@@ -129,12 +129,13 @@ export default function ResultsPage({ data, onBack }) {
   // Group layouts to show required stocks
   const requiredStocksMap = {};
   layouts.forEach(l => {
-    const key = `${l.diameter}-${l.stockLength}`;
+    const key = `${l.diameter}-${l.stockLength}-${l.isVirtual ? 'v' : 'r'}`;
     if (!requiredStocksMap[key]) {
       requiredStocksMap[key] = {
         diameter: l.diameter || '12',
         length: l.stockLength,
-        quantity: 0
+        quantity: 0,
+        isVirtual: !!l.isVirtual
       };
     }
     requiredStocksMap[key].quantity += l.repetition;
@@ -142,11 +143,12 @@ export default function ResultsPage({ data, onBack }) {
   const requiredStocks = Object.values(requiredStocksMap);
 
   const exportToExcel = () => {
-    let csvContent = "Layout,Repetition,Diameter (mm),Stock Length (mm),Cuts,Waste (mm),Utilization (%),Cut Details\n";
+    let csvContent = "Layout,Repetition,Diameter (mm),Stock Length (mm),Cuts,Waste (mm),Utilization (%),Status,Cut Details\n";
     
     layouts.forEach(layout => {
       const partsStr = layout.parts.map(p => `${p.length}mm`).join(" | ");
-      const row = `${layout.id},${layout.repetition},${layout.diameter || '12'},${layout.stockLength},${layout.cutsCount},${layout.waste},${layout.utilization.toFixed(2)}%,"${partsStr}"`;
+      const status = layout.isVirtual ? "Unavailable" : "Available";
+      const row = `${layout.id},${layout.repetition},${layout.diameter || '12'},${layout.stockLength},${layout.cutsCount},${layout.waste},${layout.utilization.toFixed(2)}%,${status},"${partsStr}"`;
       csvContent += row + "\n";
     });
     
@@ -222,36 +224,6 @@ export default function ResultsPage({ data, onBack }) {
         </div>
       </div>
 
-      {/* Unassigned/Uncut Parts Warning */}
-      {data?.unassigned && data.unassigned.length > 0 && (
-        <div className="card unassigned-warning-card" style={{ borderLeft: '4px solid #d93025', background: '#fff5f5', padding: '16px', marginBottom: '24px' }}>
-          <h3 style={{ color: '#d93025', margin: '0 0 8px 0', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>⚠️</span> Unassigned Parts (Stock Unavailable)
-          </h3>
-          <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#5f6368' }}>
-            The following parts could not be cut because there is no matching stock or not enough quantity available:
-          </p>
-          <table className="summary-table" style={{ width: '100%', fontSize: '12px' }}>
-            <thead>
-              <tr>
-                <th>Diameter (mm)</th>
-                <th>Length (mm)</th>
-                <th>Reason</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.unassigned.map((p, idx) => (
-                <tr key={idx}>
-                  <td>{p.diameter} mm</td>
-                  <td>{p.length.toLocaleString()} mm</td>
-                  <td style={{ color: '#d93025', fontWeight: 'bold' }}>{p.reason}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
       {/* Top Summary Cards (4 Cards) */}
       <div className="top-cards-grid">
         <div className="card summary-icon-card">
@@ -312,10 +284,17 @@ export default function ResultsPage({ data, onBack }) {
             </thead>
             <tbody>
               {requiredStocks.map((s, idx) => (
-                <tr key={idx}>
-                  <td>{s.diameter}</td>
+                <tr key={idx} style={s.isVirtual ? { background: '#fff5f5' } : {}}>
+                  <td>
+                    {s.diameter}
+                    {s.isVirtual && (
+                      <span style={{ color: '#d93025', fontSize: '10px', marginLeft: '6px', fontWeight: 'bold' }}>
+                        (Unavailable)
+                      </span>
+                    )}
+                  </td>
                   <td>{s.length.toLocaleString()}</td>
-                  <td>{s.quantity}</td>
+                  <td style={s.isVirtual ? { color: '#d93025', fontWeight: 'bold' } : {}}>{s.quantity}</td>
                   <td>{(s.length * s.quantity).toLocaleString()}</td>
                 </tr>
               ))}
@@ -372,12 +351,16 @@ export default function ResultsPage({ data, onBack }) {
         <h2 className="layouts-heading-title">Cutting Layouts</h2>
 
         {layouts.map((layout) => (
-          <div key={layout.id} className="card layout-card-new">
+          <div 
+            key={layout.id} 
+            className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card' : ''}`}
+            style={layout.isVirtual ? { borderLeft: '4px solid #d93025', background: '#fff9f9' } : {}}
+          >
             <div className="layout-grid-new">
               
               {/* Left Panel */}
               <div className="layout-left-panel">
-                <div className="layout-avatar-id">{layout.id}</div>
+                <div className="layout-avatar-id" style={layout.isVirtual ? { background: '#fce8e6', color: '#a51d24' } : {}}>{layout.id}</div>
                 <div className="layout-rep-meta">
                   <span className="layout-rep-val">{layout.repetition}x</span>
                   <span className="layout-rep-label">Repetition</span>
@@ -387,14 +370,14 @@ export default function ResultsPage({ data, onBack }) {
                   <span className="layout-stock-label">Diameter</span>
                 </div>
                 <div className="layout-stock-meta">
-                  <span className="layout-stock-val">{layout.stockLength.toLocaleString()} mm</span>
-                  <span className="layout-stock-label">Stock Length</span>
+                  <span className="layout-stock-val" style={layout.isVirtual ? { color: '#d93025', fontWeight: 'bold' } : {}}>{layout.stockLength.toLocaleString()} mm</span>
+                  <span className="layout-stock-label">{layout.isVirtual ? 'Stock (Unavailable)' : 'Stock Length'}</span>
                 </div>
               </div>
 
               {/* Middle Panel with ruler */}
               <div className="layout-middle-panel">
-                <div className="layout-middle-header">
+                <div className="layout-middle-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div className="colors-indicator-legend">
                     {Array.from(new Set(layout.parts.map(p => p.length))).map((len, idx) => {
                       const part = layout.parts.find(p => p.length === len);
@@ -406,6 +389,11 @@ export default function ResultsPage({ data, onBack }) {
                       );
                     })}
                   </div>
+                  {layout.isVirtual && (
+                    <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                      ⚠️ STOCK UNAVAILABLE (NEEDS PURCHASE)
+                    </span>
+                  )}
                 </div>
 
                 <div className="visual-bar-wrapper">

@@ -26,7 +26,6 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
   const diameters = Array.from(new Set([...stocks.map(s => s.diameter), ...parts.map(p => p.diameter)]));
   
   const allLayouts = [];
-  const unassignedParts = [];
   let totalPartsLength = 0;
 
   // Visual color coding colors
@@ -86,18 +85,20 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
           targetBar = {
             stockLength: barLength,
             diameter: dia,
+            isVirtual: false,
             parts: []
           };
           usedBars.push(targetBar);
         } else {
-          // If no matching stock could be found or all are used up
-          unassignedParts.push({
+          // If no matching stock could be found or all are used up, create a virtual stock bar (default 12000 mm)
+          const barLength = 12000;
+          targetBar = {
+            stockLength: barLength,
             diameter: dia,
-            length: part.length,
-            label: part.label,
-            reason: availableStocks.length === 0 ? 'No available stock for this diameter' : 'Part length (with margins) exceeds available stock bars'
-          });
-          return;
+            isVirtual: true,
+            parts: []
+          };
+          usedBars.push(targetBar);
         }
       }
 
@@ -123,6 +124,7 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
       const match = grouped.find(g => 
         g.diameter === bar.diameter &&
         g.stockLength === bar.stockLength &&
+        g.isVirtual === bar.isVirtual &&
         g.parts.length === bar.parts.length &&
         g.parts.every((p, idx) => p.length === bar.parts[idx].length)
       );
@@ -134,7 +136,12 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
           repetition: 1,
           diameter: bar.diameter,
           stockLength: bar.stockLength,
-          parts: bar.parts.map(p => ({ length: p.length, color: p.color, label: p.label })),
+          isVirtual: bar.isVirtual,
+          parts: bar.parts.map(p => ({ 
+            length: p.length, 
+            color: bar.isVirtual ? '#ffb3b3' : p.color, // Muted red if virtual
+            label: p.label 
+          })),
           cutsCount: bar.cutsCount,
           waste: bar.waste,
           utilization: bar.utilization
@@ -159,7 +166,6 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
       totalCutsCount: totalCuts,
       totalRemnant,
       avgUtilization: avgUtil
-    },
-    unassigned: unassignedParts
+    }
   };
 }

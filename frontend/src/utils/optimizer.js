@@ -26,6 +26,7 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
   const diameters = Array.from(new Set([...stocks.map(s => s.diameter), ...parts.map(p => p.diameter)]));
   
   const allLayouts = [];
+  const unassignedParts = [];
   let totalPartsLength = 0;
 
   // Visual color coding colors
@@ -79,21 +80,25 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
           }
         }
 
-        let barLength = 12000;
         if (stockIndex !== -1) {
-          barLength = availableStocks[stockIndex].length;
+          const barLength = availableStocks[stockIndex].length;
           availableStocks.splice(stockIndex, 1);
-        } else if (availableStocks.length > 0) {
-          barLength = availableStocks[0].length;
-          availableStocks.splice(0, 1);
+          targetBar = {
+            stockLength: barLength,
+            diameter: dia,
+            parts: []
+          };
+          usedBars.push(targetBar);
+        } else {
+          // If no matching stock could be found or all are used up
+          unassignedParts.push({
+            diameter: dia,
+            length: part.length,
+            label: part.label,
+            reason: availableStocks.length === 0 ? 'No available stock for this diameter' : 'Part length (with margins) exceeds available stock bars'
+          });
+          return;
         }
-
-        targetBar = {
-          stockLength: barLength,
-          diameter: dia,
-          parts: []
-        };
-        usedBars.push(targetBar);
       }
 
       targetBar.parts.push(part);
@@ -154,6 +159,7 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
       totalCutsCount: totalCuts,
       totalRemnant,
       avgUtilization: avgUtil
-    }
+    },
+    unassigned: unassignedParts
   };
 }

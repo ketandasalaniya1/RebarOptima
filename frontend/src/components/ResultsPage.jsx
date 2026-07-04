@@ -222,6 +222,36 @@ export default function ResultsPage({ data, onBack }) {
         </div>
       </div>
 
+      {/* Unassigned/Uncut Parts Warning */}
+      {data?.unassigned && data.unassigned.length > 0 && (
+        <div className="card unassigned-warning-card" style={{ borderLeft: '4px solid #d93025', background: '#fff5f5', padding: '16px', marginBottom: '24px' }}>
+          <h3 style={{ color: '#d93025', margin: '0 0 8px 0', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>⚠️</span> Unassigned Parts (Stock Unavailable)
+          </h3>
+          <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#5f6368' }}>
+            The following parts could not be cut because there is no matching stock or not enough quantity available:
+          </p>
+          <table className="summary-table" style={{ width: '100%', fontSize: '12px' }}>
+            <thead>
+              <tr>
+                <th>Diameter (mm)</th>
+                <th>Length (mm)</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.unassigned.map((p, idx) => (
+                <tr key={idx}>
+                  <td>{p.diameter} mm</td>
+                  <td>{p.length.toLocaleString()} mm</td>
+                  <td style={{ color: '#d93025', fontWeight: 'bold' }}>{p.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {/* Top Summary Cards (4 Cards) */}
       <div className="top-cards-grid">
         <div className="card summary-icon-card">

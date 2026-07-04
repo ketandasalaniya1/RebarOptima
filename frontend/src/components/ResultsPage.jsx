@@ -114,7 +114,7 @@ const mockLayouts = [
 ]
 
 export default function ResultsPage({ data, onBack }) {
-  const layouts = data ? data.layouts : mockLayouts;
+  const layouts = (data ? data.layouts : mockLayouts).slice().sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
   const summary = data ? data.summary : {
     totalPartsLength: 554480,
     totalUsedStockLength: 564000,
@@ -140,7 +140,7 @@ export default function ResultsPage({ data, onBack }) {
     }
     requiredStocksMap[key].quantity += l.repetition;
   });
-  const requiredStocks = Object.values(requiredStocksMap);
+  const requiredStocks = Object.values(requiredStocksMap).sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
 
   const exportToExcel = () => {
     let csvContent = "Layout,Repetition,Diameter (mm),Stock Length (mm),Cuts,Waste (mm),Utilization (%),Status,Cut Details\n";

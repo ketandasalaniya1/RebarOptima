@@ -1,15 +1,12 @@
 import { useState, useRef } from 'react'
 import './NewBatchPage.css'
 import { solve1DCSP } from '../utils/optimizer'
-import { 
-  Settings, 
-  Upload, 
-  X, 
-  ChevronDown, 
-  ChevronUp, 
-  Zap, 
-  BarChart3, 
-  Download 
+import {
+  Upload,
+  X,
+  Zap,
+  BarChart3,
+  Download
 } from 'lucide-react'
 
 const initialStock = [
@@ -68,11 +65,7 @@ export default function NewBatchPage({ onOptimize }) {
     label: '',
   }))
 
-  // Advanced settings states
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [kerf, setKerf] = useState('0')
-  const [trimMargin, setTrimMargin] = useState('0')
-  const [minRemnant, setMinRemnant] = useState('0')
+
 
   // CSV Import Modal states
   const [showImportModal, setShowImportModal] = useState(false)
@@ -183,65 +176,20 @@ export default function NewBatchPage({ onOptimize }) {
         </div>
       </section>
 
-      {/* Advanced Settings Accordion */}
-      <section className="card advanced-card">
-        <div className="advanced-header" onClick={() => setShowAdvanced(!showAdvanced)}>
-          <div className="advanced-title">
-            <Settings size={16} />
-            <span>Advanced Parameters Settings</span>
-          </div>
-          {showAdvanced ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
-
-        {showAdvanced && (
-          <div className="advanced-body">
-            <div className="advanced-inputs-grid">
-              <div className="adv-field">
-                <label className="adv-lbl">Kerf / Blade Thickness (mm)</label>
-                <input 
-                  type="number" 
-                  className="form-input" 
-                  value={kerf} 
-                  onChange={(e) => setKerf(e.target.value)} 
-                  placeholder="0"
-                />
-                <span className="adv-hint">Material consumed by blade cut width</span>
-              </div>
-              <div className="adv-field">
-                <label className="adv-lbl">Trim Margin (mm)</label>
-                <input 
-                  type="number" 
-                  className="form-input" 
-                  value={trimMargin} 
-                  onChange={(e) => setTrimMargin(e.target.value)} 
-                  placeholder="0"
-                />
-                <span className="adv-hint">Margin cut off stock bar ends</span>
-              </div>
-              <div className="adv-field">
-                <label className="adv-lbl">Min. Remnant Length (mm)</label>
-                <input 
-                  type="number" 
-                  className="form-input" 
-                  value={minRemnant} 
-                  onChange={(e) => setMinRemnant(e.target.value)} 
-                  placeholder="0"
-                />
-                <span className="adv-hint">Reusable waste size inventory limit</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
+      {/* ponytail: ad banner slot — full-width, ~728×90px (leaderboard) or responsive */}
+      <div className="ad-banner-slot" style={{ width: '100%', minHeight: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8fc', border: '1px dashed #ccc', borderRadius: '8px' }}>
+        {/* Replace this placeholder with your ad script/iframe */}
+        <span style={{ color: '#aaa', fontSize: '12px' }}>Ad Space — 728×90 (Leaderboard) or Responsive</span>
+      </div>
 
       {/* Required Parts */}
       <section className="card">
         <div className="section-header">
           <h2 className="section-title">Required Parts</h2>
           <div className="actions-header-row">
-            <button className="import-row-btn" onClick={() => setShowImportModal(true)}>
+            {/* <button className="import-row-btn" onClick={() => setShowImportModal(true)}>
               <Upload size={13} style={{ marginRight: '4px' }} /> Import CSV
-            </button>
+            </button> */}
             <button className="add-row-btn" onClick={() => parts.addRow()}>+ Add Row</button>
           </div>
         </div>
@@ -351,10 +299,10 @@ export default function NewBatchPage({ onOptimize }) {
 
       {/* Optimize Button */}
       <div className="optimize-section">
-        <button 
-          className="btn-optimize" 
+        <button
+          className="btn-optimize"
           onClick={() => {
-            const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin, minRemnant });
+            const data = solve1DCSP(stock.rows, parts.rows, {});
             onOptimize(data);
           }}
         >

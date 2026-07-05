@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
+  height: 100px;
   background: var(--navbar-bg);
   border-bottom: 1px solid var(--navbar-border);
   position: sticky;
@@ -12,17 +12,19 @@
 }
 
 .navbar.shrunk {
-  height: 42px;
-  box-shadow: 0 4px 12px rgba(26, 18, 89, 0.08); /* Matches purple shadow */
+  height: 80px;
+  box-shadow: 0 4px 12px rgba(26, 18, 89, 0.08);
+  /* Matches purple shadow */
 }
 
 .navbar-logo-img {
-  height: 36px;
+  height: 150px;
   width: auto;
   display: block;
   transition: height 0.2s ease-in-out;
 }
 
 .navbar-logo-img.logo-shrunk {
-  height: 26px; /* Shrinks when page is scrolled */
+  height: 150px;
+  /* Shrinks when page is scrolled */
 }

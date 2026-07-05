@@ -10,6 +10,8 @@ function App() {
   const [view, setView] = useState('inputs') // 'inputs' or 'results'
   const [optimizationData, setOptimizationData] = useState(null)
 
+
+  //hello
   return (
     <div className="app-layout">
       <Navbar />

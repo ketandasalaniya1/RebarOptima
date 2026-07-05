@@ -1,15 +1,15 @@
 import './ResultsPage.css'
 import html2pdf from 'html2pdf.js'
-import { 
-  ArrowLeft, 
-  Printer, 
-  CheckCircle2, 
-  Package, 
-  TrendingUp, 
-  ClipboardList, 
-  Scissors, 
-  PieChart, 
-  Trash2, 
+import {
+  ArrowLeft,
+  Printer,
+  CheckCircle2,
+  Package,
+  TrendingUp,
+  ClipboardList,
+  Scissors,
+  PieChart,
+  Trash2,
   BarChart3,
   FileDown,
   FileSpreadsheet
@@ -144,14 +144,14 @@ export default function ResultsPage({ data, onBack }) {
 
   const exportToExcel = () => {
     let csvContent = "Layout,Repetition,Diameter (mm),Stock Length (mm),Cuts,Waste (mm),Utilization (%),Status,Cut Details\n";
-    
+
     layouts.forEach(layout => {
       const partsStr = layout.parts.map(p => `${p.length}mm`).join(" | ");
       const status = layout.isVirtual ? "Unavailable" : "Available";
       const row = `${layout.id},${layout.repetition},${layout.diameter || '12'},${layout.stockLength},${layout.cutsCount},${layout.waste},${layout.utilization.toFixed(2)}%,${status},"${partsStr}"`;
       csvContent += row + "\n";
     });
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -166,11 +166,11 @@ export default function ResultsPage({ data, onBack }) {
   const downloadPDF = () => {
     const element = document.querySelector('.results-page');
     const opt = {
-      margin:       [10, 10, 10, 10],
-      filename:     'rebar_optima_report.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      margin: [10, 10, 10, 10],
+      filename: 'rebar_optima_report.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       ignoreElements: (el) => el.classList.contains('no-print')
     };
 
@@ -351,13 +351,13 @@ export default function ResultsPage({ data, onBack }) {
         <h2 className="layouts-heading-title">Cutting Layouts</h2>
 
         {layouts.map((layout) => (
-          <div 
-            key={layout.id} 
+          <div
+            key={layout.id}
             className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card' : ''}`}
             style={layout.isVirtual ? { borderLeft: '4px solid #d93025', background: '#fff9f9' } : {}}
           >
             <div className="layout-grid-new">
-              
+
               {/* Left Panel */}
               <div className="layout-left-panel">
                 <div className="layout-avatar-id" style={layout.isVirtual ? { background: '#fce8e6', color: '#a51d24' } : {}}>{layout.id}</div>
@@ -401,12 +401,12 @@ export default function ResultsPage({ data, onBack }) {
                     {layout.parts.map((p, idx) => {
                       const percent = (p.length / layout.stockLength) * 100;
                       return (
-                        <div 
+                        <div
                           key={idx}
                           className="bar-segment"
-                          style={{ 
-                            width: `${percent}%`, 
-                            backgroundColor: p.color 
+                          style={{
+                            width: `${percent}%`,
+                            backgroundColor: p.color
                           }}
                         >
                           {p.length}
@@ -420,7 +420,7 @@ export default function ResultsPage({ data, onBack }) {
                       const wastePercent = (remnantLen / layout.stockLength) * 100;
                       if (wastePercent > 0.1) {
                         return (
-                          <div 
+                          <div
                             className="bar-segment remnant-segment"
                             style={{ width: `${wastePercent}%` }}
                           >

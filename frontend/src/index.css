@@ -58,7 +58,8 @@ button {
   cursor: pointer;
 }
 
-input, select {
+input,
+select {
   font-family: inherit;
   font-size: 14px;
 }

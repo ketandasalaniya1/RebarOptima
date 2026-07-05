@@ -31,7 +31,8 @@
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 76px; /* Sticky so banners remain visible while page scrolls */
+  top: 76px;
+  /* Sticky so banners remain visible while page scrolls */
 }
 
 .banner-sidebar a {
@@ -56,7 +57,7 @@
   .banner-sidebar {
     display: none !important;
   }
-  
+
   .optimizer-workspace {
     gap: 0;
   }

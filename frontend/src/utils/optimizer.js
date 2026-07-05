@@ -22,6 +22,27 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
     }))
     .filter(p => p.length > 0 && p.quantity > 0);
 
+  if (parts.length === 0) {
+    throw new Error("Please enter at least one valid required part with length and quantity greater than 0.");
+  }
+
+  // ponytail: input validation at trust boundary - prevent physically impossible part lengths that exceed stock. O(N*M) check, works fast for small browser input sheets.
+  for (const part of parts) {
+    const diaStocks = stocks.filter(s => s.diameter === part.diameter);
+    const maxStockLength = diaStocks.length > 0
+      ? Math.max(...diaStocks.map(s => s.length))
+      : 12000;
+
+    const requiredLength = part.length + trimMargin * 2;
+    if (requiredLength > maxStockLength) {
+      if (diaStocks.length > 0) {
+        throw new Error(`Required part length (${part.length} mm)${trimMargin > 0 ? ` plus trim margin (${trimMargin * 2} mm)` : ''} cannot be greater than the maximum stock length (${maxStockLength} mm) for diameter ${part.diameter} mm.`);
+      } else {
+        throw new Error(`Required part length (${part.length} mm)${trimMargin > 0 ? ` plus trim margin (${trimMargin * 2} mm)` : ''} cannot be greater than the default virtual stock length (12,000 mm) for diameter ${part.diameter} mm. Please add a stock bar of at least ${requiredLength} mm.`);
+      }
+    }
+  }
+
   // Group by diameter
   const diameters = Array.from(new Set([...stocks.map(s => s.diameter), ...parts.map(p => p.diameter)]));
   

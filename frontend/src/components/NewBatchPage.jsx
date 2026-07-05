@@ -1,12 +1,14 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './NewBatchPage.css'
 import { solve1DCSP } from '../utils/optimizer'
+import topAdStrip from '../assets/top_ad _strip.jpeg'
+import bottomAdStrip from '../assets/bottom_ad_strip.jpeg'
 import {
-  Upload,
   X,
   Zap,
   BarChart3,
-  Download
+  Download,
+  AlertCircle
 } from 'lucide-react'
 
 const initialStock = [
@@ -65,6 +67,13 @@ export default function NewBatchPage({ onOptimize }) {
     label: '',
   }))
 
+  const [error, setError] = useState(null)
+
+  // Clear error when rows change
+  useEffect(() => {
+    setError(null)
+  }, [stock.rows, parts.rows])
+
 
 
   // CSV Import Modal states
@@ -110,6 +119,12 @@ export default function NewBatchPage({ onOptimize }) {
 
   return (
     <div className="optimizer-page">
+      {/* Top Ad Strip */}
+      <div className="top-ad-strip-container">
+        <a href="https://cravorasolutions.com/" target="_blank" rel="noopener noreferrer">
+          <img src={topAdStrip} alt="Advertisement" className="top-ad-strip-img" />
+        </a>
+      </div>
 
       {/* Available Stock */}
       <section className="card">
@@ -176,11 +191,7 @@ export default function NewBatchPage({ onOptimize }) {
         </div>
       </section>
 
-      {/* ponytail: ad banner slot — full-width, ~728×90px (leaderboard) or responsive */}
-      <div className="ad-banner-slot" style={{ width: '100%', minHeight: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8fc', border: '1px dashed #ccc', borderRadius: '8px' }}>
-        {/* Replace this placeholder with your ad script/iframe */}
-        <span style={{ color: '#aaa', fontSize: '12px' }}>Ad Space — 728×90 (Leaderboard) or Responsive</span>
-      </div>
+
 
       {/* Required Parts */}
       <section className="card">
@@ -297,17 +308,35 @@ export default function NewBatchPage({ onOptimize }) {
         </div>
       )}
 
+      {error && (
+        <div className="error-alert-banner">
+          <AlertCircle size={20} className="error-alert-icon" />
+          <div className="error-alert-text">{error}</div>
+        </div>
+      )}
+
       {/* Optimize Button */}
       <div className="optimize-section">
         <button
           className="btn-optimize"
           onClick={() => {
-            const data = solve1DCSP(stock.rows, parts.rows, {});
-            onOptimize(data);
+            try {
+              const data = solve1DCSP(stock.rows, parts.rows, {});
+              onOptimize(data);
+            } catch (err) {
+              setError(err.message);
+            }
           }}
         >
           RUN OPTIMIZATION
         </button>
+      </div>
+
+      {/* Bottom Ad Strip (Mobile View Only) */}
+      <div className="bottom-ad-strip-container">
+        <a href="https://cravorasolutions.com/" target="_blank" rel="noopener noreferrer">
+          <img src={bottomAdStrip} alt="Advertisement" className="bottom-ad-strip-img" />
+        </a>
       </div>
 
       {/* Premium Educational Landing Section */}

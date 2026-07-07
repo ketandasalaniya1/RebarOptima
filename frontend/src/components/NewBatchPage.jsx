@@ -8,7 +8,8 @@ import {
   Zap,
   BarChart3,
   Download,
-  AlertCircle
+  AlertCircle,
+  Upload
 } from 'lucide-react'
 
 const initialStock = [
@@ -22,13 +23,14 @@ const initialParts = [
 // ponytail: shared hook for add-row-on-Tab logic across both tables
 function useTableRows(initial, defaults) {
   const [rows, setRows] = useState(initial)
-  const [nextId, setNextId] = useState(initial.length + 1)
   const focusNew = useRef(false)
 
   const addRow = (overrides = {}) => {
     focusNew.current = true
-    setRows(prev => [...prev, { id: nextId, ...defaults(prev), ...overrides }])
-    setNextId(n => n + 1)
+    setRows(prev => {
+      const maxId = prev.reduce((max, r) => (r.id > max ? r.id : max), 0)
+      return [...prev, { id: maxId + 1, ...defaults(prev), ...overrides }]
+    })
   }
 
   const deleteRow = (id) => setRows(prev => prev.filter(r => r.id !== id))
@@ -85,7 +87,8 @@ export default function NewBatchPage({ onOptimize }) {
 
     const lines = csvText.split('\n')
     const newParts = []
-    let tempId = parts.rows.length + 1
+    const currentMaxId = parts.rows.reduce((max, r) => (r.id > max ? r.id : max), 0)
+    let tempId = currentMaxId + 1
 
     lines.forEach(line => {
       // split by comma, semicolon or tab
@@ -110,7 +113,13 @@ export default function NewBatchPage({ onOptimize }) {
     })
 
     if (newParts.length > 0) {
-      parts.setRows(prev => [...prev, ...newParts])
+      parts.setRows(prev => {
+        // If the first row is the default blank row, remove it
+        if (prev.length > 0 && prev[0].length === '' && prev[0].quantity === '') {
+          return [...prev.slice(1), ...newParts]
+        }
+        return [...prev, ...newParts]
+      })
     }
 
     setCsvText('')
@@ -198,9 +207,9 @@ export default function NewBatchPage({ onOptimize }) {
         <div className="section-header">
           <h2 className="section-title">Required Parts</h2>
           <div className="actions-header-row">
-            {/* <button className="import-row-btn" onClick={() => setShowImportModal(true)}>
+            <button className="import-row-btn" onClick={() => setShowImportModal(true)}>
               <Upload size={13} style={{ marginRight: '4px' }} /> Import CSV
-            </button> */}
+            </button>
             <button className="add-row-btn" onClick={() => parts.addRow()}>+ Add Row</button>
           </div>
         </div>

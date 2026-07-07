@@ -1,4 +1,17 @@
 {
+  "name": "rebaroptima",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "lint": "npm run lint --workspace=frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "start:backend": "npm run start:dev --workspace=backend"
+  },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"
   }

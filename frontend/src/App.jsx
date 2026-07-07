@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import Navbar from './components/Navbar'
 import NewBatchPage from './components/NewBatchPage'
@@ -10,8 +10,22 @@ function App() {
   const [view, setView] = useState('inputs') // 'inputs' or 'results'
   const [optimizationData, setOptimizationData] = useState(null)
 
+  // ponytail: Using native popstate history navigation to handle back button without router dependency.
+  // Ceiling: App doesn't support complex URLs/sub-routes. Upgrade path: Use react-router-dom if routing needs grow.
+  useEffect(() => {
+    window.history.replaceState({ view: 'inputs' }, '')
 
-  //hello
+    const handlePopState = (event) => {
+      if (event.state && event.state.view === 'results') {
+        setView('results')
+      } else {
+        setView('inputs')
+      }
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
   return (
     <div className="app-layout">
       <Navbar />
@@ -27,6 +41,7 @@ function App() {
               <NewBatchPage onOptimize={(data) => {
                 setOptimizationData(data)
                 setView('results')
+                window.history.pushState({ view: 'results' }, '')
               }} />
             </div>
             <aside className="banner-sidebar right-sidebar">
@@ -36,7 +51,7 @@ function App() {
             </aside>
           </div>
         ) : (
-          <ResultsPage data={optimizationData} onBack={() => setView('inputs')} />
+          <ResultsPage data={optimizationData} onBack={() => window.history.back()} />
         )}
       </div>
     </div>
@@ -44,3 +59,4 @@ function App() {
 }
 
 export default App
+

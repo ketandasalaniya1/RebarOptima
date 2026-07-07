@@ -21,10 +21,16 @@ const mockLayouts = [
     repetition: 8,
     stockLength: 12000,
     parts: [
-      { length: 4500, qty: 1, color: '#f28e8e' },
-      { length: 1200, qty: 1, color: '#f7e1a1' },
-      { length: 950, qty: 1, color: '#a6e2a6' },
-      { length: 760, qty: 7, color: '#a0e1e1' },
+      { length: 4500, color: '#36454F' },
+      { length: 1200, color: '#71797E' },
+      { length: 950, color: '#708090' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
     ],
     cutsCount: 10,
     waste: '30 mm (0.25%)',
@@ -35,10 +41,15 @@ const mockLayouts = [
     repetition: 2,
     stockLength: 12000,
     parts: [
-      { length: 4500, qty: 1, color: '#f28e8e' },
-      { length: 1200, qty: 1, color: '#f7e1a1' },
-      { length: 950, qty: 5, color: '#a6e2a6' },
-      { length: 760, qty: 2, color: '#a0e1e1' },
+      { length: 4500, color: '#36454F' },
+      { length: 1200, color: '#71797E' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
     ],
     cutsCount: 9,
     waste: '30 mm (0.25%)',
@@ -49,24 +60,29 @@ const mockLayouts = [
     repetition: 15,
     stockLength: 12000,
     parts: [
-      { length: 4500, qty: 2, color: '#f28e8e' },
-      { length: 1200, qty: 1, color: '#f7e1a1' },
-      { length: 950, qty: 1, color: '#a6e2a6' },
-      { length: 760, qty: 1, color: '#a0e1e1' },
+      { length: 4500, color: '#36454F' },
+      { length: 4500, color: '#36454F' },
+      { length: 1200, color: '#71797E' },
+      { length: 950, color: '#708090' },
+      { length: 760, color: '#808080' },
     ],
     cutsCount: 5,
-    waste: '40 mm (0.33%)',
-    utilization: 99.67,
+    waste: '90 mm (0.75%)',
+    utilization: 99.25,
   },
   {
     id: 'D',
     repetition: 3,
     stockLength: 12000,
     parts: [
-      { length: 4500, qty: 1, color: '#f28e8e' },
-      { length: 1200, qty: 4, color: '#f7e1a1' },
-      { length: 950, qty: 2, color: '#a6e2a6' },
-      { length: 760, qty: 1, color: '#a0e1e1' },
+      { length: 4500, color: '#36454F' },
+      { length: 1200, color: '#71797E' },
+      { length: 1200, color: '#71797E' },
+      { length: 1200, color: '#71797E' },
+      { length: 1200, color: '#71797E' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 760, color: '#808080' },
     ],
     cutsCount: 8,
     waste: '40 mm (0.33%)',
@@ -77,10 +93,11 @@ const mockLayouts = [
     repetition: 17,
     stockLength: 12000,
     parts: [
-      { length: 4500, qty: 2, color: '#f28e8e' },
-      { length: 1200, qty: 1, color: '#f7e1a1' },
-      { length: 950, qty: 1, color: '#a6e2a6' },
-      { length: 760, qty: 1, color: '#a0e1e1' },
+      { length: 4500, color: '#36454F' },
+      { length: 4500, color: '#36454F' },
+      { length: 1200, color: '#71797E' },
+      { length: 950, color: '#708090' },
+      { length: 760, color: '#808080' },
     ],
     cutsCount: 5,
     waste: '90 mm (0.75%)',
@@ -91,9 +108,14 @@ const mockLayouts = [
     repetition: 1,
     stockLength: 12000,
     parts: [
-      { length: 4500, qty: 1, color: '#f28e8e' },
-      { length: 1200, qty: 3, color: '#f7e1a1' },
-      { length: 950, qty: 4, color: '#a6e2a6' },
+      { length: 4500, color: '#36454F' },
+      { length: 1200, color: '#71797E' },
+      { length: 1200, color: '#71797E' },
+      { length: 1200, color: '#71797E' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
     ],
     cutsCount: 8,
     waste: '100 mm (0.83%)',
@@ -104,14 +126,29 @@ const mockLayouts = [
     repetition: 1,
     stockLength: 12000,
     parts: [
-      { length: 950, qty: 3, color: '#a6e2a6' },
-      { length: 760, qty: 3, color: '#a0e1e1' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 950, color: '#708090' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
+      { length: 760, color: '#808080' },
     ],
     cutsCount: 6,
     waste: '6,870 mm (57.25%)',
     utilization: 42.75,
   },
-]
+];
+
+const getTextStyle = (hex) => {
+  if (!hex || hex.startsWith('var')) return {};
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum < 135 
+    ? { color: '#ffffff' } 
+    : { color: '#111827' };
+};
 
 export default function ResultsPage({ data, onBack }) {
   const layouts = (data ? data.layouts : mockLayouts).slice().sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
@@ -228,8 +265,8 @@ export default function ResultsPage({ data, onBack }) {
       <div className="top-cards-grid">
         <div className="card summary-icon-card">
           <div className="card-info">
-            <span className="stat-label">Total Parts (Quantity)</span>
-            <span className="stat-value">{summary.totalPartsLength.toLocaleString()} <span className="stat-sub">({totalPartsQty})</span></span>
+            <span className="stat-label">Total Parts Length (Qty)</span>
+            <span className="stat-value">{summary.totalPartsLength.toLocaleString()} <span className="stat-unit">mm</span> <span className="stat-sub">({totalPartsQty})</span></span>
           </div>
           <div className="card-icon">
             <Package size={20} color="var(--accent)" />
@@ -388,6 +425,19 @@ export default function ResultsPage({ data, onBack }) {
                         </span>
                       );
                     })}
+                    {(() => {
+                      const partsLen = layout.parts.reduce((sum, p) => sum + p.length, 0);
+                      const remnantLen = layout.stockLength - partsLen;
+                      if (remnantLen > 0.1) {
+                        return (
+                          <span className="legend-item" style={{ marginRight: '8px', display: 'inline-flex', alignItems: 'center', borderStyle: 'dashed' }}>
+                            <span className="legend-dot" style={{ backgroundColor: '#d1d5db', width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block', marginRight: '4px' }} />
+                            Wastage/Remnant: {remnantLen.toLocaleString()}
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                   {layout.isVirtual && (
                     <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
@@ -406,7 +456,8 @@ export default function ResultsPage({ data, onBack }) {
                           className="bar-segment"
                           style={{
                             width: `${percent}%`,
-                            backgroundColor: p.color
+                            backgroundColor: p.color,
+                            ...getTextStyle(p.color)
                           }}
                         >
                           {p.length}

@@ -49,8 +49,22 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
   const allLayouts = [];
   let totalPartsLength = 0;
 
-  // Visual color coding colors
-  const colors = ['#f28e8e', '#f7e1a1', '#a6e2a6', '#a0e1e1', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6'];
+  // Visual color coding colors - shades of gray sorted from darker to lighter
+  const colors = [
+    '#36454F', // Charcoal
+    '#71797E', // Steel Gray
+    '#708090', // Slate Gray
+    '#808080', // Gray
+    '#818589', // Gunmetal Gray
+    '#848884', // Smoke
+    '#7393B3', // Blue Gray
+    '#899499', // Pewter
+    '#A9A9A9', // Dark Gray
+    '#B2BEB5', // Ash Gray
+    '#C0C0C0', // Silver
+    '#D3D3D3', // Light Gray
+    '#E5E4E2'  // Platinum
+  ];
 
   diameters.forEach(dia => {
     const diaStocks = stocks.filter(s => s.diameter === dia);
@@ -58,11 +72,13 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
 
     if (diaParts.length === 0) return;
 
-    // Expand parts into a flat list, sorted by length descending
+    // Expand parts into a flat list. Sort unique part lengths descending to assign colors from darker to lighter.
+    const sortedUniquePartLengths = Array.from(new Set(diaParts.map(p => p.length))).sort((a, b) => b - a);
     const flatParts = [];
-    diaParts.forEach((p, partIdx) => {
+    diaParts.forEach((p) => {
       totalPartsLength += p.length * p.quantity;
-      const color = colors[partIdx % colors.length];
+      const lengthIdx = sortedUniquePartLengths.indexOf(p.length);
+      const color = colors[lengthIdx % colors.length];
       for (let i = 0; i < p.quantity; i++) {
         flatParts.push({ length: p.length, label: p.label, color });
       }
@@ -134,7 +150,7 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
       const totalUsedWithTrim = totalCutAndKerf + trimMargin * 2;
       const rawWaste = bar.stockLength - totalUsedWithTrim;
 
-      bar.cutsCount = Math.max(0, bar.parts.length - 1);
+      bar.cutsCount = bar.parts.length === 0 ? 0 : (rawWaste > 0.1 ? bar.parts.length : bar.parts.length - 1);
       bar.waste = rawWaste;
       bar.utilization = (cutsLength / bar.stockLength) * 100;
     });
@@ -175,7 +191,7 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
 
   // Calculate global summary stats
   const totalUsedLength = allLayouts.reduce((sum, l) => sum + (l.stockLength * l.repetition), 0);
-  const totalCuts = allLayouts.reduce((sum, l) => sum + ((l.parts.length) * l.repetition), 0);
+  const totalCuts = allLayouts.reduce((sum, l) => sum + (l.cutsCount * l.repetition), 0);
   const totalRemnant = allLayouts.reduce((sum, l) => sum + (l.waste * l.repetition), 0);
   const avgUtil = totalUsedLength > 0 ? ((totalPartsLength / totalUsedLength) * 100) : 0;
 

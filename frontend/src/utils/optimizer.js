@@ -196,7 +196,7 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
   const avgUtil = totalUsedLength > 0 ? ((totalPartsLength / totalUsedLength) * 100) : 0;
 
   return {
-    layouts: allLayouts.map((l, idx) => ({ ...l, id: String.fromCharCode(65 + (idx % 26)) })),
+    layouts: allLayouts.map((l, idx) => ({ ...l, id: String(idx + 1) })),
     summary: {
       totalPartsLength,
       totalUsedStockLength: totalUsedLength,

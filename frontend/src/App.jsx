@@ -26,6 +26,10 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [view])
+
   return (
     <div className="app-layout">
       <Navbar />

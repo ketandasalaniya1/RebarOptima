@@ -179,6 +179,47 @@ export default function ResultsPage({ data, onBack }) {
   });
   const requiredStocks = Object.values(requiredStocksMap).sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
 
+  // Group layouts by diameter for wastage and utilization in kg
+  const diaWeightSummaryMap = {};
+  layouts.forEach(l => {
+    const dia = l.diameter || '12';
+    if (!diaWeightSummaryMap[dia]) {
+      diaWeightSummaryMap[dia] = {
+        diameter: dia,
+        totalStockLength: 0,
+        totalPartsLength: 0
+      };
+    }
+    diaWeightSummaryMap[dia].totalStockLength += l.stockLength * l.repetition;
+    const layoutPartsLength = l.parts.reduce((sum, p) => sum + p.length, 0);
+    diaWeightSummaryMap[dia].totalPartsLength += layoutPartsLength * l.repetition;
+  });
+
+  const diaWeightSummary = Object.values(diaWeightSummaryMap)
+    .map(d => {
+      const diaNum = parseFloat(d.diameter);
+      const weightPerMeter = Math.round(((diaNum * diaNum) / 162) * 100) / 100;
+      const totalStockKg = (d.totalStockLength / 1000) * weightPerMeter;
+      const utilisationKg = (d.totalPartsLength / 1000) * weightPerMeter;
+      const wastageKg = Math.max(0, totalStockKg - utilisationKg);
+      const wastagePercent = totalStockKg > 0 ? (wastageKg / totalStockKg) * 100 : 0;
+      const utilisationPercent = totalStockKg > 0 ? (utilisationKg / totalStockKg) * 100 : 0;
+      return {
+        diameter: d.diameter,
+        totalStockKg,
+        utilisationKg,
+        wastageKg,
+        wastagePercent,
+        utilisationPercent
+      };
+    })
+    .sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
+
+  const totalStockKgSum = diaWeightSummary.reduce((sum, d) => sum + d.totalStockKg, 0);
+  const totalUtilisationKgSum = diaWeightSummary.reduce((sum, d) => sum + d.utilisationKg, 0);
+  const totalWastageKgSum = Math.max(0, totalStockKgSum - totalUtilisationKgSum);
+  const totalWastagePercent = totalStockKgSum > 0 ? (totalWastageKgSum / totalStockKgSum) * 100 : 0;
+
   const exportToExcel = () => {
     let csvContent = "Layout,Repetition,Diameter (mm),Stock Length (mm),Cuts,Waste (mm),Utilization (%),Status,Cut Details\n";
 
@@ -202,16 +243,28 @@ export default function ResultsPage({ data, onBack }) {
 
   const downloadPDF = () => {
     const element = document.querySelector('.results-page');
+    element.classList.add('print-mode');
     const opt = {
-      margin: [10, 10, 10, 10],
+      margin: [15, 10, 15, 10],
       filename: 'rebar_optima_report.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        windowWidth: 794
+      },
+      pagebreak: { mode: ['css', 'legacy'], after: '.pdf-page-break' },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       ignoreElements: (el) => el.classList.contains('no-print')
     };
 
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).save().then(() => {
+      element.classList.remove('print-mode');
+    }).catch(err => {
+      console.error('PDF Generation Error:', err);
+      element.classList.remove('print-mode');
+    });
   };
 
   return (
@@ -253,11 +306,11 @@ export default function ResultsPage({ data, onBack }) {
         </div>
         <div>
           <span className="meta-lbl">Total Parts Length</span>
-          <span className="meta-v">{summary.totalPartsLength.toLocaleString()} mm</span>
+          <span className="meta-v">{(summary.totalPartsLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} m</span>
         </div>
         <div>
           <span className="meta-lbl">Units</span>
-          <span className="meta-v">Metric (mm)</span>
+          <span className="meta-v">Metric (m)</span>
         </div>
       </div>
 
@@ -266,7 +319,7 @@ export default function ResultsPage({ data, onBack }) {
         <div className="card summary-icon-card">
           <div className="card-info">
             <span className="stat-label">Total Parts Length (Qty)</span>
-            <span className="stat-value">{summary.totalPartsLength.toLocaleString()} <span className="stat-unit">mm</span> <span className="stat-sub">({totalPartsQty})</span></span>
+            <span className="stat-value">{(summary.totalPartsLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="stat-unit">m</span> <span className="stat-sub">({totalPartsQty})</span></span>
           </div>
           <div className="card-icon">
             <Package size={20} color="var(--accent)" />
@@ -276,7 +329,7 @@ export default function ResultsPage({ data, onBack }) {
         <div className="card summary-icon-card">
           <div className="card-info">
             <span className="stat-label">Used Stock Length</span>
-            <span className="stat-value">{summary.totalUsedStockLength.toLocaleString()} <span className="stat-unit">mm</span></span>
+            <span className="stat-value">{(summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="stat-unit">m</span></span>
             <span className="stat-percentage">({summary.avgUtilization.toFixed(3)}%)</span>
           </div>
           <div className="card-icon">
@@ -307,41 +360,77 @@ export default function ResultsPage({ data, onBack }) {
 
       {/* Tables Row: Required Stocks & Summary */}
       <div className="tables-grid">
-        {/* Required Stocks */}
-        <div className="card table-card">
-          <h3 className="table-card-heading">Required Stocks</h3>
-          <table className="summary-table">
-            <thead>
-              <tr>
-                <th>Diameter (mm)</th>
-                <th>Stock Length (mm)</th>
-                <th>Quantity (Bars)</th>
-                <th>Total Length (mm)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requiredStocks.map((s, idx) => (
-                <tr key={idx} style={s.isVirtual ? { background: '#fff5f5' } : {}}>
-                  <td>
-                    {s.diameter}
-                    {s.isVirtual && (
-                      <span style={{ color: '#d93025', fontSize: '10px', marginLeft: '6px', fontWeight: 'bold' }}>
-                        (Unavailable)
-                      </span>
-                    )}
-                  </td>
-                  <td>{s.length.toLocaleString()}</td>
-                  <td style={s.isVirtual ? { color: '#d93025', fontWeight: 'bold' } : {}}>{s.quantity}</td>
-                  <td>{(s.length * s.quantity).toLocaleString()}</td>
+        <div className="tables-left-col">
+          {/* Required Stocks */}
+          <div className="card table-card">
+            <h3 className="table-card-heading">Required Stocks</h3>
+            <table className="summary-table">
+              <thead>
+                <tr>
+                  <th>Diameter (mm)</th>
+                  <th>Stock Length (m)</th>
+                  <th>Quantity (Bars)</th>
+                  <th>Total Length (m)</th>
                 </tr>
-              ))}
-              <tr className="total-row">
-                <td colSpan={2}>TOTAL</td>
-                <td>{totalBarsUsed}</td>
-                <td>{summary.totalUsedStockLength.toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {requiredStocks.map((s, idx) => (
+                  <tr key={idx} style={s.isVirtual ? { background: '#fff5f5' } : {}}>
+                    <td>
+                      {s.diameter}
+                      {s.isVirtual && (
+                        <span style={{ color: '#d93025', fontSize: '10px', marginLeft: '6px', fontWeight: 'bold' }}>
+                          (Unavailable)
+                        </span>
+                      )}
+                    </td>
+                    <td>{(s.length / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                    <td style={s.isVirtual ? { color: '#d93025', fontWeight: 'bold' } : {}}>{s.quantity}</td>
+                    <td>{((s.length * s.quantity) / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  </tr>
+                ))}
+                <tr className="total-row">
+                  <td colSpan={2}>TOTAL</td>
+                  <td>{totalBarsUsed}</td>
+                  <td>{(summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Wastage & Utilisation (dia-wise) */}
+          <div className="card table-card">
+            <h3 className="table-card-heading">Wastage & Utilisation (dia-wise)</h3>
+            <table className="summary-table">
+              <thead>
+                <tr>
+                  <th>Diameter (mm)</th>
+                  <th>Total Stock (kg)</th>
+                  <th>Utilisation (kg)</th>
+                  <th>Wastage (kg)</th>
+                  <th>Wastage (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {diaWeightSummary.map((s, idx) => (
+                  <tr key={idx}>
+                    <td>{s.diameter} mm</td>
+                    <td>{s.totalStockKg.toFixed(2)}</td>
+                    <td>{s.utilisationKg.toFixed(2)}</td>
+                    <td className="text-orange font-bold">{s.wastageKg.toFixed(2)}</td>
+                    <td>{s.wastagePercent.toFixed(2)}%</td>
+                  </tr>
+                ))}
+                <tr className="total-row">
+                  <td>TOTAL</td>
+                  <td>{totalStockKgSum.toFixed(2)}</td>
+                  <td>{totalUtilisationKgSum.toFixed(2)}</td>
+                  <td className="text-orange">{totalWastageKgSum.toFixed(2)}</td>
+                  <td>{totalWastagePercent.toFixed(2)}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Summary Table */}
@@ -351,11 +440,11 @@ export default function ResultsPage({ data, onBack }) {
             <tbody>
               <tr>
                 <td>Total parts length (Quantity)</td>
-                <td className="text-right font-bold">{summary.totalPartsLength.toLocaleString()} mm ({totalPartsQty})</td>
+                <td className="text-right font-bold">{(summary.totalPartsLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} m ({totalPartsQty})</td>
               </tr>
               <tr>
                 <td>Used stocks total length (Yield)</td>
-                <td className="text-right font-bold text-green">{summary.totalUsedStockLength.toLocaleString()} mm ({summary.avgUtilization.toFixed(3)}%)</td>
+                <td className="text-right font-bold text-green">{(summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} m ({summary.avgUtilization.toFixed(3)}%)</td>
               </tr>
               <tr>
                 <td>Total cutting layouts</td>
@@ -367,7 +456,7 @@ export default function ResultsPage({ data, onBack }) {
               </tr>
               <tr>
                 <td>Total material remnant</td>
-                <td className="text-right font-bold text-orange">{summary.totalRemnant.toLocaleString()} mm ({(100 - summary.avgUtilization).toFixed(3)}%)</td>
+                <td className="text-right font-bold text-orange">{(summary.totalRemnant / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} m ({(100 - summary.avgUtilization).toFixed(3)}%)</td>
               </tr>
               <tr className="progress-row">
                 <td>Average utilization</td>
@@ -387,10 +476,10 @@ export default function ResultsPage({ data, onBack }) {
       <div className="layouts-section">
         <h2 className="layouts-heading-title">Cutting Layouts</h2>
 
-        {layouts.map((layout) => (
+        {layouts.map((layout, index) => (
           <div
             key={layout.id}
-            className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card' : ''}`}
+            className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card' : ''} ${(index + 1) % 5 === 0 ? 'pdf-page-break' : ''}`}
             style={layout.isVirtual ? { borderLeft: '4px solid #d93025', background: '#fff9f9' } : {}}
           >
             <div className="layout-grid-new">
@@ -398,17 +487,23 @@ export default function ResultsPage({ data, onBack }) {
               {/* Left Panel */}
               <div className="layout-left-panel">
                 <div className="layout-avatar-id" style={layout.isVirtual ? { background: '#fce8e6', color: '#a51d24' } : {}}>{layout.id}</div>
-                <div className="layout-rep-meta">
-                  <span className="layout-rep-val">{layout.repetition}x</span>
-                  <span className="layout-rep-label">Repetition</span>
-                </div>
-                <div className="layout-stock-meta">
-                  <span className="layout-stock-val">{layout.diameter || '12'} mm</span>
-                  <span className="layout-stock-label">Diameter</span>
-                </div>
-                <div className="layout-stock-meta">
-                  <span className="layout-stock-val" style={layout.isVirtual ? { color: '#d93025', fontWeight: 'bold' } : {}}>{layout.stockLength.toLocaleString()} mm</span>
-                  <span className="layout-stock-label">{layout.isVirtual ? 'Stock (Unavailable)' : 'Stock Length'}</span>
+                <div className="layout-info-stack">
+                  <div className="layout-rep-info">
+                    <span className="layout-rep-val">{layout.repetition}x</span>
+                    <span className="layout-rep-label">Repetition</span>
+                  </div>
+                  <div className="layout-details-grid">
+                    <div className="detail-item">
+                      <span className="detail-lbl">Diameter</span>
+                      <span className="detail-val">{layout.diameter || '12'} mm</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-lbl">{layout.isVirtual ? 'Stock (Unavailable)' : 'Stock Length'}</span>
+                      <span className="detail-val" style={layout.isVirtual ? { color: '#d93025' } : {}}>
+                        {layout.stockLength.toLocaleString()} mm
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -425,19 +520,7 @@ export default function ResultsPage({ data, onBack }) {
                         </span>
                       );
                     })}
-                    {(() => {
-                      const partsLen = layout.parts.reduce((sum, p) => sum + p.length, 0);
-                      const remnantLen = layout.stockLength - partsLen;
-                      if (remnantLen > 0.1) {
-                        return (
-                          <span className="legend-item" style={{ marginRight: '8px', display: 'inline-flex', alignItems: 'center', borderStyle: 'dashed' }}>
-                            <span className="legend-dot" style={{ backgroundColor: '#d1d5db', width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block', marginRight: '4px' }} />
-                            Wastage/Remnant: {remnantLen.toLocaleString()}
-                          </span>
-                        );
-                      }
-                      return null;
-                    })()}
+                    {/* Wastage/Remnant pill removed from legend to save space and avoid redundancy */}
                   </div>
                   {layout.isVirtual && (
                     <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
@@ -459,8 +542,9 @@ export default function ResultsPage({ data, onBack }) {
                             backgroundColor: p.color,
                             ...getTextStyle(p.color)
                           }}
+                          title={`${p.length.toLocaleString()} mm`}
                         >
-                          {p.length}
+                          {percent >= 5.5 ? p.length.toLocaleString() : ''}
                         </div>
                       );
                     })}
@@ -470,12 +554,19 @@ export default function ResultsPage({ data, onBack }) {
                       const remnantLen = layout.stockLength - partsLen;
                       const wastePercent = (remnantLen / layout.stockLength) * 100;
                       if (wastePercent > 0.1) {
+                        const getRemnantText = (rLen, wPercent) => {
+                          if (wPercent >= 22) return `Waste / Remnant: ${rLen.toLocaleString()} mm`;
+                          if (wPercent >= 12) return `Remnant: ${rLen.toLocaleString()} mm`;
+                          if (wPercent >= 6) return rLen.toLocaleString();
+                          return '';
+                        };
                         return (
                           <div
                             className="bar-segment remnant-segment"
                             style={{ width: `${wastePercent}%` }}
+                            title={`Waste / Remnant: ${remnantLen.toLocaleString()} mm`}
                           >
-                            Waste / Remnant<br />{remnantLen.toLocaleString()} mm
+                            {getRemnantText(remnantLen, wastePercent)}
                           </div>
                         );
                       }

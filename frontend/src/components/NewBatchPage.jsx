@@ -13,11 +13,11 @@ import {
 } from 'lucide-react'
 
 const initialStock = [
-  { id: 1, diameter: '12', length: '12000', quantity: '1000' },
+  { id: 1, diameter: '8', length: '12000', quantity: '1000' },
 ]
 
 const initialParts = [
-  { id: 1, diameter: '12', length: '', quantity: '', label: '' },
+  { id: 1, diameter: '8', length: '', quantity: '', label: '' },
 ]
 
 // ponytail: shared hook for add-row-on-Tab logic across both tables

@@ -8,38 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const mongoose_1 = require("@nestjs/mongoose");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const auth_module_1 = require("./modules/auth/auth.module");
-const users_module_1 = require("./modules/users/users.module");
-const companies_module_1 = require("./modules/companies/companies.module");
-const projects_module_1 = require("./modules/projects/projects.module");
-const inventory_module_1 = require("./modules/inventory/inventory.module");
-const stock_module_1 = require("./modules/stock/stock.module");
-const optimizer_module_1 = require("./modules/optimizer/optimizer.module");
-const reports_module_1 = require("./modules/reports/reports.module");
-const settings_module_1 = require("./modules/settings/settings.module");
-const notifications_module_1 = require("./modules/notifications/notifications.module");
-const audit_module_1 = require("./modules/audit/audit.module");
-const shared_module_1 = require("./modules/shared/shared.module");
+const auth_module_1 = require("./auth/auth.module");
+const users_module_1 = require("./users/users.module");
+const companies_module_1 = require("./companies/companies.module");
+const inventory_module_1 = require("./inventory/inventory.module");
+const batches_module_1 = require("./batches/batches.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            mongoose_1.MongooseModule.forRoot(process.env.DATABASE_URL || 'mongodb://localhost:27017/rebar_optima'),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             companies_module_1.CompaniesModule,
-            projects_module_1.ProjectsModule,
             inventory_module_1.InventoryModule,
-            stock_module_1.StockModule,
-            optimizer_module_1.OptimizerModule,
-            reports_module_1.ReportsModule,
-            settings_module_1.SettingsModule,
-            notifications_module_1.NotificationsModule,
-            audit_module_1.AuditModule,
-            shared_module_1.SharedModule,
+            batches_module_1.BatchesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -1,15 +1,11 @@
 version: '3.8'
 services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: rebar_optima
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: supersecretpassword
+  mongodb:
+    image: mongo:6-jammy
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mongodata:/data/db
 
   redis:
     image: redis:7-alpine
@@ -23,14 +19,15 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:supersecretpassword@postgres:5432/rebar_optima?schema=public
+      - DATABASE_URL=mongodb://mongodb:27017/rebar_optima
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - JWT_ACCESS_SECRET=change-this-to-a-very-secure-secret-key
       - JWT_REFRESH_SECRET=change-this-to-another-very-secure-secret-key
     depends_on:
-      - postgres
+      - mongodb
       - redis
 
 volumes:
-  pgdata:
+  mongodata:
+

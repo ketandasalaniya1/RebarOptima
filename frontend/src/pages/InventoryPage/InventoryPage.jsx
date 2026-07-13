@@ -241,6 +241,7 @@ export default function InventoryPage() {
                       <th>Type</th>
                       <th>Brand</th>
                       <th>Vendor</th>
+                      <th>Inward Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -254,6 +255,7 @@ export default function InventoryPage() {
                         <td>{item.typeOfBar || '-'}</td>
                         <td>{item.brandName || '-'}</td>
                         <td>{item.vendorName || '-'}</td>
+                        <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -286,6 +288,7 @@ export default function InventoryPage() {
                       <th>Original Type</th>
                       <th>Original Brand</th>
                       <th>Original Vendor</th>
+                      <th>Generated Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -298,6 +301,7 @@ export default function InventoryPage() {
                         <td>{item.typeOfBar || '-'}</td>
                         <td>{item.brandName || '-'}</td>
                         <td>{item.vendorName || '-'}</td>
+                        <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-'}</td>
                       </tr>
                     ))}
                   </tbody>

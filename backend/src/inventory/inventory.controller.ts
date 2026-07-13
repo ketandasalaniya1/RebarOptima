@@ -43,4 +43,9 @@ export class InventoryController {
   ) {
     return this.inventoryService.updateScrapRules(user.companyId.toString(), dto.rules);
   }
+
+  @Get('ledger')
+  async getLedger(@CurrentUser() user: User) {
+    return this.inventoryService.getLedger(user.companyId.toString());
+  }
 }

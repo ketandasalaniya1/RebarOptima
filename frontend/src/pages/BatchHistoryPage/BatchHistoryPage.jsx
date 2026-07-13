@@ -117,7 +117,10 @@ export default function BatchHistoryPage() {
             })
 
             const totalBars = batch.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0
-            const totalParts = batch.layouts?.reduce((sum, l) => sum + (l.parts?.length * Number(l.repetition)), 0) || 0
+            const totalParts = batch.layouts?.reduce((sum, l) => {
+              const partsCount = l.parts?.length || (l.stockLength > l.waste ? 1 : 0);
+              return sum + (partsCount * Number(l.repetition));
+            }, 0) || 0
 
             return (
               <div key={batch._id} className={`card batch-history-card ${isExpanded ? 'expanded' : ''}`}>
@@ -184,7 +187,15 @@ export default function BatchHistoryPage() {
                     {/* Layouts visualization */}
                     <div className="history-layouts-section" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                       <h4 className="section-subtitle-small">Optimized Cutting Layouts</h4>
-                      {batch.layouts?.map((layout, lIdx) => {
+                      {batch.layouts?.map((rawLayout, lIdx) => {
+                        const layout = {
+                          ...rawLayout,
+                          parts: rawLayout.parts && rawLayout.parts.length > 0
+                            ? rawLayout.parts
+                            : (rawLayout.stockLength > rawLayout.waste
+                              ? [{ length: rawLayout.stockLength - rawLayout.waste, color: '#71797E', label: 'Utilized' }]
+                              : [])
+                        };
                         const cutsCount = layout.cutsCount ?? (layout.parts?.length > 0 ? (layout.waste > 0.1 ? layout.parts.length : layout.parts.length - 1) : 0);
                         const utilization = layout.utilization ?? (layout.parts?.length > 0 ? (layout.parts.reduce((s, p) => s + p.length, 0) / layout.stockLength) * 100 : 0);
                         
@@ -357,7 +368,15 @@ export default function BatchHistoryPage() {
 
                   {/* Layouts List */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {batch.layouts?.map((layout, lIdx) => {
+                    {batch.layouts?.map((rawLayout, lIdx) => {
+                      const layout = {
+                        ...rawLayout,
+                        parts: rawLayout.parts && rawLayout.parts.length > 0
+                          ? rawLayout.parts
+                          : (rawLayout.stockLength > rawLayout.waste
+                            ? [{ length: rawLayout.stockLength - rawLayout.waste, color: '#71797E', label: 'Utilized' }]
+                            : [])
+                      };
                       const cutsCount = layout.cutsCount ?? (layout.parts?.length > 0 ? (layout.waste > 0.1 ? layout.parts.length : layout.parts.length - 1) : 0);
                       const utilization = layout.utilization ?? (layout.parts?.length > 0 ? (layout.parts.reduce((s, p) => s + p.length, 0) / layout.stockLength) * 100 : 0);
                       return (

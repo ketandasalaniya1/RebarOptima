@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -27,6 +27,11 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       id: 'history',
       label: 'Batch History',
       icon: <ClipboardList size={18} />
+    },
+    {
+      id: 'ledger',
+      label: 'Ledger & Orders',
+      icon: <BookOpen size={18} />
     }
   ];
 

@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { StockItem } from './stock-item.schema';
 import { ScrapRule } from './scrap-rule.schema';
+import { InventoryTransaction } from './inventory-transaction.schema';
 
 @Injectable()
 export class InventoryService {
   constructor(
     @InjectModel(StockItem.name) private stockItemModel: Model<StockItem>,
     @InjectModel(ScrapRule.name) private scrapRuleModel: Model<ScrapRule>,
+    @InjectModel(InventoryTransaction.name) private transactionModel: Model<InventoryTransaction>,
   ) {}
 
   // Helper formula to compute weight of 1 standard bar (12m length) in kg
@@ -21,7 +23,9 @@ export class InventoryService {
     const items = await this.stockItemModel.find({
       companyId: new Types.ObjectId(companyId) as any,
       quantity: { $gt: 0 } as any,
-    }).exec();
+    })
+    .sort({ createdAt: 1 } as any) // ponytail: FIFO - oldest rebar stock first
+    .exec();
 
     return {
       standardStock: items.filter(item => !item.isRemnant),
@@ -76,10 +80,28 @@ export class InventoryService {
       },
     };
 
-    return this.stockItemModel.findOneAndUpdate(filter as any, update as any, {
+    const result = await this.stockItemModel.findOneAndUpdate(filter as any, update as any, {
       upsert: true,
       new: true,
-    } as any).exec();
+    } as any).exec() as any;
+
+    // ponytail: log inward inventory transaction
+    const transaction = new this.transactionModel({
+      companyId: new Types.ObjectId(companyId),
+      type: 'INWARD',
+      diameter: dto.diameter,
+      length,
+      quantity,
+      weightInKgs,
+      brandName: dto.brandName || '',
+      vendorName: dto.vendorName || '',
+      typeOfBar: dto.typeOfBar || 'TMT500',
+      referenceId: result._id.toString(),
+      referenceName: 'Manual Inward Entry',
+    });
+    await transaction.save();
+
+    return result;
   }
 
   async getScrapRules(companyId: string): Promise<ScrapRule[]> {
@@ -124,5 +146,11 @@ export class InventoryService {
     );
     await Promise.all(promises);
     return this.getScrapRules(companyId);
+  }
+
+  async getLedger(companyId: string): Promise<InventoryTransaction[]> {
+    return this.transactionModel.find({ companyId: new Types.ObjectId(companyId) as any })
+      .sort({ createdAt: -1 } as any)
+      .exec();
   }
 }

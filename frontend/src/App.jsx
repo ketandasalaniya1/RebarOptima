@@ -8,6 +8,7 @@ import SignUpPage from './pages/SignUpPage/SignUpPage'
 import OverviewPage from './pages/OverviewPage/OverviewPage'
 import InventoryPage from './pages/InventoryPage/InventoryPage'
 import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage'
+import LedgerPage from './pages/LedgerPage/LedgerPage'
 import ScrollToTop from './components/ScrollToTop/ScrollToTop'
 
 function App() {
@@ -120,6 +121,9 @@ function App() {
             )}
             {view === 'history' && (
               <BatchHistoryPage />
+            )}
+            {view === 'ledger' && (
+              <LedgerPage />
             )}
           </div>
         </div>

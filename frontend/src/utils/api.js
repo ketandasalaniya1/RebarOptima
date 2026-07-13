@@ -48,6 +48,8 @@ export const inventoryApi = {
     apiRequest('/inventory/scrap-rules'),
   updateScrapRules: (rules) => 
     apiRequest('/inventory/scrap-rules', { method: 'POST', body: { rules } }),
+  getLedger: () => 
+    apiRequest('/inventory/ledger'),
 };
 
 export const batchesApi = {

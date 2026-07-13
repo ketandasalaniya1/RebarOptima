@@ -4,12 +4,14 @@ import { Model, Types } from 'mongoose';
 import { Batch } from './batch.schema';
 import { StockItem } from '../inventory/stock-item.schema';
 import { InventoryService } from '../inventory/inventory.service';
+import { InventoryTransaction } from '../inventory/inventory-transaction.schema';
 
 @Injectable()
 export class BatchesService {
   constructor(
     @InjectModel(Batch.name) private batchModel: Model<Batch>,
     @InjectModel(StockItem.name) private stockItemModel: Model<StockItem>,
+    @InjectModel(InventoryTransaction.name) private transactionModel: Model<InventoryTransaction>,
     private inventoryService: InventoryService,
   ) {}
 
@@ -65,6 +67,20 @@ export class BatchesService {
               } as any).exec();
             }
 
+            // ponytail: log outward stock consumption transaction
+            await new this.transactionModel({
+              companyId: cid,
+              type: 'OUTWARD',
+              diameter,
+              length: stockLength,
+              quantity: repetition,
+              weightInKgs: layoutStockWeight,
+              brandName: originalItem.brandName || '',
+              vendorName: originalItem.vendorName || '',
+              typeOfBar: originalItem.typeOfBar || '',
+              referenceName: dto.batchName || 'Cutting Batch',
+            }).save();
+
             // Copy parent properties for remnants we are going to create
             const waste = Number(layout.waste);
             if (waste > 0) {
@@ -100,6 +116,20 @@ export class BatchesService {
                   } as any,
                   { upsert: true } as any
                 ).exec();
+
+                // ponytail: log remnant inward transaction
+                await new this.transactionModel({
+                  companyId: cid,
+                  type: 'REMNANT',
+                  diameter,
+                  length: waste,
+                  quantity: repetition,
+                  weightInKgs: wasteWeight,
+                  brandName: originalItem.brandName || '',
+                  vendorName: originalItem.vendorName || '',
+                  typeOfBar: originalItem.typeOfBar || '',
+                  referenceName: dto.batchName || 'Cutting Batch',
+                }).save();
               }
             }
           }

@@ -160,10 +160,10 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
     setSaveLoading(true);
     setSaveError('');
     try {
-      let batchName = prompt('Enter a name for this batch:', `Batch #${new Date().toLocaleDateString()}`);
+      let batchName = prompt('Enter a name for this batch:', `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`);
       if (batchName === null) {
         // ponytail: fallback name if prompt is cancelled (e.g. in automation/headless tests)
-        batchName = `Batch #${new Date().toLocaleDateString()}`;
+        batchName = `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`;
       }
       await batchesApi.commitBatch({
         batchName: batchName || `Batch #${Date.now()}`,

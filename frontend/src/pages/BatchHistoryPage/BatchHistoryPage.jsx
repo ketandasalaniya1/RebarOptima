@@ -108,13 +108,14 @@ export default function BatchHistoryPage() {
         <div className="history-list">
           {history.map((batch) => {
             const isExpanded = expandedBatchId === batch._id
-            const date = new Date(batch.createdAt).toLocaleDateString(undefined, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
+            const date = `${new Date(batch.createdAt).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: '2-digit'
+            })}, ${new Date(batch.createdAt).toLocaleTimeString(undefined, {
               hour: '2-digit',
               minute: '2-digit'
-            })
+            })}`;
 
             const totalBars = batch.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0
             const totalParts = batch.layouts?.reduce((sum, l) => {

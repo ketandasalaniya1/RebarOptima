@@ -296,10 +296,10 @@ export default function LedgerPage() {
                     </thead>
                     <tbody>
                       {filteredOrders.map((order) => {
-                        const date = new Date(order.createdAt).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
+                        const date = new Date(order.createdAt).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: '2-digit'
                         });
 
                         const totalBars = order.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0;

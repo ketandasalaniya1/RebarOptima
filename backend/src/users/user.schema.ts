@@ -21,6 +21,15 @@ export class User extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company', required: true })
   companyId: MongooseSchema.Types.ObjectId;
 
+  @Prop({ required: false })
+  mobileNumber?: string;
+
+  @Prop({ required: false, default: false })
+  promoConsent?: boolean;
+
+  @Prop({ required: false, default: false })
+  newsletterConsent?: boolean;
+
   @Prop()
   deletedAt?: Date;
 }

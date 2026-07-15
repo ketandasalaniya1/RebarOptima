@@ -316,3 +316,192 @@
   font-size: 13px;
   color: var(--text-secondary);
 }
+
+/* Voucher Header */
+.voucher-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 14px;
+}
+
+.add-voucher-row-btn {
+  background: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.add-voucher-row-btn:hover {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.voucher-entry-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.voucher-entry-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-label);
+  padding: 10px;
+  border-bottom: 2px solid var(--card-border);
+  text-transform: uppercase;
+}
+
+.voucher-entry-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--card-border);
+  vertical-align: middle;
+}
+
+.voucher-select, .voucher-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.voucher-select:focus, .voucher-input:focus {
+  border-color: var(--accent);
+}
+
+.gst-preview {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.total-preview {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.delete-row-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.delete-row-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.delete-row-btn:disabled {
+  color: var(--text-label);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Scrap Sales Portal */
+.scrap-sales-portal {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.scrap-analytics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.scrap-stat-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-top-width: 4px !important;
+}
+
+.scrap-stat-panel:nth-child(1) { border-top-color: var(--accent) !important; }
+.scrap-stat-panel:nth-child(2) { border-top-color: #059669 !important; }
+.scrap-stat-panel:nth-child(3) { border-top-color: #ef4444 !important; }
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.stat-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+}
+
+.stat-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.unit-small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-label);
+}
+
+.stat-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon-wrapper.green { background: rgba(5, 150, 105, 0.1); color: #059669; }
+.stat-icon-wrapper.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.scrap-portal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 24px;
+}
+
+.scrap-form-card, .scrap-history-card {
+  padding: 24px;
+}
+
+.scrap-sale-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .scrap-portal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

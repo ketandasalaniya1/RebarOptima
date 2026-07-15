@@ -6,6 +6,12 @@ export class Company extends Document {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ required: false })
+  projectName?: string;
+
+  @Prop({ required: false })
+  location?: string;
+
   @Prop()
   deletedAt?: Date;
 }

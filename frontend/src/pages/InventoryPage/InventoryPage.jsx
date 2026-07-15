@@ -7,12 +7,16 @@ import {
   Sparkles,
   AlertCircle,
   CheckCircle2,
-  List
+  List,
+  Plus,
+  Trash2,
+  TrendingDown,
+  DollarSign
 } from 'lucide-react'
 import './InventoryPage.css'
 
 export default function InventoryPage() {
-  // Tab states: 'list' | 'inward' | 'rules'
+  // Tab states: 'list' | 'inward' | 'rules' | 'scrapsales'
   const [activeTab, setActiveTab] = useState('list')
   const [inventory, setInventory] = useState({ standardStock: [], remnantsStock: [] })
   const [scrapRules, setScrapRules] = useState([])
@@ -21,15 +25,22 @@ export default function InventoryPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Inward Form State
-  const [inwardForm, setInwardForm] = useState({
-    diameter: 12,
-    quantity: '',
-    weightInKgs: '',
-    costPerKg: '',
-    typeOfBar: 'TMT500',
-    brandName: '',
-    vendorName: '',
+  // Inward Multi-Diameter Voucher Form State
+  const [voucherRows, setVoucherRows] = useState([
+    { id: Date.now(), diameter: 12, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
+  ])
+
+  // Scrap Sales Portal State
+  const [scrapSales, setScrapSales] = useState([
+    { id: 1, date: '2026-07-01', buyer: 'Mittal Steel Scrap Corp', weight: 450, pricePerKg: 22, revenue: 9900 },
+    { id: 2, date: '2026-07-10', buyer: 'Hariom Scrap Buyers', weight: 1200, pricePerKg: 24, revenue: 28800 }
+  ])
+
+  const [scrapSaleForm, setScrapSaleForm] = useState({
+    date: new Date().toISOString().split('T')[0],
+    buyer: '',
+    weight: '',
+    pricePerKg: ''
   })
 
   // Load inventory and rules on mount
@@ -59,87 +70,83 @@ export default function InventoryPage() {
     return (lengthMm / 1000) * ((dia * dia) / 162)
   }
 
-  // Inward Form Change Handlers with Auto-Conversion
-  const handleInwardChange = (field, val) => {
-    setInwardForm(prev => {
-      const updated = { ...prev, [field]: val }
-      
-      const dia = Number(updated.diameter)
-      const singleWeight = getSingleBarWeight(dia, 12000)
-
-      if (field === 'weightInKgs') {
-        // Convert weight to quantity
-        const weight = parseFloat(val) || 0
-        updated.quantity = weight > 0 ? String(Math.round(weight / singleWeight)) : ''
-      } else if (field === 'quantity') {
-        // Convert quantity to weight
-        const qty = parseInt(val, 10) || 0
-        updated.weightInKgs = qty > 0 ? String(Math.round(qty * singleWeight * 100) / 100) : ''
-      } else if (field === 'diameter') {
-        // Recompute weight if quantity exists
-        const qty = parseInt(updated.quantity, 10) || 0
-        if (qty > 0) {
-          updated.weightInKgs = String(Math.round(qty * singleWeight * 100) / 100)
-        }
-      }
-      return updated
-    })
+  // Multi-Diameter Voucher handlers
+  const handleAddVoucherRow = () => {
+    setVoucherRows(prev => [
+      ...prev,
+      { id: Date.now(), diameter: 12, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
+    ])
   }
 
-  const handleInwardSubmit = async (e) => {
+  const handleDeleteVoucherRow = (id) => {
+    if (voucherRows.length === 1) return
+    setVoucherRows(prev => prev.filter(row => row.id !== id))
+  }
+
+  const handleVoucherRowChange = (id, field, value) => {
+    setVoucherRows(prev => prev.map(row => {
+      if (row.id !== id) return row
+      const updated = { ...row, [field]: value }
+
+      const tons = parseFloat(updated.weightInTons) || 0
+      const price = parseFloat(updated.pricePerTonWithoutGst) || 0
+
+      updated.gstAmount = Math.round(tons * price * 0.18 * 100) / 100
+      updated.totalPriceWithGst = Math.round(tons * price * 1.18 * 100) / 100
+      return updated
+    }))
+  }
+
+  const handleVoucherSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess('')
     setActionLoading(true)
 
     try {
-      const qty = parseInt(inwardForm.quantity) || 0
-      const weight = parseFloat(inwardForm.weightInKgs) || 0
-      const cost = parseFloat(inwardForm.costPerKg) || 0
+      for (const row of voucherRows) {
+        const tons = parseFloat(row.weightInTons) || 0
+        const price = parseFloat(row.pricePerTonWithoutGst) || 0
+        if (tons <= 0 || price <= 0) {
+          throw new Error('Please fill in valid weights and prices for all rows in the voucher.')
+        }
 
-      if (qty <= 0 || weight <= 0 || cost <= 0) {
-        throw new Error('Please fill in quantity, weight, and cost per kg with values greater than zero.')
+        const singleWeight = getSingleBarWeight(row.diameter, 12000)
+        const weightInKgs = tons * 1000
+        const quantity = Math.round(weightInKgs / singleWeight)
+        const costPerKg = (price * 1.18) / 1000 // Rs. including 18% GST
+
+        await inventoryApi.inward({
+          diameter: Number(row.diameter),
+          quantity,
+          weightInKgs,
+          costPerKg,
+          typeOfBar: 'TMT500',
+          brandName: row.brandName || '',
+          vendorName: row.vendorName || '',
+        })
       }
 
-      await inventoryApi.inward({
-        diameter: Number(inwardForm.diameter),
-        quantity: qty,
-        weightInKgs: weight,
-        costPerKg: cost,
-        typeOfBar: inwardForm.typeOfBar,
-        brandName: inwardForm.brandName,
-        vendorName: inwardForm.vendorName,
-      })
-
-      setSuccess('Inward entry recorded successfully!')
-      // Reset form
-      setInwardForm({
-        diameter: 12,
-        quantity: '',
-        weightInKgs: '',
-        costPerKg: '',
-        typeOfBar: 'TMT500',
-        brandName: '',
-        vendorName: '',
-      })
-      // Refresh inventory data
+      setSuccess('Voucher inward entry recorded successfully!')
+      setVoucherRows([
+        { id: Date.now(), diameter: 12, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
+      ])
+      
       const invData = await inventoryApi.getInventory()
       setInventory(invData)
-      
-      // Navigate back to list tab after a brief delay
+
       setTimeout(() => {
         setActiveTab('list')
         setSuccess('')
       }, 1500)
-
     } catch (err) {
-      setError(err.message || 'Failed to submit inward entry.')
+      setError(err.message || 'Failed to submit voucher inward entry.')
     } finally {
       setActionLoading(false)
     }
   }
 
-  // Scrap Rules Form Change Handlers
+  // Scrap rules changes
   const handleRuleChange = (idx, value) => {
     setScrapRules(prev => {
       const updated = [...prev]
@@ -163,6 +170,46 @@ export default function InventoryPage() {
       setActionLoading(false)
     }
   }
+
+  // Scrap sales portal submission
+  const handleScrapSaleSubmit = (e) => {
+    e.preventDefault()
+    const weight = parseFloat(scrapSaleForm.weight) || 0
+    const price = parseFloat(scrapSaleForm.pricePerKg) || 0
+    if (weight <= 0 || price <= 0 || !scrapSaleForm.buyer.trim()) return
+
+    const revenue = weight * price
+    setScrapSales(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        date: scrapSaleForm.date,
+        buyer: scrapSaleForm.buyer,
+        weight,
+        pricePerKg: price,
+        revenue
+      }
+    ])
+    setSuccess('Scrap sale recorded successfully!')
+    setScrapSaleForm({
+      date: new Date().toISOString().split('T')[0],
+      buyer: '',
+      weight: '',
+      pricePerKg: ''
+    })
+    setTimeout(() => setSuccess(''), 1500)
+  }
+
+  // Calculations for Scrap Sales Portal
+  const totalScrapSoldWeight = scrapSales.reduce((sum, s) => sum + s.weight, 0)
+  const totalScrapRevenue = scrapSales.reduce((sum, s) => sum + s.revenue, 0)
+  
+  // Average purchase price including GST is ₹60/kg for estimations
+  const estPurchasePriceWithGst = 60
+  const totalScrapLossDifferential = scrapSales.reduce((sum, s) => {
+    const loss = (estPurchasePriceWithGst - s.pricePerKg) * s.weight
+    return sum + loss
+  }, 0)
 
   if (loading) {
     return (
@@ -191,7 +238,13 @@ export default function InventoryPage() {
             className={`tab-btn ${activeTab === 'inward' ? 'active' : ''}`}
             onClick={() => setActiveTab('inward')}
           >
-            <PlusSquare size={16} /> Inward Entry
+            <PlusSquare size={16} /> Voucher Inward
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'scrapsales' ? 'active' : ''}`}
+            onClick={() => setActiveTab('scrapsales')}
+          >
+            <DollarSign size={16} /> Scrap Sales
           </button>
           <button 
             className={`tab-btn ${activeTab === 'rules' ? 'active' : ''}`}
@@ -237,7 +290,7 @@ export default function InventoryPage() {
                       <th>Length</th>
                       <th>Qty (Bars)</th>
                       <th>Total Weight (kg)</th>
-                      <th>Cost (per kg)</th>
+                      <th>Cost (per kg with GST)</th>
                       <th>Type</th>
                       <th>Brand</th>
                       <th>Vendor</th>
@@ -251,7 +304,7 @@ export default function InventoryPage() {
                         <td>{(item.length / 1000).toFixed(1)} m</td>
                         <td className="font-bold">{item.quantity}</td>
                         <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
-                        <td>Rs. {item.costPerKg}</td>
+                        <td>₹{item.costPerKg?.toFixed(2)}</td>
                         <td>{item.typeOfBar || '-'}</td>
                         <td>{item.brandName || '-'}</td>
                         <td>{item.vendorName || '-'}</td>
@@ -267,7 +320,7 @@ export default function InventoryPage() {
           {/* Remnants Stock Section */}
           <section className="card stock-section remnant-card">
             <h3 className="section-title">
-              <Sparkles size={18} color="#3ac0e8" style={{ marginRight: '6px' }} /> Reusable Remnants Stock
+              <Sparkles size={18} color="#059669" style={{ marginRight: '6px' }} /> Reusable Remnants Stock
             </h3>
             <p className="remnant-disclaimer">
               These are reusable remnants generated automatically from previous cutting optimizations. They are prioritised first in next optimizations.
@@ -312,107 +365,234 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* Tab: Inward Entry */}
+      {/* Tab: Multi-Diameter Inward Voucher */}
       {activeTab === 'inward' && (
         <div className="card inward-form-card">
-          <h3 className="form-card-title">Manual Stock Inward Entry</h3>
-          <p className="form-card-subtitle">
-            Purchased standard bars (standard length 12m/12000mm) entry. Fill quantity in Bars or total Weight in Kgs to auto-convert.
-          </p>
+          <div className="voucher-header">
+            <div>
+              <h3 className="form-card-title">Multi-Diameter Inward Voucher Entry</h3>
+              <p className="form-card-subtitle">
+                Log multiple diameters delivered in the truck. Weight must be entered in **Tons** (1 Ton = 1000 kg). Pricing fields assume price without GST; 18% GST is automatically calculated.
+              </p>
+            </div>
+            <button className="add-voucher-row-btn" onClick={handleAddVoucherRow}>
+              <Plus size={14} /> Add Row
+            </button>
+          </div>
 
-          <form onSubmit={handleInwardSubmit} className="inward-form">
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Diameter of Bar (mm)</label>
-                <select
-                  value={inwardForm.diameter}
-                  onChange={(e) => handleInwardChange('diameter', Number(e.target.value))}
-                  className="inward-input"
-                >
-                  {[8, 10, 12, 16, 20, 25, 32].map(d => (
-                    <option key={d} value={d}>{d} mm</option>
+          <form onSubmit={handleVoucherSubmit} className="inward-form">
+            <div className="table-responsive">
+              <table className="voucher-entry-table">
+                <thead>
+                  <tr>
+                    <th>Diameter</th>
+                    <th>Weight (Tons)</th>
+                    <th>Price/Ton (Without GST)</th>
+                    <th>GST Amount (18%)</th>
+                    <th>Total Price (With GST)</th>
+                    <th>Brand Name</th>
+                    <th>Vendor Name</th>
+                    <th className="col-actions">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {voucherRows.map((row) => (
+                    <tr key={row.id}>
+                      <td>
+                        <select
+                          value={row.diameter}
+                          onChange={(e) => handleVoucherRowChange(row.id, 'diameter', Number(e.target.value))}
+                          className="voucher-select"
+                        >
+                          {[8, 10, 12, 16, 20, 25, 32].map(d => (
+                            <option key={d} value={d}>{d} mm</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          step="0.01"
+                          required
+                          placeholder="e.g. 2.5"
+                          value={row.weightInTons}
+                          onChange={(e) => handleVoucherRowChange(row.id, 'weightInTons', e.target.value)}
+                          className="voucher-input"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          step="1"
+                          required
+                          placeholder="e.g. 52000"
+                          value={row.pricePerTonWithoutGst}
+                          onChange={(e) => handleVoucherRowChange(row.id, 'pricePerTonWithoutGst', e.target.value)}
+                          className="voucher-input"
+                        />
+                      </td>
+                      <td>
+                        <span className="gst-preview">₹{row.gstAmount.toLocaleString('en-IN')}</span>
+                      </td>
+                      <td>
+                        <span className="total-preview font-bold">₹{row.totalPriceWithGst.toLocaleString('en-IN')}</span>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          placeholder="Brand name"
+                          value={row.brandName}
+                          onChange={(e) => handleVoucherRowChange(row.id, 'brandName', e.target.value)}
+                          className="voucher-input"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          placeholder="Vendor name"
+                          value={row.vendorName}
+                          onChange={(e) => handleVoucherRowChange(row.id, 'vendorName', e.target.value)}
+                          className="voucher-input"
+                        />
+                      </td>
+                      <td className="col-actions">
+                        <button 
+                          type="button" 
+                          className="delete-row-btn"
+                          onClick={() => handleDeleteVoucherRow(row.id)}
+                          disabled={voucherRows.length === 1}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Weight of Bars (Kgs)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Enter total weight in Kgs"
-                  value={inwardForm.weightInKgs}
-                  onChange={(e) => handleInwardChange('weightInKgs', e.target.value)}
-                  className="inward-input animate-input"
-                />
-              </div>
-
-              <div className="form-group animate-highlight">
-                <label>Quantity (Number of Bars)</label>
-                <input
-                  type="number"
-                  placeholder="Computed automatically from Weight"
-                  value={inwardForm.quantity}
-                  onChange={(e) => handleInwardChange('quantity', e.target.value)}
-                  className="inward-input font-bold"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Cost per Kg (Rs.)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="e.g. 55"
-                  required
-                  value={inwardForm.costPerKg}
-                  onChange={(e) => handleInwardChange('costPerKg', e.target.value)}
-                  className="inward-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Type of Bar</label>
-                <select
-                  value={inwardForm.typeOfBar}
-                  onChange={(e) => handleInwardChange('typeOfBar', e.target.value)}
-                  className="inward-input"
-                >
-                  <option value="TMT500">TMT 500</option>
-                  <option value="TMT500D">TMT 500D</option>
-                  <option value="TMT550">TMT 550</option>
-                  <option value="TMT550D">TMT 550D</option>
-                  <option value="Plain">Plain Bar</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Brand Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. VikrantTMT"
-                  value={inwardForm.brandName}
-                  onChange={(e) => handleInwardChange('brandName', e.target.value)}
-                  className="inward-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Vendor Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. KalyanTraders"
-                  value={inwardForm.vendorName}
-                  onChange={(e) => handleInwardChange('vendorName', e.target.value)}
-                  className="inward-input"
-                />
-              </div>
+                </tbody>
+              </table>
             </div>
 
             <button type="submit" disabled={actionLoading} className="submit-inward-btn">
-              {actionLoading ? 'Recording Entry...' : 'Record Inward Entry'}
+              {actionLoading ? 'Recording Voucher Entry...' : 'Submit Inward Voucher'}
             </button>
           </form>
+        </div>
+      )}
+
+      {/* Tab: Scrap Sales Portal */}
+      {activeTab === 'scrapsales' && (
+        <div className="scrap-sales-portal">
+          {/* Analytical summary cards */}
+          <div className="scrap-analytics-row">
+            <div className="card scrap-stat-panel">
+              <div className="stat-info">
+                <span className="stat-lbl">Total Scrap Weight Sold</span>
+                <span className="stat-val">{totalScrapSoldWeight.toLocaleString()} <span className="unit-small">kg</span></span>
+              </div>
+              <div className="stat-icon-wrapper green"><TrendingDown size={20} /></div>
+            </div>
+            <div className="card scrap-stat-panel">
+              <div className="stat-info">
+                <span className="stat-lbl">Total Revenue Retrieved</span>
+                <span className="stat-val text-green">₹{totalScrapRevenue.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="stat-icon-wrapper green"><Plus size={20} /></div>
+            </div>
+            <div className="card scrap-stat-panel">
+              <div className="stat-info">
+                <span className="stat-lbl">Lost Material Capital</span>
+                <span className="stat-val text-red">₹{totalScrapLossDifferential.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="stat-icon-wrapper red"><Trash2 size={20} /></div>
+            </div>
+          </div>
+
+          <div className="scrap-portal-grid">
+            {/* Log Sales form */}
+            <div className="card scrap-form-card">
+              <h3 className="form-card-title">Record Scrap Sale</h3>
+              <p className="form-card-subtitle">Log transactions when scrap material is cleared and sold to buyers.</p>
+
+              <form onSubmit={handleScrapSaleSubmit} className="scrap-sale-form">
+                <div className="form-group">
+                  <label>Transaction Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={scrapSaleForm.date}
+                    onChange={(e) => setScrapSaleForm(prev => ({ ...prev, date: e.target.value }))}
+                    className="inward-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Scrap Buyer / Factory</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Mittal Steel Scrap Buyers"
+                    value={scrapSaleForm.buyer}
+                    onChange={(e) => setScrapSaleForm(prev => ({ ...prev, buyer: e.target.value }))}
+                    className="inward-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Weight Sold (Kgs)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="e.g. 500"
+                    value={scrapSaleForm.weight}
+                    onChange={(e) => setScrapSaleForm(prev => ({ ...prev, weight: e.target.value }))}
+                    className="inward-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Selling Price per Kg (₹)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    required
+                    placeholder="e.g. 22.5"
+                    value={scrapSaleForm.pricePerKg}
+                    onChange={(e) => setScrapSaleForm(prev => ({ ...prev, pricePerKg: e.target.value }))}
+                    className="inward-input"
+                  />
+                </div>
+
+                <button type="submit" className="submit-inward-btn">Record Scrap Transaction</button>
+              </form>
+            </div>
+
+            {/* Sales ledger list */}
+            <div className="card scrap-history-card">
+              <h3 className="form-card-title">Scrap Sales History</h3>
+              <p className="form-card-subtitle">Detailed ledger of scrap cleared from site.</p>
+
+              <div className="table-responsive">
+                <table className="inventory-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Buyer</th>
+                      <th>Weight</th>
+                      <th>Rate / Kg</th>
+                      <th>Total Earned</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scrapSales.map((sale) => (
+                      <tr key={sale.id}>
+                        <td>{new Date(sale.date).toLocaleDateString('en-GB')}</td>
+                        <td className="font-bold">{sale.buyer}</td>
+                        <td>{sale.weight} kg</td>
+                        <td>₹{sale.pricePerKg}</td>
+                        <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

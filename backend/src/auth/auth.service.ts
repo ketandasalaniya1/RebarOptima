@@ -11,7 +11,19 @@ export class AuthService {
     private companiesService: CompaniesService,
   ) {}
 
-  async signup(dto: { email: string; password?: string; fullName: string; companyName: string }) {
+  async signup(dto: { 
+    email: string; 
+    password?: string; 
+    firstName: string; 
+    lastName: string; 
+    role: string; 
+    companyName: string;
+    projectName: string;
+    location: string;
+    mobileNumber: string;
+    promoConsent?: boolean;
+    newsletterConsent?: boolean;
+  }) {
     const email = dto.email.toLowerCase().trim();
     if (!dto.password) {
       throw new BadRequestException('Password is required');
@@ -22,12 +34,8 @@ export class AuthService {
       throw new ConflictException('Email already registered');
     }
 
-    // Split full name
-    const [firstName, ...lastNameParts] = (dto.fullName || '').trim().split(' ');
-    const lastName = lastNameParts.join(' ') || 'User';
-
     // Create Company
-    const company = await this.companiesService.create(dto.companyName);
+    const company = await this.companiesService.create(dto.companyName, dto.projectName, dto.location);
 
     // Hash Password
     const passwordHash = await bcrypt.hash(dto.password, 10);
@@ -36,10 +44,13 @@ export class AuthService {
     const user = await this.usersService.create({
       email,
       passwordHash,
-      firstName,
-      lastName,
-      role: 'OWNER',
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      role: dto.role || 'OWNER',
       companyId: company._id as any,
+      mobileNumber: dto.mobileNumber,
+      promoConsent: !!dto.promoConsent,
+      newsletterConsent: !!dto.newsletterConsent
     });
 
     const userIdStr = user._id.toString();
@@ -75,6 +86,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    const company = await this.companiesService.findById(user.companyId.toString());
+    const companyName = company ? company.name : 'Unknown Firm';
+
     const userIdStr = user._id.toString();
     const tokens = this.generateTokens(userIdStr, user.email, user.role);
 
@@ -87,6 +101,7 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         companyId: user.companyId.toString(),
+        companyName,
       },
     };
   }

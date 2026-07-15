@@ -358,3 +358,104 @@
     gap: 10px;
   }
 }
+
+.requests-portal {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.requests-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  gap: 24px;
+}
+
+.request-form-card, .requests-history-card {
+  padding: 24px;
+}
+
+.request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.action-buttons-flex {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-approve, .btn-reject {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-approve {
+  color: #059669;
+}
+
+.btn-approve:hover {
+  background: rgba(5, 150, 105, 0.08);
+}
+
+.btn-reject {
+  color: #ef4444;
+}
+
+.btn-reject:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.order-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.order-status-badge.badge-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.order-status-badge.badge-approved {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.order-status-badge.badge-rejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.edit-qty-input {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  border-radius: 4px;
+  font-size: 12.5px;
+  outline: none;
+}
+
+.edit-qty-input:focus {
+  border-color: var(--accent);
+}
+
+@media (max-width: 1024px) {
+  .requests-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

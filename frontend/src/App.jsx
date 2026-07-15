@@ -1,75 +1,72 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import SideNavbar from './components/SideNavbar/SideNavbar'
-import NewBatchPage from './pages/NewBatchPage/NewBatchPage'
-import ResultsPage from './pages/ResultsPage/ResultsPage'
-import SignInPage from './pages/SignInPage/SignInPage'
-import SignUpPage from './pages/SignUpPage/SignUpPage'
-import OverviewPage from './pages/OverviewPage/OverviewPage'
-import InventoryPage from './pages/InventoryPage/InventoryPage'
-import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage'
-import LedgerPage from './pages/LedgerPage/LedgerPage'
-import ScrollToTop from './components/ScrollToTop/ScrollToTop'
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import './App.css';
+import SideNavbar from './components/SideNavbar/SideNavbar';
+import NewBatchPage from './pages/NewBatchPage/NewBatchPage';
+import ResultsPage from './pages/ResultsPage/ResultsPage';
+import SignInPage from './pages/SignInPage/SignInPage';
+import SignUpPage from './pages/SignUpPage/SignUpPage';
+import OverviewPage from './pages/OverviewPage/OverviewPage';
+import InventoryPage from './pages/InventoryPage/InventoryPage';
+import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage';
+import LedgerPage from './pages/LedgerPage/LedgerPage';
+import SettingsPage from './pages/SettingsPage/SettingsPage';
+import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
+import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
+import ScrollToTop from './components/ScrollToTop/ScrollToTop';
+import { setView, syncViewFromPopState } from './store/slices/routingSlice';
+import { loginSuccess, logout } from './store/slices/authSlice';
 
 function App() {
-  const [view, setView] = useState('signin') // 'signin', 'signup', 'overview', 'inventory', 'inputs', 'results', 'history'
-  const [optimizationData, setOptimizationData] = useState(null)
-  const [_user, setUser] = useState(null)
+  const dispatch = useDispatch();
+  const view = useSelector((state) => state.routing.view);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  // ponytail: Restore session from localStorage on mount.
+  const [optimizationData, setOptimizationData] = useState(null);
+
+  // Synchronize route session on mount and handle PopState events
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
-    const storedUser = localStorage.getItem('user')
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser))
-      setView('overview')
-      window.history.replaceState({ view: 'overview' }, '')
-    } else {
-      window.history.replaceState({ view: 'signin' }, '')
-    }
+    // Initial theme set from settings
+    const storedThemeMode = localStorage.getItem('themeMode') || 'dark';
+    const storedThemeColor = localStorage.getItem('themeColor') || 'slate-emerald';
+    document.documentElement.setAttribute('data-theme', storedThemeMode);
+    document.documentElement.setAttribute('data-color-theme', storedThemeColor);
 
     const handlePopState = (event) => {
-      const tokenExists = localStorage.getItem('accessToken')
+      const tokenExists = localStorage.getItem('accessToken');
       if (event.state && event.state.view) {
         // Protected routes check
-        if (!tokenExists && event.state.view !== 'signin' && event.state.view !== 'signup') {
-          setView('signin')
-          window.history.replaceState({ view: 'signin' }, '')
+        if (!tokenExists && event.state.view !== 'signin' && event.state.view !== 'signup' && event.state.view !== 'superadmin-login') {
+          dispatch(setView('signin'));
         } else {
-          setView(event.state.view)
+          dispatch(syncViewFromPopState(event.state.view));
         }
       } else {
-        setView(tokenExists ? 'overview' : 'signin')
+        dispatch(syncViewFromPopState(tokenExists ? 'overview' : 'signin'));
       }
-    }
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [dispatch]);
 
+  // Scroll to top on view changes
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [view])
+    window.scrollTo(0, 0);
+  }, [view]);
 
   const handleSignInSuccess = (authData) => {
-    localStorage.setItem('accessToken', authData.accessToken)
-    localStorage.setItem('user', JSON.stringify(authData.user))
-    setUser(authData.user)
-    setView('overview')
-    window.history.pushState({ view: 'overview' }, '')
-  }
+    dispatch(loginSuccess(authData));
+    dispatch(setView('overview'));
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('user')
-    setUser(null)
-    setView('signin')
-    window.history.pushState({ view: 'signin' }, '')
-  }
+    dispatch(logout());
+    dispatch(setView('signin'));
+  };
 
   const handleNavigate = (newView) => {
-    setView(newView)
-    window.history.pushState({ view: newView }, '')
-  }
+    dispatch(setView(newView));
+  };
 
   return (
     <div className="app-layout">
@@ -77,18 +74,20 @@ function App() {
         <SignInPage 
           onSignIn={handleSignInSuccess} 
           onNavigateToSignUp={() => {
-            setView('signup')
-            window.history.pushState({ view: 'signup' }, '')
+            dispatch(setView('signup'));
           }}
         />
       ) : view === 'signup' ? (
         <SignUpPage 
           onSignUp={handleSignInSuccess}
           onNavigateToSignIn={() => {
-            setView('signin')
-            window.history.pushState({ view: 'signin' }, '')
+            dispatch(setView('signin'));
           }}
         />
+      ) : view === 'superadmin-login' ? (
+        <SuperadminLoginPage />
+      ) : view === 'superadmin' ? (
+        <SuperadminDashboard />
       ) : (
         <div className="app-workspace">
           <SideNavbar currentView={view} onViewChange={handleNavigate} onLogout={handleLogout} />
@@ -101,21 +100,18 @@ function App() {
             )}
             {view === 'inputs' && (
               <NewBatchPage onOptimize={(data) => {
-                setOptimizationData(data)
-                setView('results')
-                window.history.pushState({ view: 'results' }, '')
+                setOptimizationData(data);
+                dispatch(setView('results'));
               }} />
             )}
             {view === 'results' && (
               <ResultsPage 
                 data={optimizationData} 
                 onBack={() => {
-                  setView('inputs')
-                  window.history.pushState({ view: 'inputs' }, '')
+                  dispatch(setView('inputs'));
                 }}
                 onSaveSuccess={() => {
-                  setView('history')
-                  window.history.pushState({ view: 'history' }, '')
+                  dispatch(setView('history'));
                 }}
               />
             )}
@@ -125,12 +121,15 @@ function App() {
             {view === 'ledger' && (
               <LedgerPage />
             )}
+            {view === 'settings' && (
+              <SettingsPage />
+            )}
           </div>
         </div>
       )}
       <ScrollToTop />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

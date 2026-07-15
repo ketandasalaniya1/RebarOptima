@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { inventoryApi, batchesApi } from '../../utils/api';
 import { 
   TrendingUp, 
@@ -10,20 +11,42 @@ import {
   Filter, 
   Search,
   PackagePlus,
-  Scale
+  Scale,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Plus
 } from 'lucide-react';
 import './LedgerPage.css';
 
 export default function LedgerPage() {
-  const [activeTab, setActiveTab] = useState('ledger'); // 'ledger' | 'orders'
+  const user = useSelector((state) => state.auth.user);
+  
+  // Tab states: 'ledger' | 'orders' | 'requests'
+  const [activeTab, setActiveTab] = useState('ledger'); 
   const [ledger, setLedger] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+  const [success, setSuccess] = useState('');
+
   // Filtering & Search states
-  const [ledgerFilter, setLedgerFilter] = useState('ALL'); // 'ALL' | 'INWARD' | 'OUTWARD' | 'REMNANT'
+  const [ledgerFilter, setLedgerFilter] = useState('ALL'); 
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Order Requests State
+  const [requests, setRequests] = useState([
+    { id: 1, date: '2026-07-12 10:30', site: 'Sector-62 Site', requester: 'Amit Sharma (Engineer)', diameter: 12, quantity: 150, status: 'Pending', approver: '', approvedQuantity: 150 },
+    { id: 2, date: '2026-07-14 09:15', site: 'Noida Site', requester: 'Amit Sharma (Engineer)', diameter: 16, quantity: 80, status: 'Approved', approver: 'Ketan (Owner)', approvedQuantity: 75 }
+  ]);
+
+  const [requestForm, setRequestForm] = useState({
+    diameter: 12,
+    quantity: '',
+    site: user?.companyName ? `${user.companyName} Site` : 'Builder Site'
+  });
+
+  const [editQtyMap, setEditQtyMap] = useState({});
 
   useEffect(() => {
     fetchData();
@@ -74,281 +97,458 @@ export default function LedgerPage() {
     return order.batchName.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  // Engineer Request Submission
+  const handleRequestSubmit = (e) => {
+    e.preventDefault();
+    const qty = parseInt(requestForm.quantity) || 0;
+    if (qty <= 0) return;
+
+    const newReq = {
+      id: Date.now(),
+      date: new Date().toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }),
+      site: requestForm.site,
+      requester: `${user?.firstName || 'User'} (${user?.role || 'Staff'})`,
+      diameter: Number(requestForm.diameter),
+      quantity: qty,
+      status: 'Pending',
+      approver: '',
+      approvedQuantity: qty
+    };
+
+    setRequests(prev => [newReq, ...prev]);
+    setRequestForm(prev => ({ ...prev, quantity: '' }));
+    setSuccess('Steel order request submitted successfully!');
+    setTimeout(() => setSuccess(''), 1500);
+  };
+
+  // Owner/Admin approval & editing
+  const handleApprove = (id) => {
+    const editVal = editQtyMap[id];
+    setRequests(prev => prev.map(req => {
+      if (req.id !== id) return req;
+      const finalQty = editVal !== undefined ? (parseInt(editVal) || 0) : req.quantity;
+      return {
+        ...req,
+        status: 'Approved',
+        approver: `${user?.firstName || 'User'} (${user?.role || 'Admin'})`,
+        approvedQuantity: finalQty
+      };
+    }));
+    setSuccess('Order request approved successfully!');
+    setTimeout(() => setSuccess(''), 1500);
+  };
+
+  const handleReject = (id) => {
+    setRequests(prev => prev.map(req => {
+      if (req.id !== id) return req;
+      return {
+        ...req,
+        status: 'Rejected',
+        approver: `${user?.firstName || 'User'} (${user?.role || 'Admin'})`,
+        approvedQuantity: 0
+      };
+    }));
+    setSuccess('Order request rejected.');
+    setTimeout(() => setSuccess(''), 1500);
+  };
+
+  const handleEditQtyChange = (id, val) => {
+    setEditQtyMap(prev => ({ ...prev, [id]: val }));
+  };
+
   return (
     <div className="ledger-page">
       {/* Header */}
       <div className="ledger-header">
         <div>
-          <h1 className="ledger-title">Steel Ledger & Order Summary</h1>
-          <p className="ledger-subtitle">Track rebar inventory stock movements and audit project orders.</p>
+          <h1 className="ledger-title">Ledger & Procurement</h1>
+          <p className="ledger-subtitle">Track material ledger logs, optimization batches, and site purchase requests.</p>
         </div>
-        <div className="ledger-tab-buttons">
+        <div className="tab-buttons">
           <button 
-            className={`ledger-tab-btn ${activeTab === 'ledger' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveTab('ledger');
-              setSearchQuery('');
-            }}
+            className={`tab-btn ${activeTab === 'ledger' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('ledger'); setSearchQuery(''); }}
           >
-            <BookOpen size={16} /> Steel Ledger
+            <BookOpen size={16} /> Audit Ledger
           </button>
           <button 
-            className={`ledger-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveTab('orders');
-              setSearchQuery('');
-            }}
+            className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('orders'); setSearchQuery(''); }}
           >
-            <ClipboardCheck size={16} /> Order Summary
+            <ClipboardCheck size={16} /> Batch Orders
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'requests' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('requests'); setSearchQuery(''); }}
+          >
+            <Clock size={16} /> Order Requests
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="alert alert-error" style={{ margin: '16px 0' }}>
+        <div className="alert alert-error">
+          <AlertCircle size={18} />
           <span>{error}</span>
         </div>
       )}
 
-      {loading ? (
-        <div className="ledger-page loading-state">
-          <div className="loader"></div>
-          <p>Loading ledger details...</p>
+      {success && (
+        <div className="alert alert-success">
+          <CheckCircle2 size={18} />
+          <span>{success}</span>
         </div>
-      ) : (
+      )}
+
+      {activeTab === 'ledger' && (
         <>
           {/* Summary Cards */}
-          <div className="ledger-metrics-grid">
-            <div className="card metric-card inward-card-theme">
-              <div className="metric-info">
-                <span className="metric-label">Total Inward Stock</span>
-                <span className="metric-val">{(totalInwardKg / 1000).toFixed(2)} <span className="metric-unit">Tons</span></span>
-                <span className="metric-sub">{totalInwardKg.toLocaleString(undefined, { maximumFractionDigits: 0 })} kg</span>
+          <div className="ledger-stats-grid">
+            <div className="card stat-mini">
+              <div className="stat-info">
+                <span className="mini-lbl">Inward Deliveries</span>
+                <span className="mini-val">{totalInwardKg.toLocaleString()} <span className="u">kg</span></span>
               </div>
-              <div className="metric-icon">
-                <PackagePlus size={24} color="#2da44e" />
-              </div>
+              <div className="mini-icon inward"><TrendingUp size={20} /></div>
             </div>
-
-            <div className="card metric-card consumed-card-theme">
-              <div className="metric-info">
-                <span className="metric-label">Total Consumed (Outward)</span>
-                <span className="metric-val">{(totalConsumedKg / 1000).toFixed(2)} <span className="metric-unit">Tons</span></span>
-                <span className="metric-sub">{totalConsumedKg.toLocaleString(undefined, { maximumFractionDigits: 0 })} kg</span>
+            <div className="card stat-mini">
+              <div className="stat-info">
+                <span className="mini-lbl">Consumed Optimization Weight</span>
+                <span className="mini-val text-orange">{totalConsumedKg.toLocaleString()} <span className="u">kg</span></span>
               </div>
-              <div className="metric-icon">
-                <TrendingDown size={24} color="#ea4a4a" />
-              </div>
+              <div className="mini-icon outward"><TrendingDown size={20} /></div>
             </div>
-
-            <div className="card metric-card remnant-card-theme">
-              <div className="metric-info">
-                <span className="metric-label">Reusable Remnants Inwarded</span>
-                <span className="metric-val">{(totalRemnantsKg / 1000).toFixed(2)} <span className="metric-unit">Tons</span></span>
-                <span className="metric-sub">{totalRemnantsKg.toLocaleString(undefined, { maximumFractionDigits: 0 })} kg</span>
+            <div className="card stat-mini">
+              <div className="stat-info">
+                <span className="mini-lbl">Recovered Remnants Yield</span>
+                <span className="mini-val text-green">{totalRemnantsKg.toLocaleString()} <span className="u">kg</span></span>
               </div>
-              <div className="metric-icon">
-                <Sparkles size={24} color="#3ac0e8" />
-              </div>
+              <div className="mini-icon remnants"><Sparkles size={20} /></div>
             </div>
-
-            <div className="card metric-card live-card-theme">
-              <div className="metric-info">
-                <span className="metric-label">Approx. Current Live Weight</span>
-                <span className="metric-val">{(netLiveStockKg / 1000).toFixed(2)} <span className="metric-unit">Tons</span></span>
-                <span className="metric-sub">{netLiveStockKg.toLocaleString(undefined, { maximumFractionDigits: 0 })} kg</span>
+            <div className="card stat-mini">
+              <div className="stat-info">
+                <span className="mini-lbl">Current Warehouse Valuation</span>
+                <span className="mini-val">₹{(netLiveStockKg * 60).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
               </div>
-              <div className="metric-icon">
-                <Scale size={24} color="#a855f7" />
-              </div>
+              <div className="mini-icon stock"><Scale size={20} /></div>
             </div>
           </div>
 
-          {/* Filtering Bar */}
-          <div className="ledger-controls no-print">
-            <div className="search-box-wrapper">
-              <Search size={16} className="search-icon" />
+          {/* Ledger table card */}
+          <div className="card table-card">
+            <div className="table-header">
+              <div className="filters-row">
+                <button 
+                  className={`filter-badge ${ledgerFilter === 'ALL' ? 'active' : ''}`}
+                  onClick={() => setLedgerFilter('ALL')}
+                >
+                  All Logs
+                </button>
+                <button 
+                  className={`filter-badge ${ledgerFilter === 'INWARD' ? 'active' : ''}`}
+                  onClick={() => setLedgerFilter('INWARD')}
+                >
+                  Inwards
+                </button>
+                <button 
+                  className={`filter-badge ${ledgerFilter === 'OUTWARD' ? 'active' : ''}`}
+                  onClick={() => setLedgerFilter('OUTWARD')}
+                >
+                  Outwards
+                </button>
+                <button 
+                  className={`filter-badge ${ledgerFilter === 'REMNANT' ? 'active' : ''}`}
+                  onClick={() => setLedgerFilter('REMNANT')}
+                >
+                  Remnants
+                </button>
+              </div>
+
+              <div className="search-box">
+                <Search size={14} className="search-icon" />
+                <input 
+                  type="text" 
+                  placeholder="Search brand, vendor..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
+
+            <div className="table-responsive">
+              <table className="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                    <th>Diameter</th>
+                    <th>Length</th>
+                    <th>Qty (Bars)</th>
+                    <th>Weight</th>
+                    <th>Cost (per kg)</th>
+                    <th>Reference / Vendor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLedger.map((item) => (
+                    <tr key={item._id}>
+                      <td className="ledger-date-col">
+                        <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                        {new Date(item.createdAt).toLocaleString('en-GB')}
+                      </td>
+                      <td>
+                        <span className={`ledger-type-badge ${item.type.toLowerCase()}`}>
+                          {item.type}
+                        </span>
+                      </td>
+                      <td className="font-bold">{item.diameter} mm</td>
+                      <td>{(item.length / 1000).toFixed(1)} m</td>
+                      <td className="font-bold">{item.quantity}</td>
+                      <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
+                      <td>₹{item.costPerKg?.toFixed(2)}</td>
+                      <td>
+                        <div className="vendor-ref-cell">
+                          <span className="font-bold">{item.vendorName || '-'}</span>
+                          <span className="text-secondary" style={{ fontSize: '11px' }}>{item.brandName ? `Brand: ${item.brandName}` : ''}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'orders' && (
+        <div className="card table-card">
+          <div className="table-header">
+            <h3 className="table-card-heading">Processed Batches Summary</h3>
+            <div className="search-box">
+              <Search size={14} className="search-icon" />
               <input 
                 type="text" 
-                placeholder={activeTab === 'ledger' ? "Search by brand, vendor, batch..." : "Search orders by name..."}
+                placeholder="Search batch name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="search-input"
               />
             </div>
-            
-            {activeTab === 'ledger' && (
-              <div className="filter-wrapper">
-                <Filter size={16} className="filter-icon" />
-                <select 
-                  value={ledgerFilter} 
-                  onChange={(e) => setLedgerFilter(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="ALL">All Transactions</option>
-                  <option value="INWARD">Purchased Stock (Inwards)</option>
-                  <option value="OUTWARD">Stock Consumption (Outwards)</option>
-                  <option value="REMNANT">Remnant Savings</option>
-                </select>
-              </div>
-            )}
           </div>
 
-          {/* Tab Content: Steel Ledger */}
-          {activeTab === 'ledger' && (
-            <div className="card ledger-table-card">
-              <h3 className="table-card-heading">Transaction Journal</h3>
-              {filteredLedger.length === 0 ? (
-                <div className="empty-ledger-state">
-                  <p>No transaction records found matching your filters.</p>
-                </div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="ledger-table-data">
-                    <thead>
-                      <tr>
-                        <th>Date & Time</th>
-                        <th>Type</th>
-                        <th>Specification</th>
-                        <th>Qty (Bars)</th>
-                        <th>Weight (kg)</th>
-                        <th>Reference / Description</th>
-                        <th>Vendor & Brand</th>
+          {filteredOrders.length === 0 ? (
+            <div className="empty-state">
+              <p>No processed optimization batches found matching query.</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Commit Date</th>
+                    <th>Batch Identifier</th>
+                    <th>Required Length</th>
+                    <th>Yield Stock</th>
+                    <th>Scrap Waste</th>
+                    <th>Remnants Saved</th>
+                    <th>Avg. Utilization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map((order) => {
+                    const date = new Date(order.createdAt).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: '2-digit'
+                    });
+
+                    const totalBars = order.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0;
+                    const totalParts = order.layouts?.reduce((sum, l) => {
+                      const partsCount = l.parts?.length || (l.stockLength > l.waste ? 1 : 0);
+                      return sum + (partsCount * Number(l.repetition));
+                    }, 0) || 0;
+
+                    return (
+                      <tr key={order._id}>
+                        <td className="ledger-date-col">
+                          <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {date}
+                        </td>
+                        <td className="font-bold">{order.batchName}</td>
+                        <td>
+                          {(order.summary.totalPartsLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} m
+                          <div className="text-secondary" style={{ fontSize: '11px' }}>({totalParts} cuts)</div>
+                        </td>
+                        <td>
+                          {(order.summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} m
+                          <div className="text-secondary" style={{ fontSize: '11px' }}>({totalBars} bars)</div>
+                        </td>
+                        <td className="text-danger font-bold">
+                          {order.summary.totalScrapKg?.toFixed(2)} kg
+                        </td>
+                        <td className="text-cyan font-bold">
+                          {order.summary.totalRemnantKg?.toFixed(2)} kg
+                        </td>
+                        <td>
+                          <div className="order-util-cell">
+                            <span className="font-bold text-green">{order.summary.avgUtilization?.toFixed(2)}%</span>
+                            <div className="mini-progress-bar-container">
+                              <div className="mini-progress-bar" style={{ width: `${order.summary.avgUtilization}%` }} />
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="order-status-badge badge-completed">Processed</span>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {filteredLedger.map((item) => {
-                        const date = new Date(item.createdAt).toLocaleString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        });
-
-                        let badgeClass = '';
-                        let badgeText = '';
-                        if (item.type === 'INWARD') {
-                          badgeClass = 'badge-inward';
-                          badgeText = 'Inward Purchase';
-                        } else if (item.type === 'OUTWARD') {
-                          badgeClass = 'badge-outward';
-                          badgeText = 'Outward Cut';
-                        } else if (item.type === 'REMNANT') {
-                          badgeClass = 'badge-remnant';
-                          badgeText = 'Remnant In';
-                        }
-
-                        return (
-                          <tr key={item._id}>
-                            <td className="ledger-date-col">
-                              <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {date}
-                            </td>
-                            <td>
-                              <span className={`transaction-badge ${badgeClass}`}>{badgeText}</span>
-                            </td>
-                            <td className="font-bold">
-                              {item.diameter}mm × {(item.length / 1000).toFixed(1)}m
-                            </td>
-                            <td className="font-bold">{item.quantity}</td>
-                            <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
-                            <td className="text-secondary">{item.referenceName || '-'}</td>
-                            <td>
-                              {item.brandName || item.vendorName ? (
-                                <div style={{ fontSize: '12px' }}>
-                                  <div className="font-bold">{item.brandName || '-'}</div>
-                                  <div className="text-secondary" style={{ fontSize: '11px' }}>{item.vendorName || '-'}</div>
-                                </div>
-                              ) : '-'}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
+        </div>
+      )}
 
-          {/* Tab Content: Order Summary */}
-          {activeTab === 'orders' && (
-            <div className="card ledger-table-card">
-              <h3 className="table-card-heading">Committed Optimization Orders</h3>
-              {filteredOrders.length === 0 ? (
-                <div className="empty-ledger-state">
-                  <p>No project orders found.</p>
+      {activeTab === 'requests' && (
+        <div className="requests-portal">
+          <div className="requests-grid">
+            {/* Left Column: Engineer request creation form */}
+            <div className="card request-form-card">
+              <h3 className="table-card-heading">Raise Steel Order Request</h3>
+              <p className="form-card-subtitle">Required for on-site material procurement requests. Subject to Owner/Admin approvals.</p>
+
+              <form onSubmit={handleRequestSubmit} className="request-form">
+                <div className="form-group">
+                  <label>Project / Site Location</label>
+                  <input
+                    type="text"
+                    required
+                    value={requestForm.site}
+                    onChange={(e) => setRequestForm(prev => ({ ...prev, site: e.target.value }))}
+                    className="voucher-input"
+                  />
                 </div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="ledger-table-data">
-                    <thead>
-                      <tr>
-                        <th>Date Committed</th>
-                        <th>Order / Batch Name</th>
-                        <th>Parts Demanded</th>
-                        <th>Stock Consumed</th>
-                        <th>Scrap Generated</th>
-                        <th>Remnants Saved</th>
-                        <th>Avg. Utilization</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredOrders.map((order) => {
-                        const date = new Date(order.createdAt).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: '2-digit'
-                        });
 
-                        const totalBars = order.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0;
-                        const totalParts = order.layouts?.reduce((sum, l) => {
-                          const partsCount = l.parts?.length || (l.stockLength > l.waste ? 1 : 0);
-                          return sum + (partsCount * Number(l.repetition));
-                        }, 0) || 0;
-
-                        return (
-                          <tr key={order._id}>
-                            <td className="ledger-date-col">
-                              <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {date}
-                            </td>
-                            <td className="font-bold">{order.batchName}</td>
-                            <td>
-                              {(order.summary.totalPartsLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} m
-                              <div className="text-secondary" style={{ fontSize: '11px' }}>({totalParts} cuts)</div>
-                            </td>
-                            <td>
-                              {(order.summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} m
-                              <div className="text-secondary" style={{ fontSize: '11px' }}>({totalBars} bars)</div>
-                            </td>
-                            <td className="text-danger font-bold">
-                              {order.summary.totalScrapKg?.toFixed(2)} kg
-                            </td>
-                            <td className="text-cyan font-bold">
-                              {order.summary.totalRemnantKg?.toFixed(2)} kg
-                            </td>
-                            <td>
-                              <div className="order-util-cell">
-                                <span className="font-bold text-green">{order.summary.avgUtilization?.toFixed(2)}%</span>
-                                <div className="mini-progress-bar-container">
-                                  <div className="mini-progress-bar" style={{ width: `${order.summary.avgUtilization}%` }} />
-                                </div>
-                              </div>
-                            </td>
-                            <td>
-                              <span className="order-status-badge badge-completed">Processed</span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                <div className="form-group">
+                  <label>Diameter of Steel Bar (mm)</label>
+                  <select
+                    value={requestForm.diameter}
+                    onChange={(e) => setRequestForm(prev => ({ ...prev, diameter: Number(e.target.value) }))}
+                    className="voucher-select"
+                  >
+                    {[8, 10, 12, 16, 20, 25, 32].map(d => (
+                      <option key={d} value={d}>{d} mm</option>
+                    ))}
+                  </select>
                 </div>
-              )}
+
+                <div className="form-group">
+                  <label>Required Quantity (Bars)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="e.g. 150"
+                    value={requestForm.quantity}
+                    onChange={(e) => setRequestForm(prev => ({ ...prev, quantity: e.target.value }))}
+                    className="voucher-input"
+                  />
+                </div>
+
+                <button type="submit" className="submit-inward-btn">
+                  Submit Request
+                </button>
+              </form>
             </div>
-          )}
-        </>
+
+            {/* Right Column: Approvals list */}
+            <div className="card requests-history-card">
+              <h3 className="table-card-heading">Order Requests Ledger</h3>
+              <p className="form-card-subtitle">Approval status and procurement authorization history logs.</p>
+
+              <div className="table-responsive">
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Requester / Site</th>
+                      <th>Dia</th>
+                      <th>Requested</th>
+                      <th>Approval Rate (Qty)</th>
+                      <th>Status</th>
+                      <th>Approved By</th>
+                      {user?.role !== 'ENGINEER' && <th>Action</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {requests.map((req) => {
+                      const isPending = req.status === 'Pending';
+                      const isApproved = req.status === 'Approved';
+                      const isOwnerAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN';
+
+                      return (
+                        <tr key={req.id}>
+                          <td>{req.date}</td>
+                          <td>
+                            <div className="font-bold">{req.requester}</div>
+                            <div className="text-secondary" style={{ fontSize: '11px' }}>{req.site}</div>
+                          </td>
+                          <td className="font-bold">{req.diameter} mm</td>
+                          <td>{req.quantity}</td>
+                          <td>
+                            {isPending && isOwnerAdmin ? (
+                              <input
+                                type="number"
+                                className="voucher-input edit-qty-input"
+                                style={{ maxWidth: '80px', padding: '4px 8px' }}
+                                defaultValue={req.quantity}
+                                onChange={(e) => handleEditQtyChange(req.id, e.target.value)}
+                              />
+                            ) : (
+                              <span className="font-bold">{req.approvedQuantity}</span>
+                            )}
+                          </td>
+                          <td>
+                            <span className={`order-status-badge badge-${req.status.toLowerCase()}`}>
+                              {req.status}
+                            </span>
+                          </td>
+                          <td className="text-secondary">{req.approver || '-'}</td>
+                          {user?.role !== 'ENGINEER' && (
+                            <td>
+                              {isPending ? (
+                                <div className="action-buttons-flex">
+                                  <button 
+                                    className="btn-approve" 
+                                    onClick={() => handleApprove(req.id)}
+                                    title="Approve request"
+                                  >
+                                    <CheckCircle2 size={14} />
+                                  </button>
+                                  <button 
+                                    className="btn-reject" 
+                                    onClick={() => handleReject(req.id)}
+                                    title="Reject request"
+                                  >
+                                    <XCircle size={14} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-secondary">-</span>
+                              )}
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

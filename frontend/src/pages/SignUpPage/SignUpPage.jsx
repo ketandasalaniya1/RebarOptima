@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, EyeOff, Eye, Mail, Building2, CheckCircle2, Shield, BarChart3, Users } from 'lucide-react';
+import { User, Lock, EyeOff, Eye, Mail, Building2, CheckCircle2, Shield, BarChart3, Users, Phone, MapPin } from 'lucide-react';
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
 import { authApi } from '../../utils/api';
@@ -8,11 +8,19 @@ import './SignUpPage.css';
 const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [role, setRole] = useState('OWNER');
   const [companyName, setCompanyName] = useState('');
+  const [projectName, setProjectName] = useState('');
+  const [location, setLocation] = useState('');
   const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [promoConsent, setPromoConsent] = useState(false);
+  const [newsletterConsent, setNewsletterConsent] = useState(false);
+  const [termsConsent, setTermsConsent] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,9 +42,26 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
       return;
     }
 
+    if (!termsConsent) {
+      setError('You must accept the Terms and Conditions.');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const data = await authApi.signup(email, password, fullName, companyName);
+      const data = await authApi.signup({
+        email,
+        password,
+        firstName,
+        lastName,
+        role,
+        companyName,
+        projectName,
+        location,
+        mobileNumber,
+        promoConsent,
+        newsletterConsent
+      });
       if (onSignUp) {
         onSignUp(data);
       }
@@ -73,21 +98,21 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
 
               <div className="features-list">
                 <div className="feature-item">
-                  <div className="feature-icon"><Shield size={20} color="#a468eb" /></div>
+                  <div className="feature-icon"><Shield size={20} color="#059669" /></div>
                   <div className="feature-text">
                     <h3>Centralized Project Management</h3>
                     <p>Keep all your projects, tasks & teams in one place.</p>
                   </div>
                 </div>
                 <div className="feature-item">
-                  <div className="feature-icon"><BarChart3 size={20} color="#a468eb" /></div>
+                  <div className="feature-icon"><BarChart3 size={20} color="#059669" /></div>
                   <div className="feature-text">
                     <h3>Real-time Collaboration</h3>
                     <p>Work together and stay updated in real time.</p>
                   </div>
                 </div>
                 <div className="feature-item">
-                  <div className="feature-icon"><Lock size={20} color="#a468eb" /></div>
+                  <div className="feature-icon"><Lock size={20} color="#059669" /></div>
                   <div className="feature-text">
                     <h3>Secure & Reliable</h3>
                     <p>Enterprise-grade security for your data.</p>
@@ -116,26 +141,59 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
               <form className="signup-form" onSubmit={handleSubmit}>
                 <div className="form-row">
                   <div className="input-group">
-                    <label>Full Name</label>
+                    <label>First Name</label>
                     <div className="input-wrapper">
                       <User size={18} className="input-icon" color="#8d86b8" />
                       <input 
                         type="text" 
-                        placeholder="Enter your full name" 
+                        placeholder="First name" 
                         required 
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
                       />
                     </div>
                   </div>
 
                   <div className="input-group">
-                    <label>Company Name</label>
+                    <label>Last Name</label>
+                    <div className="input-wrapper">
+                      <User size={18} className="input-icon" color="#8d86b8" />
+                      <input 
+                        type="text" 
+                        placeholder="Last name" 
+                        required 
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="input-group">
+                    <label>Account Role</label>
+                    <div className="input-wrapper">
+                      <Users size={18} className="input-icon" color="#8d86b8" />
+                      <select 
+                        className="signup-select"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        required
+                      >
+                        <option value="OWNER">Owner</option>
+                        <option value="ADMIN">Admin</option>
+                        <option value="ENGINEER">Engineer</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="input-group">
+                    <label>Firm Name</label>
                     <div className="input-wrapper">
                       <Building2 size={18} className="input-icon" color="#8d86b8" />
                       <input 
                         type="text" 
-                        placeholder="Enter company name" 
+                        placeholder="Company/Firm name" 
                         required 
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
@@ -144,17 +202,64 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                   </div>
                 </div>
 
-                <div className="input-group">
-                  <label>Email Address</label>
-                  <div className="input-wrapper">
-                    <Mail size={18} className="input-icon" color="#8d86b8" />
-                    <input 
-                      type="email" 
-                      placeholder="Enter your email address" 
-                      required 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                <div className="form-row">
+                  <div className="input-group">
+                    <label>Initial Project Name</label>
+                    <div className="input-wrapper">
+                      <Building2 size={18} className="input-icon" color="#8d86b8" />
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Sector-62 Site" 
+                        required 
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="input-group">
+                    <label>Project Location</label>
+                    <div className="input-wrapper">
+                      <MapPin size={18} className="input-icon" color="#8d86b8" />
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Noida, India" 
+                        required 
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="input-group">
+                    <label>Email Address</label>
+                    <div className="input-wrapper">
+                      <Mail size={18} className="input-icon" color="#8d86b8" />
+                      <input 
+                        type="email" 
+                        placeholder="Enter email address" 
+                        required 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="input-group">
+                    <label>Mobile Number</label>
+                    <div className="input-wrapper">
+                      <Phone size={18} className="input-icon" color="#8d86b8" />
+                      <input 
+                        type="tel" 
+                        placeholder="10-digit number" 
+                        required 
+                        pattern="[0-9]{10}"
+                        value={mobileNumber}
+                        onChange={(e) => setMobileNumber(e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -165,7 +270,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       <Lock size={18} className="input-icon" color="#8d86b8" />
                       <input 
                         type={showPassword ? "text" : "password"} 
-                        placeholder="Create a password" 
+                        placeholder="Create password" 
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -186,7 +291,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       <Lock size={18} className="input-icon" color="#8d86b8" />
                       <input 
                         type={showConfirmPassword ? "text" : "password"} 
-                        placeholder="Confirm your password" 
+                        placeholder="Confirm password" 
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -205,38 +310,45 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                 <div className="password-requirements">
                   <p>Password must contain:</p>
                   <div className="req-grid">
-                    <div className="req-item"><CheckCircle2 size={14} color="#7016d2" /> At least 8 characters</div>
-                    <div className="req-item"><CheckCircle2 size={14} color="#7016d2" /> One number</div>
-                    <div className="req-item"><CheckCircle2 size={14} color="#7016d2" /> One uppercase letter</div>
-                    <div className="req-item"><CheckCircle2 size={14} color="#7016d2" /> One special character</div>
+                    <div className="req-item"><CheckCircle2 size={14} color="#059669" /> At least 8 characters</div>
+                    <div className="req-item"><CheckCircle2 size={14} color="#059669" /> One number</div>
+                    <div className="req-item"><CheckCircle2 size={14} color="#059669" /> One uppercase letter</div>
+                    <div className="req-item"><CheckCircle2 size={14} color="#059669" /> One special character</div>
                   </div>
                 </div>
 
-                <div className="form-actions">
-                  <label className="remember-me terms">
-                    <input type="checkbox" required />
-                    <span className="checkmark"></span>
-                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                <div className="form-actions-consent">
+                  <label className="checkbox-consent">
+                    <input 
+                      type="checkbox" 
+                      checked={promoConsent}
+                      onChange={(e) => setPromoConsent(e.target.checked)}
+                    />
+                    <span>Yes, send me SMS/Whatsapp promotional updates.</span>
+                  </label>
+
+                  <label className="checkbox-consent">
+                    <input 
+                      type="checkbox" 
+                      checked={newsletterConsent}
+                      onChange={(e) => setNewsletterConsent(e.target.checked)}
+                    />
+                    <span>Subscribe to email newsletters and product tips.</span>
+                  </label>
+
+                  <label className="checkbox-consent terms-consent">
+                    <input 
+                      type="checkbox" 
+                      required 
+                      checked={termsConsent}
+                      onChange={(e) => setTermsConsent(e.target.checked)}
+                    />
+                    <span>I accept the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a> *</span>
                   </label>
                 </div>
 
                 <button type="submit" className="signup-button" disabled={isLoading}>
                   {isLoading ? 'Creating Account...' : 'Create Account'}
-                </button>
-
-                
-                <div className="divider">
-                  <span>OR</span>
-                </div>
-
-                <button type="button" className="google-signup">
-                   <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                  Sign up with Google
                 </button>
               </form>
 
@@ -246,43 +358,6 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                   if (onNavigateToSignIn) onNavigateToSignIn();
                 }}>Sign In</a>
               </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="signup-bottom-bar">
-          <div className="bottom-bar-item left-item">
-            <div className="bottom-icon-wrapper">
-              <Shield size={20} color="var(--accent)" />
-            </div>
-            <div className="bottom-text">
-              <h4>Enterprise Security</h4>
-              <p>Your data is protected with industry-leading security.</p>
-            </div>
-          </div>
-          
-          <div className="bottom-separator"></div>
-
-          <div className="bottom-bar-item center-item">
-            <div className="bottom-icon-wrapper">
-              <Users size={20} color="var(--accent)" />
-            </div>
-            <div className="bottom-text">
-              <h4>Built for Construction Teams</h4>
-              <p>Designed to simplify project management for contractors, builders & teams.</p>
-            </div>
-          </div>
-
-          <div className="bottom-separator"></div>
-
-          <div className="bottom-bar-item right-item">
-            <div className="bottom-icon-wrapper">
-              <BarChart3 size={20} color="var(--accent)" />
-            </div>
-            <div className="bottom-text">
-              <h4>Save Time & Reduce Costs</h4>
-              <p>Streamline workflows and make smarter decisions every day.</p>
             </div>
           </div>
         </div>

@@ -7,8 +7,12 @@ import { Company } from './company.schema';
 export class CompaniesService {
   constructor(@InjectModel(Company.name) private companyModel: Model<Company>) {}
 
-  async create(name: string): Promise<Company> {
-    const newCompany = new this.companyModel({ name });
+  async create(name: string, projectName?: string, location?: string): Promise<Company> {
+    const newCompany = new this.companyModel({ name, projectName, location });
     return newCompany.save();
+  }
+
+  async findById(id: string): Promise<Company | null> {
+    return this.companyModel.findById(id).exec();
   }
 }

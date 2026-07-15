@@ -1415,3 +1415,103 @@
   background: #3a1515;
   color: #ff6b6b;
 }
+
+.financial-summary-card {
+  border-top-color: var(--accent) !important;
+  margin-bottom: 8px;
+}
+
+.financial-card-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.financial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.financial-stat {
+  display: flex;
+  flex-direction: column;
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.fin-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+}
+
+.fin-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.fin-val.text-red {
+  color: #ef4444;
+}
+
+.fin-val.text-green {
+  color: #059669;
+}
+
+.fin-hint {
+  font-size: 10.5px;
+  color: var(--text-label);
+  margin-top: 4px;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .results-page {
+    padding: 0 !important;
+    gap: 15px !important;
+    max-width: 100% !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .layout-card-new {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 15px !important;
+    padding: 16px !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  .summary-table th, .summary-table td {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+  }
+}

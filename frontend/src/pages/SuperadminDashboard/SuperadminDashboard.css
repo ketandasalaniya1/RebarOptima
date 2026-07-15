@@ -1,0 +1,376 @@
+.superadmin-dashboard {
+  min-height: 100vh;
+  background: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.superadmin-nav {
+  height: 56px;
+  background: #1e293b; /* Slate 800 */
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-txt {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-console {
+  background: #334155;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.telemetry-info {
+  font-size: 12px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.text-green {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.superadmin-logout-btn {
+  background: none;
+  border: 1px solid #dc2626;
+  color: #f87171;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.superadmin-logout-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.superadmin-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.superadmin-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.metric-panel {
+  background: #1e293b;
+  border-color: #334155;
+  border-top-color: #ef4444; /* Alert red stripe */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.panel-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.panel-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.panel-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-icon.purple { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+.panel-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.panel-icon.orange { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+.panel-icon.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Grid Layout */
+.superadmin-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 24px;
+}
+
+.list-panel, .control-panel {
+  background: #1e293b;
+  border-color: #334155;
+  border-top-color: #475569;
+  padding: 24px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 14px;
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.panel-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.s-icon {
+  position: absolute;
+  left: 10px;
+  color: #94a3b8;
+}
+
+.superadmin-search {
+  padding: 6px 12px 6px 30px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  outline: none;
+  width: 200px;
+  transition: all 0.2s;
+}
+
+.superadmin-search:focus {
+  border-color: #ef4444;
+  width: 240px;
+}
+
+/* Table */
+.superadmin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.superadmin-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  padding: 10px;
+  border-bottom: 2px solid #334155;
+  text-transform: uppercase;
+}
+
+.superadmin-table td {
+  padding: 12px 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #334155;
+}
+
+.superadmin-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.plan-badge {
+  background: #334155;
+  color: #e2e8f0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.billing-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.billing-status.status-paid {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+}
+
+.billing-status.status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+}
+
+.btn-verify {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-verify.verified {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.btn-verify.unverified {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.btn-verify:hover {
+  filter: brightness(1.2);
+}
+
+/* Control Panel elements */
+.backup-telemetry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.backup-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+}
+
+.backup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.backup-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.backup-date {
+  font-size: 11px;
+}
+
+.badge-ok {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.promo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.superadmin-textarea {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+}
+
+.superadmin-textarea:focus {
+  border-color: #ef4444;
+}
+
+.btn-broadcast {
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-broadcast:hover {
+  background: #dc2626;
+}
+
+.broadcast-success {
+  font-size: 12px;
+  font-weight: 600;
+  color: #10b981;
+  text-align: center;
+  margin-top: 4px;
+}
+
+@media (max-width: 1024px) {
+  .superadmin-grid {
+    grid-template-columns: 1fr;
+  }
+}

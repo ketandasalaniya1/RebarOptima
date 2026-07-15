@@ -9,68 +9,92 @@
 }
 
 :root {
-  /* Sidebar / Brand Accent */
-  --sidebar-bg: #1a1259;
+  /* Dimensions & defaults */
   --sidebar-width: 180px;
-  --sidebar-text: #8d86b8;
+  --sidebar-text: #94a3b8;
   --sidebar-text-active: #ffffff;
-  --sidebar-active-border: #7016d2;
-
-  /* Accent */
-  --accent: #7016d2;
-  --accent-hover: #591cc2;
-
-  /* Main area */
-  --main-bg: #f4f3fa;
+  --main-bg: #f8fafc;
   --card-bg: #ffffff;
-  --card-border: #e1ddf2;
-
-  /* Text */
-  --text-primary: #1a1259;
-  --text-secondary: #5e578c;
-  --text-label: #8d86b8;
-
-  /* Navbar */
+  --card-border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-label: #64748b;
   --navbar-bg: #ffffff;
-  --navbar-border: #e1ddf2;
-
-  /* Misc */
-  --danger: #e85a3a;
-  --input-border: #ccd0db;
+  --navbar-border: #e2e8f0;
+  --danger: #ef4444;
+  --input-border: #cbd5e1;
   --input-bg: #ffffff;
-  
-  /* Auth Page Left Overlay */
-  --auth-gradient: linear-gradient(to bottom, rgba(244, 243, 250, 0.75), rgba(244, 243, 250, 0.95));
+  --auth-gradient: linear-gradient(to bottom, rgba(248, 250, 252, 0.75), rgba(248, 250, 252, 0.95));
 
+  /* Theme color default mapping: slate-emerald */
+  --sidebar-bg: #334155;
+  --sidebar-active-border: #059669;
+  --accent: #059669;
+  --accent-hover: #047857;
+  
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   color: var(--text-primary);
 }
 
+/* Light / Dark overrides */
 [data-theme="dark"] {
-  --sidebar-bg: #151125;
-  --sidebar-text: #8d86b8;
-  --sidebar-text-active: #ffffff;
-  --sidebar-active-border: #7016d2;
+  --main-bg: #0f172a;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-label: #64748b;
+  --navbar-bg: #1e293b;
+  --navbar-border: #334155;
+  --input-border: #334155;
+  --input-bg: #0f172a;
+  --auth-gradient: linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.95));
+}
 
+/* Color theme mappings */
+[data-color-theme="slate-emerald"] {
+  --accent: #059669;
+  --accent-hover: #047857;
+  --sidebar-bg: #334155;
+  --sidebar-active-border: #059669;
+}
+[data-theme="dark"][data-color-theme="slate-emerald"] {
+  --sidebar-bg: #1e293b;
+}
+
+[data-color-theme="steel-blue"] {
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --sidebar-bg: #1e3a8a;
+  --sidebar-active-border: #2563eb;
+}
+[data-theme="dark"][data-color-theme="steel-blue"] {
+  --sidebar-bg: #1e293b;
+}
+
+[data-color-theme="classic-purple"] {
   --accent: #7016d2;
-  --accent-hover: #8b30f5;
-
+  --accent-hover: #591cc2;
+  --sidebar-bg: #1a1259;
+  --sidebar-active-border: #7016d2;
+  --main-bg: #f4f3fa;
+  --text-primary: #1a1259;
+  --text-secondary: #5e578c;
+  --text-label: #8d86b8;
+}
+[data-theme="dark"][data-color-theme="classic-purple"] {
+  --sidebar-bg: #151125;
   --main-bg: #110e16;
   --card-bg: #151125;
   --card-border: #282142;
-
   --text-primary: #ffffff;
   --text-secondary: #a19db5;
   --text-label: #8d86b8;
-
   --navbar-bg: #151125;
   --navbar-border: #282142;
-
   --input-border: #282142;
   --input-bg: #1d1833;
-  
-  --auth-gradient: linear-gradient(to bottom, rgba(20, 18, 30, 0.75), rgba(15, 12, 23, 0.95));
 }
 
 body {

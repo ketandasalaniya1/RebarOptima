@@ -52,19 +52,19 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
 
   // Visual color coding colors - shades of gray sorted from darker to lighter
   const colors = [
-    '#36454F', // Charcoal
-    '#71797E', // Steel Gray
-    '#708090', // Slate Gray
-    '#808080', // Gray
-    '#818589', // Gunmetal Gray
-    '#848884', // Smoke
-    '#7393B3', // Blue Gray
-    '#899499', // Pewter
-    '#A9A9A9', // Dark Gray
-    '#B2BEB5', // Ash Gray
-    '#C0C0C0', // Silver
-    '#D3D3D3', // Light Gray
-    '#E5E4E2'  // Platinum
+    '#0d9488', // Teal
+    '#4f46e5', // Indigo
+    '#e11d48', // Rose
+    '#ea580c', // Orange
+    '#9333ea', // Purple
+    '#d97706', // Amber
+    '#0284c7', // Sky Blue
+    '#16a34a', // Green
+    '#7c3aed', // Violet
+    '#db2777', // Pink
+    '#0891b2', // Cyan
+    '#059669', // Emerald
+    '#dc2626'  // Red
   ];
 
   diameters.forEach(dia => {

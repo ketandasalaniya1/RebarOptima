@@ -1,13 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import './NewBatchPage.css'
 import { solve1DCSP } from '../../utils/optimizer'
 import { inventoryApi } from '../../utils/api'
-import topAdStrip from '../../assets/top_ad _strip.jpeg'
-import bottomAdStrip from '../../assets/bottom_ad_strip.jpeg'
 import {
   X,
   AlertCircle,
-  Upload
+  Upload,
+  ChevronDown,
+  ChevronUp,
+  Settings,
+  Plus,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 
 const initialStock = [
@@ -18,7 +23,7 @@ const initialParts = [
   { id: 1, diameter: '12', length: '', quantity: '', label: '' },
 ]
 
-// ponytail: shared hook for add-row-on-Tab logic across both tables
+// shared hook for add-row-on-Tab logic across both tables
 function useTableRows(initial, defaults) {
   const [rows, setRows] = useState(initial)
   const focusNew = useRef(false)
@@ -55,6 +60,8 @@ function useTableRows(initial, defaults) {
 }
 
 export default function NewBatchPage({ onOptimize }) {
+  const settingsState = useSelector((state) => state.settings)
+  
   const stock = useTableRows(initialStock, (prev) => ({
     diameter: prev.length ? prev[prev.length - 1].diameter : '12',
     length: '12000',
@@ -68,13 +75,24 @@ export default function NewBatchPage({ onOptimize }) {
   }))
 
   const [error, setError] = useState(null)
+  const [isStockExpanded, setIsStockExpanded] = useState(false) // Minimised by default
+  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false)
+  
+  const [kerf, setKerf] = useState(settingsState.defaultKerf)
+  const [trimMargin, setTrimMargin] = useState(settingsState.defaultTrimMargin)
+
+  // Sync state if settings change
+  useEffect(() => {
+    setKerf(settingsState.defaultKerf)
+    setTrimMargin(settingsState.defaultTrimMargin)
+  }, [settingsState])
 
   // Clear error when rows change
   useEffect(() => {
     setError(null)
   }, [stock.rows, parts.rows])
 
-  // ponytail: Load stock items and remnants dynamically from DB on mount
+  // Load stock items and remnants dynamically from DB on mount
   useEffect(() => {
     async function loadStock() {
       try {
@@ -89,7 +107,8 @@ export default function NewBatchPage({ onOptimize }) {
             diameter: String(s.diameter),
             length: String(s.length),
             quantity: String(s.quantity),
-            isRemnant: false
+            isRemnant: false,
+            costPerKg: s.costPerKg || 0
           })
         })
 
@@ -100,7 +119,8 @@ export default function NewBatchPage({ onOptimize }) {
             diameter: String(s.diameter),
             length: String(s.length),
             quantity: String(s.quantity),
-            isRemnant: true
+            isRemnant: true,
+            costPerKg: s.costPerKg || 0
           })
         })
 
@@ -128,7 +148,6 @@ export default function NewBatchPage({ onOptimize }) {
     let tempId = currentMaxId + 1
 
     lines.forEach(line => {
-      // split by comma, semicolon or tab
       const cols = line.split(/[,\t;]/).map(c => c.trim())
       if (cols.length >= 2) {
         const diameter = cols[0] || '12'
@@ -136,7 +155,6 @@ export default function NewBatchPage({ onOptimize }) {
         const quantity = cols[2] || ''
         const label = cols[3] || ''
 
-        // validation: skip header row if length is not a number
         if (isNaN(Number(length)) || length === '') return
 
         newParts.push({
@@ -151,7 +169,6 @@ export default function NewBatchPage({ onOptimize }) {
 
     if (newParts.length > 0) {
       parts.setRows(prev => {
-        // If the first row is the default blank row, remove it
         if (prev.length > 0 && prev[0].length === '' && prev[0].quantity === '') {
           return [...prev.slice(1), ...newParts]
         }
@@ -165,86 +182,159 @@ export default function NewBatchPage({ onOptimize }) {
 
   return (
     <div className="optimizer-page">
-      {/* Top Ad Strip */}
-      <div className="top-ad-strip-container">
-        <a href="https://cravorasolutions.com/" target="_blank" rel="noopener noreferrer">
-          <img src={topAdStrip} alt="Advertisement" className="top-ad-strip-img" />
-        </a>
-      </div>
-
-      {/* Available Stock */}
-      <section className="card">
+      {/* Collapsible Manual Stock Override section */}
+      <section className="card stock-section-card">
         <div className="section-header">
-          <h2 className="section-title">Available Stock</h2>
-          <button className="add-row-btn" onClick={() => stock.addRow()}>+ Add Row</button>
+          <div className="title-with-toggle">
+            <h2 className="section-title">Manual Stock Override</h2>
+            <span className="section-title-hint">(Add outside stock or simulation parameters manually)</span>
+          </div>
+          <div className="header-actions">
+            <button 
+              className="toggle-stock-btn" 
+              onClick={() => setIsStockExpanded(!isStockExpanded)}
+            >
+              {isStockExpanded ? (
+                <>Collapse Inputs <ChevronUp size={16} /></>
+              ) : (
+                <>Expand Inputs <ChevronDown size={16} /></>
+              )}
+            </button>
+            {isStockExpanded && (
+              <button className="add-row-btn" onClick={() => stock.addRow()}>
+                <Plus size={14} /> Add Row
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="table-responsive">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th className="col-num">#</th>
-                <th>Diameter (mm)</th>
-                <th>Length (mm)</th>
-                <th>Quantity</th>
-                <th className="col-actions">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stock.rows.map((row, i) => (
-                <tr key={row.id} style={row.isRemnant ? { backgroundColor: 'rgba(58, 192, 232, 0.04)' } : {}}>
-                  <td className="col-num">{i + 1}</td>
-                  <td>
-                    {row.isRemnant ? (
-                      <span style={{ fontWeight: '600', color: '#17a2b8' }}>
-                        {row.diameter} mm [Remnant]
-                      </span>
-                    ) : (
-                      <select
-                        className="form-select"
-                        value={row.diameter}
-                        onChange={(e) => stock.updateRow(row.id, 'diameter', e.target.value)}
-                        ref={i === stock.rows.length - 1 ? stock.firstFieldRef : undefined}
-                      >
-                        <option>8</option>
-                        <option>10</option>
-                        <option>12</option>
-                        <option>16</option>
-                        <option>20</option>
-                        <option>25</option>
-                        <option>32</option>
-                      </select>
-                    )}
-                  </td>
-                  <td>
-                    {row.isRemnant ? (
-                      <span style={{ fontWeight: '500' }}>{row.length} mm</span>
-                    ) : (
+        {isStockExpanded ? (
+          <div className="table-responsive">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th className="col-num">#</th>
+                  <th>Diameter (mm)</th>
+                  <th>Length (mm)</th>
+                  <th>Quantity</th>
+                  <th className="col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stock.rows.map((row, i) => (
+                  <tr key={row.id} style={row.isRemnant ? { backgroundColor: 'rgba(5, 150, 105, 0.04)' } : {}}>
+                    <td className="col-num">{i + 1}</td>
+                    <td>
+                      {row.isRemnant ? (
+                        <span style={{ fontWeight: '600', color: 'var(--accent)' }}>
+                          {row.diameter} mm [Remnant]
+                        </span>
+                      ) : (
+                        <select
+                          className="form-select"
+                          value={row.diameter}
+                          onChange={(e) => stock.updateRow(row.id, 'diameter', e.target.value)}
+                          ref={i === stock.rows.length - 1 ? stock.firstFieldRef : undefined}
+                        >
+                          <option>8</option>
+                          <option>10</option>
+                          <option>12</option>
+                          <option>16</option>
+                          <option>20</option>
+                          <option>25</option>
+                          <option>32</option>
+                        </select>
+                      )}
+                    </td>
+                    <td>
+                      {row.isRemnant ? (
+                        <span style={{ fontWeight: '500' }}>{row.length} mm</span>
+                      ) : (
+                        <input
+                          className="form-input"
+                          type="number"
+                          value={row.length}
+                          onChange={(e) => stock.updateRow(row.id, 'length', e.target.value)}
+                        />
+                      )}
+                    </td>
+                    <td>
                       <input
                         className="form-input"
                         type="number"
-                        value={row.length}
-                        onChange={(e) => stock.updateRow(row.id, 'length', e.target.value)}
+                        value={row.quantity}
+                        onChange={(e) => stock.updateRow(row.id, 'quantity', e.target.value)}
+                        onKeyDown={(e) => stock.handleLastFieldKeyDown(e, i === stock.rows.length - 1)}
                       />
-                    )}
-                  </td>
-                  <td>
-                    <input
-                      className="form-input"
-                      type="number"
-                      value={row.quantity}
-                      onChange={(e) => stock.updateRow(row.id, 'quantity', e.target.value)}
-                      onKeyDown={(e) => stock.handleLastFieldKeyDown(e, i === stock.rows.length - 1)}
-                    />
-                  </td>
-                  <td className="col-actions">
-                    <button className="delete-btn" onClick={() => stock.deleteRow(row.id)}>✕</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td className="col-actions">
+                      <button className="delete-btn" onClick={() => stock.deleteRow(row.id)}>
+                        <X size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="stock-collapsed-hint">
+            Stock lists are synchronised from live warehouse storage database counts.
+          </div>
+        )}
+      </section>
+
+      {/* Advanced Parameters Expandable Section */}
+      <section className="card advanced-params-card">
+        <div className="section-header" style={{ cursor: 'pointer' }} onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}>
+          <div className="title-with-toggle">
+            <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Settings size={18} className="text-secondary" /> Advanced Settings
+            </h2>
+            <span className="section-title-hint">(Kerf size and trim waste adjustments)</span>
+          </div>
+          <button className="toggle-stock-btn" type="button">
+            {isAdvancedExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
         </div>
+
+        {isAdvancedExpanded && (
+          <div className="advanced-inputs-grid">
+            <div className="advanced-input-group">
+              <label className="setting-label">Blade Kerf Size (mm)</label>
+              <div className="input-with-unit">
+                <input 
+                  type="number" 
+                  step="0.1"
+                  min="0"
+                  max="50"
+                  value={kerf}
+                  onChange={(e) => setKerf(parseFloat(e.target.value) || 0)}
+                  className="settings-input"
+                />
+                <span className="unit-tag">mm</span>
+              </div>
+              <span className="field-hint">Material consumed by blade cut width. Defaults to settings configurations.</span>
+            </div>
+
+            <div className="advanced-input-group">
+              <label className="setting-label">Stock Trim Margin (mm)</label>
+              <div className="input-with-unit">
+                <input 
+                  type="number" 
+                  step="1"
+                  min="0"
+                  max="500"
+                  value={trimMargin}
+                  onChange={(e) => setTrimMargin(parseFloat(e.target.value) || 0)}
+                  className="settings-input"
+                />
+                <span className="unit-tag">mm</span>
+              </div>
+              <span className="field-hint">End-waste discarded from both sides of stock bars during cutting run.</span>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Required Parts */}
@@ -255,7 +345,9 @@ export default function NewBatchPage({ onOptimize }) {
             <button className="import-row-btn" onClick={() => setShowImportModal(true)}>
               <Upload size={13} style={{ marginRight: '4px' }} /> Import CSV
             </button>
-            <button className="add-row-btn" onClick={() => parts.addRow()}>+ Add Row</button>
+            <button className="add-row-btn" onClick={() => parts.addRow()}>
+              <Plus size={14} /> Add Row
+            </button>
           </div>
         </div>
 
@@ -265,9 +357,9 @@ export default function NewBatchPage({ onOptimize }) {
               <tr>
                 <th className="col-num">#</th>
                 <th>Diameter (mm)</th>
-                <th>Length (mm)</th>
+                <th>Required Length (mm)</th>
                 <th>Quantity</th>
-                <th>Label</th>
+                <th>Label (Optional)</th>
                 <th className="col-actions">Actions</th>
               </tr>
             </thead>
@@ -297,6 +389,7 @@ export default function NewBatchPage({ onOptimize }) {
                       type="number"
                       value={row.length}
                       onChange={(e) => parts.updateRow(row.id, 'length', e.target.value)}
+                      placeholder="e.g. 3500"
                     />
                   </td>
                   <td>
@@ -305,6 +398,7 @@ export default function NewBatchPage({ onOptimize }) {
                       type="number"
                       value={row.quantity}
                       onChange={(e) => parts.updateRow(row.id, 'quantity', e.target.value)}
+                      placeholder="e.g. 5"
                     />
                   </td>
                   <td>
@@ -313,12 +407,14 @@ export default function NewBatchPage({ onOptimize }) {
                       type="text"
                       value={row.label}
                       onChange={(e) => parts.updateRow(row.id, 'label', e.target.value)}
+                      placeholder="e.g. Beams-A"
                       onKeyDown={(e) => parts.handleLastFieldKeyDown(e, i === parts.rows.length - 1)}
-                      placeholder="Optional"
                     />
                   </td>
                   <td className="col-actions">
-                    <button className="delete-btn" onClick={() => parts.deleteRow(row.id)}>✕</button>
+                    <button className="delete-btn" onClick={() => parts.deleteRow(row.id)}>
+                      <X size={14} />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -332,8 +428,8 @@ export default function NewBatchPage({ onOptimize }) {
         <div className="modal-backdrop">
           <div className="modal-content card">
             <div className="modal-header">
-              <h3 className="modal-title">Bulk CSV Import</h3>
-              <button className="close-modal-btn" onClick={() => setShowImportModal(false)}>
+              <h3 className="modal-title">Import Parts from CSV Text</h3>
+              <button className="modal-close-btn" onClick={() => setShowImportModal(false)}>
                 <X size={18} />
               </button>
             </div>
@@ -375,11 +471,10 @@ export default function NewBatchPage({ onOptimize }) {
           className="btn-optimize"
           onClick={() => {
             try {
-              // Extract isRemnant & dbId properties when solving
-              const data = solve1DCSP(stock.rows, parts.rows, {});
-              // Attach input rows to solve output for history saving later
+              const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin });
               data.inputStock = stock.rows;
               data.requiredParts = parts.rows;
+              data.settings = { kerf, trimMargin };
               onOptimize(data);
             } catch (err) {
               setError(err.message);
@@ -388,13 +483,6 @@ export default function NewBatchPage({ onOptimize }) {
         >
           RUN OPTIMIZATION
         </button>
-      </div>
-
-      {/* Bottom Ad Strip (Mobile View Only) */}
-      <div className="bottom-ad-strip-container">
-        <a href="https://cravorasolutions.com/" target="_blank" rel="noopener noreferrer">
-          <img src={bottomAdStrip} alt="Advertisement" className="bottom-ad-strip-img" />
-        </a>
       </div>
 
     </div>

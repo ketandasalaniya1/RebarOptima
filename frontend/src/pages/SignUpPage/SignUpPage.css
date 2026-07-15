@@ -537,3 +537,61 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.signup-select {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.signup-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+.form-actions-consent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.checkbox-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+}
+
+.checkbox-consent input {
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.terms-consent {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.terms-consent a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.terms-consent a:hover {
+  text-decoration: underline;
+}
+
+

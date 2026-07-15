@@ -35,8 +35,8 @@ export async function apiRequest(endpoint, options = {}) {
 export const authApi = {
   signin: (email, password) => 
     apiRequest('/auth/signin', { method: 'POST', body: { email, password } }),
-  signup: (email, password, fullName, companyName) => 
-    apiRequest('/auth/signup', { method: 'POST', body: { email, password, fullName, companyName } }),
+  signup: (dto) => 
+    apiRequest('/auth/signup', { method: 'POST', body: dto }),
 };
 
 export const inventoryApi = {

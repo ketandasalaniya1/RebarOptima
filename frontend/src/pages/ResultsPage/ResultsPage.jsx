@@ -266,6 +266,32 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const totalWastageKgSum = Math.max(0, totalStockKgSum - totalUtilisationKgSum);
   const totalWastagePercent = totalStockKgSum > 0 ? (totalWastageKgSum / totalStockKgSum) * 100 : 0;
 
+  const getCostPerKgForDia = (diameter) => {
+    const stockItem = data?.inputStock?.find(s => String(s.diameter) === String(diameter));
+    return stockItem?.costPerKg ? parseFloat(stockItem.costPerKg) : 60;
+  };
+
+  const totalRemnantsSavings = layouts
+    .filter(l => l.isRemnant)
+    .reduce((sum, l) => {
+      const diaNum = parseFloat(l.diameter);
+      const weightPerMeter = (diaNum * diaNum) / 162;
+      const barPartsLength = l.parts.reduce((s, p) => s + p.length, 0);
+      const consumedWeight = (barPartsLength / 1000) * weightPerMeter;
+      const costPerKg = getCostPerKgForDia(l.diameter);
+      return sum + (consumedWeight * l.repetition * costPerKg);
+    }, 0);
+
+  const totalScrapLossCost = diaWeightSummary.reduce((sum, d) => {
+    const costPerKg = getCostPerKgForDia(d.diameter);
+    return sum + (d.wastageKg * costPerKg);
+  }, 0);
+
+  const totalYieldValue = diaWeightSummary.reduce((sum, d) => {
+    const costPerKg = getCostPerKgForDia(d.diameter);
+    return sum + (d.utilisationKg * costPerKg);
+  }, 0);
+
   const exportToExcel = () => {
     let csvContent = "Layout,Repetition,Diameter (mm),Stock Length (mm),Cuts,Waste (mm),Utilization (%),Status,Cut Details\n";
 
@@ -425,6 +451,28 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           </div>
           <div className="card-icon">
             <Scissors size={20} color="var(--accent)" />
+          </div>
+        </div>
+      </div>
+
+      {/* Financial Summary (₹) Section */}
+      <div className="card financial-summary-card">
+        <h3 className="financial-card-heading">Financial Summary (₹)</h3>
+        <div className="financial-grid">
+          <div className="financial-stat">
+            <span className="fin-lbl">Total Scrap Loss Cost</span>
+            <span className="fin-val text-red">₹{totalScrapLossCost.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+            <span className="fin-hint">(Steel purchased material wasted)</span>
+          </div>
+          <div className="financial-stat">
+            <span className="fin-lbl">Reused Remnants Savings</span>
+            <span className="fin-val text-green">₹{totalRemnantsSavings.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+            <span className="fin-hint">(Recovered value of remnant inventory)</span>
+          </div>
+          <div className="financial-stat">
+            <span className="fin-lbl">Est. Batch Yield Value</span>
+            <span className="fin-val">₹{totalYieldValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+            <span className="fin-hint">(Value of cut pieces in structure)</span>
           </div>
         </div>
       </div>

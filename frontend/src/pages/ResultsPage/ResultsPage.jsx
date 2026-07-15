@@ -349,25 +349,27 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           </button>
         </div>
         <div className="actions-right">
-          <button 
-            className="btn-commit-batch" 
-            style={{ 
-              background: '#2da44e', 
-              color: '#ffffff', 
-              border: 'none', 
-              borderRadius: '6px', 
-              padding: '6px 14px', 
-              fontWeight: '600', 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px',
-              cursor: saveLoading ? 'not-allowed' : 'pointer'
-            }}
-            onClick={handleSaveBatch}
-            disabled={saveLoading}
-          >
-            <CheckCircle2 size={16} /> {saveLoading ? 'Saving Batch...' : 'Save & Commit Batch'}
-          </button>
+          {!data?._id && (
+            <button 
+              className="btn-commit-batch" 
+              style={{ 
+                background: '#2da44e', 
+                color: '#ffffff', 
+                border: 'none', 
+                borderRadius: '6px', 
+                padding: '6px 14px', 
+                fontWeight: '600', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                cursor: saveLoading ? 'not-allowed' : 'pointer'
+              }}
+              onClick={handleSaveBatch}
+              disabled={saveLoading}
+            >
+              <CheckCircle2 size={16} /> {saveLoading ? 'Saving Batch...' : 'Save & Commit Batch'}
+            </button>
+          )}
           <button className="btn-print-report" onClick={() => window.print()}>
             <Printer size={16} /> Print Report
           </button>

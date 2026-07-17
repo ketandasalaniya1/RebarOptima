@@ -153,4 +153,13 @@ export class InventoryService {
       .sort({ createdAt: -1 } as any)
       .exec();
   }
+
+  async deleteStockItem(companyId: string, id: string): Promise<{ deleted: boolean }> {
+    const result = await this.stockItemModel.findOneAndDelete({
+      _id: new Types.ObjectId(id),
+      companyId: new Types.ObjectId(companyId),
+      isRemnant: false, // only allow deleting standard stock, not remnants
+    } as any).exec();
+    return { deleted: !!result };
+  }
 }

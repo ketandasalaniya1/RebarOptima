@@ -8,7 +8,19 @@ export class AuthController {
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   async signup(
-    @Body() dto: { email: string; password?: string; fullName: string; companyName: string },
+    @Body() dto: {
+      email: string;
+      password?: string;
+      firstName: string;
+      lastName: string;
+      role: string;
+      companyName: string;
+      projectName: string;
+      location: string;
+      mobileNumber: string;
+      promoConsent?: boolean;
+      newsletterConsent?: boolean;
+    },
   ) {
     return this.authService.signup(dto);
   }

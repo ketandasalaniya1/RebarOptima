@@ -50,6 +50,8 @@ export const inventoryApi = {
     apiRequest('/inventory/scrap-rules', { method: 'POST', body: { rules } }),
   getLedger: () => 
     apiRequest('/inventory/ledger'),
+  deleteStockItem: (id) =>
+    apiRequest(`/inventory/${id}`, { method: 'DELETE' }),
 };
 
 export const batchesApi = {

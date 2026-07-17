@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/user.decorator';
 import { InventoryService } from './inventory.service';
@@ -47,5 +47,13 @@ export class InventoryController {
   @Get('ledger')
   async getLedger(@CurrentUser() user: User) {
     return this.inventoryService.getLedger(user.companyId.toString());
+  }
+
+  @Delete(':id')
+  async deleteStockItem(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ) {
+    return this.inventoryService.deleteStockItem(user.companyId.toString(), id);
   }
 }

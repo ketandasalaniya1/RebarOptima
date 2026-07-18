@@ -418,31 +418,64 @@
   opacity: 0.5;
 }
 
-/* Scrap Sales Portal */
+/* Scrap Sales Portal Layout & Aesthetics */
 .scrap-sales-portal {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: fadeIn 0.3s ease-out;
+  gap: 28px;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .scrap-analytics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
 }
 
 .scrap-stat-panel {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-top-width: 4px !important;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.scrap-stat-panel:nth-child(1) { border-top-color: var(--accent) !important; }
-.scrap-stat-panel:nth-child(2) { border-top-color: #059669 !important; }
-.scrap-stat-panel:nth-child(3) { border-top-color: #ef4444 !important; }
+.scrap-stat-panel:hover {
+  transform: translateY(-4px);
+}
+
+.scrap-stat-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.scrap-stat-panel:nth-child(1)::before { background: var(--accent); }
+.scrap-stat-panel:nth-child(2)::before { background: #059669; }
+.scrap-stat-panel:nth-child(3)::before { background: #ef4444; }
+
+.scrap-stat-panel:nth-child(1):hover {
+  border-color: rgba(112, 22, 210, 0.35);
+  box-shadow: 0 12px 30px rgba(112, 22, 210, 0.2);
+}
+
+.scrap-stat-panel:nth-child(2):hover {
+  border-color: rgba(5, 150, 105, 0.35);
+  box-shadow: 0 12px 30px rgba(5, 150, 105, 0.2);
+}
+
+.scrap-stat-panel:nth-child(3):hover {
+  border-color: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.2);
+}
 
 .stat-info {
   display: flex;
@@ -451,33 +484,48 @@
 }
 
 .stat-lbl {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-bottom: 4px;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
 }
 
 .stat-val {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.text-green {
+  color: #059669 !important;
+}
+
+.text-red {
+  color: #ef4444 !important;
 }
 
 .unit-small {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--text-label);
+  color: var(--text-secondary);
+  margin-left: 2px;
 }
 
 .stat-icon-wrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.scrap-stat-panel:hover .stat-icon-wrapper {
+  transform: scale(1.1);
 }
 
 .stat-icon-wrapper.green { background: rgba(5, 150, 105, 0.1); color: #059669; }
@@ -486,22 +534,295 @@
 .scrap-portal-grid {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
-  gap: 24px;
+  gap: 28px;
 }
 
 .scrap-form-card, .scrap-history-card {
-  padding: 24px;
+  padding: 28px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .scrap-sale-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .scrap-portal-grid {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sale action buttons in history table */
+.sale-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-sale-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.edit-sale-btn:hover {
+  background: rgba(112, 22, 210, 0.08);
+  border-color: rgba(112, 22, 210, 0.2);
+}
+
+/* Inline delete confirmation */
+.sale-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.delete-confirm-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ef4444;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.confirm-delete-btn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+}
+
+.confirm-delete-btn:hover {
+  background: #dc2626;
+}
+
+.cancel-delete-btn {
+  background: var(--main-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cancel-delete-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+/* Edit Modal Glassmorphism styling */
+.edit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 20, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.edit-modal {
+  background: rgba(21, 17, 37, 0.95);
+  border: 1px solid rgba(112, 22, 210, 0.25);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.edit-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(112, 22, 210, 0.15);
+}
+
+.edit-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: inline-flex;
+}
+
+.edit-modal-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.edit-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.edit-preview-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(112, 22, 210, 0.08);
+  border: 1px solid rgba(112, 22, 210, 0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.edit-preview-total strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3ac0e8;
+}
+
+.edit-modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 16px 24px 20px;
+  border-top: 1px solid rgba(112, 22, 210, 0.15);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.edit-cancel-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.edit-cancel-btn:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.edit-save-btn {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 15px rgba(112, 22, 210, 0.35);
+  transition: all 0.2s;
+}
+
+.edit-save-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Custom Dropdown Suggestion Menu */
+.custom-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(21, 17, 37, 0.95);
+  border: 1px solid rgba(112, 22, 210, 0.25);
+  backdrop-filter: blur(16px);
+  border-radius: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin-top: 6px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.custom-dropdown-menu.open-upward {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.custom-dropdown-item {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.custom-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.custom-dropdown-item:hover {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.custom-dropdown-no-item {
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+}
+
 

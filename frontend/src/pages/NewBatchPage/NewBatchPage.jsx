@@ -435,37 +435,46 @@ export default function NewBatchPage({ onOptimize }) {
         </div>
       </div>
 
-      {/* Right Column: Recent Batch History sidebar */}
-      <div className="optimizer-right-sidebar">
-        <div className="card recent-batches-sidebar-card">
-          <div className="sidebar-header">
-            <History size={16} className="sidebar-header-icon" />
-            <h3 className="sidebar-title">Recent Optimizations</h3>
+      {/* Bottom Section: Recent Optimizations */}
+      <div className="recent-optimizations-section">
+        <div className="card recent-batches-card">
+          <div className="card-header-row">
+            <div className="header-title-group">
+              <History size={18} className="section-header-icon" />
+              <h3 className="section-main-title">Recent Optimizations</h3>
+            </div>
+            <p className="section-main-desc">Quick look at previously committed batch runs. Click to restore parameters.</p>
           </div>
-          <p className="sidebar-desc">Quick look at previously committed batch summaries.</p>
 
           {recentBatches.length === 0 ? (
             <div className="sidebar-empty-state">
               <p>No recent batches found.</p>
             </div>
           ) : (
-            <div className="sidebar-batch-list">
+            <div className="recent-batches-grid">
               {recentBatches.map((b) => {
                 const totalBars = b.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0;
                 return (
-                  <div key={b._id} className="sidebar-batch-item" onClick={() => onOptimize(b)} style={{ cursor: 'pointer' }}>
-                    <div className="sidebar-batch-meta">
-                      <span className="sidebar-batch-name">{b.batchName}</span>
-                      <span className="sidebar-batch-date">
-                        {new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
+                  <div key={b._id} className="batch-grid-item" onClick={() => onOptimize(b)}>
+                    <div className="batch-item-header">
+                      <span className="batch-item-name">{b.batchName}</span>
+                      <span className="batch-item-date">
+                        {new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                       </span>
                     </div>
-                    <div className="sidebar-batch-stats">
-                      <div className="sidebar-stat-chip">
-                        <TrendingUp size={11} />
-                        <span>{b.summary?.avgUtilization?.toFixed(1)}% Util</span>
+                    <div className="batch-item-body">
+                      <div className="batch-metric">
+                        <span className="metric-val">{b.summary?.avgUtilization?.toFixed(1)}%</span>
+                        <span className="metric-lbl">Avg Utilization</span>
                       </div>
-                      <span className="sidebar-stat-lbl">{totalBars} Bars Used</span>
+                      <div className="batch-vertical-divider"></div>
+                      <div className="batch-metric">
+                        <span className="metric-val">{totalBars}</span>
+                        <span className="metric-lbl">Bars Used</span>
+                      </div>
+                    </div>
+                    <div className="batch-item-footer">
+                      <span className="restore-hint-btn">Restore Optimization</span>
                     </div>
                   </div>
                 );

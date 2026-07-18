@@ -45,7 +45,8 @@ export default function OverviewPage({ onNavigate }) {
     totalLiveStockKg = 0,
     totalScrapKg = 0,
     wastagePercentage = 0,
-    dailyScrapGraph = []
+    dailyScrapGraph = [],
+    diameterWeights = {}
   } = stats || {}
 
   // SVG Chart Dimensions
@@ -237,31 +238,31 @@ export default function OverviewPage({ onNavigate }) {
           <p className="dist-card-subtitle">Total weight distribution by rebar size (8mm to 32mm).</p>
 
           <div className="dia-distribution-list">
-            {[8, 10, 12, 16, 20, 25, 32].map(dia => {
-              // We don't have stats.liveStockItems directly, but we can compute standard/remnant ratio of weight
-              // Let's sum the standard vs remnants per dia
-              // Wait, the backend doesn't return liveStockItems list directly in stats, let's double check batches.service:
-              // It returned liveStandardKg and liveRemnantsKg, but wait, we can fetch the inventory list from the backend!
-              // For simplicity, let's render a nice progress visual for the main steel diameters based on typical rebar distribution
-              // or let's fetch it, or show general metrics.
-              // Wait, let's keep it clean! We can show live stock summaries using standard rebar stats.
-              return (
-                <div key={dia} className="dia-dist-row">
-                  <span className="dia-dist-label">{dia} mm</span>
-                  <div className="dia-dist-bar-bg">
-                    <div 
-                      className="dia-dist-bar-fill" 
-                      style={{ 
-                        width: `${dia === 8 || dia === 10 || dia === 12 ? '65%' : dia === 16 ? '40%' : '15%'}`
-                      }}
-                    ></div>
+            {(() => {
+              const weights = [8, 10, 12, 16, 20, 25, 32].map(dia => diameterWeights[dia] || 0);
+              const maxWeight = Math.max(...weights, 0);
+
+              return [8, 10, 12, 16, 20, 25, 32].map(dia => {
+                const weight = diameterWeights[dia] || 0;
+                const percentWidth = maxWeight > 0 ? (weight / maxWeight) * 100 : 0;
+                return (
+                  <div key={dia} className="dia-dist-row">
+                    <span className="dia-dist-label">{dia} mm</span>
+                    <div className="dia-dist-bar-bg">
+                      <div 
+                        className="dia-dist-bar-fill" 
+                        style={{ 
+                          width: `${percentWidth}%`
+                        }}
+                      ></div>
+                    </div>
+                    <span className="dia-dist-value">
+                      {weight > 0 ? `${Math.round(weight).toLocaleString()} kg` : '0 kg'}
+                    </span>
                   </div>
-                  <span className="dia-dist-value">
-                    {dia === 8 || dia === 10 || dia === 12 ? 'High Stock' : dia === 16 ? 'Medium Stock' : 'Low Stock'}
-                  </span>
-                </div>
-              )
-            })}
+                );
+              });
+            })()}
           </div>
         </div>
       </div>

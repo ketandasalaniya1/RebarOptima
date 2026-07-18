@@ -13,6 +13,10 @@
     "start:backend": "npm run start:dev --workspace=backend"
   },
   "dependencies": {
-    "@vercel/analytics": "^2.0.1"
+    "@vercel/analytics": "^2.0.1",
+    "lucide-react": "^1.25.0"
+  },
+  "allowScripts": {
+    "lucide-react@1.25.0": true
   }
 }

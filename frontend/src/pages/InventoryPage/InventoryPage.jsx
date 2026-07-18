@@ -11,7 +11,10 @@ import {
   Plus,
   Trash2,
   TrendingDown,
-  DollarSign
+  DollarSign,
+  Pencil,
+  X,
+  Save
 } from 'lucide-react'
 import './InventoryPage.css'
 
@@ -27,7 +30,7 @@ export default function InventoryPage() {
 
   // Inward Multi-Diameter Voucher Form State
   const [voucherRows, setVoucherRows] = useState([
-    { id: Date.now(), diameter: 12, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
+    { id: Date.now(), diameter: 8, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
   ])
 
   // Scrap Sales Portal State
@@ -42,6 +45,18 @@ export default function InventoryPage() {
     weight: '',
     pricePerKg: ''
   })
+
+  // Edit state for Scrap Sales History
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState({
+    date: '',
+    buyer: '',
+    weight: '',
+    pricePerKg: ''
+  })
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+  const [confirmDeleteStockId, setConfirmDeleteStockId] = useState(null)
+  const [focusedDropdown, setFocusedDropdown] = useState(null)
 
   // Load inventory and rules on mount
   useEffect(() => {
@@ -74,7 +89,7 @@ export default function InventoryPage() {
   const handleAddVoucherRow = () => {
     setVoucherRows(prev => [
       ...prev,
-      { id: Date.now(), diameter: 12, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
+      { id: Date.now(), diameter: 8, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
     ])
   }
 
@@ -129,7 +144,7 @@ export default function InventoryPage() {
 
       setSuccess('Voucher inward entry recorded successfully!')
       setVoucherRows([
-        { id: Date.now(), diameter: 12, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
+        { id: Date.now(), diameter: 8, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
       ])
       
       const invData = await inventoryApi.getInventory()
@@ -171,8 +186,11 @@ export default function InventoryPage() {
     }
   }
 
-  const handleDeleteStockItem = async (id) => {
-    if (!window.confirm('Delete this stock entry permanently?')) return
+  const handleDeleteStockItem = (id) => {
+    setConfirmDeleteStockId(id)
+  }
+
+  const handleConfirmDeleteStock = async (id) => {
     setError('')
     try {
       await inventoryApi.deleteStockItem(id)
@@ -180,11 +198,16 @@ export default function InventoryPage() {
         ...prev,
         standardStock: prev.standardStock.filter(item => item._id !== id)
       }))
+      setConfirmDeleteStockId(null)
       setSuccess('Stock entry deleted.')
       setTimeout(() => setSuccess(''), 2000)
     } catch (err) {
       setError(err.message || 'Failed to delete stock entry.')
     }
+  }
+
+  const handleCancelDeleteStock = () => {
+    setConfirmDeleteStockId(null)
   }
 
   // Scrap sales portal submission
@@ -216,6 +239,58 @@ export default function InventoryPage() {
     setTimeout(() => setSuccess(''), 1500)
   }
 
+  // Edit Scrap Sale handlers
+  const handleEditSale = (sale) => {
+    setEditingId(sale.id)
+    setEditForm({
+      date: sale.date,
+      buyer: sale.buyer,
+      weight: String(sale.weight),
+      pricePerKg: String(sale.pricePerKg)
+    })
+  }
+
+  const handleEditFormChange = (field, value) => {
+    setEditForm(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleSaveEdit = () => {
+    const weight = parseFloat(editForm.weight) || 0
+    const price = parseFloat(editForm.pricePerKg) || 0
+    if (weight <= 0 || price <= 0 || !editForm.buyer.trim()) {
+      setError('Please fill in all fields with valid values.')
+      return
+    }
+    setScrapSales(prev => prev.map(s =>
+      s.id === editingId
+        ? { ...s, date: editForm.date, buyer: editForm.buyer, weight, pricePerKg: price, revenue: weight * price }
+        : s
+    ))
+    setEditingId(null)
+    setSuccess('Scrap sale entry updated successfully!')
+    setTimeout(() => setSuccess(''), 1500)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingId(null)
+    setError('')
+  }
+
+  const handleDeleteSale = (id) => {
+    setConfirmDeleteId(id)
+  }
+
+  const handleConfirmDelete = (id) => {
+    setScrapSales(prev => prev.filter(s => s.id !== id))
+    setConfirmDeleteId(null)
+    setSuccess('Scrap sale entry deleted.')
+    setTimeout(() => setSuccess(''), 1500)
+  }
+
+  const handleCancelDelete = () => {
+    setConfirmDeleteId(null)
+  }
+
   // Calculations for Scrap Sales Portal
   const totalScrapSoldWeight = scrapSales.reduce((sum, s) => sum + s.weight, 0)
   const totalScrapRevenue = scrapSales.reduce((sum, s) => sum + s.revenue, 0)
@@ -235,6 +310,33 @@ export default function InventoryPage() {
       </div>
     )
   }
+
+  const uniqueBrands = Array.from(new Set([
+    ...(inventory.standardStock || []).map(item => item.brandName),
+    ...(inventory.remnantsStock || []).map(item => item.brandName)
+  ].map(b => b ? b.trim() : '').filter(Boolean)));
+
+  const uniqueVendors = Array.from(new Set([
+    ...(inventory.standardStock || []).map(item => item.vendorName),
+    ...(inventory.remnantsStock || []).map(item => item.vendorName)
+  ].map(v => v ? v.trim() : '').filter(Boolean)));
+
+  const getFilteredBrands = (val) => {
+    const term = (val || '').toLowerCase().trim();
+    if (!term) return uniqueBrands;
+    return uniqueBrands.filter(b => b.toLowerCase().includes(term));
+  };
+
+  const getFilteredVendors = (val) => {
+    const term = (val || '').toLowerCase().trim();
+    if (!term) return uniqueVendors;
+    return uniqueVendors.filter(v => v.toLowerCase().includes(term));
+  };
+
+  const handleSelectSuggestion = (rowId, field, value) => {
+    handleVoucherRowChange(rowId, field, value);
+    setFocusedDropdown(null);
+  };
 
   return (
     <div className="inventory-page">
@@ -327,13 +429,31 @@ export default function InventoryPage() {
                         <td>{item.vendorName || '-'}</td>
                         <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'}</td>
                         <td>
-                          <button
-                            className="delete-row-btn"
-                            title="Delete this stock entry"
-                            onClick={() => handleDeleteStockItem(item._id)}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          {confirmDeleteStockId === item._id ? (
+                            <div className="sale-delete-confirm">
+                              <span className="delete-confirm-text">Delete?</span>
+                              <button
+                                className="confirm-delete-btn"
+                                onClick={() => handleConfirmDeleteStock(item._id)}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                className="cancel-delete-btn"
+                                onClick={handleCancelDeleteStock}
+                              >
+                                No
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              className="delete-row-btn"
+                              title="Delete this stock entry"
+                              onClick={() => handleDeleteStockItem(item._id)}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -422,7 +542,7 @@ export default function InventoryPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {voucherRows.map((row) => (
+                  {voucherRows.map((row, idx) => (
                     <tr key={row.id}>
                       <td>
                         <select
@@ -463,23 +583,69 @@ export default function InventoryPage() {
                       <td>
                         <span className="total-preview font-bold">₹{row.totalPriceWithGst.toLocaleString('en-IN')}</span>
                       </td>
-                      <td>
+                      <td style={{ position: 'relative' }}>
                         <input
                           type="text"
                           placeholder="Brand name"
                           value={row.brandName}
                           onChange={(e) => handleVoucherRowChange(row.id, 'brandName', e.target.value)}
+                          onFocus={() => setFocusedDropdown({ id: row.id, field: 'brandName' })}
+                          onBlur={() => setFocusedDropdown(null)}
                           className="voucher-input"
+                          autoComplete="off"
                         />
+                        {focusedDropdown?.id === row.id && focusedDropdown?.field === 'brandName' && (
+                          <div className={`custom-dropdown-menu ${idx > 0 ? 'open-upward' : ''}`}>
+                            {getFilteredBrands(row.brandName).length > 0 ? (
+                              getFilteredBrands(row.brandName).map(brand => (
+                                <div
+                                  key={brand}
+                                  className="custom-dropdown-item"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSelectSuggestion(row.id, 'brandName', brand);
+                                  }}
+                                >
+                                  {brand}
+                                </div>
+                              ))
+                            ) : (
+                              <div className="custom-dropdown-no-item">No brands found</div>
+                            )}
+                          </div>
+                        )}
                       </td>
-                      <td>
+                      <td style={{ position: 'relative' }}>
                         <input
                           type="text"
                           placeholder="Vendor name"
                           value={row.vendorName}
                           onChange={(e) => handleVoucherRowChange(row.id, 'vendorName', e.target.value)}
+                          onFocus={() => setFocusedDropdown({ id: row.id, field: 'vendorName' })}
+                          onBlur={() => setFocusedDropdown(null)}
                           className="voucher-input"
+                          autoComplete="off"
                         />
+                        {focusedDropdown?.id === row.id && focusedDropdown?.field === 'vendorName' && (
+                          <div className={`custom-dropdown-menu ${idx > 0 ? 'open-upward' : ''}`}>
+                            {getFilteredVendors(row.vendorName).length > 0 ? (
+                              getFilteredVendors(row.vendorName).map(vendor => (
+                                <div
+                                  key={vendor}
+                                  className="custom-dropdown-item"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSelectSuggestion(row.id, 'vendorName', vendor);
+                                  }}
+                                >
+                                  {vendor}
+                                </div>
+                              ))
+                            ) : (
+                              <div className="custom-dropdown-no-item">No vendors found</div>
+                            )}
+                          </div>
+                        )}
                       </td>
                       <td className="col-actions">
                         <button 
@@ -602,6 +768,7 @@ export default function InventoryPage() {
                       <th>Weight</th>
                       <th>Rate / Kg</th>
                       <th>Total Earned</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -612,12 +779,119 @@ export default function InventoryPage() {
                         <td>{sale.weight} kg</td>
                         <td>₹{sale.pricePerKg}</td>
                         <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
+                        <td>
+                          {confirmDeleteId === sale.id ? (
+                            <div className="sale-delete-confirm">
+                              <span className="delete-confirm-text">Delete?</span>
+                              <button
+                                className="confirm-delete-btn"
+                                onClick={() => handleConfirmDelete(sale.id)}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                className="cancel-delete-btn"
+                                onClick={handleCancelDelete}
+                              >
+                                No
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="sale-action-btns">
+                              <button
+                                className="edit-sale-btn"
+                                title="Edit this entry"
+                                onClick={() => handleEditSale(sale)}
+                              >
+                                <Pencil size={13} />
+                              </button>
+                              <button
+                                className="delete-row-btn"
+                                title="Delete this entry"
+                                onClick={() => handleDeleteSale(sale.id)}
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
+
+            {/* Edit Modal */}
+            {editingId !== null && (
+              <div className="edit-modal-overlay" onClick={handleCancelEdit}>
+                <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="edit-modal-header">
+                    <h4 className="edit-modal-title"><Pencil size={15} /> Edit Scrap Sale Entry</h4>
+                    <button className="edit-modal-close" onClick={handleCancelEdit}><X size={16} /></button>
+                  </div>
+
+                  <div className="edit-modal-body">
+                    <div className="form-group">
+                      <label>Transaction Date</label>
+                      <input
+                        type="date"
+                        value={editForm.date}
+                        onChange={(e) => handleEditFormChange('date', e.target.value)}
+                        className="inward-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Scrap Buyer / Factory</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Mittal Steel Scrap Buyers"
+                        value={editForm.buyer}
+                        onChange={(e) => handleEditFormChange('buyer', e.target.value)}
+                        className="inward-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Weight Sold (Kgs)</label>
+                      <input
+                        type="number"
+                        placeholder="e.g. 500"
+                        value={editForm.weight}
+                        onChange={(e) => handleEditFormChange('weight', e.target.value)}
+                        className="inward-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Selling Price per Kg (₹)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        placeholder="e.g. 22.5"
+                        value={editForm.pricePerKg}
+                        onChange={(e) => handleEditFormChange('pricePerKg', e.target.value)}
+                        className="inward-input"
+                      />
+                    </div>
+
+                    {editForm.weight && editForm.pricePerKg && (
+                      <div className="edit-preview-total">
+                        <span>Preview Total:</span>
+                        <strong>₹{((parseFloat(editForm.weight) || 0) * (parseFloat(editForm.pricePerKg) || 0)).toLocaleString('en-IN')}</strong>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="edit-modal-footer">
+                    <button className="edit-cancel-btn" onClick={handleCancelEdit}>
+                      <X size={14} /> Cancel
+                    </button>
+                    <button className="edit-save-btn" onClick={handleSaveEdit}>
+                      <Save size={14} /> Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -662,6 +936,7 @@ export default function InventoryPage() {
           </button>
         </div>
       )}
+
     </div>
   )
 }

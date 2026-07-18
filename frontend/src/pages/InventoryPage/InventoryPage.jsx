@@ -34,10 +34,7 @@ export default function InventoryPage() {
   ])
 
   // Scrap Sales Portal State
-  const [scrapSales, setScrapSales] = useState([
-    { id: 1, date: '2026-07-01', buyer: 'Mittal Steel Scrap Corp', weight: 450, pricePerKg: 22, revenue: 9900 },
-    { id: 2, date: '2026-07-10', buyer: 'Hariom Scrap Buyers', weight: 1200, pricePerKg: 24, revenue: 28800 }
-  ])
+  const [scrapSales, setScrapSales] = useState([])
 
   const [scrapSaleForm, setScrapSaleForm] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -56,6 +53,11 @@ export default function InventoryPage() {
   })
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
   const [confirmDeleteStockId, setConfirmDeleteStockId] = useState(null)
+  const [editingRemnantId, setEditingRemnantId] = useState(null)
+  const [editRemnantQty, setEditRemnantQty] = useState('')
+  const [confirmDeleteRemnantId, setConfirmDeleteRemnantId] = useState(null)
+  const [editingStockId, setEditingStockId] = useState(null)
+  const [editStockQty, setEditStockQty] = useState('')
   const [focusedDropdown, setFocusedDropdown] = useState(null)
 
   // Load inventory and rules on mount
@@ -67,12 +69,14 @@ export default function InventoryPage() {
     try {
       setLoading(true)
       setError('')
-      const [invData, rulesData] = await Promise.all([
+      const [invData, rulesData, salesData] = await Promise.all([
         inventoryApi.getInventory(),
-        inventoryApi.getScrapRules()
+        inventoryApi.getScrapRules(),
+        inventoryApi.getScrapSales()
       ])
       setInventory(invData)
       setScrapRules(rulesData)
+      setScrapSales(salesData)
     } catch (err) {
       setError(err.message || 'Failed to fetch inventory data.')
     } finally {
@@ -210,38 +214,165 @@ export default function InventoryPage() {
     setConfirmDeleteStockId(null)
   }
 
+  const handleEditStock = (item) => {
+    setEditingStockId(item._id)
+    setEditStockQty(item.quantity)
+  }
+
+  const handleCancelStockEdit = () => {
+    setEditingStockId(null)
+    setEditStockQty('')
+  }
+
+  const handleSaveStockEdit = async (id) => {
+    setError('')
+    setSuccess('')
+    const newQty = parseInt(editStockQty)
+    if (isNaN(newQty) || newQty < 0) {
+      setError('Quantity must be a non-negative number.')
+      return
+    }
+
+    try {
+      setActionLoading(true)
+      const result = await inventoryApi.updateStockItem(id, newQty)
+      
+      setInventory(prev => {
+        if (newQty === 0 || result.deleted) {
+          return {
+            ...prev,
+            standardStock: prev.standardStock.filter(item => item._id !== id)
+          }
+        }
+        return {
+          ...prev,
+          standardStock: prev.standardStock.map(item => 
+            item._id === id ? { ...item, quantity: result.quantity, weightInKgs: result.weightInKgs } : item
+          )
+        }
+      })
+
+      setEditingStockId(null)
+      setEditStockQty('')
+      setSuccess('Stock updated successfully.')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (err) {
+      setError(err.message || 'Failed to update stock.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Remnants Delete and Edit handlers
+  const handleDeleteRemnant = (id) => {
+    setConfirmDeleteRemnantId(id)
+  }
+
+  const handleConfirmDeleteRemnant = async (id) => {
+    setError('')
+    try {
+      await inventoryApi.deleteStockItem(id)
+      setInventory(prev => ({
+        ...prev,
+        remnantsStock: prev.remnantsStock.filter(item => item._id !== id)
+      }))
+      setConfirmDeleteRemnantId(null)
+      setSuccess('Remnant stock entry deleted.')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (err) {
+      setError(err.message || 'Failed to delete remnant stock entry.')
+    }
+  }
+
+  const handleCancelDeleteRemnant = () => {
+    setConfirmDeleteRemnantId(null)
+  }
+
+  const handleEditRemnant = (item) => {
+    setEditingRemnantId(item._id)
+    setEditRemnantQty(item.quantity)
+  }
+
+  const handleCancelRemnantEdit = () => {
+    setEditingRemnantId(null)
+    setEditRemnantQty('')
+  }
+
+  const handleSaveRemnantEdit = async (id) => {
+    setError('')
+    setSuccess('')
+    const newQty = parseInt(editRemnantQty)
+    if (isNaN(newQty) || newQty < 0) {
+      setError('Quantity must be a non-negative number.')
+      return
+    }
+
+    try {
+      setActionLoading(true)
+      const result = await inventoryApi.updateStockItem(id, newQty)
+      
+      setInventory(prev => {
+        if (newQty === 0 || result.deleted) {
+          return {
+            ...prev,
+            remnantsStock: prev.remnantsStock.filter(item => item._id !== id)
+          }
+        }
+        return {
+          ...prev,
+          remnantsStock: prev.remnantsStock.map(item => 
+            item._id === id ? { ...item, quantity: result.quantity, weightInKgs: result.weightInKgs } : item
+          )
+        }
+      })
+
+      setEditingRemnantId(null)
+      setEditRemnantQty('')
+      setSuccess('Remnant stock updated successfully.')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (err) {
+      setError(err.message || 'Failed to update remnant stock.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   // Scrap sales portal submission
-  const handleScrapSaleSubmit = (e) => {
+  const handleScrapSaleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
+    setSuccess('')
     const weight = parseFloat(scrapSaleForm.weight) || 0
     const price = parseFloat(scrapSaleForm.pricePerKg) || 0
     if (weight <= 0 || price <= 0 || !scrapSaleForm.buyer.trim()) return
 
-    const revenue = weight * price
-    setScrapSales(prev => [
-      ...prev,
-      {
-        id: Date.now(),
+    try {
+      setActionLoading(true)
+      const newSale = await inventoryApi.createScrapSale({
         date: scrapSaleForm.date,
         buyer: scrapSaleForm.buyer,
         weight,
-        pricePerKg: price,
-        revenue
-      }
-    ])
-    setSuccess('Scrap sale recorded successfully!')
-    setScrapSaleForm({
-      date: new Date().toISOString().split('T')[0],
-      buyer: '',
-      weight: '',
-      pricePerKg: ''
-    })
-    setTimeout(() => setSuccess(''), 1500)
+        pricePerKg: price
+      })
+      setScrapSales(prev => [newSale, ...prev])
+      setSuccess('Scrap sale recorded successfully!')
+      setScrapSaleForm({
+        date: new Date().toISOString().split('T')[0],
+        buyer: '',
+        weight: '',
+        pricePerKg: ''
+      })
+      setTimeout(() => setSuccess(''), 1500)
+    } catch (err) {
+      setError(err.message || 'Failed to record scrap transaction.')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   // Edit Scrap Sale handlers
   const handleEditSale = (sale) => {
-    setEditingId(sale.id)
+    setEditingId(sale._id)
     setEditForm({
       date: sale.date,
       buyer: sale.buyer,
@@ -254,21 +385,33 @@ export default function InventoryPage() {
     setEditForm(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
+    setError('')
+    setSuccess('')
     const weight = parseFloat(editForm.weight) || 0
     const price = parseFloat(editForm.pricePerKg) || 0
     if (weight <= 0 || price <= 0 || !editForm.buyer.trim()) {
       setError('Please fill in all fields with valid values.')
       return
     }
-    setScrapSales(prev => prev.map(s =>
-      s.id === editingId
-        ? { ...s, date: editForm.date, buyer: editForm.buyer, weight, pricePerKg: price, revenue: weight * price }
-        : s
-    ))
-    setEditingId(null)
-    setSuccess('Scrap sale entry updated successfully!')
-    setTimeout(() => setSuccess(''), 1500)
+
+    try {
+      setActionLoading(true)
+      const updated = await inventoryApi.updateScrapSale(editingId, {
+        date: editForm.date,
+        buyer: editForm.buyer,
+        weight,
+        pricePerKg: price
+      })
+      setScrapSales(prev => prev.map(s => s._id === editingId ? updated : s))
+      setEditingId(null)
+      setSuccess('Scrap sale entry updated successfully!')
+      setTimeout(() => setSuccess(''), 1500)
+    } catch (err) {
+      setError(err.message || 'Failed to update scrap sale.')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   const handleCancelEdit = () => {
@@ -280,11 +423,17 @@ export default function InventoryPage() {
     setConfirmDeleteId(id)
   }
 
-  const handleConfirmDelete = (id) => {
-    setScrapSales(prev => prev.filter(s => s.id !== id))
-    setConfirmDeleteId(null)
-    setSuccess('Scrap sale entry deleted.')
-    setTimeout(() => setSuccess(''), 1500)
+  const handleConfirmDelete = async (id) => {
+    setError('')
+    try {
+      await inventoryApi.deleteScrapSale(id)
+      setScrapSales(prev => prev.filter(s => s._id !== id))
+      setConfirmDeleteId(null)
+      setSuccess('Scrap sale entry deleted.')
+      setTimeout(() => setSuccess(''), 1500)
+    } catch (err) {
+      setError(err.message || 'Failed to delete scrap sale.')
+    }
   }
 
   const handleCancelDelete = () => {
@@ -421,7 +570,28 @@ export default function InventoryPage() {
                       <tr key={item._id}>
                         <td className="font-bold">{item.diameter} mm</td>
                         <td>{(item.length / 1000).toFixed(1)} m</td>
-                        <td className="font-bold">{item.quantity}</td>
+                        <td className="font-bold">
+                          {editingStockId === item._id ? (
+                            <input
+                              type="number"
+                              min="0"
+                              value={editStockQty}
+                              onChange={(e) => setEditStockQty(e.target.value)}
+                              style={{
+                                width: '70px',
+                                padding: '4px 8px',
+                                background: 'var(--input-bg)',
+                                border: '1px solid var(--input-border)',
+                                borderRadius: '6px',
+                                color: 'var(--text-primary)',
+                                outline: 'none',
+                                textAlign: 'center'
+                              }}
+                            />
+                          ) : (
+                            item.quantity
+                          )}
+                        </td>
                         <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
                         <td>₹{item.costPerKg?.toFixed(2)}</td>
                         <td>{item.typeOfBar || '-'}</td>
@@ -429,7 +599,25 @@ export default function InventoryPage() {
                         <td>{item.vendorName || '-'}</td>
                         <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'}</td>
                         <td>
-                          {confirmDeleteStockId === item._id ? (
+                          {editingStockId === item._id ? (
+                            <div className="sale-action-btns">
+                              <button
+                                className="edit-sale-btn"
+                                title="Save changes"
+                                onClick={() => handleSaveStockEdit(item._id)}
+                                style={{ color: '#10b981' }}
+                              >
+                                <Save size={14} />
+                              </button>
+                              <button
+                                className="delete-row-btn"
+                                title="Cancel edit"
+                                onClick={handleCancelStockEdit}
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          ) : confirmDeleteStockId === item._id ? (
                             <div className="sale-delete-confirm">
                               <span className="delete-confirm-text">Delete?</span>
                               <button
@@ -446,13 +634,22 @@ export default function InventoryPage() {
                               </button>
                             </div>
                           ) : (
-                            <button
-                              className="delete-row-btn"
-                              title="Delete this stock entry"
-                              onClick={() => handleDeleteStockItem(item._id)}
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            <div className="sale-action-btns">
+                              <button
+                                className="edit-sale-btn"
+                                title="Edit quantity"
+                                onClick={() => handleEditStock(item)}
+                              >
+                                <Pencil size={14} />
+                              </button>
+                              <button
+                                className="delete-row-btn"
+                                title="Delete this stock entry"
+                                onClick={() => handleDeleteStockItem(item._id)}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -488,6 +685,7 @@ export default function InventoryPage() {
                       <th>Original Brand</th>
                       <th>Original Vendor</th>
                       <th>Generated Date</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -495,12 +693,87 @@ export default function InventoryPage() {
                       <tr key={item._id}>
                         <td className="font-bold text-cyan">{item.diameter} mm</td>
                         <td className="font-bold">{item.length.toLocaleString()} mm</td>
-                        <td className="font-bold">{item.quantity}</td>
+                        <td className="font-bold">
+                          {editingRemnantId === item._id ? (
+                            <input
+                              type="number"
+                              min="0"
+                              value={editRemnantQty}
+                              onChange={(e) => setEditRemnantQty(e.target.value)}
+                              style={{
+                                width: '70px',
+                                padding: '4px 8px',
+                                background: 'var(--input-bg)',
+                                border: '1px solid var(--input-border)',
+                                borderRadius: '6px',
+                                color: 'var(--text-primary)',
+                                outline: 'none',
+                                textAlign: 'center'
+                              }}
+                            />
+                          ) : (
+                            item.quantity
+                          )}
+                        </td>
                         <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
                         <td>{item.typeOfBar || '-'}</td>
                         <td>{item.brandName || '-'}</td>
                         <td>{item.vendorName || '-'}</td>
                         <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'}</td>
+                        <td>
+                          {editingRemnantId === item._id ? (
+                            <div className="sale-action-btns">
+                              <button
+                                className="edit-sale-btn"
+                                title="Save changes"
+                                onClick={() => handleSaveRemnantEdit(item._id)}
+                                style={{ color: '#10b981' }}
+                              >
+                                <Save size={14} />
+                              </button>
+                              <button
+                                className="delete-row-btn"
+                                title="Cancel edit"
+                                onClick={handleCancelRemnantEdit}
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          ) : confirmDeleteRemnantId === item._id ? (
+                            <div className="sale-delete-confirm">
+                              <span className="delete-confirm-text">Delete?</span>
+                              <button
+                                className="confirm-delete-btn"
+                                onClick={() => handleConfirmDeleteRemnant(item._id)}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                className="cancel-delete-btn"
+                                onClick={handleCancelDeleteRemnant}
+                              >
+                                No
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="sale-action-btns">
+                              <button
+                                className="edit-sale-btn"
+                                title="Edit quantity"
+                                onClick={() => handleEditRemnant(item)}
+                              >
+                                <Pencil size={14} />
+                              </button>
+                              <button
+                                className="delete-row-btn"
+                                title="Delete this remnant"
+                                onClick={() => handleDeleteRemnant(item._id)}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -773,19 +1046,19 @@ export default function InventoryPage() {
                   </thead>
                   <tbody>
                     {scrapSales.map((sale) => (
-                      <tr key={sale.id}>
+                      <tr key={sale._id}>
                         <td>{new Date(sale.date).toLocaleDateString('en-GB')}</td>
                         <td className="font-bold">{sale.buyer}</td>
                         <td>{sale.weight} kg</td>
                         <td>₹{sale.pricePerKg}</td>
                         <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
                         <td>
-                          {confirmDeleteId === sale.id ? (
+                          {confirmDeleteId === sale._id ? (
                             <div className="sale-delete-confirm">
                               <span className="delete-confirm-text">Delete?</span>
                               <button
                                 className="confirm-delete-btn"
-                                onClick={() => handleConfirmDelete(sale.id)}
+                                onClick={() => handleConfirmDelete(sale._id)}
                               >
                                 Yes
                               </button>
@@ -808,7 +1081,7 @@ export default function InventoryPage() {
                               <button
                                 className="delete-row-btn"
                                 title="Delete this entry"
-                                onClick={() => handleDeleteSale(sale.id)}
+                                onClick={() => handleDeleteSale(sale._id)}
                               >
                                 <Trash2 size={13} />
                               </button>

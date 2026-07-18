@@ -23,6 +23,7 @@ function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const [optimizationData, setOptimizationData] = useState(null);
+  const [editBatchParams, setEditBatchParams] = useState(null);
 
   // Synchronize route session on mount and handle PopState events
   useEffect(() => {
@@ -99,10 +100,14 @@ function App() {
               <InventoryPage />
             )}
             {view === 'inputs' && (
-              <NewBatchPage onOptimize={(data) => {
-                setOptimizationData(data);
-                dispatch(setView('results'));
-              }} />
+              <NewBatchPage 
+                editParams={editBatchParams}
+                clearEditParams={() => setEditBatchParams(null)}
+                onOptimize={(data) => {
+                  setOptimizationData(data);
+                  dispatch(setView('results'));
+                }} 
+              />
             )}
             {view === 'results' && (
               <ResultsPage 
@@ -116,7 +121,12 @@ function App() {
               />
             )}
             {view === 'history' && (
-              <BatchHistoryPage />
+              <BatchHistoryPage 
+                onEditBatch={(batch) => {
+                  setEditBatchParams(batch);
+                  dispatch(setView('inputs'));
+                }}
+              />
             )}
             {view === 'ledger' && (
               <LedgerPage />

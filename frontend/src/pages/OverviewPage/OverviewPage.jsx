@@ -6,7 +6,10 @@ import {
   Trash2,
   AlertTriangle,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Scale,
+  DollarSign,
+  TrendingDown
 } from 'lucide-react'
 import './OverviewPage.css'
 
@@ -46,7 +49,10 @@ export default function OverviewPage({ onNavigate }) {
     totalScrapKg = 0,
     wastagePercentage = 0,
     dailyScrapGraph = [],
-    diameterWeights = {}
+    diameterWeights = {},
+    totalScrapSoldWeight = 0,
+    totalScrapRevenue = 0,
+    totalScrapLossDifferential = 0
   } = stats || {}
 
   // SVG Chart Dimensions
@@ -85,14 +91,14 @@ export default function OverviewPage({ onNavigate }) {
           <div className="stat-card-left">
             <span className="card-lbl">Live Stock Weight</span>
             <span className="card-val">
-              {totalLiveStockKg.toLocaleString()} <span className="val-unit">Kgs</span>
+              {(totalLiveStockKg / 1000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="val-unit">Tons</span>
             </span>
             <div className="card-sub-stats">
               <span className="sub-stat-item">
-                <span className="bullet std"></span> Standard: {liveStandardKg.toLocaleString()} Kgs
+                <span className="bullet std"></span> Standard: {(liveStandardKg / 1000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Tons
               </span>
               <span className="sub-stat-item">
-                <span className="bullet rem"></span> Remnants: {liveRemnantsKg.toLocaleString()} Kgs
+                <span className="bullet rem"></span> Remnants: {(liveRemnantsKg / 1000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Tons
               </span>
             </div>
           </div>
@@ -128,6 +134,45 @@ export default function OverviewPage({ onNavigate }) {
           </div>
           <div className="card-icon-wrapper orange-bg">
             <TrendingUp size={22} color="#e38c22" />
+          </div>
+        </div>
+
+        <div className="card stat-card">
+          <div className="stat-card-left">
+            <span className="card-lbl">Total Scrap Weight Sold</span>
+            <span className="card-val text-cyan">
+              {totalScrapSoldWeight.toLocaleString()} <span className="val-unit">Kgs</span>
+            </span>
+            <span className="card-sub-lbl text-cyan">Scrap cleared & sold from site</span>
+          </div>
+          <div className="card-icon-wrapper cyan-bg">
+            <Scale size={22} color="#3ac0e8" />
+          </div>
+        </div>
+
+        <div className="card stat-card">
+          <div className="stat-card-left">
+            <span className="card-lbl">Total Revenue Retrieved</span>
+            <span className="card-val text-green">
+              ₹{totalScrapRevenue.toLocaleString('en-IN')}
+            </span>
+            <span className="card-sub-lbl text-green">Capital recovered from waste sales</span>
+          </div>
+          <div className="card-icon-wrapper green-bg">
+            <DollarSign size={22} color="#2da44e" />
+          </div>
+        </div>
+
+        <div className="card stat-card">
+          <div className="stat-card-left">
+            <span className="card-lbl">Lost Material Capital</span>
+            <span className="card-val text-red">
+              ₹{totalScrapLossDifferential.toLocaleString('en-IN')}
+            </span>
+            <span className="card-sub-lbl text-red">Lost value (Purchased vs sold scrap)</span>
+          </div>
+          <div className="card-icon-wrapper red-bg">
+            <TrendingDown size={22} color="#ea4a4a" />
           </div>
         </div>
       </div>

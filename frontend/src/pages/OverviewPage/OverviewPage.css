@@ -146,6 +146,14 @@
   color: #e38c22 !important;
 }
 
+.text-cyan {
+  color: #3ac0e8 !important;
+}
+
+.text-green {
+  color: #2da44e !important;
+}
+
 .card-icon-wrapper {
   display: flex;
   align-items: center;
@@ -165,6 +173,14 @@
 
 .orange-bg {
   background: rgba(227, 140, 34, 0.08);
+}
+
+.green-bg {
+  background: rgba(45, 164, 78, 0.08);
+}
+
+.cyan-bg {
+  background: rgba(58, 192, 232, 0.08);
 }
 
 /* Dashboard Content Grid */

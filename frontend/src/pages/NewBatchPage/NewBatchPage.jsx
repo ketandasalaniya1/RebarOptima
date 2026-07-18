@@ -61,7 +61,7 @@ function useTableRows(initial, defaults) {
   return { rows, setRows, addRow, deleteRow, updateRow, handleLastFieldKeyDown, firstFieldRef }
 }
 
-export default function NewBatchPage({ onOptimize }) {
+export default function NewBatchPage({ onOptimize, editParams, clearEditParams }) {
   const settingsState = useSelector((state) => state.settings)
   
   const stock = useTableRows(initialStock, (prev) => ({
@@ -94,6 +94,25 @@ export default function NewBatchPage({ onOptimize }) {
   useEffect(() => {
     setError(null)
   }, [stock.rows, parts.rows])
+
+  // Load parameters for editing batch
+  useEffect(() => {
+    if (editParams) {
+      if (editParams.inputStock && editParams.inputStock.length > 0) {
+        stock.setRows(editParams.inputStock)
+        setIsStockExpanded(true)
+      }
+      if (editParams.requiredParts && editParams.requiredParts.length > 0) {
+        parts.setRows(editParams.requiredParts)
+      }
+      if (editParams.settings) {
+        if (editParams.settings.kerf !== undefined) setKerf(editParams.settings.kerf)
+        if (editParams.settings.trimMargin !== undefined) setTrimMargin(editParams.settings.trimMargin)
+      }
+      clearEditParams()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editParams])
 
   // Load stock items and remnants, plus batches history dynamically from DB on mount
   useEffect(() => {

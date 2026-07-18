@@ -52,6 +52,16 @@ export const inventoryApi = {
     apiRequest('/inventory/ledger'),
   deleteStockItem: (id) =>
     apiRequest(`/inventory/${id}`, { method: 'DELETE' }),
+  updateStockItem: (id, quantity) =>
+    apiRequest(`/inventory/${id}`, { method: 'PUT', body: { quantity } }),
+  getScrapSales: () =>
+    apiRequest('/inventory/scrapsales'),
+  createScrapSale: (dto) =>
+    apiRequest('/inventory/scrapsales', { method: 'POST', body: dto }),
+  updateScrapSale: (id, dto) =>
+    apiRequest(`/inventory/scrapsales/${id}`, { method: 'PUT', body: dto }),
+  deleteScrapSale: (id) =>
+    apiRequest(`/inventory/scrapsales/${id}`, { method: 'DELETE' }),
 };
 
 export const batchesApi = {
@@ -61,5 +71,9 @@ export const batchesApi = {
     apiRequest('/batches'),
   getStats: () => 
     apiRequest('/batches/stats'),
+  updateBatch: (id, batchName) =>
+    apiRequest(`/batches/${id}`, { method: 'PUT', body: { batchName } }),
+  deleteBatch: (id) =>
+    apiRequest(`/batches/${id}`, { method: 'DELETE' }),
 };
 

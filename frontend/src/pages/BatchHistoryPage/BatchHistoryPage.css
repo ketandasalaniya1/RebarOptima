@@ -446,6 +446,129 @@
   color: #ffffff;
 }
 
+.btn-edit-batch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(227, 140, 34, 0.08);
+  color: #e38c22;
+  border: 1px solid #e38c22;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11.5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.btn-edit-batch:hover {
+  background: #e38c22;
+  color: #ffffff;
+}
+
+.btn-delete-batch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(234, 74, 74, 0.08);
+  color: #ea4a4a;
+  border: 1px solid #ea4a4a;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11.5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-delete-batch:hover {
+  background: #ea4a4a;
+  color: #ffffff;
+}
+
+.batch-rename-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.batch-rename-input {
+  border: 1px solid var(--accent);
+  background: var(--main-bg);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  width: 200px;
+}
+
+.batch-rename-save-btn {
+  background: #2da44e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.batch-rename-cancel-btn {
+  background: #ea4a4a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.batch-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(234, 74, 74, 0.05);
+  border: 1px dashed #ea4a4a;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.delete-confirm-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ea4a4a;
+}
+
+.batch-delete-confirm .confirm-delete-btn {
+  background: #ea4a4a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.batch-delete-confirm .cancel-delete-btn {
+  background: var(--text-secondary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .no-screen {
   display: none !important;
 }

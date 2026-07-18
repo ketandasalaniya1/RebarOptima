@@ -124,7 +124,8 @@ app.post('/api/auth/signin', async (req, res) => {
 app.get('/api/inventory', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
-    const companyId = new ObjectId(req.user.sub === req.user.sub ? (await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) }))?.companyId : null);
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const items = await db.collection('stockitems').find({ companyId, quantity: { $gt: 0 } }).sort({ createdAt: 1 }).toArray();
     res.json({ standardStock: items.filter((i: any) => !i.isRemnant), remnantsStock: items.filter((i: any) => i.isRemnant) });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
@@ -134,7 +135,7 @@ app.post('/api/inventory/inward', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc?.companyId;
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '' } = req.body;
     let quantity = Number(rawQty), weightInKgs = Number(rawWeight);
     const singleWeight = getSingleBarWeight(Number(diameter), Number(length));
@@ -151,7 +152,8 @@ app.get('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const rules = await ensureScrapRules(db, userDoc?.companyId);
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const rules = await ensureScrapRules(db, companyId as any);
     res.json(rules);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -160,7 +162,7 @@ app.post('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => 
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc?.companyId;
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const { rules } = req.body;
     await Promise.all(rules.map((r: any) =>
       db.collection('scraprules').findOneAndUpdate({ companyId, diameter: r.diameter }, { $set: { scrapLengthThreshold: r.scrapLengthThreshold } }, { upsert: true })
@@ -173,7 +175,8 @@ app.get('/api/inventory/ledger', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const ledger = await db.collection('inventorytransactions').find({ companyId: userDoc?.companyId }).sort({ createdAt: -1 }).toArray();
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const ledger = await db.collection('inventorytransactions').find({ companyId }).sort({ createdAt: -1 }).toArray();
     res.json(ledger);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -182,7 +185,125 @@ app.delete('/api/inventory/:id', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const result = await db.collection('stockitems').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId: userDoc?.companyId, isRemnant: false });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const result = await db.collection('stockitems').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+    res.json({ deleted: !!result });
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/inventory/:id', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const { quantity } = req.body;
+
+    if (quantity === undefined || Number(quantity) < 0) {
+      return res.status(400).json({ message: 'Quantity must be a non-negative number' });
+    }
+
+    const item = await db.collection('stockitems').findOne({ _id: new ObjectId(req.params.id), companyId });
+    if (!item) return res.status(404).json({ message: 'Stock item not found' });
+
+    const newQty = Number(quantity);
+    if (newQty === 0) {
+      await db.collection('stockitems').deleteOne({ _id: item._id });
+      return res.json({ deleted: true });
+    }
+
+    const singleWeight = getSingleBarWeight(Number(item.diameter), Number(item.length));
+    const newWeight = newQty * singleWeight;
+
+    const result = await db.collection('stockitems').findOneAndUpdate(
+      { _id: item._id },
+      { $set: { quantity: newQty, weightInKgs: newWeight } },
+      { returnDocument: 'after' }
+    );
+    res.json(result);
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.get('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    
+    if (companyId) {
+      const company = await db.collection('companies').findOne({ _id: companyId });
+      if (company && !company.scrapSalesSeeded) {
+        await db.collection('scrapsales').insertMany([
+          { companyId, date: '2026-07-01', buyer: 'Mittal Steel Scrap Corp', weight: 450, pricePerKg: 22, revenue: 9900, createdAt: new Date() },
+          { companyId, date: '2026-07-10', buyer: 'Hariom Scrap Buyers', weight: 1200, pricePerKg: 24, revenue: 28800, createdAt: new Date() }
+        ]);
+        await db.collection('companies').updateOne({ _id: companyId }, { $set: { scrapSalesSeeded: true } });
+      }
+    }
+
+    const sales = await db.collection('scrapsales').find({ companyId }).sort({ date: -1 }).toArray();
+    res.json(sales);
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.post('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const { date, buyer, weight, pricePerKg } = req.body;
+    if (!date || !buyer || !weight || !pricePerKg) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const newSale = {
+      companyId,
+      date,
+      buyer,
+      weight: Number(weight),
+      pricePerKg: Number(pricePerKg),
+      revenue: Number(weight) * Number(pricePerKg),
+      createdAt: new Date()
+    };
+    const result = await db.collection('scrapsales').insertOne(newSale);
+    res.status(201).json({ _id: result.insertedId, ...newSale });
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/inventory/scrapsales/:id', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const { date, buyer, weight, pricePerKg } = req.body;
+    const updateDoc: any = {};
+    if (date) updateDoc.date = date;
+    if (buyer) updateDoc.buyer = buyer;
+    if (weight !== undefined) updateDoc.weight = Number(weight);
+    if (pricePerKg !== undefined) updateDoc.pricePerKg = Number(pricePerKg);
+    if (weight !== undefined && pricePerKg !== undefined) {
+      updateDoc.revenue = Number(weight) * Number(pricePerKg);
+    } else if (weight !== undefined || pricePerKg !== undefined) {
+      const existing = await db.collection('scrapsales').findOne({ _id: new ObjectId(req.params.id), companyId });
+      if (existing) {
+        const w = weight !== undefined ? Number(weight) : existing.weight;
+        const p = pricePerKg !== undefined ? Number(pricePerKg) : existing.pricePerKg;
+        updateDoc.revenue = w * p;
+      }
+    }
+    const result = await db.collection('scrapsales').findOneAndUpdate(
+      { _id: new ObjectId(req.params.id), companyId },
+      { $set: updateDoc },
+      { returnDocument: 'after' }
+    );
+    res.json(result);
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.delete('/api/inventory/scrapsales/:id', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const result = await db.collection('scrapsales').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
     res.json({ deleted: !!result });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -192,9 +313,9 @@ app.post('/api/batches', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc?.companyId;
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const { batchName, inputStock, requiredParts, layouts, summary } = req.body;
-    const scrapRules = await ensureScrapRules(db, companyId);
+    const scrapRules = await ensureScrapRules(db, companyId as any);
     const rulesMap = new Map(scrapRules.map((r: any) => [r.diameter, r.scrapLengthThreshold]));
     let totalScrapKg = 0, totalRemnantKg = 0;
 
@@ -245,8 +366,37 @@ app.get('/api/batches', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const batches = await db.collection('batches').find({ companyId: userDoc?.companyId }).sort({ createdAt: -1 }).toArray();
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const batches = await db.collection('batches').find({ companyId }).sort({ createdAt: -1 }).toArray();
     res.json(batches);
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/batches/:id', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const { batchName } = req.body;
+    if (!batchName || !batchName.trim()) {
+      return res.status(400).json({ message: 'Batch name is required' });
+    }
+    const result = await db.collection('batches').findOneAndUpdate(
+      { _id: new ObjectId(req.params.id), companyId },
+      { $set: { batchName: batchName.trim() } },
+      { returnDocument: 'after' }
+    );
+    res.json(result);
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
+app.delete('/api/batches/:id', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const result = await db.collection('batches').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+    res.json({ deleted: !!result });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
@@ -254,7 +404,7 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc?.companyId;
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
 
     const liveStock = await db.collection('stockitems').find({ companyId, quantity: { $gt: 0 } }).toArray();
     let liveStandardKg = 0, liveRemnantsKg = 0;
@@ -294,6 +444,19 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
     });
 
     const wastagePercentage = totalStockUsedKg > 0 ? (totalScrapKg / totalStockUsedKg) * 100 : 0;
+
+    const scrapSales = await db.collection('scrapsales').find({ companyId }).toArray();
+    let totalScrapSoldWeight = 0;
+    let totalScrapRevenue = 0;
+    let totalScrapLossDifferential = 0;
+    const estPurchasePriceWithGst = 60;
+
+    scrapSales.forEach((s: any) => {
+      totalScrapSoldWeight += s.weight || 0;
+      totalScrapRevenue += s.revenue || 0;
+      totalScrapLossDifferential += ((estPurchasePriceWithGst - (s.pricePerKg || 0)) * (s.weight || 0));
+    });
+
     res.json({
       liveStandardKg: Math.round(liveStandardKg * 100) / 100,
       liveRemnantsKg: Math.round(liveRemnantsKg * 100) / 100,
@@ -302,6 +465,9 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
       wastagePercentage: Math.round(wastagePercentage * 100) / 100,
       dailyScrapGraph,
       diameterWeights,
+      totalScrapSoldWeight: Math.round(totalScrapSoldWeight * 100) / 100,
+      totalScrapRevenue: Math.round(totalScrapRevenue * 100) / 100,
+      totalScrapLossDifferential: Math.round(totalScrapLossDifferential * 100) / 100,
     });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });

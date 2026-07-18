@@ -7,7 +7,11 @@ import {
   TrendingUp,
   ChevronDown,
   ChevronUp,
-  Printer
+  Printer,
+  Pencil,
+  Trash2,
+  Save,
+  X
 } from 'lucide-react'
 import './BatchHistoryPage.css'
 
@@ -22,11 +26,18 @@ const getTextStyle = (hex) => {
     : { color: '#111827' };
 };
 
-export default function BatchHistoryPage() {
+export default function BatchHistoryPage({ onEditBatch }) {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [expandedBatchId, setExpandedBatchId] = useState(null)
+
+  // Edit & Delete states
+  const [editingBatchId, setEditingBatchId] = useState(null)
+  const [editBatchName, setEditBatchName] = useState('')
+  const [confirmDeleteBatchId, setConfirmDeleteBatchId] = useState(null)
+  const [actionLoading, setActionLoading] = useState(false)
 
   useEffect(() => {
     async function loadHistory() {
@@ -45,6 +56,70 @@ export default function BatchHistoryPage() {
 
   const toggleExpand = (id) => {
     setExpandedBatchId(prev => (prev === id ? null : id))
+  }
+
+  const handleEditBatch = (e, batch) => {
+    e.stopPropagation() // Prevent toggling accordion expand
+    setEditingBatchId(batch._id)
+    setEditBatchName(batch.batchName)
+  }
+
+  const handleCancelBatchEdit = (e) => {
+    if (e) e.stopPropagation()
+    setEditingBatchId(null)
+    setEditBatchName('')
+  }
+
+  const handleSaveBatchEdit = async (e, id) => {
+    if (e) e.stopPropagation()
+    setError('')
+    setSuccess('')
+    if (!editBatchName.trim()) {
+      setError('Batch name cannot be empty.')
+      return
+    }
+
+    try {
+      setActionLoading(true)
+      const updated = await batchesApi.updateBatch(id, editBatchName)
+      setHistory(prev => prev.map(b => b._id === id ? { ...b, batchName: updated.batchName } : b))
+      setEditingBatchId(null)
+      setEditBatchName('')
+      setSuccess('Batch name updated successfully!')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (err) {
+      setError(err.message || 'Failed to update batch name.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleDeleteBatch = (e, id) => {
+    e.stopPropagation()
+    setConfirmDeleteBatchId(id)
+  }
+
+  const handleCancelDeleteBatch = (e) => {
+    if (e) e.stopPropagation()
+    setConfirmDeleteBatchId(null)
+  }
+
+  const handleConfirmDeleteBatch = async (e, id) => {
+    if (e) e.stopPropagation()
+    setError('')
+    setSuccess('')
+    try {
+      setActionLoading(true)
+      await batchesApi.deleteBatch(id)
+      setHistory(prev => prev.filter(b => b._id !== id))
+      setConfirmDeleteBatchId(null)
+      setSuccess('Batch optimization history entry deleted successfully!')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (err) {
+      setError(err.message || 'Failed to delete batch entry.')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   const handlePrintBatch = (e, batch) => {
@@ -98,6 +173,12 @@ export default function BatchHistoryPage() {
         </div>
       )}
 
+      {success && (
+        <div className="alert alert-success">
+          <span>{success}</span>
+        </div>
+      )}
+
       {history.length === 0 ? (
         <div className="card empty-history-card">
           <Layers size={40} color="var(--text-label)" />
@@ -127,11 +208,44 @@ export default function BatchHistoryPage() {
               <div key={batch._id} className={`card batch-history-card ${isExpanded ? 'expanded' : ''}`}>
                 {/* Header block (Click to toggle) */}
                 <div className="batch-card-header" onClick={() => toggleExpand(batch._id)}>
-                  <div className="batch-meta-left">
-                    <span className="batch-name">{batch.batchName}</span>
-                    <span className="batch-date">
-                      <Calendar size={13} style={{ marginRight: '4px' }} /> {date}
-                    </span>
+                  <div className="batch-meta-left" onClick={(e) => e.stopPropagation()}>
+                    {editingBatchId === batch._id ? (
+                      <div className="batch-rename-form">
+                        <input
+                          type="text"
+                          value={editBatchName}
+                          onChange={(e) => setEditBatchName(e.target.value)}
+                          className="batch-rename-input"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSaveBatchEdit(e, batch._id)
+                            else if (e.key === 'Escape') handleCancelBatchEdit(e)
+                          }}
+                        />
+                        <button
+                          className="batch-rename-save-btn"
+                          onClick={(e) => handleSaveBatchEdit(e, batch._id)}
+                          disabled={actionLoading}
+                          title="Save"
+                        >
+                          <Save size={13} />
+                        </button>
+                        <button
+                          className="batch-rename-cancel-btn"
+                          onClick={handleCancelBatchEdit}
+                          title="Cancel"
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="batch-name" onDoubleClick={(e) => handleEditBatch(e, batch)} title="Double click to rename">{batch.batchName}</span>
+                        <span className="batch-date">
+                          <Calendar size={13} style={{ marginRight: '4px' }} /> {date}
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   <div className="batch-meta-right">
@@ -142,6 +256,41 @@ export default function BatchHistoryPage() {
                     >
                       <Printer size={13} style={{ marginRight: '4px' }} /> Print
                     </button>
+                    {confirmDeleteBatchId === batch._id ? (
+                      <div className="batch-delete-confirm" onClick={(e) => e.stopPropagation()}>
+                        <span className="delete-confirm-text">Delete?</span>
+                        <button
+                          className="confirm-delete-btn"
+                          onClick={(e) => handleConfirmDeleteBatch(e, batch._id)}
+                          disabled={actionLoading}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          className="cancel-delete-btn"
+                          onClick={handleCancelDeleteBatch}
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <button 
+                          className="btn-edit-batch animate-hover"
+                          onClick={() => onEditBatch(batch)}
+                          title="Edit Batch optimization input parameters"
+                        >
+                          <Pencil size={13} style={{ marginRight: '4px' }} /> Edit Batch
+                        </button>
+                        <button 
+                          className="btn-delete-batch animate-hover"
+                          onClick={(e) => handleDeleteBatch(e, batch._id)}
+                          title="Delete Batch Record"
+                        >
+                          <Trash2 size={13} style={{ marginRight: '4px' }} /> Delete
+                        </button>
+                      </>
+                    )}
                     <div className="meta-pill text-green">
                       <TrendingUp size={13} /> {batch.summary?.avgUtilization?.toFixed(2)}% Util.
                     </div>

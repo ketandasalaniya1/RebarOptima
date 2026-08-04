@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { batchesApi } from '../../utils/api'
 import {
   TrendingUp,
@@ -14,6 +15,7 @@ import {
 import './OverviewPage.css'
 
 export default function OverviewPage({ onNavigate }) {
+  const user = useSelector((state) => state.auth.user)
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -71,7 +73,9 @@ export default function OverviewPage({ onNavigate }) {
       <div className="overview-header">
         <div>
           <h1 className="overview-title">Dashboard Overview</h1>
-          <p className="overview-subtitle">Real-time steel stock analytics and optimization efficiency logs.</p>
+          <p className="overview-subtitle">
+            Real-time analytics for {user?.companyName || 'Firm'}{user?.projectName ? ` (${user.projectName})` : ''}
+          </p>
         </div>
         <button className="run-opt-btn" onClick={() => onNavigate('inputs')}>
           Run Optimization <ArrowRight size={16} style={{ marginLeft: '6px' }} />

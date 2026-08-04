@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { inventoryApi } from '../../utils/api'
 import {
   Package,
@@ -19,6 +20,7 @@ import {
 import './InventoryPage.css'
 
 export default function InventoryPage() {
+  const user = useSelector((state) => state.auth.user)
   // Tab states: 'list' | 'inward' | 'rules' | 'scrapsales'
   const [activeTab, setActiveTab] = useState('list')
   const [inventory, setInventory] = useState({ standardStock: [], remnantsStock: [] })
@@ -1030,7 +1032,9 @@ export default function InventoryPage() {
             {/* Sales ledger list */}
             <div className="card scrap-history-card">
               <h3 className="form-card-title">Scrap Sales History</h3>
-              <p className="form-card-subtitle">Detailed ledger of scrap cleared from site.</p>
+              <p className="form-card-subtitle">
+                Detailed ledger of scrap cleared from site for {user?.companyName || 'Firm'}{user?.projectName ? ` (${user.projectName})` : ''}.
+              </p>
 
               <div className="table-responsive">
                 <table className="inventory-table">
@@ -1045,51 +1049,59 @@ export default function InventoryPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {scrapSales.map((sale) => (
-                      <tr key={sale._id}>
-                        <td>{new Date(sale.date).toLocaleDateString('en-GB')}</td>
-                        <td className="font-bold">{sale.buyer}</td>
-                        <td>{sale.weight} kg</td>
-                        <td>₹{sale.pricePerKg}</td>
-                        <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
-                        <td>
-                          {confirmDeleteId === sale._id ? (
-                            <div className="sale-delete-confirm">
-                              <span className="delete-confirm-text">Delete?</span>
-                              <button
-                                className="confirm-delete-btn"
-                                onClick={() => handleConfirmDelete(sale._id)}
-                              >
-                                Yes
-                              </button>
-                              <button
-                                className="cancel-delete-btn"
-                                onClick={handleCancelDelete}
-                              >
-                                No
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="sale-action-btns">
-                              <button
-                                className="edit-sale-btn"
-                                title="Edit this entry"
-                                onClick={() => handleEditSale(sale)}
-                              >
-                                <Pencil size={13} />
-                              </button>
-                              <button
-                                className="delete-row-btn"
-                                title="Delete this entry"
-                                onClick={() => handleDeleteSale(sale._id)}
-                              >
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          )}
+                    {scrapSales.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
+                          No scrap sales recorded for {user?.companyName || 'this firm'}{user?.projectName ? ` (${user.projectName})` : ''} yet.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      scrapSales.map((sale) => (
+                        <tr key={sale._id}>
+                          <td>{new Date(sale.date).toLocaleDateString('en-GB')}</td>
+                          <td className="font-bold">{sale.buyer}</td>
+                          <td>{sale.weight} kg</td>
+                          <td>₹{sale.pricePerKg}</td>
+                          <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
+                          <td>
+                            {confirmDeleteId === sale._id ? (
+                              <div className="sale-delete-confirm">
+                                <span className="delete-confirm-text">Delete?</span>
+                                <button
+                                  className="confirm-delete-btn"
+                                  onClick={() => handleConfirmDelete(sale._id)}
+                                >
+                                  Yes
+                                </button>
+                                <button
+                                  className="cancel-delete-btn"
+                                  onClick={handleCancelDelete}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="sale-action-btns">
+                                <button
+                                  className="edit-sale-btn"
+                                  title="Edit this entry"
+                                  onClick={() => handleEditSale(sale)}
+                                >
+                                  <Pencil size={13} />
+                                </button>
+                                <button
+                                  className="delete-row-btn"
+                                  title="Delete this entry"
+                                  onClick={() => handleDeleteSale(sale._id)}
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

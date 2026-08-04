@@ -103,7 +103,9 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
                 <div className="profile-role-company">
                   <span className="profile-role">{user.role}</span>
                   <span className="profile-divider">•</span>
-                  <span className="profile-company">{user.companyName || 'Standard Firm'}</span>
+                  <span className="profile-company" title={`${user.companyName || 'Standard Firm'}${user.projectName ? ` (${user.projectName})` : ''}`}>
+                    {user.companyName || 'Standard Firm'}{user.projectName ? ` • ${user.projectName}` : ''}
+                  </span>
                 </div>
               </div>
             </div>

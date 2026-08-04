@@ -96,7 +96,7 @@ app.post('/api/auth/signup', async (req, res) => {
     const userDoc: any = { email: email.toLowerCase().trim(), passwordHash, firstName, lastName, role: role || 'OWNER', companyId, mobileNumber, promoConsent: !!promoConsent, newsletterConsent: !!newsletterConsent, createdAt: new Date() };
     const userResult = await usersColl.insertOne(userDoc);
     const tokens = generateTokens(userResult.insertedId.toString(), userDoc.email, userDoc.role);
-    res.status(201).json({ ...tokens, user: { id: userResult.insertedId.toString(), email: userDoc.email, firstName, lastName, role: userDoc.role, companyId: companyId.toString(), companyName } });
+    res.status(201).json({ ...tokens, user: { id: userResult.insertedId.toString(), email: userDoc.email, firstName, lastName, role: userDoc.role, companyId: companyId.toString(), companyName, projectName: projectName || '' } });
   } catch (e: any) {
     console.error(e);
     res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -113,7 +113,7 @@ app.post('/api/auth/signin', async (req, res) => {
     if (!await bcrypt.compare(password, user.passwordHash)) return res.status(401).json({ message: 'Invalid credentials' });
     const company = await db.collection('companies').findOne({ _id: user.companyId });
     const tokens = generateTokens(user._id.toString(), user.email, user.role);
-    res.json({ ...tokens, user: { id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, companyId: user.companyId.toString(), companyName: company?.name ?? 'Unknown' } });
+    res.json({ ...tokens, user: { id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, companyId: user.companyId.toString(), companyName: company?.name ?? 'Unknown', projectName: company?.projectName ?? '' } });
   } catch (e: any) {
     console.error(e);
     res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -228,17 +228,7 @@ app.get('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    
-    if (companyId) {
-      const company = await db.collection('companies').findOne({ _id: companyId });
-      if (company && !company.scrapSalesSeeded) {
-        await db.collection('scrapsales').insertMany([
-          { companyId, date: '2026-07-01', buyer: 'Mittal Steel Scrap Corp', weight: 450, pricePerKg: 22, revenue: 9900, createdAt: new Date() },
-          { companyId, date: '2026-07-10', buyer: 'Hariom Scrap Buyers', weight: 1200, pricePerKg: 24, revenue: 28800, createdAt: new Date() }
-        ]);
-        await db.collection('companies').updateOne({ _id: companyId }, { $set: { scrapSalesSeeded: true } });
-      }
-    }
+    if (!companyId) return res.json([]);
 
     const sales = await db.collection('scrapsales').find({ companyId }).sort({ date: -1 }).toArray();
     res.json(sales);
@@ -250,12 +240,14 @@ app.post('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const company = companyId ? await db.collection('companies').findOne({ _id: companyId }) : null;
     const { date, buyer, weight, pricePerKg } = req.body;
     if (!date || !buyer || !weight || !pricePerKg) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
     const newSale = {
       companyId,
+      projectName: company?.projectName || '',
       date,
       buyer,
       weight: Number(weight),

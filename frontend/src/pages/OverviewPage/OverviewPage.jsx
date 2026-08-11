@@ -135,7 +135,7 @@ export default function OverviewPage({ onNavigate }) {
             {wastagePercentage.toFixed(2)}<span className="val-unit">%</span>
           </span>
           <span className="card-sub-lbl text-orange">
-            {wastagePercentage > 0 
+            {wastagePercentage > 0
               ? `Efficiency: ${(100 - wastagePercentage).toFixed(2)}% yield`
               : 'No optimization batches run yet'}
           </span>
@@ -187,7 +187,7 @@ export default function OverviewPage({ onNavigate }) {
         <div className="card graph-card">
           <h3 className="graph-card-title">Daily Scrap Generation</h3>
           <p className="graph-card-subtitle">Scrap weight logged per batch over the last 7 active days.</p>
-          
+
           <div className="svg-chart-container">
             {dailyScrapGraph.length === 0 ? (
               <div className="no-data-placeholder">
@@ -202,19 +202,19 @@ export default function OverviewPage({ onNavigate }) {
                   const gridVal = Math.round(maxScrap * ratio)
                   return (
                     <g key={idx}>
-                      <line 
-                        x1={padLeft} 
-                        y1={y} 
-                        x2={chartWidth - padRight} 
-                        y2={y} 
-                        stroke="var(--border-color)" 
-                        strokeWidth="1" 
+                      <line
+                        x1={padLeft}
+                        y1={y}
+                        x2={chartWidth - padRight}
+                        y2={y}
+                        stroke="var(--border-color)"
+                        strokeWidth="1"
                         strokeDasharray="4 4"
                       />
-                      <text 
-                        x={padLeft - 10} 
-                        y={y + 4} 
-                        className="axis-text axis-y" 
+                      <text
+                        x={padLeft - 10}
+                        y={y + 4}
+                        className="axis-text axis-y"
                         textAnchor="end"
                       >
                         {gridVal} kg
@@ -229,11 +229,11 @@ export default function OverviewPage({ onNavigate }) {
                   const colWidth = graphWidth / barCount
                   const barWidth = colWidth * 0.5
                   const x = padLeft + idx * colWidth + (colWidth - barWidth) / 2
-                  
+
                   // Height mapping
                   const barHeight = item.scrapKg > 0 ? (item.scrapKg / maxScrap) * graphHeight : 4
                   const y = chartHeight - padBottom - barHeight
-                  
+
                   return (
                     <g key={idx} className="chart-bar-group">
                       <rect
@@ -268,12 +268,12 @@ export default function OverviewPage({ onNavigate }) {
                 })}
 
                 {/* Bottom Base axis */}
-                <line 
-                  x1={padLeft} 
-                  y1={chartHeight - padBottom} 
-                  x2={chartWidth - padRight} 
-                  y2={chartHeight - padBottom} 
-                  stroke="var(--text-secondary)" 
+                <line
+                  x1={padLeft}
+                  y1={chartHeight - padBottom}
+                  x2={chartWidth - padRight}
+                  y2={chartHeight - padBottom}
+                  stroke="var(--text-secondary)"
                   strokeWidth="1"
                 />
               </svg>
@@ -298,9 +298,9 @@ export default function OverviewPage({ onNavigate }) {
                   <div key={dia} className="dia-dist-row">
                     <span className="dia-dist-label">{dia} mm</span>
                     <div className="dia-dist-bar-bg">
-                      <div 
-                        className="dia-dist-bar-fill" 
-                        style={{ 
+                      <div
+                        className="dia-dist-bar-fill"
+                        style={{
                           width: `${percentWidth}%`
                         }}
                       ></div>

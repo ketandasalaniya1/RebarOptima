@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './ResultsPage.css'
 import html2pdf from 'html2pdf.js'
-import { batchesApi } from '../../utils/api'
+import { batchesApi, inventoryApi } from '../../utils/api'
 import {
   ArrowLeft,
   Printer,
@@ -147,14 +147,33 @@ const getTextStyle = (hex) => {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return lum < 135 
-    ? { color: '#ffffff' } 
+  return lum < 135
+    ? { color: '#ffffff' }
     : { color: '#111827' };
 };
 
 export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [scrapRulesMap, setScrapRulesMap] = useState({});
+
+  useEffect(() => {
+    async function loadScrapRules() {
+      try {
+        const rules = await inventoryApi.getScrapRules();
+        if (Array.isArray(rules)) {
+          const map = {};
+          rules.forEach(r => {
+            map[Number(r.diameter)] = Number(r.scrapLengthThreshold);
+          });
+          setScrapRulesMap(map);
+        }
+      } catch (err) {
+        console.warn('Failed to load scrap rules, defaulting to 1000mm threshold', err);
+      }
+    }
+    loadScrapRules();
+  }, []);
 
   const handleSaveBatch = async () => {
     setSaveLoading(true);
@@ -225,20 +244,44 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   });
   const requiredStocks = Object.values(requiredStocksMap).sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
 
-  // Group layouts by diameter for wastage and utilization in kg
+  // Group layouts by diameter for wastage, remnant, scrap, and utilization in kg according to Scrap Rules
   const diaWeightSummaryMap = {};
   layouts.forEach(l => {
     const dia = l.diameter || '12';
+    const diaNum = parseFloat(dia);
     if (!diaWeightSummaryMap[dia]) {
       diaWeightSummaryMap[dia] = {
         diameter: dia,
         totalStockLength: 0,
-        totalPartsLength: 0
+        totalPartsLength: 0,
+        remnantKg: 0,
+        scrapKg: 0,
+        threshold: scrapRulesMap[diaNum] ?? 1000
       };
     }
+    diaWeightSummaryMap[dia].threshold = scrapRulesMap[diaNum] ?? 1000;
     diaWeightSummaryMap[dia].totalStockLength += l.stockLength * l.repetition;
+    
     const layoutPartsLength = l.parts.reduce((sum, p) => sum + p.length, 0);
     diaWeightSummaryMap[dia].totalPartsLength += layoutPartsLength * l.repetition;
+
+    // Parse waste length in mm per bar
+    let wasteLen = parseFloat(l.waste);
+    if (isNaN(wasteLen)) {
+      wasteLen = Math.max(0, l.stockLength - layoutPartsLength);
+    }
+
+    if (wasteLen > 0) {
+      const weightPerMeter = (diaNum * diaNum) / 162;
+      const wasteWeightKg = (wasteLen / 1000) * weightPerMeter * l.repetition;
+      const threshold = diaWeightSummaryMap[dia].threshold;
+
+      if (wasteLen >= threshold) {
+        diaWeightSummaryMap[dia].remnantKg += wasteWeightKg;
+      } else {
+        diaWeightSummaryMap[dia].scrapKg += wasteWeightKg;
+      }
+    }
   });
 
   const diaWeightSummary = Object.values(diaWeightSummaryMap)
@@ -247,15 +290,24 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       const weightPerMeter = Math.round(((diaNum * diaNum) / 162) * 100) / 100;
       const totalStockKg = (d.totalStockLength / 1000) * weightPerMeter;
       const utilisationKg = (d.totalPartsLength / 1000) * weightPerMeter;
-      const wastageKg = Math.max(0, totalStockKg - utilisationKg);
-      const wastagePercent = totalStockKg > 0 ? (wastageKg / totalStockKg) * 100 : 0;
+      const remnantKg = d.remnantKg;
+      const scrapKg = d.scrapKg;
+      const totalWastageKg = remnantKg + scrapKg;
+      const wastagePercent = totalStockKg > 0 ? (totalWastageKg / totalStockKg) * 100 : 0;
+      const remnantPercent = totalStockKg > 0 ? (remnantKg / totalStockKg) * 100 : 0;
+      const scrapPercent = totalStockKg > 0 ? (scrapKg / totalStockKg) * 100 : 0;
       const utilisationPercent = totalStockKg > 0 ? (utilisationKg / totalStockKg) * 100 : 0;
       return {
         diameter: d.diameter,
+        threshold: d.threshold,
         totalStockKg,
         utilisationKg,
-        wastageKg,
+        remnantKg,
+        scrapKg,
+        totalWastageKg,
         wastagePercent,
+        remnantPercent,
+        scrapPercent,
         utilisationPercent
       };
     })
@@ -263,7 +315,9 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
 
   const totalStockKgSum = diaWeightSummary.reduce((sum, d) => sum + d.totalStockKg, 0);
   const totalUtilisationKgSum = diaWeightSummary.reduce((sum, d) => sum + d.utilisationKg, 0);
-  const totalWastageKgSum = Math.max(0, totalStockKgSum - totalUtilisationKgSum);
+  const totalRemnantKgSum = diaWeightSummary.reduce((sum, d) => sum + d.remnantKg, 0);
+  const totalScrapKgSum = diaWeightSummary.reduce((sum, d) => sum + d.scrapKg, 0);
+  const totalWastageKgSum = totalRemnantKgSum + totalScrapKgSum;
   const totalWastagePercent = totalStockKgSum > 0 ? (totalWastageKgSum / totalStockKgSum) * 100 : 0;
 
   const getCostPerKgForDia = (diameter) => {
@@ -271,20 +325,14 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
     return stockItem?.costPerKg ? parseFloat(stockItem.costPerKg) : 60;
   };
 
-  const totalRemnantsSavings = layouts
-    .filter(l => l.isRemnant)
-    .reduce((sum, l) => {
-      const diaNum = parseFloat(l.diameter);
-      const weightPerMeter = (diaNum * diaNum) / 162;
-      const barPartsLength = l.parts.reduce((s, p) => s + p.length, 0);
-      const consumedWeight = (barPartsLength / 1000) * weightPerMeter;
-      const costPerKg = getCostPerKgForDia(l.diameter);
-      return sum + (consumedWeight * l.repetition * costPerKg);
-    }, 0);
+  const totalRemnantsSavings = diaWeightSummary.reduce((sum, d) => {
+    const costPerKg = getCostPerKgForDia(d.diameter);
+    return sum + (d.remnantKg * costPerKg);
+  }, 0);
 
   const totalScrapLossCost = diaWeightSummary.reduce((sum, d) => {
     const costPerKg = getCostPerKgForDia(d.diameter);
-    return sum + (d.wastageKg * costPerKg);
+    return sum + (d.scrapKg * costPerKg);
   }, 0);
 
   const totalYieldValue = diaWeightSummary.reduce((sum, d) => {
@@ -320,9 +368,9 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       margin: [15, 10, 15, 10],
       filename: 'rebar_optima_report.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
-        useCORS: true, 
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
         logging: false,
         windowWidth: 794
       },
@@ -350,17 +398,17 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
         </div>
         <div className="actions-right">
           {!data?._id && (
-            <button 
-              className="btn-commit-batch" 
-              style={{ 
-                background: '#2da44e', 
-                color: '#ffffff', 
-                border: 'none', 
-                borderRadius: '6px', 
-                padding: '6px 14px', 
-                fontWeight: '600', 
-                display: 'inline-flex', 
-                alignItems: 'center', 
+            <button
+              className="btn-commit-batch"
+              style={{
+                background: '#2da44e',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '6px 14px',
+                fontWeight: '600',
+                display: 'inline-flex',
+                alignItems: 'center',
                 gap: '6px',
                 cursor: saveLoading ? 'not-allowed' : 'pointer'
               }}
@@ -528,17 +576,26 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                   <th>Diameter (mm)</th>
                   <th>Total Stock (kg)</th>
                   <th>Utilisation (kg)</th>
-                  <th>Wastage (kg)</th>
+                  <th>Remnant (kg)</th>
+                  <th>Scrap (kg)</th>
+                  <th>Total Waste (kg)</th>
                   <th>Wastage (%)</th>
                 </tr>
               </thead>
               <tbody>
                 {diaWeightSummary.map((s, idx) => (
                   <tr key={idx}>
-                    <td>{s.diameter} mm</td>
+                    <td>
+                      {s.diameter} mm
+                      <span style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block' }}>
+                        Rule: ≥{s.threshold}mm
+                      </span>
+                    </td>
                     <td>{s.totalStockKg.toFixed(2)}</td>
                     <td>{s.utilisationKg.toFixed(2)}</td>
-                    <td className="text-orange font-bold">{s.wastageKg.toFixed(2)}</td>
+                    <td className="text-cyan font-bold">{s.remnantKg.toFixed(2)}</td>
+                    <td className="text-red font-bold">{s.scrapKg.toFixed(2)}</td>
+                    <td className="text-orange font-bold">{s.totalWastageKg.toFixed(2)}</td>
                     <td>{s.wastagePercent.toFixed(2)}%</td>
                   </tr>
                 ))}
@@ -546,6 +603,8 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                   <td>TOTAL</td>
                   <td>{totalStockKgSum.toFixed(2)}</td>
                   <td>{totalUtilisationKgSum.toFixed(2)}</td>
+                  <td className="text-cyan">{totalRemnantKgSum.toFixed(2)}</td>
+                  <td className="text-red">{totalScrapKgSum.toFixed(2)}</td>
                   <td className="text-orange">{totalWastageKgSum.toFixed(2)}</td>
                   <td>{totalWastagePercent.toFixed(2)}%</td>
                 </tr>
@@ -670,23 +729,30 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                     })}
                     {/* Waste / Remnant Segment */}
                     {(() => {
+                      const diaNum = parseFloat(layout.diameter || '12');
+                      const threshold = scrapRulesMap[diaNum] ?? 1000;
                       const partsLen = layout.parts.reduce((sum, p) => sum + p.length, 0);
                       const remnantLen = layout.stockLength - partsLen;
                       const wastePercent = (remnantLen / layout.stockLength) * 100;
+                      const isRemnant = remnantLen >= threshold;
                       if (wastePercent > 0.1) {
-                        const getRemnantText = (rLen, wPercent) => {
-                          if (wPercent >= 22) return `Waste / Remnant: ${rLen.toLocaleString()} mm`;
-                          if (wPercent >= 12) return `Remnant: ${rLen.toLocaleString()} mm`;
+                        const getRemnantText = (rLen, wPercent, isRem) => {
+                          const label = isRem ? 'Remnant' : 'Scrap';
+                          if (wPercent >= 22) return `${label}: ${rLen.toLocaleString()} mm`;
+                          if (wPercent >= 12) return `${label}: ${rLen.toLocaleString()} mm`;
                           if (wPercent >= 6) return rLen.toLocaleString();
                           return '';
                         };
                         return (
                           <div
-                            className="bar-segment remnant-segment"
-                            style={{ width: `${wastePercent}%` }}
-                            title={`Waste / Remnant: ${remnantLen.toLocaleString()} mm`}
+                            className={`bar-segment remnant-segment ${isRemnant ? 'is-remnant-bar' : 'is-scrap-bar'}`}
+                            style={{
+                              width: `${wastePercent}%`,
+                              backgroundColor: isRemnant ? '#0891b2' : '#dc2626'
+                            }}
+                            title={`${isRemnant ? 'Reusable Remnant' : 'Scrap Waste'}: ${remnantLen.toLocaleString()} mm (Rule: ≥${threshold}mm)`}
                           >
-                            {getRemnantText(remnantLen, wastePercent)}
+                            {getRemnantText(remnantLen, wastePercent, isRemnant)}
                           </div>
                         );
                       }
@@ -705,7 +771,24 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
 
                 <div className="right-stat-box">
                   <span className="right-stat-lbl">Waste</span>
-                  <span className="right-stat-val text-dark">{layout.waste.toLocaleString()} mm</span>
+                  {(() => {
+                    const diaNum = parseFloat(layout.diameter || '12');
+                    const threshold = scrapRulesMap[diaNum] ?? 1000;
+                    let wasteLen = parseFloat(layout.waste);
+                    if (isNaN(wasteLen)) {
+                      const partsLen = layout.parts.reduce((sum, p) => sum + p.length, 0);
+                      wasteLen = Math.max(0, layout.stockLength - partsLen);
+                    }
+                    const isRemnant = wasteLen >= threshold;
+                    return (
+                      <span className={`right-stat-val ${isRemnant ? 'text-cyan' : 'text-red'}`}>
+                        {wasteLen.toLocaleString()} mm
+                        <span style={{ fontSize: '10px', display: 'block', fontWeight: 'bold', color: isRemnant ? '#0891b2' : '#dc2626' }}>
+                          ({isRemnant ? 'Remnant' : 'Scrap'})
+                        </span>
+                      </span>
+                    );
+                  })()}
                 </div>
 
                 <div className="right-stat-box">

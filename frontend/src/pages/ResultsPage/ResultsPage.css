@@ -1503,6 +1503,22 @@
   color: #059669;
 }
 
+.text-cyan {
+  color: #0891b2 !important;
+}
+
+.text-red {
+  color: #dc2626 !important;
+}
+
+.text-orange {
+  color: #ea580c !important;
+}
+
+.text-green {
+  color: #16a34a !important;
+}
+
 .fin-hint {
   font-size: 10.5px;
   color: var(--text-label);

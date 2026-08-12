@@ -4,15 +4,37 @@
   "graph": {},
   "nodes": [
     {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_agents",
+      "community": 170,
+      "community_name": "AGENTS.md",
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "Workspace Rules",
+      "file_type": "document",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_agents_workspace_rules",
+      "community": 170,
+      "community_name": "AGENTS.md",
+      "norm_label": "workspace rules"
+    },
+    {
       "label": "batches.controller.ts",
       "file_type": "code",
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller",
       "community": 21,
       "community_name": "User",
-      "norm_label": "batches.controller.ts"
+      "norm_label": "batches.controller.ts",
+      "id": "backend_src_batches_batches_controller"
     },
     {
       "label": "BatchesController",
@@ -20,10 +42,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "batchescontroller"
+      "norm_label": "batchescontroller",
+      "id": "backend_src_batches_batches_controller_batchescontroller"
     },
     {
       "label": "Controller",
@@ -31,10 +53,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "controller",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "controller"
+      "norm_label": "controller",
+      "id": "controller"
     },
     {
       "label": "UseGuards",
@@ -42,10 +64,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "useguards",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "useguards"
+      "norm_label": "useguards",
+      "id": "useguards"
     },
     {
       "label": "Post",
@@ -53,10 +75,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "post",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "post"
+      "norm_label": "post",
+      "id": "post"
     },
     {
       "label": "CurrentUser",
@@ -64,10 +86,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "currentuser",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "currentuser"
+      "norm_label": "currentuser",
+      "id": "currentuser"
     },
     {
       "label": "Body",
@@ -75,10 +97,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "body",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "body"
+      "norm_label": "body",
+      "id": "body"
     },
     {
       "label": "Get",
@@ -86,10 +108,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "get",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "get"
+      "norm_label": "get",
+      "id": "get"
     },
     {
       "label": "Put",
@@ -97,10 +119,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "put",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "put"
+      "norm_label": "put",
+      "id": "put"
     },
     {
       "label": "Param",
@@ -108,10 +130,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "param",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "param"
+      "norm_label": "param",
+      "id": "param"
     },
     {
       "label": "Delete",
@@ -119,10 +141,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "delete",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "delete"
+      "norm_label": "delete",
+      "id": "delete"
     },
     {
       "label": ".constructor()",
@@ -130,10 +152,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_constructor",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".constructor()"
+      "norm_label": ".constructor()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_constructor"
     },
     {
       "label": ".commitBatch()",
@@ -141,10 +163,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L13",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_commitbatch",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".commitbatch()"
+      "norm_label": ".commitbatch()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_commitbatch"
     },
     {
       "label": ".getBatchHistory()",
@@ -152,10 +174,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L27",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".getbatchhistory()"
+      "norm_label": ".getbatchhistory()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory"
     },
     {
       "label": ".getDashboardStats()",
@@ -163,10 +185,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L32",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".getdashboardstats()"
+      "norm_label": ".getdashboardstats()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats"
     },
     {
       "label": ".getBatchScrapRecords()",
@@ -174,10 +196,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L37",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".getbatchscraprecords()"
+      "norm_label": ".getbatchscraprecords()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords"
     },
     {
       "label": ".updateBatch()",
@@ -185,10 +207,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L42",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_updatebatch",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".updatebatch()"
+      "norm_label": ".updatebatch()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_updatebatch"
     },
     {
       "label": ".deleteBatch()",
@@ -196,10 +218,10 @@
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L51",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".deletebatch()"
+      "norm_label": ".deletebatch()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_deletebatch"
     },
     {
       "label": "batches.service.ts",
@@ -207,10 +229,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service",
       "community": 16,
       "community_name": "inventory.module.ts",
-      "norm_label": "batches.service.ts"
+      "norm_label": "batches.service.ts",
+      "id": "backend_src_batches_batches_service"
     },
     {
       "label": "BatchesService",
@@ -218,10 +240,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "batchesservice"
+      "norm_label": "batchesservice",
+      "id": "backend_src_batches_batches_service_batchesservice"
     },
     {
       "label": "Injectable",
@@ -229,10 +251,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "injectable",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "injectable"
+      "norm_label": "injectable",
+      "id": "injectable"
     },
     {
       "label": "InjectModel",
@@ -240,10 +262,10 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "injectmodel",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": "injectmodel"
+      "norm_label": "injectmodel",
+      "id": "injectmodel"
     },
     {
       "label": ".constructor()",
@@ -251,10 +273,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_constructor",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".constructor()"
+      "norm_label": ".constructor()",
+      "id": "backend_src_batches_batches_service_batchesservice_constructor"
     },
     {
       "label": ".commitBatch()",
@@ -262,10 +284,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L18",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_commitbatch",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".commitbatch()"
+      "norm_label": ".commitbatch()",
+      "id": "backend_src_batches_batches_service_batchesservice_commitbatch"
     },
     {
       "label": ".getBatchHistory()",
@@ -273,10 +295,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L197",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_getbatchhistory",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".getbatchhistory()"
+      "norm_label": ".getbatchhistory()",
+      "id": "backend_src_batches_batches_service_batchesservice_getbatchhistory"
     },
     {
       "label": ".getDashboardStats()",
@@ -284,10 +306,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L203",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_getdashboardstats",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".getdashboardstats()"
+      "norm_label": ".getdashboardstats()",
+      "id": "backend_src_batches_batches_service_batchesservice_getdashboardstats"
     },
     {
       "label": ".getBatchScrapRecords()",
@@ -295,10 +317,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L278",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_getbatchscraprecords",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".getbatchscraprecords()"
+      "norm_label": ".getbatchscraprecords()",
+      "id": "backend_src_batches_batches_service_batchesservice_getbatchscraprecords"
     },
     {
       "label": ".updateBatch()",
@@ -306,10 +328,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L334",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_updatebatch",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".updatebatch()"
+      "norm_label": ".updatebatch()",
+      "id": "backend_src_batches_batches_service_batchesservice_updatebatch"
     },
     {
       "label": ".deleteBatch()",
@@ -317,10 +339,10 @@
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L345",
       "_origin": "ast",
-      "id": "backend_src_batches_batches_service_batchesservice_deletebatch",
       "community": 25,
       "community_name": "batches.module.ts",
-      "norm_label": ".deletebatch()"
+      "norm_label": ".deletebatch()",
+      "id": "backend_src_batches_batches_service_batchesservice_deletebatch"
     },
     {
       "label": "BatchHistoryPage.jsx",
@@ -328,10 +350,10 @@
       "source_file": "frontend/src/pages/BatchHistoryPage/BatchHistoryPage.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "frontend_src_pages_batchhistorypage_batchhistorypage",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "batchhistorypage.jsx"
+      "norm_label": "batchhistorypage.jsx",
+      "id": "frontend_src_pages_batchhistorypage_batchhistorypage"
     },
     {
       "label": "getTextStyle()",
@@ -339,10 +361,10 @@
       "source_file": "frontend/src/pages/BatchHistoryPage/BatchHistoryPage.jsx",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "frontend_src_pages_batchhistorypage_batchhistorypage_gettextstyle",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "gettextstyle()"
+      "norm_label": "gettextstyle()",
+      "id": "frontend_src_pages_batchhistorypage_batchhistorypage_gettextstyle"
     },
     {
       "label": "BatchHistoryPage()",
@@ -350,10 +372,10 @@
       "source_file": "frontend/src/pages/BatchHistoryPage/BatchHistoryPage.jsx",
       "source_location": "L30",
       "_origin": "ast",
-      "id": "frontend_src_pages_batchhistorypage_batchhistorypage_batchhistorypage",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "batchhistorypage()"
+      "norm_label": "batchhistorypage()",
+      "id": "frontend_src_pages_batchhistorypage_batchhistorypage_batchhistorypage"
     },
     {
       "label": "NewBatchPage.jsx",
@@ -361,10 +383,10 @@
       "source_file": "frontend/src/pages/NewBatchPage/NewBatchPage.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "frontend_src_pages_newbatchpage_newbatchpage",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "newbatchpage.jsx"
+      "norm_label": "newbatchpage.jsx",
+      "id": "frontend_src_pages_newbatchpage_newbatchpage"
     },
     {
       "label": "initialStock",
@@ -372,10 +394,10 @@
       "source_file": "frontend/src/pages/NewBatchPage/NewBatchPage.jsx",
       "source_location": "L22",
       "_origin": "ast",
-      "id": "frontend_src_pages_newbatchpage_newbatchpage_initialstock",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "initialstock"
+      "norm_label": "initialstock",
+      "id": "frontend_src_pages_newbatchpage_newbatchpage_initialstock"
     },
     {
       "label": "initialParts",
@@ -383,10 +405,10 @@
       "source_file": "frontend/src/pages/NewBatchPage/NewBatchPage.jsx",
       "source_location": "L26",
       "_origin": "ast",
-      "id": "frontend_src_pages_newbatchpage_newbatchpage_initialparts",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "initialparts"
+      "norm_label": "initialparts",
+      "id": "frontend_src_pages_newbatchpage_newbatchpage_initialparts"
     },
     {
       "label": "useTableRows()",
@@ -394,10 +416,10 @@
       "source_file": "frontend/src/pages/NewBatchPage/NewBatchPage.jsx",
       "source_location": "L31",
       "_origin": "ast",
-      "id": "frontend_src_pages_newbatchpage_newbatchpage_usetablerows",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "usetablerows()"
+      "norm_label": "usetablerows()",
+      "id": "frontend_src_pages_newbatchpage_newbatchpage_usetablerows"
     },
     {
       "label": "NewBatchPage()",
@@ -405,10 +427,10 @@
       "source_file": "frontend/src/pages/NewBatchPage/NewBatchPage.jsx",
       "source_location": "L66",
       "_origin": "ast",
-      "id": "frontend_src_pages_newbatchpage_newbatchpage_newbatchpage",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "newbatchpage()"
+      "norm_label": "newbatchpage()",
+      "id": "frontend_src_pages_newbatchpage_newbatchpage_newbatchpage"
     },
     {
       "label": "ResultsPage.jsx",
@@ -416,10 +438,10 @@
       "source_file": "frontend/src/pages/ResultsPage/ResultsPage.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "frontend_src_pages_resultspage_resultspage",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "resultspage.jsx"
+      "norm_label": "resultspage.jsx",
+      "id": "frontend_src_pages_resultspage_resultspage"
     },
     {
       "label": "mockLayouts",
@@ -427,10 +449,10 @@
       "source_file": "frontend/src/pages/ResultsPage/ResultsPage.jsx",
       "source_location": "L24",
       "_origin": "ast",
-      "id": "frontend_src_pages_resultspage_resultspage_mocklayouts",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "mocklayouts"
+      "norm_label": "mocklayouts",
+      "id": "frontend_src_pages_resultspage_resultspage_mocklayouts"
     },
     {
       "label": "getTextStyle()",
@@ -438,10 +460,10 @@
       "source_file": "frontend/src/pages/ResultsPage/ResultsPage.jsx",
       "source_location": "L148",
       "_origin": "ast",
-      "id": "frontend_src_pages_resultspage_resultspage_gettextstyle",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "gettextstyle()"
+      "norm_label": "gettextstyle()",
+      "id": "frontend_src_pages_resultspage_resultspage_gettextstyle"
     },
     {
       "label": "ResultsPage()",
@@ -449,10 +471,10 @@
       "source_file": "frontend/src/pages/ResultsPage/ResultsPage.jsx",
       "source_location": "L159",
       "_origin": "ast",
-      "id": "frontend_src_pages_resultspage_resultspage_resultspage",
       "community": 0,
       "community_name": "App.jsx",
-      "norm_label": "resultspage()"
+      "norm_label": "resultspage()",
+      "id": "frontend_src_pages_resultspage_resultspage_resultspage"
     },
     {
       "label": "extract-colors.cjs",
@@ -3739,7 +3761,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "norm_label": "sm",
       "id": "agents_skills_design_system_templates_design_tokens_starter_fontsize_sm"
     },
@@ -3750,7 +3772,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "norm_label": "$value",
       "id": "agents_skills_design_system_templates_design_tokens_starter_sm_value"
     },
@@ -3761,7 +3783,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "norm_label": "$type",
       "id": "agents_skills_design_system_templates_design_tokens_starter_sm_type"
     },
@@ -3980,8 +4002,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L63",
       "_origin": "ast",
-      "community": 49,
-      "community_name": "radius",
+      "community": 63,
+      "community_name": "none",
       "norm_label": "none",
       "id": "agents_skills_design_system_templates_design_tokens_starter_radius_none"
     },
@@ -3991,8 +4013,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L63",
       "_origin": "ast",
-      "community": 49,
-      "community_name": "radius",
+      "community": 63,
+      "community_name": "none",
       "norm_label": "$value",
       "id": "agents_skills_design_system_templates_design_tokens_starter_none_value"
     },
@@ -4002,8 +4024,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L63",
       "_origin": "ast",
-      "community": 49,
-      "community_name": "radius",
+      "community": 63,
+      "community_name": "none",
       "norm_label": "$type",
       "id": "agents_skills_design_system_templates_design_tokens_starter_none_type"
     },
@@ -4014,7 +4036,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "norm_label": "sm",
       "id": "agents_skills_design_system_templates_design_tokens_starter_radius_sm"
     },
@@ -4024,8 +4046,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 170,
-      "community_name": "default",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "default",
       "id": "agents_skills_design_system_templates_design_tokens_starter_radius_default"
     },
@@ -4035,8 +4057,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 170,
-      "community_name": "default",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "$value",
       "id": "agents_skills_design_system_templates_design_tokens_starter_default_value"
     },
@@ -4046,8 +4068,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 170,
-      "community_name": "default",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "$type",
       "id": "agents_skills_design_system_templates_design_tokens_starter_default_type"
     },
@@ -4057,8 +4079,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L66",
       "_origin": "ast",
-      "community": 63,
-      "community_name": "md",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "md",
       "id": "agents_skills_design_system_templates_design_tokens_starter_radius_md"
     },
@@ -4068,8 +4090,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L66",
       "_origin": "ast",
-      "community": 63,
-      "community_name": "md",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "$value",
       "id": "agents_skills_design_system_templates_design_tokens_starter_md_value"
     },
@@ -4079,8 +4101,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L66",
       "_origin": "ast",
-      "community": 63,
-      "community_name": "md",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "$type",
       "id": "agents_skills_design_system_templates_design_tokens_starter_md_type"
     },
@@ -4145,8 +4167,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L71",
       "_origin": "ast",
-      "community": 59,
-      "community_name": "shadow",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "shadow",
       "id": "agents_skills_design_system_templates_design_tokens_starter_primitive_shadow"
     },
@@ -4156,8 +4178,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L72",
       "_origin": "ast",
-      "community": 49,
-      "community_name": "radius",
+      "community": 63,
+      "community_name": "none",
       "norm_label": "none",
       "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_none"
     },
@@ -4168,7 +4190,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "norm_label": "sm",
       "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_sm"
     },
@@ -4178,8 +4200,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L74",
       "_origin": "ast",
-      "community": 170,
-      "community_name": "default",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "default",
       "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_default"
     },
@@ -4189,8 +4211,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L75",
       "_origin": "ast",
-      "community": 63,
-      "community_name": "md",
+      "community": 49,
+      "community_name": "radius",
       "norm_label": "md",
       "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_md"
     },
@@ -9744,8 +9766,8 @@
       "source_file": "backend/package.json",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 193,
-      "community_name": "bcryptjs",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "bcryptjs",
       "id": "backend_package_dependencies_bcryptjs"
     },
@@ -9755,8 +9777,8 @@
       "source_file": "backend/package.json",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 193,
-      "community_name": "bcryptjs",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "bcryptjs",
       "id": "bcryptjs"
     },
@@ -9766,8 +9788,8 @@
       "source_file": "backend/package.json",
       "source_location": "L28",
       "_origin": "ast",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 193,
+      "community_name": "dotenv",
       "norm_label": "dotenv",
       "id": "backend_package_dependencies_dotenv"
     },
@@ -9777,8 +9799,8 @@
       "source_file": "backend/package.json",
       "source_location": "L28",
       "_origin": "ast",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 193,
+      "community_name": "dotenv",
       "norm_label": "dotenv",
       "id": "dotenv"
     },
@@ -26571,6 +26593,17 @@
   ],
   "links": [
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents",
+      "target": "agents_agents_workspace_rules",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -26578,9 +26611,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_auth_jwt_auth_guard",
-      "confidence_score": 1.0
+      "target": "backend_src_auth_jwt_auth_guard"
     },
     {
       "relation": "imports",
@@ -26590,9 +26623,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_auth_jwt_auth_guard_jwtauthguard",
-      "confidence_score": 1.0
+      "target": "backend_src_auth_jwt_auth_guard_jwtauthguard"
     },
     {
       "relation": "imports_from",
@@ -26602,9 +26635,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_auth_user_decorator",
-      "confidence_score": 1.0
+      "target": "backend_src_auth_user_decorator"
     },
     {
       "relation": "imports",
@@ -26614,9 +26647,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_auth_user_decorator_currentuser",
-      "confidence_score": 1.0
+      "target": "backend_src_auth_user_decorator_currentuser"
     },
     {
       "relation": "contains",
@@ -26625,9 +26658,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_batches_batches_controller_batchescontroller",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller"
     },
     {
       "relation": "imports_from",
@@ -26637,9 +26670,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_batches_batches_service",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service"
     },
     {
       "relation": "imports",
@@ -26649,9 +26682,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_batches_batches_service_batchesservice",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice"
     },
     {
       "relation": "imports_from",
@@ -26661,9 +26694,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_users_user_schema",
-      "confidence_score": 1.0
+      "target": "backend_src_users_user_schema"
     },
     {
       "relation": "imports",
@@ -26673,9 +26706,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller",
-      "target": "backend_src_users_user_schema_user",
-      "confidence_score": 1.0
+      "target": "backend_src_users_user_schema_user"
     },
     {
       "relation": "imports_from",
@@ -26696,9 +26729,9 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_commitbatch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_commitbatch"
     },
     {
       "relation": "method",
@@ -26707,9 +26740,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_constructor",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_constructor"
     },
     {
       "relation": "method",
@@ -26718,9 +26751,9 @@
       "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_deletebatch"
     },
     {
       "relation": "method",
@@ -26729,9 +26762,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory"
     },
     {
       "relation": "method",
@@ -26740,9 +26773,9 @@
       "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords"
     },
     {
       "relation": "method",
@@ -26751,9 +26784,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats"
     },
     {
       "relation": "method",
@@ -26762,9 +26795,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "backend_src_batches_batches_controller_batchescontroller_updatebatch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_controller_batchescontroller_updatebatch"
     },
     {
       "relation": "references",
@@ -26774,9 +26807,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "controller",
-      "confidence_score": 1.0
+      "target": "controller"
     },
     {
       "relation": "references",
@@ -26786,9 +26819,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller",
-      "target": "useguards",
-      "confidence_score": 1.0
+      "target": "useguards"
     },
     {
       "relation": "imports",
@@ -26810,9 +26843,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_commitbatch",
-      "target": "post",
-      "confidence_score": 1.0
+      "target": "post"
     },
     {
       "relation": "references",
@@ -26822,9 +26855,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_commitbatch",
-      "target": "currentuser",
-      "confidence_score": 1.0
+      "target": "currentuser"
     },
     {
       "relation": "references",
@@ -26834,9 +26867,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
-      "target": "currentuser",
-      "confidence_score": 1.0
+      "target": "currentuser"
     },
     {
       "relation": "references",
@@ -26846,9 +26879,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory",
-      "target": "currentuser",
-      "confidence_score": 1.0
+      "target": "currentuser"
     },
     {
       "relation": "references",
@@ -26858,9 +26891,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords",
-      "target": "currentuser",
-      "confidence_score": 1.0
+      "target": "currentuser"
     },
     {
       "relation": "references",
@@ -26870,9 +26903,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats",
-      "target": "currentuser",
-      "confidence_score": 1.0
+      "target": "currentuser"
     },
     {
       "relation": "references",
@@ -26882,9 +26915,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_updatebatch",
-      "target": "currentuser",
-      "confidence_score": 1.0
+      "target": "currentuser"
     },
     {
       "relation": "references",
@@ -26894,9 +26927,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_commitbatch",
-      "target": "body",
-      "confidence_score": 1.0
+      "target": "body"
     },
     {
       "relation": "references",
@@ -26906,9 +26939,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_updatebatch",
-      "target": "body",
-      "confidence_score": 1.0
+      "target": "body"
     },
     {
       "relation": "references",
@@ -26918,9 +26951,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory",
-      "target": "get",
-      "confidence_score": 1.0
+      "target": "get"
     },
     {
       "relation": "references",
@@ -26930,9 +26963,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords",
-      "target": "get",
-      "confidence_score": 1.0
+      "target": "get"
     },
     {
       "relation": "references",
@@ -26942,9 +26975,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats",
-      "target": "get",
-      "confidence_score": 1.0
+      "target": "get"
     },
     {
       "relation": "references",
@@ -26954,9 +26987,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_updatebatch",
-      "target": "put",
-      "confidence_score": 1.0
+      "target": "put"
     },
     {
       "relation": "references",
@@ -26966,9 +26999,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
-      "target": "param",
-      "confidence_score": 1.0
+      "target": "param"
     },
     {
       "relation": "references",
@@ -26978,9 +27011,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_updatebatch",
-      "target": "param",
-      "confidence_score": 1.0
+      "target": "param"
     },
     {
       "relation": "references",
@@ -26990,9 +27023,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
-      "target": "delete",
-      "confidence_score": 1.0
+      "target": "delete"
     },
     {
       "relation": "references",
@@ -27002,9 +27035,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_controller_batchescontroller_constructor",
-      "target": "backend_src_batches_batches_service_batchesservice",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice"
     },
     {
       "relation": "calls",
@@ -27098,9 +27131,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_batches_batch_schema",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batch_schema"
     },
     {
       "relation": "imports",
@@ -27110,9 +27143,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_batches_batch_schema_batch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batch_schema_batch"
     },
     {
       "relation": "contains",
@@ -27121,9 +27154,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_batches_batches_service_batchesservice",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice"
     },
     {
       "relation": "imports_from",
@@ -27133,9 +27166,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_inventory_inventory_service",
-      "confidence_score": 1.0
+      "target": "backend_src_inventory_inventory_service"
     },
     {
       "relation": "imports",
@@ -27145,9 +27178,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_inventory_inventory_service_inventoryservice",
-      "confidence_score": 1.0
+      "target": "backend_src_inventory_inventory_service_inventoryservice"
     },
     {
       "relation": "imports_from",
@@ -27157,9 +27190,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_inventory_inventory_transaction_schema",
-      "confidence_score": 1.0
+      "target": "backend_src_inventory_inventory_transaction_schema"
     },
     {
       "relation": "imports",
@@ -27169,9 +27202,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_inventory_inventory_transaction_schema_inventorytransaction",
-      "confidence_score": 1.0
+      "target": "backend_src_inventory_inventory_transaction_schema_inventorytransaction"
     },
     {
       "relation": "imports_from",
@@ -27181,9 +27214,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_inventory_stock_item_schema",
-      "confidence_score": 1.0
+      "target": "backend_src_inventory_stock_item_schema"
     },
     {
       "relation": "imports",
@@ -27193,9 +27226,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service",
-      "target": "backend_src_inventory_stock_item_schema_stockitem",
-      "confidence_score": 1.0
+      "target": "backend_src_inventory_stock_item_schema_stockitem"
     },
     {
       "relation": "imports",
@@ -27216,9 +27249,9 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_commitbatch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_commitbatch"
     },
     {
       "relation": "method",
@@ -27227,9 +27260,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_constructor",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_constructor"
     },
     {
       "relation": "method",
@@ -27238,9 +27271,9 @@
       "source_location": "L345",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_deletebatch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_deletebatch"
     },
     {
       "relation": "method",
@@ -27249,9 +27282,9 @@
       "source_location": "L197",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_getbatchhistory",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_getbatchhistory"
     },
     {
       "relation": "method",
@@ -27260,9 +27293,9 @@
       "source_location": "L278",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_getbatchscraprecords",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_getbatchscraprecords"
     },
     {
       "relation": "method",
@@ -27271,9 +27304,9 @@
       "source_location": "L203",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_getdashboardstats",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_getdashboardstats"
     },
     {
       "relation": "method",
@@ -27282,9 +27315,9 @@
       "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "backend_src_batches_batches_service_batchesservice_updatebatch",
-      "confidence_score": 1.0
+      "target": "backend_src_batches_batches_service_batchesservice_updatebatch"
     },
     {
       "relation": "references",
@@ -27294,9 +27327,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice",
-      "target": "injectable",
-      "confidence_score": 1.0
+      "target": "injectable"
     },
     {
       "relation": "references",
@@ -27306,9 +27339,9 @@
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "backend_src_batches_batches_service_batchesservice_constructor",
-      "target": "injectmodel",
-      "confidence_score": 1.0
+      "target": "injectmodel"
     },
     {
       "relation": "imports_from",
@@ -27329,9 +27362,9 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_batchhistorypage_batchhistorypage",
-      "target": "frontend_src_pages_batchhistorypage_batchhistorypage_batchhistorypage",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_batchhistorypage_batchhistorypage_batchhistorypage"
     },
     {
       "relation": "contains",
@@ -27340,9 +27373,9 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_batchhistorypage_batchhistorypage",
-      "target": "frontend_src_pages_batchhistorypage_batchhistorypage_gettextstyle",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_batchhistorypage_batchhistorypage_gettextstyle"
     },
     {
       "relation": "imports_from",
@@ -27352,9 +27385,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_batchhistorypage_batchhistorypage",
-      "target": "frontend_src_utils_api",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api"
     },
     {
       "relation": "imports",
@@ -27364,9 +27397,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_batchhistorypage_batchhistorypage",
-      "target": "frontend_src_utils_api_batchesapi",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api_batchesapi"
     },
     {
       "relation": "imports_from",
@@ -27376,9 +27409,9 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_batchhistorypage_batchhistorypage",
-      "target": "ref_react",
-      "confidence_score": 1.0
+      "target": "ref_react"
     },
     {
       "relation": "calls",
@@ -27388,9 +27421,9 @@
       "source_location": "L430",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_batchhistorypage_batchhistorypage_batchhistorypage",
-      "target": "frontend_src_pages_batchhistorypage_batchhistorypage_gettextstyle",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_batchhistorypage_batchhistorypage_gettextstyle"
     },
     {
       "relation": "imports",
@@ -27423,9 +27456,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_pages_newbatchpage_newbatchpage_initialparts",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_newbatchpage_newbatchpage_initialparts"
     },
     {
       "relation": "contains",
@@ -27434,9 +27467,9 @@
       "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_pages_newbatchpage_newbatchpage_initialstock",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_newbatchpage_newbatchpage_initialstock"
     },
     {
       "relation": "contains",
@@ -27445,9 +27478,9 @@
       "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_pages_newbatchpage_newbatchpage_newbatchpage",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_newbatchpage_newbatchpage_newbatchpage"
     },
     {
       "relation": "contains",
@@ -27456,9 +27489,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_pages_newbatchpage_newbatchpage_usetablerows",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_newbatchpage_newbatchpage_usetablerows"
     },
     {
       "relation": "imports_from",
@@ -27468,9 +27501,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_utils_api",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api"
     },
     {
       "relation": "imports",
@@ -27480,9 +27513,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_utils_api_batchesapi",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api_batchesapi"
     },
     {
       "relation": "imports",
@@ -27492,9 +27525,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_utils_api_inventoryapi",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api_inventoryapi"
     },
     {
       "relation": "imports_from",
@@ -27504,9 +27537,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_utils_optimizer",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_optimizer"
     },
     {
       "relation": "imports",
@@ -27516,9 +27549,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "frontend_src_utils_optimizer_solve1dcsp",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_optimizer_solve1dcsp"
     },
     {
       "relation": "imports_from",
@@ -27528,9 +27561,9 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage",
-      "target": "ref_react",
-      "confidence_score": 1.0
+      "target": "ref_react"
     },
     {
       "relation": "calls",
@@ -27540,9 +27573,9 @@
       "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_newbatchpage_newbatchpage_newbatchpage",
-      "target": "frontend_src_pages_newbatchpage_newbatchpage_usetablerows",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_newbatchpage_newbatchpage_usetablerows"
     },
     {
       "relation": "imports",
@@ -27575,9 +27608,9 @@
       "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "frontend_src_pages_resultspage_resultspage_gettextstyle",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_resultspage_resultspage_gettextstyle"
     },
     {
       "relation": "contains",
@@ -27586,9 +27619,9 @@
       "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "frontend_src_pages_resultspage_resultspage_mocklayouts",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_resultspage_resultspage_mocklayouts"
     },
     {
       "relation": "contains",
@@ -27597,9 +27630,9 @@
       "source_location": "L159",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "frontend_src_pages_resultspage_resultspage_resultspage",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_resultspage_resultspage_resultspage"
     },
     {
       "relation": "imports_from",
@@ -27609,9 +27642,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "frontend_src_utils_api",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api"
     },
     {
       "relation": "imports",
@@ -27621,9 +27654,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "frontend_src_utils_api_batchesapi",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api_batchesapi"
     },
     {
       "relation": "imports",
@@ -27633,9 +27666,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "frontend_src_utils_api_inventoryapi",
-      "confidence_score": 1.0
+      "target": "frontend_src_utils_api_inventoryapi"
     },
     {
       "relation": "imports_from",
@@ -27645,9 +27678,9 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage",
-      "target": "ref_react",
-      "confidence_score": 1.0
+      "target": "ref_react"
     },
     {
       "relation": "calls",
@@ -27657,9 +27690,9 @@
       "source_location": "L794",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultspage_resultspage_resultspage",
-      "target": "frontend_src_pages_resultspage_resultspage_gettextstyle",
-      "confidence_score": 1.0
+      "target": "frontend_src_pages_resultspage_resultspage_gettextstyle"
     },
     {
       "relation": "imports",
@@ -59022,5 +59055,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1b7302f2ca41c0c8b39a2cfa1751366fbbb05b00"
+  "built_at_commit": "1822433d760bc5f042d386d9465bdbec7d765c7d"
 }

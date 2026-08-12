@@ -1,16 +1,16 @@
 # Graph Report - RebarOptima  (2026-08-13)
 
 ## Corpus Check
-- 168 files · ~219,553 words
+- 169 files · ~219,614 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2415 nodes · 2884 edges · 205 communities (147 shown, 58 thin omitted)
+- 2417 nodes · 2885 edges · 205 communities (146 shown, 59 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1b7302f2`
+- Built from commit: `1822433d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -74,11 +74,11 @@
 - devDependencies
 - Canvas Design System
 - Prerequisites
-- shadow
+- sm
 - nest-cli.json
 - lg
 - auth.module.ts
-- md
+- none
 - _generate_intelligent_overrides
 - is_server_ready
 - moduleFileExtensions
@@ -179,7 +179,7 @@
 - ponytail-audit/SKILL.md
 - Ponytail Gain
 - ponytail-review/SKILL.md
-- default
+- AGENTS.md
 - ponytail-debt/SKILL.md
 - React + Vite
 - primary
@@ -202,7 +202,7 @@
 - .test_base_config_structure
 - .test_default_content_paths_react
 - workflows/graphify.md
-- bcryptjs
+- dotenv
 - eslint-config-prettier
 - PROJECT_AI_PROMPT.md
 - Body
@@ -242,7 +242,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (205 total, 58 thin omitted)
+## Communities (205 total, 59 thin omitted)
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.06
@@ -322,7 +322,7 @@ Nodes (9): DesignSystemGenerator, Find matching reasoning rule for a category., 
 
 ### Community 19 - "dependencies"
 Cohesion: 0.11
-Nodes (19): dependencies, dotenv, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
+Nodes (19): dependencies, bcryptjs, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
 
 ### Community 20 - "fetch-background.py"
 Cohesion: 0.17
@@ -441,8 +441,8 @@ Cohesion: 0.22
 Nodes (9): jest, collectCoverageFrom, coverageDirectory, rootDir, testEnvironment, testRegex, transform, ^.+\\.(t|j)s$ (+1 more)
 
 ### Community 49 - "radius"
-Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, none, none
+Cohesion: 0.19
+Nodes (13): $type, $value, $type, $value, $type, $value, radius, shadow (+5 more)
 
 ### Community 50 - "._generate_javascript"
 Cohesion: 0.29
@@ -476,9 +476,9 @@ Nodes (35): 1. Visual Communication First, 2. Minimal Text Integration, 3. Exper
 Cohesion: 0.06
 Nodes (33): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+25 more)
 
-### Community 59 - "shadow"
-Cohesion: 0.47
-Nodes (6): sm, shadow, sm, sm, $type, $value
+### Community 59 - "sm"
+Cohesion: 0.60
+Nodes (5): sm, sm, sm, $type, $value
 
 ### Community 60 - "nest-cli.json"
 Cohesion: 0.33
@@ -492,9 +492,9 @@ Nodes (5): lg, $type, $value, lg, lg
 Cohesion: 0.11
 Nodes (16): AuthController, Body, Controller, Post, AuthService, Injectable, CompaniesModule, Module (+8 more)
 
-### Community 63 - "md"
+### Community 63 - "none"
 Cohesion: 0.67
-Nodes (4): $type, $value, md, md
+Nodes (4): $type, $value, none, none
 
 ### Community 64 - "_generate_intelligent_overrides"
 Cohesion: 0.33
@@ -772,10 +772,6 @@ Nodes (4): Boundaries, Honesty boundary, Ponytail Gain, Scoreboard
 Cohesion: 0.40
 Nodes (4): Boundaries, Examples, Format, Scoring
 
-### Community 170 - "default"
-Cohesion: 0.67
-Nodes (4): $type, $value, default, default
-
 ### Community 171 - "ponytail-debt/SKILL.md"
 Cohesion: 0.50
 Nodes (3): Boundaries, Output, Scan
@@ -809,23 +805,23 @@ Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
 ## Knowledge Gaps
-- **1117 isolated node(s):** `initialStock`, `initialParts`, `mockLayouts`, `fs`, `path` (+1112 more)
+- **1118 isolated node(s):** `Workspace Rules`, `initialStock`, `initialParts`, `mockLayouts`, `fs` (+1113 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **58 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `radius`, `design-tokens-starter.json`, `fontSize`, `shadow`?**
+- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `radius`, `design-tokens-starter.json`, `fontSize`?**
   _High betweenness centrality (0.010) - this node is a cross-community bridge._
 - **Why does `color` connect `color` to `$type`, `primary`, `destructive-foreground`, `muted`, `primary-foreground`, `ring`, `secondary-foreground`, `design-tokens-starter.json`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `color` connect `gray` to `primitive`?**
+- **Why does `semantic` connect `design-tokens-starter.json` to `color`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `initialStock`, `initialParts`, `mockLayouts` to the rest of the system?**
-  _1117 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Workspace Rules`, `initialStock`, `initialParts` to the rest of the system?**
+  _1118 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `App.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.0625 - nodes in this community are weakly interconnected._
 - **Should `gray` be split into smaller, more focused modules?**

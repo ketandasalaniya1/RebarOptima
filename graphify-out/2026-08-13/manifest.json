@@ -245,9 +245,9 @@
     "semantic_hash": "16aa03e99ea73d0fa47209f4ce30b84b"
   },
   "backend/src/batches/batches.controller.ts": {
-    "mtime": 1786561262.751663,
-    "ast_hash": "e79ee4e8cec5e4c55b6d99812ff20218",
-    "semantic_hash": "e79ee4e8cec5e4c55b6d99812ff20218"
+    "mtime": 1786570263.785124,
+    "ast_hash": "8baa790c739ed26dd72c7af3f731e644",
+    "semantic_hash": ""
   },
   "backend/src/batches/batches.module.ts": {
     "mtime": 1783889353.4829223,
@@ -255,9 +255,9 @@
     "semantic_hash": "07667010a28a606ec6c5c5a4c1b9dc1d"
   },
   "backend/src/batches/batches.service.ts": {
-    "mtime": 1786561248.1601732,
-    "ast_hash": "21e0310e02acd3f9c41252fb8c7b0846",
-    "semantic_hash": "21e0310e02acd3f9c41252fb8c7b0846"
+    "mtime": 1786570412.808726,
+    "ast_hash": "363148b3dd73ffc82bc5b72974425a97",
+    "semantic_hash": ""
   },
   "backend/src/companies/companies.module.ts": {
     "mtime": 1783880868.0183792,
@@ -385,9 +385,9 @@
     "semantic_hash": "c4931efa716e5ce134aea30ca162f0ca"
   },
   "frontend/src/pages/BatchHistoryPage/BatchHistoryPage.jsx": {
-    "mtime": 1786561518.7331407,
-    "ast_hash": "e34c8d64618f64efd8cf5e52003919f0",
-    "semantic_hash": "e34c8d64618f64efd8cf5e52003919f0"
+    "mtime": 1786570378.3765967,
+    "ast_hash": "7c3d111f7e6665bf5320be0c880f19b3",
+    "semantic_hash": ""
   },
   "frontend/src/pages/InventoryPage/InventoryPage.jsx": {
     "mtime": 1786561479.9784105,
@@ -400,9 +400,9 @@
     "semantic_hash": "7ec7de902887b728dde4391424c85599"
   },
   "frontend/src/pages/NewBatchPage/NewBatchPage.jsx": {
-    "mtime": 1786554719.69627,
-    "ast_hash": "5e54c1b24ff0f16921334473c98f8f1e",
-    "semantic_hash": "5e54c1b24ff0f16921334473c98f8f1e"
+    "mtime": 1786570318.0769944,
+    "ast_hash": "737dc13e36ec8e4895d13b079135c06e",
+    "semantic_hash": ""
   },
   "frontend/src/pages/OverviewPage/OverviewPage.jsx": {
     "mtime": 1786568937.7952569,
@@ -410,9 +410,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/ResultsPage/ResultsPage.jsx": {
-    "mtime": 1786556248.7528613,
-    "ast_hash": "c43376f84a8a8d461a1376d42c4d9841",
-    "semantic_hash": "c43376f84a8a8d461a1376d42c4d9841"
+    "mtime": 1786570365.3183918,
+    "ast_hash": "3a3363f998203c8eccb96dfe3bb72443",
+    "semantic_hash": ""
   },
   "frontend/src/pages/SettingsPage/SettingsPage.jsx": {
     "mtime": 1784077214.2213354,

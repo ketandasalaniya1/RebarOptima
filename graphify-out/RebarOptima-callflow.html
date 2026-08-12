@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2405 nodes, 2903 edges, 196 communities. Commit: d244fc4</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2415 nodes, 2884 edges, 205 communities. Commit: 1b7302f</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -90,9 +90,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>26 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>640 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>642 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
-    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>10 nodes</small>")
+    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>25 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
     OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>134 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
@@ -100,7 +100,7 @@ flowchart LR
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>51 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>167 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>161 nodes</small>")
     class SERVE_API_35EC8E86 module;
     TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>161 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
@@ -116,18 +116,20 @@ flowchart LR
     class LOGO_USAGE_RULES_91E51D96 module;
     COMPONENT_SPECIFICATIONS_B4AF2A34("Component Specifications<br/><small>29 nodes</small>")
     class COMPONENT_SPECIFICATIONS_B4AF2A34 module;
-    OTHER_D0941E68("Other<br/><small>723 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>722 nodes</small>")
     class OTHER_D0941E68 module;
-    OTHER_D0941E68 -->|references x31| BUILD_GRAPH_321CBB04
+    OTHER_D0941E68 -->|references x20| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|contains x12| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|method x11| CLI_SKILLS_9964CBB8
-    BUILD_GRAPH_321CBB04 -->|method x11| OTHER_D0941E68
-    SERVE_API_35EC8E86 -->|contains x5| OTHER_D0941E68
+    ANALYSIS_CLUSTERING_C79796DA -->|contains x11| SERVE_API_35EC8E86
     TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
     TESTS_FIXTURES_B84B1DCC -->|method x4| EXTRACT_PIPELINE_5F350230
-    OTHER_D0941E68 -->|calls x4| SERVE_API_35EC8E86
+    OTHER_D0941E68 -->|calls x3| SERVE_API_35EC8E86
+    SERVE_API_35EC8E86 -->|calls x3| ANALYSIS_CLUSTERING_C79796DA
     CLI_SKILLS_9964CBB8 -->|calls x2| EXTRACT_PIPELINE_5F350230
     BUILD_GRAPH_321CBB04 -->|contains x2| EXTRACT_PIPELINE_5F350230
     TESTS_FIXTURES_B84B1DCC -->|method| OTHER_D0941E68
+    SERVE_API_35EC8E86 -->|contains| OTHER_D0941E68
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -144,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>26</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>640</td><td><code>0, 1, 62, 39, 7, 25, 16, 12, 54, 124, 19, 4, 21, 23, 116, 31, 5, 36, 151, 48, 156, 49, 53, 162, 55, 56, 59, 60, 165, 166, 61, 117, 170, 63, 64, 66, 173, 174, 175, 176, 177, 178, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 193, 194, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>289</td><td><code>44, 58, 69, 89, 120, 122, 17, 136, 86, 148, 154, 157, 158, 52, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>167</td><td><code>3, 6, 10, 15, 18, 38</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>161</td><td><code>9, 14, 24, 29, 30, 33, 37, 46, 67, 119, 183, 184, 185, 186, 187, 188, 189, 190, 191, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Component Specifications</td><td>29</td><td><code>74</code></td></tr><tr><td>Other</td><td>723</td><td><code>79, 80, 82, 83, 84, 88, 121, 11, 123, 125, 126, 2, 127, 128, 129, 130, 131, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 51, 159, 164, 172, 65, 179, 73, 180, 181, 182, 192, 195, 85, 111, 113, 114</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>26</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>642</td><td><code>0, 1, 39, 62, 7, 25, 16, 12, 21, 54, 124, 19, 4, 23, 116, 31, 156, 5, 36, 151, 48, 49, 53, 162, 55, 56, 59, 60, 165, 166, 61, 117, 170, 63, 66, 173, 174, 175, 176, 177, 178, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 193, 194, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>25</td><td><code>51, 43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>289</td><td><code>44, 58, 69, 89, 120, 122, 17, 136, 86, 148, 154, 157, 158, 52, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>161</td><td><code>3, 6, 10, 18, 38, 15, 64, 198</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>161</td><td><code>9, 14, 24, 29, 30, 33, 37, 46, 67, 119, 183, 184, 185, 186, 187, 188, 189, 190, 191, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Component Specifications</td><td>29</td><td><code>74</code></td></tr><tr><td>Other</td><td>722</td><td><code>79, 80, 82, 83, 84, 88, 121, 2, 123, 125, 126, 127, 128, 129, 11, 130, 131, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 159, 164, 172, 65, 179, 73, 180, 181, 182, 192, 195, 85, 111, 113, 114, 196, 197, 199, 200, 201, 202, 203, 204</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -156,7 +158,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>2405 nodes · 2903 edges · 196 communities (147 shown, 49 thin omitted)</li>
+      <li>2415 nodes · 2884 edges · 205 communities (147 shown, 58 thin omitted)</li>
       <li>Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.5)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `TailwindConfigGenerator` - 58 edges</li>
@@ -480,73 +482,73 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 640 nodes and 861 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 642 nodes and 855 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (640 nodes, 861 edges)
-    subgraph build_graph_src_auth_auth_service_ts_ae322d1a["src/auth/auth.service.ts"]
-        backend_src_auth_auth_service_authservice_signup_b84fbdb9("signup()<br/><small>src/auth/auth.service.ts</small>")
-        backend_src_auth_auth_service_authservice_signin_f921a44d("signin()<br/><small>src/auth/auth.service.ts</small>")
-        backend_src_auth_auth_service_authservice_3c0a3ada("AuthService<br/><small>src/auth/auth.service.ts</small>")
-        backend_src_auth_auth_service_authservice_constr_c5658005("constructor()<br/><small>src/auth/auth.service.ts</small>")
-        backend_src_auth_auth_service_authservice_genera_554e0747("generateTokens()<br/><small>src/auth/auth.service.ts</small>")
+    %% Section: Graph Build (642 nodes, 855 edges)
+    subgraph build_graph_src_batches_batches_controller_ts_15d02307["src/batches/batches.controller.ts"]
+        backend_src_batches_batches_controller_8f94094a("batches.controller.ts")
+        backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_c52c26f7("commitBatch()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_309045c6("constructor()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_206b4897("deleteBatch()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_26e1e091("getBatchHistory()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_219fd2fa("getBatchScrapRecords()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_a3855cd0("getDashboardStats()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_358428a0("updateBatch()<br/><small>src/batches/batches.controller.ts</small>")
     end
-    subgraph build_graph_src_auth_auth_controller_ts_2e6b55d1["src/auth/auth.controller.ts"]
-        backend_src_auth_auth_controller_authcontroller_abc12de8("AuthController<br/><small>src/auth/auth.controller.ts</small>")
-        backend_src_auth_auth_controller_authcontroller_eee7c059("constructor()<br/><small>src/auth/auth.controller.ts</small>")
-        backend_src_auth_auth_controller_authcontroller_abf4cf72("signin()<br/><small>src/auth/auth.controller.ts</small>")
-        backend_src_auth_auth_controller_authcontroller_fdafb8c2("signup()<br/><small>src/auth/auth.controller.ts</small>")
-    end
-    subgraph build_graph_src_users_users_service_ts_27864f12["src/users/users.service.ts"]
-        backend_src_users_users_service_usersservice_cre_8351475e("create()<br/><small>src/users/users.service.ts</small>")
-        backend_src_users_users_service_usersservice_fin_4a6dace3("findByEmail()<br/><small>src/users/users.service.ts</small>")
+    subgraph build_graph_src_batches_batches_service_ts_eda289fe["src/batches/batches.service.ts"]
+        backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
+        backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_d075144b("commitBatch()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_a5728714("getBatchHistory()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_f01c5444("getDashboardStats()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_aae40981("getBatchScrapRecords()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_d6fe95bf("updateBatch()<br/><small>src/batches/batches.service.ts</small>")
     end
     ref_react_47bfb9fb("react<br/><small>frontend/.oxlintrc.json</small>")
     frontend_src_app_7da8908b("App.jsx")
-    backend_src_auth_auth_module_0356b543("auth.module.ts")
-    backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
-    backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
-    backend_src_companies_companies_service_companie_42ba43b4("create()<br/><small>src/companies/companies.service.ts</small>")
-    backend_src_inventory_inventory_module_66f489cd("inventory.module.ts")
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|method| backend_src_auth_auth_controller_authcontroller_eee7c059
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|method| backend_src_auth_auth_controller_authcontroller_abf4cf72
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|method| backend_src_auth_auth_controller_authcontroller_fdafb8c2
-    backend_src_auth_auth_controller_authcontroller_fdafb8c2 -->|calls| backend_src_auth_auth_service_authservice_signup_b84fbdb9
-    backend_src_auth_auth_controller_authcontroller_abf4cf72 -->|calls| backend_src_auth_auth_service_authservice_signin_f921a44d
-    backend_src_auth_auth_service_authservice_3c0a3ada -->|method| backend_src_auth_auth_service_authservice_constr_c5658005
-    backend_src_auth_auth_service_authservice_3c0a3ada -->|method| backend_src_auth_auth_service_authservice_genera_554e0747
-    backend_src_auth_auth_service_authservice_3c0a3ada -->|method| backend_src_auth_auth_service_authservice_signin_f921a44d
-    backend_src_auth_auth_service_authservice_3c0a3ada -->|method| backend_src_auth_auth_service_authservice_signup_b84fbdb9
-    backend_src_auth_auth_service_authservice_signup_b84fbdb9 -->|calls| backend_src_auth_auth_service_authservice_genera_554e0747
-    backend_src_auth_auth_service_authservice_signup_b84fbdb9 -->|calls| backend_src_companies_companies_service_companie_42ba43b4
-    backend_src_auth_auth_service_authservice_signup_b84fbdb9 -->|calls| backend_src_users_users_service_usersservice_cre_8351475e
-    backend_src_auth_auth_service_authservice_signup_b84fbdb9 -->|calls| backend_src_users_users_service_usersservice_fin_4a6dace3
-    backend_src_auth_auth_service_authservice_signin_f921a44d -->|calls| backend_src_auth_auth_service_authservice_genera_554e0747
-    backend_src_auth_auth_service_authservice_signin_f921a44d -->|calls| backend_src_users_users_service_usersservice_fin_4a6dace3
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|imports| backend_src_auth_auth_module_0356b543
-    backend_src_auth_auth_module_0356b543 -->|imports| backend_src_auth_auth_service_authservice_3c0a3ada
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_309045c6
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_206b4897
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_26e1e091
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_219fd2fa
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_a3855cd0
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_358428a0
+    backend_src_batches_batches_controller_batchesco_c52c26f7 -->|calls| backend_src_batches_batches_service_batchesservi_d075144b
+    backend_src_batches_batches_controller_batchesco_26e1e091 -->|calls| backend_src_batches_batches_service_batchesservi_a5728714
+    backend_src_batches_batches_controller_batchesco_a3855cd0 -->|calls| backend_src_batches_batches_service_batchesservi_f01c5444
+    backend_src_batches_batches_controller_batchesco_219fd2fa -->|calls| backend_src_batches_batches_service_batchesservi_aae40981
+    backend_src_batches_batches_controller_batchesco_358428a0 -->|calls| backend_src_batches_batches_service_batchesservi_d6fe95bf
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d075144b
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_a5728714
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_aae40981
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_f01c5444
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d6fe95bf
+    backend_src_batches_batches_controller_8f94094a -->|imports| backend_src_batches_batches_service_4ee6c1f9
+    backend_src_batches_batches_controller_8f94094a -->|imports| backend_src_batches_batches_service_batchesservi_961f7b14
     ref_react_47bfb9fb -->|imports| frontend_src_app_7da8908b
-    %% Omitted for readability: 622 nodes, 0 edges
-    class backend_src_auth_auth_service_authservice_signup_b84fbdb9 function;
-    class backend_src_auth_auth_service_authservice_signin_f921a44d function;
-    class backend_src_auth_auth_service_authservice_3c0a3ada klass;
-    class backend_src_auth_auth_service_authservice_constr_c5658005 function;
-    class backend_src_auth_auth_service_authservice_genera_554e0747 function;
-    class backend_src_auth_auth_controller_authcontroller_abc12de8 klass;
-    class backend_src_auth_auth_controller_authcontroller_eee7c059 function;
-    class backend_src_auth_auth_controller_authcontroller_abf4cf72 function;
-    class backend_src_auth_auth_controller_authcontroller_fdafb8c2 function;
-    class backend_src_users_users_service_usersservice_cre_8351475e function;
-    class backend_src_users_users_service_usersservice_fin_4a6dace3 function;
+    %% Omitted for readability: 624 nodes, 0 edges
+    class backend_src_batches_batches_controller_8f94094a module;
+    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
+    class backend_src_batches_batches_controller_batchesco_c52c26f7 function;
+    class backend_src_batches_batches_controller_batchesco_309045c6 function;
+    class backend_src_batches_batches_controller_batchesco_206b4897 function;
+    class backend_src_batches_batches_controller_batchesco_26e1e091 function;
+    class backend_src_batches_batches_controller_batchesco_219fd2fa function;
+    class backend_src_batches_batches_controller_batchesco_a3855cd0 function;
+    class backend_src_batches_batches_controller_batchesco_358428a0 function;
+    class backend_src_batches_batches_service_4ee6c1f9 module;
+    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
+    class backend_src_batches_batches_service_batchesservi_d075144b function;
+    class backend_src_batches_batches_service_batchesservi_a5728714 function;
+    class backend_src_batches_batches_service_batchesservi_f01c5444 function;
+    class backend_src_batches_batches_service_batchesservi_aae40981 function;
+    class backend_src_batches_batches_service_batchesservi_d6fe95bf function;
     class ref_react_47bfb9fb function;
     class frontend_src_app_7da8908b ui;
-    class backend_src_auth_auth_module_0356b543 module;
-    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
-    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
-    class backend_src_companies_companies_service_companie_42ba43b4 function;
-    class backend_src_inventory_inventory_module_66f489cd module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -570,158 +572,14 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>.oxlintrc.json</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>.oxlintrc.json node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>$schema</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>$schema node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>plugins</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>plugins node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br>+13 more</td>
-  <td>react node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>oxc</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>oxc node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>rules</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>rules node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>react/rules-of-hooks</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>react/rules-of-hooks node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>react/only-export-components</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>warn</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>warn node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>authSlice.js</code><br><small style="color:var(--muted)">store/slices/authSlice.js</small><br><code>BatchHistoryPage()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br>+26 more</td>
-  <td>App.jsx node in frontend/src/App.jsx.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>main.jsx</code><br><small style="color:var(--muted)">frontend/src/main.jsx</small></td>
-  <td>App() node in frontend/src/App.jsx.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>ScrollToTop.jsx</code><br><small style="color:var(--muted)">components/ScrollToTop/ScrollToTop.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td>No direct outbound edge</td>
-  <td>ScrollToTop.jsx node in components/ScrollToTop/ScrollToTop.jsx.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>ScrollToTop()</code><br><small style="color:var(--muted)">components/ScrollToTop/ScrollToTop.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td>No direct outbound edge</td>
-  <td>ScrollToTop() node in components/ScrollToTop/ScrollToTop.jsx.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>ThemeToggle()</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small><br><code>ThemeToggle.jsx</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
-  <td>SideNavbar.jsx node in components/SideNavbar/SideNavbar.jsx.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>SideNavbar()</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td>No direct outbound edge</td>
-  <td>SideNavbar() node in components/SideNavbar/SideNavbar.jsx.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>ThemeToggle.jsx</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small><br><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><code>SignInPage.jsx</code><br><small style="color:var(--muted)">pages/SignInPage/SignInPage.jsx</small><br><code>SignUpPage.jsx</code><br><small style="color:var(--muted)">pages/SignUpPage/SignUpPage.jsx</small></td>
-  <td>ThemeToggle.jsx node in components/ThemeToggle/ThemeToggle.jsx.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>ThemeToggle()</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><code>SignInPage.jsx</code><br><small style="color:var(--muted)">pages/SignInPage/SignInPage.jsx</small><br><code>SignUpPage.jsx</code><br><small style="color:var(--muted)">pages/SignUpPage/SignUpPage.jsx</small></td>
-  <td>ThemeToggle() node in components/ThemeToggle/ThemeToggle.jsx.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>main.jsx</code><br><small style="color:var(--muted)">frontend/src/main.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>store</code><br><small style="color:var(--muted)">src/store/store.js</small><br><code>store.js</code><br><small style="color:var(--muted)">src/store/store.js</small></td>
-  <td>main.jsx node in frontend/src/main.jsx.</td>
-</tr>
-<tr>
-  <td>19</td>
   <td><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+1 more</td>
   <td>Organizes documentation pages, navigation, or content lookup.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>2</td>
   <td><code>getTextStyle()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -729,55 +587,23 @@ flowchart LR
   <td>getTextStyle() node in pages/BatchHistoryPage/BatchHistoryPage.jsx.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>3</td>
   <td><code>BatchHistoryPage()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>getTextStyle()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small></td>
-  <td>No direct outbound edge</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>inventoryApi</code><br><small style="color:var(--muted)">src/utils/api.js</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>InventoryPage()</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>getTextStyle()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small></td>
   <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td>No direct outbound edge</td>
   <td>Organizes documentation pages, navigation, or content lookup.</td>
 </tr>
 <tr>
-  <td>24</td>
-  <td><code>LedgerPage.jsx</code><br><small style="color:var(--muted)">pages/LedgerPage/LedgerPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>inventoryApi</code><br><small style="color:var(--muted)">src/utils/api.js</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>LedgerPage()</code><br><small style="color:var(--muted)">pages/LedgerPage/LedgerPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td>No direct outbound edge</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>26</td>
+  <td>4</td>
   <td><code>NewBatchPage.jsx</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>inventoryApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+2 more</td>
+  <td>External entry / no inbound edge</td>
+  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+4 more</td>
   <td>Organizes documentation pages, navigation, or content lookup.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>5</td>
   <td><code>initialStock</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -785,7 +611,7 @@ flowchart LR
   <td>initialStock node in pages/NewBatchPage/NewBatchPage.jsx.</td>
 </tr>
 <tr>
-  <td>28</td>
+  <td>6</td>
   <td><code>initialParts</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -793,7 +619,7 @@ flowchart LR
   <td>initialParts node in pages/NewBatchPage/NewBatchPage.jsx.</td>
 </tr>
 <tr>
-  <td>29</td>
+  <td>7</td>
   <td><code>useTableRows()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -801,12 +627,188 @@ flowchart LR
   <td>useTableRows() node in pages/NewBatchPage/NewBatchPage.jsx.</td>
 </tr>
 <tr>
-  <td>30</td>
+  <td>8</td>
   <td><code>NewBatchPage()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>useTableRows()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><code>solve1DCSP()</code><br><small style="color:var(--muted)">src/utils/optimizer.js</small></td>
+  <td><code>useTableRows()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
   <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>ResultsPage.jsx</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+2 more</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>mockLayouts</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>mockLayouts node in pages/ResultsPage/ResultsPage.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>getTextStyle()</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ResultsPage()</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td>getTextStyle() node in pages/ResultsPage/ResultsPage.jsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>ResultsPage()</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>getTextStyle()</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.oxlintrc.json</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>.oxlintrc.json node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>$schema</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$schema node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>plugins</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>plugins node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>NewBatchPage.jsx</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small><br><code>ResultsPage.jsx</code><br><small style="color:var(--muted)">pages/ResultsPage/ResultsPage.jsx</small></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br><code>LedgerPage.jsx</code><br><small style="color:var(--muted)">pages/LedgerPage/LedgerPage.jsx</small><br>+10 more</td>
+  <td>react node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>oxc</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>oxc node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>rules</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>rules node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>react/rules-of-hooks</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>react/rules-of-hooks node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>react/only-export-components</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>warn</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>warn node in frontend/.oxlintrc.json.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>BatchHistoryPage()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>NewBatchPage()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small><br>+4 more</td>
+  <td><code>authSlice.js</code><br><small style="color:var(--muted)">store/slices/authSlice.js</small><br><code>InventoryPage()</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br>+20 more</td>
+  <td>App.jsx node in frontend/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>main.jsx</code><br><small style="color:var(--muted)">frontend/src/main.jsx</small></td>
+  <td>App() node in frontend/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>ScrollToTop.jsx</code><br><small style="color:var(--muted)">components/ScrollToTop/ScrollToTop.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td>No direct outbound edge</td>
+  <td>ScrollToTop.jsx node in components/ScrollToTop/ScrollToTop.jsx.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>ScrollToTop()</code><br><small style="color:var(--muted)">components/ScrollToTop/ScrollToTop.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>ScrollToTop() node in components/ScrollToTop/ScrollToTop.jsx.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>ThemeToggle()</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small><br><code>ThemeToggle.jsx</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
+  <td>SideNavbar.jsx node in components/SideNavbar/SideNavbar.jsx.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>SideNavbar()</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>SideNavbar() node in components/SideNavbar/SideNavbar.jsx.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>ThemeToggle.jsx</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small><br><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
+  <td><code>SignInPage.jsx</code><br><small style="color:var(--muted)">pages/SignInPage/SignInPage.jsx</small><br><code>SignUpPage.jsx</code><br><small style="color:var(--muted)">pages/SignUpPage/SignUpPage.jsx</small></td>
+  <td>ThemeToggle.jsx node in components/ThemeToggle/ThemeToggle.jsx.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>ThemeToggle()</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
+  <td><code>SignInPage.jsx</code><br><small style="color:var(--muted)">pages/SignInPage/SignInPage.jsx</small><br><code>SignUpPage.jsx</code><br><small style="color:var(--muted)">pages/SignUpPage/SignUpPage.jsx</small></td>
+  <td>ThemeToggle() node in components/ThemeToggle/ThemeToggle.jsx.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>main.jsx</code><br><small style="color:var(--muted)">frontend/src/main.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>store</code><br><small style="color:var(--muted)">src/store/store.js</small><br><code>store.js</code><br><small style="color:var(--muted)">src/store/store.js</small></td>
+  <td>main.jsx node in frontend/src/main.jsx.</td>
 </tr>
 </table>
 
@@ -827,19 +829,19 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x510, imports x119, imports x85, references x74. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x508, imports x119, imports x91, references x65. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 4. Analysis & Clustering ====== -->
 <h2 id="analysis-clustering">4. Analysis &amp; Clustering</h2>
-<p>Analysis &amp; Clustering groups implementation around config, agents, skills, styling, mostly in ui-styling/scripts/tailwind_config_gen.py. This section covers 10 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Analysis &amp; Clustering groups implementation around agents, skills, scripts, design, mostly in ui-ux-pro-max/scripts/design_system.py, ui-styling/scripts/tailwind_config_gen.py. This section covers 25 nodes and 29 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Analysis &amp; Clustering (10 nodes, 10 edges)
+    %% Section: Analysis &amp; Clustering (25 nodes, 29 edges)
     subgraph analysis_clustering_ui_styling_scripts_tailwind_2a90e165["ui-styling/scripts/tailwind_config_gen.py"]
         agents_skills_ui_styling_scripts_tailwind_config_3b79ae4c("__init__()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_f80c34ac("_base_config()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
@@ -850,6 +852,16 @@ flowchart LR
         agents_skills_ui_styling_scripts_tailwind_config_9fa23067("Get default content paths for framework.<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_b5ef2f81("Initialize generator. Args: typescript:...<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
     end
+    subgraph analysis_clustering_ui_ux_pro_max_scripts_design_330afc30["ui-ux-pro-max/scripts/design_system.py"]
+        agents_skills_ui_ux_pro_max_scripts_design_syste_d41ce0ed("ansi_ljust()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_9c3e72ed("format_markdown()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_a95c93e7("hex_to_ansi()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_ae0619e0("section_header()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_0bceb792("format_ascii_box()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_2335d6cb("generate_design_system()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_581441f6("_resolve_dial()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_design_syste_56e34538("design_system.py")
+    end
     subgraph analysis_clustering_External_generated_9ee0240b["External / generated"]
         any_c5fe0200("Any")
         agents_skills_ui_styling_scripts_tailwind_config_66d453df("Path")
@@ -857,6 +869,12 @@ flowchart LR
     agents_skills_ui_styling_scripts_tailwind_config_3b79ae4c -->|calls| agents_skills_ui_styling_scripts_tailwind_config_f80c34ac
     agents_skills_ui_styling_scripts_tailwind_config_3b79ae4c -->|calls| agents_skills_ui_styling_scripts_tailwind_config_a49b999a
     agents_skills_ui_styling_scripts_tailwind_config_f80c34ac -->|calls| agents_skills_ui_styling_scripts_tailwind_config_1e730eac
+    agents_skills_ui_ux_pro_max_scripts_design_syste_a95c93e7 -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_0bceb792
+    agents_skills_ui_ux_pro_max_scripts_design_syste_d41ce0ed -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_0bceb792
+    agents_skills_ui_ux_pro_max_scripts_design_syste_ae0619e0 -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_0bceb792
+    agents_skills_ui_ux_pro_max_scripts_design_syste_0bceb792 -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_2335d6cb
+    agents_skills_ui_ux_pro_max_scripts_design_syste_9c3e72ed -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_2335d6cb
+    %% Omitted for readability: 7 nodes, 0 edges
     class agents_skills_ui_styling_scripts_tailwind_config_3b79ae4c function;
     class agents_skills_ui_styling_scripts_tailwind_config_f80c34ac function;
     class agents_skills_ui_styling_scripts_tailwind_config_a49b999a function;
@@ -865,6 +883,14 @@ flowchart LR
     class agents_skills_ui_styling_scripts_tailwind_config_85d77ad0 concept;
     class agents_skills_ui_styling_scripts_tailwind_config_9fa23067 concept;
     class agents_skills_ui_styling_scripts_tailwind_config_b5ef2f81 concept;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_d41ce0ed function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_9c3e72ed function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_a95c93e7 function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_ae0619e0 function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_0bceb792 function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_2335d6cb function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_581441f6 function;
+    class agents_skills_ui_ux_pro_max_scripts_design_syste_56e34538 module;
     class any_c5fe0200 klass;
     class agents_skills_ui_styling_scripts_tailwind_config_66d453df klass;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
@@ -890,6 +916,126 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
+  <td><code>design_system.py</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>_resolve_dial()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>_resolve_dial() node in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>hex_to_ansi()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>format_ascii_box()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td>hex_to_ansi() node in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>ansi_ljust()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>format_ascii_box()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td>ansi_ljust() node in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>section_header()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>format_ascii_box()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td>section_header() node in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>format_ascii_box()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ansi_ljust()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small><br><code>hex_to_ansi()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small><br><code>section_header()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><code>generate_design_system()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td>format_ascii_box() node in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>format_markdown()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>generate_design_system()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>generate_design_system()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>format_ascii_box()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small><br><code>format_markdown()</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>generate_design_system() node in ui-ux-pro-max/scripts/design_system.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Bucket a 1-10 dial value into its tier config. Returns None if value is None.</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Bucket a 1-10 dial value into its tier config. Returns None if value is None..</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Convert hex color to ANSI True Color swatch (██) with fallback.</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Convert hex color to ANSI True Color swatch (██) with fallback..</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Like str.ljust but accounts for zero-width ANSI escape sequences.</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Like str.ljust but accounts for zero-width ANSI escape sequences..</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Create a Unicode section separator: ├─── NAME ───...┤</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Create a Unicode section separator: ├─── NAME ───...┤.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Format design system as Unicode box with ANSI color swatches.</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Format design system as Unicode box with ANSI color swatches..</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Format design system as markdown.</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Format design system as markdown..</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Main entry point for design system generation. Args: query: Search query (e.g.,…</code><br><small style="color:var(--muted)">ui-ux-pro-max/scripts/design_system.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Main entry point for design system generation. Args: query: Search query (e.g.,….</td>
+</tr>
+<tr>
+  <td>16</td>
   <td><code>.__init__()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -897,7 +1043,7 @@ flowchart LR
   <td>.__init__() node in ui-styling/scripts/tailwind_config_gen.py.</td>
 </tr>
 <tr>
-  <td>2</td>
+  <td>17</td>
   <td><code>Path</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -905,7 +1051,7 @@ flowchart LR
   <td>Path node in project.</td>
 </tr>
 <tr>
-  <td>3</td>
+  <td>18</td>
   <td><code>._default_output_path()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>__init__()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
@@ -913,7 +1059,7 @@ flowchart LR
   <td>._default_output_path() node in ui-styling/scripts/tailwind_config_gen.py.</td>
 </tr>
 <tr>
-  <td>4</td>
+  <td>19</td>
   <td><code>._base_config()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>__init__()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
@@ -921,7 +1067,7 @@ flowchart LR
   <td>Reads, resolves, or persists project configuration.</td>
 </tr>
 <tr>
-  <td>5</td>
+  <td>20</td>
   <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -929,7 +1075,7 @@ flowchart LR
   <td>Any node in project.</td>
 </tr>
 <tr>
-  <td>6</td>
+  <td>21</td>
   <td><code>._default_content_paths()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>_base_config()</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
@@ -937,7 +1083,7 @@ flowchart LR
   <td>._default_content_paths() node in ui-styling/scripts/tailwind_config_gen.py.</td>
 </tr>
 <tr>
-  <td>7</td>
+  <td>22</td>
   <td><code>Initialize generator. Args: typescript: If True, generate .ts config, else .js…</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -945,7 +1091,7 @@ flowchart LR
   <td>Design note for Initialize generator. Args: typescript: If True, generate .ts config, else .js….</td>
 </tr>
 <tr>
-  <td>8</td>
+  <td>23</td>
   <td><code>Determine default output path.</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -953,7 +1099,7 @@ flowchart LR
   <td>Design note for Determine default output path..</td>
 </tr>
 <tr>
-  <td>9</td>
+  <td>24</td>
   <td><code>Create base configuration structure.</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -961,7 +1107,7 @@ flowchart LR
   <td>Design note for Create base configuration structure..</td>
 </tr>
 <tr>
-  <td>10</td>
+  <td>25</td>
   <td><code>Get default content paths for framework.</code><br><small style="color:var(--muted)">ui-styling/scripts/tailwind_config_gen.py</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -975,12 +1121,13 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>ui-styling/scripts/tailwind_config_gen.py</code></td><td>8 nodes</td></tr>
+      <tr><td><code>ui-ux-pro-max/scripts/design_system.py</code></td><td>15 nodes</td></tr>
+<tr><td><code>ui-styling/scripts/tailwind_config_gen.py</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: explains x4, references x3, calls x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x11, calls x8, contains x7, references x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2029,12 +2176,12 @@ flowchart LR
 
 <!-- ====== 8. Serving API ====== -->
 <h2 id="serve-api">8. Serving API</h2>
-<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 167 nodes and 269 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 161 nodes and 248 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (167 nodes, 269 edges)
+    %% Section: Serving API (161 nodes, 248 edges)
     subgraph serve_api_design_system_scripts_slide_search_cor_25be5dc3["design-system/scripts/slide_search_core.py"]
         agents_skills_design_system_scripts_slide_search_03dc6de6("search()<br/><small>design-system/scripts/slide_search_core.py</small>")
         agents_skills_design_system_scripts_slide_search_74348786("search_all()<br/><small>design-system/scripts/slide_search_core.py</small>")
@@ -2080,7 +2227,7 @@ flowchart LR
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_03dc6de6
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_74348786
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_33fcfc39
-    %% Omitted for readability: 149 nodes, 0 edges
+    %% Omitted for readability: 143 nodes, 0 edges
     class agents_skills_design_system_scripts_slide_search_03dc6de6 function;
     class agents_skills_design_system_scripts_slide_search_74348786 function;
     class agents_skills_design_system_scripts_slide_search_33fcfc39 function;
@@ -2368,7 +2515,7 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>design-system/scripts/slide_search_core.py</code></td><td>36 nodes</td></tr>
-<tr><td><code>ui-ux-pro-max/scripts/design_system.py</code></td><td>36 nodes</td></tr>
+<tr><td><code>ui-ux-pro-max/scripts/design_system.py</code></td><td>29 nodes</td></tr>
 <tr><td><code>scripts/cip/core.py</code></td><td>22 nodes</td></tr>
 <tr><td><code>scripts/logo/core.py</code></td><td>20 nodes</td></tr>
 <tr><td><code>scripts/cip/generate.py</code></td><td>14 nodes</td></tr>
@@ -2379,7 +2526,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: calls x89, explains x74, contains x62, imports x22. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x84, explains x71, contains x52, imports x20. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4768,12 +4915,12 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around agents, skills, references, design, mostly in ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md, design/references/logo-prompt-engineering.md. This section covers 723 nodes and 726 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around agents, skills, references, design, mostly in ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md, design/references/logo-prompt-engineering.md. This section covers 722 nodes and 716 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (723 nodes, 726 edges)
+    %% Section: Other (722 nodes, 716 edges)
     subgraph other_brand_scripts_inject_brand_context_cjs_8b2d2df0["brand/scripts/inject-brand-context.cjs"]
         agents_skills_brand_scripts_inject_brand_context_dc4b9603("extractHexColors()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
         agents_skills_brand_scripts_inject_brand_context_063110d2("extractColorsFromTable()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
@@ -4811,7 +4958,7 @@ flowchart LR
     backend_src_app_controller_spec_8af750bc -->|imports| backend_src_app_controller_appcontroller_e9dae26a
     backend_src_app_controller_9a366327 -->|imports| backend_src_app_module_97b3bc74
     backend_src_app_controller_appcontroller_e9dae26a -->|imports| backend_src_app_module_97b3bc74
-    %% Omitted for readability: 705 nodes, 0 edges
+    %% Omitted for readability: 704 nodes, 0 edges
     class agents_skills_brand_scripts_inject_brand_context_dc4b9603 function;
     class agents_skills_brand_scripts_inject_brand_context_063110d2 function;
     class agents_skills_brand_scripts_inject_brand_context_67503864 function;
@@ -5110,7 +5257,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x608, calls x48, references x26, explains x14. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x606, calls x42, references x28, method x14. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5121,17 +5268,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>2405</td></tr>
-      <tr><td>Edges</td><td>2903</td></tr>
+      <tr><td>Nodes</td><td>2415</td></tr>
+      <tr><td>Edges</td><td>2884</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>196</td></tr>
+      <tr><td>Communities</td><td>205</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>2885</td></tr>
+      <tr><td>EXTRACTED</td><td>2866</td></tr>
       <tr><td>INFERRED</td><td>18</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -5140,7 +5287,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-08-12 21:35 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-08-12 21:39 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

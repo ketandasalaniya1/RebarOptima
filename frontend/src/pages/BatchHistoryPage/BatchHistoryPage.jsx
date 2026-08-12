@@ -241,12 +241,23 @@ export default function BatchHistoryPage({ onEditBatch }) {
                       </div>
                     ) : (
                       <>
-                        <span className="batch-name" onDoubleClick={(e) => handleEditBatch(e, batch)} title="Double click to rename">{batch.batchName}</span>
+                        <span className="batch-name" onDoubleClick={(e) => handleEditBatch(e, batch)} title="Click edit icon or double click to rename">
+                          {batch.batchName}
+                          <button
+                            className="btn-icon-rename"
+                            onClick={(e) => handleEditBatch(e, batch)}
+                            title="Rename Batch"
+                            style={{ background: 'none', border: 'none', color: 'var(--text-label)', padding: '2px 4px', cursor: 'pointer', marginLeft: '6px', opacity: 0.7 }}
+                          >
+                            <Pencil size={12} />
+                          </button>
+                        </span>
                         <span className="batch-date">
                           <Calendar size={13} style={{ marginRight: '4px' }} /> {date}
                         </span>
                       </>
                     )}
+
                   </div>
 
                   <div className="batch-meta-right">

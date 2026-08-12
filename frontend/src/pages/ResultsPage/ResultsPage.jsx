@@ -15,8 +15,11 @@ import {
   BarChart3,
   FileDown,
   FileSpreadsheet,
-  Recycle
+  Recycle,
+  Tag,
+  X
 } from 'lucide-react'
+
 
 const mockLayouts = [
   {
@@ -157,6 +160,14 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [scrapRulesMap, setScrapRulesMap] = useState({});
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [batchNameInput, setBatchNameInput] = useState(() => data?.batchName || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`);
+
+  useEffect(() => {
+    if (data?.batchName) {
+      setBatchNameInput(data.batchName);
+    }
+  }, [data?.batchName]);
 
   useEffect(() => {
     async function loadScrapRules() {
@@ -176,17 +187,18 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
     loadScrapRules();
   }, []);
 
-  const handleSaveBatch = async () => {
+  const handleOpenSaveModal = () => {
+    setSaveError('');
+    setShowSaveModal(true);
+  };
+
+  const handleConfirmSaveBatch = async () => {
+    const nameToSave = batchNameInput.trim() || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`;
     setSaveLoading(true);
     setSaveError('');
     try {
-      let batchName = prompt('Enter a name for this batch:', `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`);
-      if (batchName === null) {
-        // ponytail: fallback name if prompt is cancelled (e.g. in automation/headless tests)
-        batchName = `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`;
-      }
       await batchesApi.commitBatch({
-        batchName: batchName || `Batch #${Date.now()}`,
+        batchName: nameToSave,
         inputStock: data?.inputStock || [],
         requiredParts: data?.requiredParts || [],
         layouts: layouts.map(l => ({
@@ -207,6 +219,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           avgUtilization: summary.avgUtilization
         }
       });
+      setShowSaveModal(false);
       if (onSaveSuccess) {
         onSaveSuccess();
       }
@@ -216,6 +229,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       setSaveLoading(false);
     }
   };
+
 
   const layouts = (data ? data.layouts : mockLayouts).slice().sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
   const summary = data ? data.summary : {
@@ -454,7 +468,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                 gap: '6px',
                 cursor: saveLoading ? 'not-allowed' : 'pointer'
               }}
-              onClick={handleSaveBatch}
+              onClick={handleOpenSaveModal}
               disabled={saveLoading}
             >
               <CheckCircle2 size={16} /> {saveLoading ? 'Saving Batch...' : 'Save & Commit Batch'}
@@ -1103,6 +1117,50 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
         </div>
       </div>
 
+
+      {/* Save & Commit Batch Modal */}
+      {showSaveModal && (
+        <div className="modal-backdrop no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content card" style={{ maxWidth: '480px', width: '90%', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '12px', padding: '24px' }}>
+            <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '12px', marginBottom: '16px' }}>
+              <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: '700', margin: 0, color: 'var(--text-primary)' }}>
+                <Tag size={18} color="var(--accent)" /> Save & Commit Cutting Batch
+              </h3>
+              <button className="modal-close-btn" onClick={() => setShowSaveModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <p className="modal-desc" style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
+                Specify a reference batch name to identify this optimization in inventory deduction and history logs.
+              </p>
+              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={batchNameInput}
+                  onChange={(e) => setBatchNameInput(e.target.value)}
+                  placeholder="e.g. Batch #13/08/26 - Ground Floor"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleConfirmSaveBatch();
+                  }}
+                  style={{ width: '100%', fontSize: '14px', padding: '10px 14px', borderRadius: '6px' }}
+                />
+              </div>
+            </div>
+            <div className="modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button className="btn-secondary" onClick={() => setShowSaveModal(false)} disabled={saveLoading} style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button className="btn-primary" onClick={handleConfirmSaveBatch} disabled={saveLoading || !batchNameInput.trim()} style={{ background: '#2da44e', borderColor: '#2da44e', color: '#fff', padding: '8px 18px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>
+                {saveLoading ? 'Saving...' : 'Save & Commit'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Brand signature (visible on print only) */}
       <div className="print-footer print-only">

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/user.decorator';
 import { BatchesService } from './batches.service';
@@ -37,4 +37,22 @@ export class BatchesController {
   async getBatchScrapRecords(@CurrentUser() user: User) {
     return this.batchesService.getBatchScrapRecords(user.companyId.toString());
   }
+
+  @Put(':id')
+  async updateBatch(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+    @Body() dto: { batchName: string },
+  ) {
+    return this.batchesService.updateBatch(user.companyId.toString(), id, dto.batchName);
+  }
+
+  @Delete(':id')
+  async deleteBatch(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ) {
+    return this.batchesService.deleteBatch(user.companyId.toString(), id);
+  }
 }
+

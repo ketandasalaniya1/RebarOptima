@@ -330,4 +330,23 @@ export class BatchesService {
       };
     });
   }
+
+  async updateBatch(companyId: string, batchId: string, batchName: string): Promise<Batch> {
+    const cid = new Types.ObjectId(companyId);
+    const bid = new Types.ObjectId(batchId);
+    const existing = await this.batchModel.findOne({ _id: bid as any, companyId: cid as any }).exec();
+    if (!existing) {
+      throw new Error('Batch not found');
+    }
+    existing.batchName = batchName;
+    return existing.save();
+  }
+
+  async deleteBatch(companyId: string, batchId: string): Promise<any> {
+    const cid = new Types.ObjectId(companyId);
+    const bid = new Types.ObjectId(batchId);
+    return this.batchModel.deleteOne({ _id: bid as any, companyId: cid as any }).exec();
+  }
 }
+
+

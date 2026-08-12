@@ -14,8 +14,10 @@ import {
   Eye,
   EyeOff,
   History,
-  TrendingUp
+  TrendingUp,
+  Tag
 } from 'lucide-react'
+
 
 const initialStock = [
   { id: 1, diameter: '12', length: '12000', quantity: '10' },
@@ -76,6 +78,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     label: '',
   }))
 
+  const [batchName, setBatchName] = useState(() => `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`)
   const [error, setError] = useState(null)
   const [isStockExpanded, setIsStockExpanded] = useState(false)
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false)
@@ -98,6 +101,9 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
   // Load parameters for editing batch
   useEffect(() => {
     if (editParams) {
+      if (editParams.batchName) {
+        setBatchName(editParams.batchName)
+      }
       if (editParams.inputStock && editParams.inputStock.length > 0) {
         stock.setRows(editParams.inputStock)
         setIsStockExpanded(true)
@@ -113,6 +119,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editParams])
+
 
   // Load stock items and remnants, plus batches history dynamically from DB on mount
   useEffect(() => {
@@ -213,8 +220,32 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
       {/* Left Column: Optimization input form */}
       <div className="optimizer-left-main">
         <div className="optimizer-page">
+          {/* Batch Details Card */}
+          <section className="card batch-name-card">
+            <div className="section-header" style={{ marginBottom: '12px', paddingBottom: '8px' }}>
+              <div className="title-with-toggle">
+                <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Tag size={16} color="var(--accent)" /> Batch Identification
+                </h2>
+                <span className="section-title-hint">(Give a unique reference name for this optimization run)</span>
+              </div>
+            </div>
+            <div className="batch-name-input-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label className="adv-lbl" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name</label>
+              <input
+                type="text"
+                className="form-input"
+                value={batchName}
+                onChange={(e) => setBatchName(e.target.value)}
+                placeholder="e.g. Slab A - Ground Floor"
+                style={{ fontSize: '14px', fontWeight: '500' }}
+              />
+            </div>
+          </section>
+
           {/* Collapsible Manual Stock Override section */}
           <section className="card stock-section-card">
+
             <div className="section-header">
               <div className="title-with-toggle">
                 <h2 className="section-title">Manual Stock Override</h2>
@@ -359,6 +390,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                   onClick={() => {
                     try {
                       const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin });
+                      data.batchName = batchName;
                       data.inputStock = stock.rows;
                       data.requiredParts = parts.rows;
                       data.settings = { kerf, trimMargin };
@@ -456,6 +488,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
               onClick={() => {
                 try {
                   const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin });
+                  data.batchName = batchName;
                   data.inputStock = stock.rows;
                   data.requiredParts = parts.rows;
                   data.settings = { kerf, trimMargin };

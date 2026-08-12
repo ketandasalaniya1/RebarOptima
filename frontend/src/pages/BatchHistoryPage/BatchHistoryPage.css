@@ -118,6 +118,12 @@
   color: #17a2b8;
 }
 
+.meta-pill.text-red-scrap {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
 .expand-chevron {
   color: var(--text-secondary);
   display: flex;

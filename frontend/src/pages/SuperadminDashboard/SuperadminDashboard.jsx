@@ -48,7 +48,7 @@ export default function SuperadminDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('superadminToken');
+    sessionStorage.removeItem('superadminToken');
     dispatch(setView('superadmin-login'));
   };
 

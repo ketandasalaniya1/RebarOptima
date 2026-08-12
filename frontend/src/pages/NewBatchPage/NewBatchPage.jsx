@@ -354,8 +354,25 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                 <button className="add-row-btn" onClick={() => parts.addRow()}>
                   <Plus size={14} /> Add Row
                 </button>
+                <button
+                  className="btn-optimize btn-optimize-inline"
+                  onClick={() => {
+                    try {
+                      const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin });
+                      data.inputStock = stock.rows;
+                      data.requiredParts = parts.rows;
+                      data.settings = { kerf, trimMargin };
+                      onOptimize(data);
+                    } catch (err) {
+                      setError(err.message);
+                    }
+                  }}
+                >
+                  RUN OPTIMIZATION
+                </button>
               </div>
             </div>
+
 
             <div className="table-responsive">
               <table className="data-table">

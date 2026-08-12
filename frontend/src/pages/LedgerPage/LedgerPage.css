@@ -276,6 +276,11 @@
   color: #3b82f6;
 }
 
+.ledger-type-badge.scrap {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
 .order-util-cell {
   display: flex;
   flex-direction: column;

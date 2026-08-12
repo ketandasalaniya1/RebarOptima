@@ -262,6 +262,12 @@ export default function LedgerPage() {
                 >
                   Remnants
                 </button>
+                <button 
+                  className={`filter-badge ${ledgerFilter === 'SCRAP' ? 'active' : ''}`}
+                  onClick={() => setLedgerFilter('SCRAP')}
+                >
+                  Scraps
+                </button>
               </div>
 
               <div className="search-box">

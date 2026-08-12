@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { inventoryApi } from '../../utils/api'
+import { inventoryApi, batchesApi } from '../../utils/api'
 import {
   Package,
   Settings,
@@ -15,16 +15,24 @@ import {
   DollarSign,
   Pencil,
   X,
-  Save
+  Save,
+  Scale,
+  Download,
+  Search,
+  Calendar,
+  FileText,
+  Layers
 } from 'lucide-react'
 import './InventoryPage.css'
 
 export default function InventoryPage() {
   const user = useSelector((state) => state.auth.user)
-  // Tab states: 'list' | 'inward' | 'rules' | 'scrapsales'
+  // Tab states: 'list' | 'inward' | 'rules' | 'scrapsales' | 'batchscrap'
   const [activeTab, setActiveTab] = useState('list')
   const [inventory, setInventory] = useState({ standardStock: [], remnantsStock: [] })
   const [scrapRules, setScrapRules] = useState([])
+  const [batchScrapRecords, setBatchScrapRecords] = useState([])
+  const [scrapSearchQuery, setScrapSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
   const [error, setError] = useState('')
@@ -71,14 +79,16 @@ export default function InventoryPage() {
     try {
       setLoading(true)
       setError('')
-      const [invData, rulesData, salesData] = await Promise.all([
+      const [invData, rulesData, salesData, scrapRecordsData] = await Promise.all([
         inventoryApi.getInventory(),
         inventoryApi.getScrapRules(),
-        inventoryApi.getScrapSales()
+        inventoryApi.getScrapSales(),
+        batchesApi.getScrapRecords().catch(() => [])
       ])
       setInventory(invData)
       setScrapRules(rulesData)
       setScrapSales(salesData)
+      setBatchScrapRecords(scrapRecordsData || [])
     } catch (err) {
       setError(err.message || 'Failed to fetch inventory data.')
     } finally {
@@ -508,6 +518,12 @@ export default function InventoryPage() {
             onClick={() => setActiveTab('inward')}
           >
             <PlusSquare size={16} /> Voucher Inward
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'batchscrap' ? 'active' : ''}`}
+            onClick={() => setActiveTab('batchscrap')}
+          >
+            <Scale size={16} /> Batch Scrap Records
           </button>
           <button 
             className={`tab-btn ${activeTab === 'scrapsales' ? 'active' : ''}`}
@@ -1219,6 +1235,179 @@ export default function InventoryPage() {
           >
             {actionLoading ? 'Saving Rules...' : 'Save Scrap Rules'}
           </button>
+        </div>
+      )}
+
+      {/* Tab: Batch Scrap Records */}
+      {activeTab === 'batchscrap' && (
+        <div className="batch-scrap-container card">
+          <div className="batch-scrap-header">
+            <div>
+              <h3 className="section-title">
+                <Scale size={20} style={{ marginRight: '8px', color: '#ef4444' }} /> Datewise Batch Scrap Records
+              </h3>
+              <p className="section-subtitle">
+                Every batch committed automatically logs date, time, total scrap quantity (kg), and diameter breakdown.
+              </p>
+            </div>
+            <button 
+              className="export-csv-btn"
+              onClick={() => {
+                if (batchScrapRecords.length === 0) return;
+                const headers = ['Date & Time', 'Batch ID', 'Batch Name', 'Total Scrap (kg)', 'Total Remnant (kg)', 'Avg Utilization (%)', 'Diameter Breakdown'];
+                const filtered = batchScrapRecords.filter(r => 
+                  r.batchName.toLowerCase().includes(scrapSearchQuery.toLowerCase()) ||
+                  (r.diameterBreakdown || []).some(d => `${d.diameter}mm`.includes(scrapSearchQuery))
+                );
+                const rows = filtered.map(r => {
+                  const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleString('en-GB') : 'N/A';
+                  const breakdownStr = (r.diameterBreakdown || []).map(d => `${d.diameter}mm: ${d.scrapKg}kg (${d.pieces} pcs)`).join(' | ') || 'N/A';
+                  return [
+                    `"${dateStr}"`,
+                    `"${r.batchId}"`,
+                    `"${r.batchName}"`,
+                    r.totalScrapKg,
+                    r.totalRemnantKg,
+                    `${r.avgUtilization}%`,
+                    `"${breakdownStr}"`
+                  ].join(',');
+                });
+                const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', `batch_scrap_records_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+            >
+              <Download size={15} style={{ marginRight: '6px' }} /> Export CSV
+            </button>
+          </div>
+
+          {/* Summary Stat Cards */}
+          <div className="batch-scrap-summary-cards">
+            <div className="scrap-stat-card card-red">
+              <span className="stat-label">Total Batch Scrap</span>
+              <span className="stat-value">
+                {batchScrapRecords.reduce((sum, r) => sum + (r.totalScrapKg || 0), 0).toFixed(2)} <small>kg</small>
+              </span>
+              <span className="stat-desc">Accumulated across all committed batches</span>
+            </div>
+
+            <div className="scrap-stat-card card-blue">
+              <span className="stat-label">Total Batches Recorded</span>
+              <span className="stat-value">{batchScrapRecords.length}</span>
+              <span className="stat-desc">Batches with committed stock & scrap logs</span>
+            </div>
+
+            <div className="scrap-stat-card card-orange">
+              <span className="stat-label">Avg Scrap per Batch</span>
+              <span className="stat-value">
+                {batchScrapRecords.length > 0 
+                  ? (batchScrapRecords.reduce((sum, r) => sum + (r.totalScrapKg || 0), 0) / batchScrapRecords.length).toFixed(2)
+                  : '0.00'} <small>kg</small>
+              </span>
+              <span className="stat-desc">Average scrap generated per optimization</span>
+            </div>
+          </div>
+
+          {/* Search Filter */}
+          <div className="scrap-search-wrapper">
+            <Search size={16} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search by Batch Name or Diameter (e.g. 12mm)..."
+              value={scrapSearchQuery}
+              onChange={(e) => setScrapSearchQuery(e.target.value)}
+              className="scrap-search-input"
+            />
+          </div>
+
+          {/* Datewise Table */}
+          {batchScrapRecords.length === 0 ? (
+            <div className="empty-stock-state">
+              <Layers size={40} color="var(--text-label)" />
+              <p>No batch scrap records found. Commit optimization batches to record scrap datewise.</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="stock-table scrap-records-table">
+                <thead>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>Batch Name / ID</th>
+                    <th>Total Scrap (kg)</th>
+                    <th>Scrap Breakdown by Diameter</th>
+                    <th>Remnants (kg)</th>
+                    <th>Utilization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {batchScrapRecords
+                    .filter(r => 
+                      r.batchName.toLowerCase().includes(scrapSearchQuery.toLowerCase()) ||
+                      (r.diameterBreakdown || []).some(d => `${d.diameter}mm`.includes(scrapSearchQuery))
+                    )
+                    .map((record) => {
+                      const formattedDate = record.createdAt 
+                        ? `${new Date(record.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}, ${new Date(record.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                        : 'N/A';
+
+                      return (
+                        <tr key={record.batchId}>
+                          <td className="date-cell">
+                            <Calendar size={13} style={{ marginRight: '4px', opacity: 0.7 }} />
+                            {formattedDate}
+                          </td>
+                          <td className="font-bold batch-name-cell">
+                            <FileText size={14} style={{ marginRight: '6px', color: '#6366f1' }} />
+                            {record.batchName}
+                          </td>
+                          <td className="scrap-weight-cell">
+                            <span className="scrap-badge">
+                              {record.totalScrapKg.toFixed(2)} kg
+                            </span>
+                          </td>
+                          <td>
+                            {record.diameterBreakdown && record.diameterBreakdown.length > 0 ? (
+                              <div className="dia-chip-group">
+                                {record.diameterBreakdown.map(d => (
+                                  <span key={d.diameter} className="dia-scrap-chip">
+                                    <strong>{d.diameter}mm:</strong> {d.scrapKg.toFixed(2)} kg <small>({d.pieces} pcs)</small>
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-muted">No scrap</span>
+                            )}
+                          </td>
+                          <td>
+                            {record.totalRemnantKg > 0 ? (
+                              <span className="remnant-text">{record.totalRemnantKg.toFixed(2)} kg</span>
+                            ) : (
+                              <span className="text-muted">0.00 kg</span>
+                            )}
+                          </td>
+                          <td>
+                            <span className="utilization-pill">
+                              {record.avgUtilization ? `${record.avgUtilization.toFixed(1)}%` : 'N/A'}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="saved-badge">
+                              Saved Datewise
+                            </span>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 

@@ -15,7 +15,9 @@ import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
-import { loginSuccess, logout } from './store/slices/authSlice';
+import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
+
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 function App() {
   const dispatch = useDispatch();
@@ -34,7 +36,7 @@ function App() {
     document.documentElement.setAttribute('data-color-theme', storedThemeColor);
 
     const handlePopState = (event) => {
-      const tokenExists = localStorage.getItem('accessToken');
+      const tokenExists = sessionStorage.getItem('accessToken');
       if (event.state && event.state.view) {
         // Protected routes check
         if (!tokenExists && event.state.view !== 'signin' && event.state.view !== 'signup' && event.state.view !== 'superadmin-login') {
@@ -49,6 +51,44 @@ function App() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [dispatch]);
+
+  // 30-minute Inactivity & Session Timeout Auto-Logout
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const handleUserActivity = () => {
+      dispatch(updateActivity());
+    };
+
+    // Activity event listeners
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+    window.addEventListener('click', handleUserActivity);
+    window.addEventListener('scroll', handleUserActivity);
+
+    // Periodic check every 10 seconds for session expiration
+    const intervalId = setInterval(() => {
+      const lastActivity = sessionStorage.getItem('lastActivity');
+      if (lastActivity) {
+        const timeDiff = Date.now() - parseInt(lastActivity, 10);
+        if (timeDiff >= SESSION_TIMEOUT_MS) {
+          dispatch(logout());
+          dispatch(setView('signin'));
+        }
+      } else {
+        dispatch(logout());
+        dispatch(setView('signin'));
+      }
+    }, 10000);
+
+    return () => {
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+      window.removeEventListener('click', handleUserActivity);
+      window.removeEventListener('scroll', handleUserActivity);
+      clearInterval(intervalId);
+    };
+  }, [isAuthenticated, dispatch]);
 
   // Scroll to top on view changes
   useEffect(() => {

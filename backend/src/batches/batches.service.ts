@@ -90,6 +90,20 @@ export class BatchesService {
               if (waste < threshold) {
                 // It is Scrap
                 totalScrapKg += wasteWeight;
+
+                // ponytail: log scrap transaction
+                await new this.transactionModel({
+                  companyId: cid,
+                  type: 'SCRAP',
+                  diameter,
+                  length: waste,
+                  quantity: repetition,
+                  weightInKgs: wasteWeight,
+                  brandName: originalItem.brandName || '',
+                  vendorName: originalItem.vendorName || '',
+                  typeOfBar: originalItem.typeOfBar || '',
+                  referenceName: dto.batchName || 'Cutting Batch',
+                }).save();
               } else {
                 // It is a Reusable Remnant
                 totalRemnantKg += wasteWeight;
@@ -136,11 +150,25 @@ export class BatchesService {
         }
       } else {
         // Virtual stock has no dbId and doesn't exist in DB, so no deduction.
-        // But waste from virtual stock goes to scrap.
+        // But waste from virtual stock goes to scrap or remnant.
         const waste = Number(layout.waste);
         if (waste > 0) {
+          const threshold = rulesMap.get(diameter) ?? 1000;
           const wasteWeight = this.inventoryService.getSingleBarWeight(diameter, waste) * repetition;
-          totalScrapKg += wasteWeight;
+          if (waste < threshold) {
+            totalScrapKg += wasteWeight;
+            await new this.transactionModel({
+              companyId: cid,
+              type: 'SCRAP',
+              diameter,
+              length: waste,
+              quantity: repetition,
+              weightInKgs: wasteWeight,
+              referenceName: dto.batchName || 'Cutting Batch',
+            }).save();
+          } else {
+            totalRemnantKg += wasteWeight;
+          }
         }
       }
     }
@@ -245,5 +273,61 @@ export class BatchesService {
       wastagePercentage: Math.round(wastagePercentage * 100) / 100,
       dailyScrapGraph,
     };
+  }
+
+  async getBatchScrapRecords(companyId: string) {
+    const cid = new Types.ObjectId(companyId);
+    const batches = await this.batchModel.find({ companyId: cid as any })
+      .sort({ createdAt: -1 } as any)
+      .exec();
+
+    const scrapRules = await this.inventoryService.getScrapRules(companyId);
+    const rulesMap = new Map<number, number>();
+    scrapRules.forEach(r => rulesMap.set(r.diameter, r.scrapLengthThreshold));
+
+    return batches.map(b => {
+      const createdAt = (b as any).createdAt;
+      const batchName = b.batchName;
+      const batchId = b._id.toString();
+      const totalScrapKg = Math.round((b.summary?.totalScrapKg || 0) * 100) / 100;
+
+      // Build diameter breakdown for scrap in this batch
+      const diameterBreakdownMap = new Map<number, { count: number; scrapKg: number; totalWasteMm: number }>();
+
+      if (b.layouts) {
+        b.layouts.forEach(layout => {
+          const dia = Number(layout.diameter);
+          const waste = Number(layout.waste);
+          const rep = Number(layout.repetition);
+          const threshold = rulesMap.get(dia) ?? 1000;
+
+          if (waste > 0 && waste < threshold) {
+            const wasteWeight = this.inventoryService.getSingleBarWeight(dia, waste) * rep;
+            const current = diameterBreakdownMap.get(dia) || { count: 0, scrapKg: 0, totalWasteMm: 0 };
+            current.count += rep;
+            current.scrapKg += wasteWeight;
+            current.totalWasteMm += waste * rep;
+            diameterBreakdownMap.set(dia, current);
+          }
+        });
+      }
+
+      const diameterBreakdown = Array.from(diameterBreakdownMap.entries()).map(([diameter, data]) => ({
+        diameter,
+        pieces: data.count,
+        scrapKg: Math.round(data.scrapKg * 100) / 100,
+        totalWasteMm: data.totalWasteMm,
+      })).sort((a, b) => a.diameter - b.diameter);
+
+      return {
+        batchId,
+        batchName,
+        createdAt,
+        totalScrapKg,
+        totalRemnantKg: Math.round((b.summary?.totalRemnantKg || 0) * 100) / 100,
+        avgUtilization: b.summary?.avgUtilization || 0,
+        diameterBreakdown,
+      };
+    });
   }
 }

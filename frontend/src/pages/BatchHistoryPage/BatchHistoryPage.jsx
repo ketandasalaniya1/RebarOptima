@@ -11,7 +11,8 @@ import {
   Pencil,
   Trash2,
   Save,
-  X
+  X,
+  Scale
 } from 'lucide-react'
 import './BatchHistoryPage.css'
 
@@ -296,6 +297,9 @@ export default function BatchHistoryPage({ onEditBatch }) {
                     </div>
                     <div className="meta-pill text-cyan">
                       <Layers size={13} /> {totalBars} Bars Used
+                    </div>
+                    <div className="meta-pill text-red-scrap" title="Datewise Batch Scrap Record">
+                      <Scale size={13} /> Scrap: {batch.summary?.totalScrapKg ? batch.summary.totalScrapKg.toFixed(2) : '0.00'} kg
                     </div>
                     <div className="expand-chevron">
                       {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

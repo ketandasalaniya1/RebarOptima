@@ -18,7 +18,7 @@ export default function SuperadminLoginPage() {
 
     // ponytail: Simple hardcoded check or mock client validation for superadmin session in local sandbox env.
     if (email === 'admin@rebaroptima.com' && password === 'SuperSecureAdmin2026!') {
-      localStorage.setItem('superadminToken', 'mock-superadmin-token-xyz');
+      sessionStorage.setItem('superadminToken', 'mock-superadmin-token-xyz');
       dispatch(setView('superadmin'));
     } else {
       setError('Invalid Superadmin access keys.');

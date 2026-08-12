@@ -43,3 +43,66 @@
     padding: 10px 8px;
   }
 }
+
+/* ═══════════════════════════════════════════
+   GLOBAL PRINT STYLES  — A4 Portrait
+   ═══════════════════════════════════════════ */
+@media print {
+  /* ── Force light theme variables for print ── */
+  :root,
+  [data-theme="dark"],
+  [data-theme="dark"][data-color-theme="classic-purple"],
+  [data-theme="dark"][data-color-theme="steel-blue"],
+  [data-theme="dark"][data-color-theme="slate-emerald"] {
+    --main-bg: #f8fafc !important;
+    --card-bg: #ffffff !important;
+    --card-border: #e2e8f0 !important;
+    --text-primary: #111827 !important;
+    --text-secondary: #475569 !important;
+    --text-label: #64748b !important;
+    --sidebar-bg: #334155 !important;
+    --accent: #7016d2 !important;
+    --accent-hover: #591cc2 !important;
+  }
+
+  /* ── Reset body/html ── */
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ── Hide everything except main content ── */
+  .scroll-to-top-btn {
+    display: none !important;
+  }
+
+  /* ── Remove sidebar ── */
+  .app-workspace {
+    display: block !important;
+    width: 100% !important;
+    min-height: unset !important;
+  }
+
+  /* ── SideNavbar: hide completely ── */
+  .sidenav,
+  .mobile-header,
+  .sidenav-backdrop {
+    display: none !important;
+  }
+
+  /* ── Main viewport: full width, no padding ── */
+  .main-viewport {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+}

@@ -1,10 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
 const getInitialView = () => {
   const path = window.location.pathname;
-  const token = localStorage.getItem('accessToken');
+  const token = sessionStorage.getItem('accessToken');
+  const lastActivity = sessionStorage.getItem('lastActivity');
+  const isExpired = lastActivity && (Date.now() - parseInt(lastActivity, 10) > SESSION_TIMEOUT_MS);
 
-  if (token) {
+  if (token && !isExpired) {
     if (path === '/inventory') return 'inventory';
     if (path === '/inputs') return 'inputs';
     if (path === '/results') return 'results';

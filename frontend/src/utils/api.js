@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem('accessToken');
+  const token = sessionStorage.getItem('accessToken');
   
   const headers = {
     'Content-Type': 'application/json',
@@ -71,6 +71,8 @@ export const batchesApi = {
     apiRequest('/batches'),
   getStats: () => 
     apiRequest('/batches/stats'),
+  getScrapRecords: () =>
+    apiRequest('/batches/scrap-records'),
   updateBatch: (id, batchName) =>
     apiRequest(`/batches/${id}`, { method: 'PUT', body: { batchName } }),
   deleteBatch: (id) =>

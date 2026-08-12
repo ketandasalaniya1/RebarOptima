@@ -6,8 +6,8 @@ export class InventoryTransaction extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company', required: true })
   companyId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, enum: ['INWARD', 'OUTWARD', 'REMNANT'] })
-  type: string; // 'INWARD' (purchased rebar), 'OUTWARD' (consumed in optimization), 'REMNANT' (reusable remnant saved)
+  @Prop({ required: true, enum: ['INWARD', 'OUTWARD', 'REMNANT', 'SCRAP'] })
+  type: string; // 'INWARD' (purchased rebar), 'OUTWARD' (consumed in optimization), 'REMNANT' (reusable remnant saved), 'SCRAP' (scrap generated in batch)
 
   @Prop({ required: true })
   diameter: number; // in mm

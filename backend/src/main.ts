@@ -317,6 +317,7 @@ app.post('/api/batches', authMiddleware, async (req: any, res) => {
       const repetition = Number(layout.repetition);
       const singleWeight = getSingleBarWeight(diameter, stockLength);
       const layoutWeight = singleWeight * repetition;
+      const waste = Number(layout.waste);
 
       if (!layout.isVirtual && layout.dbId) {
         const original = await db.collection('stockitems').findOne({ _id: new ObjectId(layout.dbId) }) as any;
@@ -327,12 +328,13 @@ app.post('/api/batches', authMiddleware, async (req: any, res) => {
           else await db.collection('stockitems').updateOne({ _id: original._id }, { $set: { quantity: newQty, weightInKgs: newWeight } });
           await db.collection('inventorytransactions').insertOne({ companyId, type: 'OUTWARD', diameter, length: stockLength, quantity: repetition, weightInKgs: layoutWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
 
-          const waste = Number(layout.waste);
           if (waste > 0) {
             const threshold = rulesMap.get(diameter) ?? 1000;
             const wasteWeight = getSingleBarWeight(diameter, waste) * repetition;
-            if (waste < threshold) { totalScrapKg += wasteWeight; }
-            else {
+            if (waste < threshold) {
+              totalScrapKg += wasteWeight;
+              await db.collection('inventorytransactions').insertOne({ companyId, type: 'SCRAP', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
+            } else {
               totalRemnantKg += wasteWeight;
               await db.collection('stockitems').findOneAndUpdate(
                 { companyId, diameter, length: waste, isRemnant: true, costPerKg: original.costPerKg, typeOfBar: original.typeOfBar || '', brandName: original.brandName || '', vendorName: original.vendorName || '' },
@@ -343,9 +345,17 @@ app.post('/api/batches', authMiddleware, async (req: any, res) => {
             }
           }
         }
-      } else if (layout.isVirtual) {
-        const waste = Number(layout.waste);
-        if (waste > 0) totalScrapKg += getSingleBarWeight(diameter, waste) * repetition;
+      } else {
+        if (waste > 0) {
+          const threshold = rulesMap.get(diameter) ?? 1000;
+          const wasteWeight = getSingleBarWeight(diameter, waste) * repetition;
+          if (waste < threshold) {
+            totalScrapKg += wasteWeight;
+            await db.collection('inventorytransactions').insertOne({ companyId, type: 'SCRAP', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
+          } else {
+            totalRemnantKg += wasteWeight;
+          }
+        }
       }
     }
 
@@ -392,6 +402,74 @@ app.delete('/api/batches/:id', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
+app.get('/api/batches/scrap-records', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    if (!companyId) return res.json([]);
+
+    const batches = await db.collection('batches').find({ companyId }).sort({ createdAt: -1 }).toArray();
+    const scrapRules = await ensureScrapRules(db, companyId);
+    const rulesMap = new Map(scrapRules.map((r: any) => [r.diameter, r.scrapLengthThreshold]));
+
+    const records = batches.map((b: any) => {
+      const batchId = b._id.toString();
+      const batchName = b.batchName || 'Cutting Batch';
+      const createdAt = b.createdAt;
+
+      const diameterBreakdownMap = new Map<number, { count: number; scrapKg: number; totalWasteMm: number }>();
+      let computedScrapKg = 0;
+      let computedRemnantKg = 0;
+
+      if (b.layouts) {
+        b.layouts.forEach((layout: any) => {
+          const dia = Number(layout.diameter);
+          const waste = Number(layout.waste);
+          const rep = Number(layout.repetition);
+          const threshold = rulesMap.get(dia) ?? 1000;
+
+          if (waste > 0) {
+            const wasteWeight = getSingleBarWeight(dia, waste) * rep;
+            if (waste < threshold) {
+              computedScrapKg += wasteWeight;
+              const current = diameterBreakdownMap.get(dia) || { count: 0, scrapKg: 0, totalWasteMm: 0 };
+              current.count += rep;
+              current.scrapKg += wasteWeight;
+              current.totalWasteMm += waste * rep;
+              diameterBreakdownMap.set(dia, current);
+            } else {
+              computedRemnantKg += wasteWeight;
+            }
+          }
+        });
+      }
+
+      const totalScrapKg = Math.round((b.summary?.totalScrapKg !== undefined && b.summary?.totalScrapKg !== null ? b.summary.totalScrapKg : computedScrapKg) * 100) / 100;
+      const totalRemnantKg = Math.round((b.summary?.totalRemnantKg !== undefined && b.summary?.totalRemnantKg !== null ? b.summary.totalRemnantKg : computedRemnantKg) * 100) / 100;
+
+      const diameterBreakdown = Array.from(diameterBreakdownMap.entries()).map(([diameter, data]) => ({
+        diameter,
+        pieces: data.count,
+        scrapKg: Math.round(data.scrapKg * 100) / 100,
+        totalWasteMm: data.totalWasteMm,
+      })).sort((a, b) => a.diameter - b.diameter);
+
+      return {
+        batchId,
+        batchName,
+        createdAt,
+        totalScrapKg,
+        totalRemnantKg,
+        avgUtilization: b.summary?.avgUtilization || 0,
+        diameterBreakdown,
+      };
+    });
+
+    res.json(records);
+  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+});
+
 app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
@@ -401,14 +479,18 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
     const liveStock = await db.collection('stockitems').find({ companyId, quantity: { $gt: 0 } }).toArray();
     let liveStandardKg = 0, liveRemnantsKg = 0;
     const diameterWeights: { [key: number]: number } = { 8: 0, 10: 0, 12: 0, 16: 0, 20: 0, 25: 0, 32: 0 };
+    const remnantDiameterWeights: { [key: number]: number } = { 8: 0, 10: 0, 12: 0, 16: 0, 20: 0, 25: 0, 32: 0 };
 
     liveStock.forEach((i: any) => {
-      if (i.isRemnant) {
-        liveRemnantsKg += i.weightInKgs;
-      } else {
-        liveStandardKg += i.weightInKgs;
-      }
       const dia = Number(i.diameter);
+      if (i.isRemnant) {
+        liveRemnantsKg += i.weightInKgs || 0;
+        if (remnantDiameterWeights[dia] !== undefined) {
+          remnantDiameterWeights[dia] += i.weightInKgs || 0;
+        }
+      } else {
+        liveStandardKg += i.weightInKgs || 0;
+      }
       if (diameterWeights[dia] !== undefined) {
         diameterWeights[dia] += i.weightInKgs || 0;
       }
@@ -449,6 +531,13 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
       totalScrapLossDifferential += ((estPurchasePriceWithGst - (s.pricePerKg || 0)) * (s.weight || 0));
     });
 
+    // Format remnant weights rounded to 2 decimals
+    const formattedRemnantWeights: { [key: number]: number } = {};
+    Object.keys(remnantDiameterWeights).forEach(dia => {
+      const key = Number(dia);
+      formattedRemnantWeights[key] = Math.round(remnantDiameterWeights[key] * 100) / 100;
+    });
+
     res.json({
       liveStandardKg: Math.round(liveStandardKg * 100) / 100,
       liveRemnantsKg: Math.round(liveRemnantsKg * 100) / 100,
@@ -457,6 +546,7 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
       wastagePercentage: Math.round(wastagePercentage * 100) / 100,
       dailyScrapGraph,
       diameterWeights,
+      remnantDiameterWeights: formattedRemnantWeights,
       totalScrapSoldWeight: Math.round(totalScrapSoldWeight * 100) / 100,
       totalScrapRevenue: Math.round(totalScrapRevenue * 100) / 100,
       totalScrapLossDifferential: Math.round(totalScrapLossDifferential * 100) / 100,

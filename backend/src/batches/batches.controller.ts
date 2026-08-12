@@ -32,4 +32,9 @@ export class BatchesController {
   async getDashboardStats(@CurrentUser() user: User) {
     return this.batchesService.getDashboardStats(user.companyId.toString());
   }
+
+  @Get('scrap-records')
+  async getBatchScrapRecords(@CurrentUser() user: User) {
+    return this.batchesService.getBatchScrapRecords(user.companyId.toString());
+  }
 }

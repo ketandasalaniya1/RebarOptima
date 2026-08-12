@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import './ResultsPage.css'
 import html2pdf from 'html2pdf.js'
 import { batchesApi, inventoryApi } from '../../utils/api'
@@ -14,7 +14,8 @@ import {
   Trash2,
   BarChart3,
   FileDown,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Recycle
 } from 'lucide-react'
 
 const mockLayouts = [
@@ -320,6 +321,41 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const totalWastageKgSum = totalRemnantKgSum + totalScrapKgSum;
   const totalWastagePercent = totalStockKgSum > 0 ? (totalWastageKgSum / totalStockKgSum) * 100 : 0;
 
+  // Per-layout waste tracker: one row per layout with waste type, length, weight
+  const wasteTracker = layouts.map((l, idx) => {
+    const diaNum = parseFloat(l.diameter || '12');
+    const threshold = scrapRulesMap[diaNum] ?? 1000;
+    const partsLen = l.parts.reduce((sum, p) => sum + p.length, 0);
+    let wasteLen = parseFloat(l.waste);
+    if (isNaN(wasteLen)) wasteLen = Math.max(0, l.stockLength - partsLen);
+    const isRemnant = wasteLen >= threshold && wasteLen > 0;
+    const isScrap = !isRemnant && wasteLen > 0;
+    const weightPerMeter = (diaNum * diaNum) / 162;
+    const wasteWeightKg = (wasteLen / 1000) * weightPerMeter * l.repetition;
+    return {
+      layoutId: l.id,
+      diameter: diaNum,
+      repetition: l.repetition,
+      cutsCount: l.cutsCount,
+      stockLength: l.stockLength,
+      wasteLenPerBar: wasteLen,
+      totalWasteLen: wasteLen * l.repetition,
+      wasteWeightKg,
+      type: wasteLen === 0 ? 'none' : isRemnant ? 'remnant' : 'scrap',
+      threshold,
+      isVirtual: !!l.isVirtual,
+    };
+  });
+
+  // Group wasteTracker by diameter for subtotals
+  const wasteTrackerByDia = {};
+  wasteTracker.forEach(row => {
+    const key = String(row.diameter);
+    if (!wasteTrackerByDia[key]) wasteTrackerByDia[key] = [];
+    wasteTrackerByDia[key].push(row);
+  });
+  const wasteTrackerDias = Object.keys(wasteTrackerByDia).sort((a, b) => parseFloat(a) - parseFloat(b));
+
   const getCostPerKgForDia = (diameter) => {
     const stockItem = data?.inputStock?.find(s => String(s.diameter) === String(diameter));
     return stockItem?.costPerKg ? parseFloat(stockItem.costPerKg) : 60;
@@ -365,14 +401,15 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
     const element = document.querySelector('.results-page');
     element.classList.add('print-mode');
     const opt = {
-      margin: [15, 10, 15, 10],
+      margin: [14, 12, 16, 12],
       filename: 'rebar_optima_report.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
+      image: { type: 'jpeg', quality: 0.99 },
       html2canvas: {
-        scale: 2,
+        scale: 3,
         useCORS: true,
         logging: false,
-        windowWidth: 794
+        windowWidth: 794,
+        allowTaint: true
       },
       pagebreak: { mode: ['css', 'legacy'], after: '.pdf-page-break' },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -386,6 +423,11 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       element.classList.remove('print-mode');
     });
   };
+
+  const reportDate = new Date().toLocaleString('en-IN', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: true
+  });
 
   return (
     <div className="results-page">
@@ -435,6 +477,22 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           <span>⚠️ {saveError}</span>
         </div>
       )}
+
+      {/* ── Professional Print Header (hidden on screen) ── */}
+      <div className="print-report-header print-only">
+        <div className="prh-brand">
+          <div className="prh-logo">RO</div>
+          <div>
+            <div className="prh-title">RebarOptima</div>
+            <div className="prh-subtitle">Steel Cutting Optimization Report</div>
+          </div>
+        </div>
+        <div className="prh-meta">
+          <div className="prh-meta-row"><strong>Generated:</strong> {reportDate}</div>
+          <div className="prh-meta-row"><strong>Total Bars:</strong> {totalBarsUsed} bars &nbsp;|&nbsp; <strong>Layouts:</strong> {layouts.length}</div>
+          <div className="prh-meta-row"><strong>Utilization:</strong> {summary.avgUtilization.toFixed(2)}% &nbsp;|&nbsp; <strong>Total Cuts:</strong> {summary.totalCutsCount}</div>
+        </div>
+      </div>
 
       {/* Main Title & Optimal Badge */}
       <div className="results-title-section">
@@ -846,10 +904,210 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
         </div>
       </div>
 
+      {/* Remnant & Scrap Tracker Table */}
+      <div className="wt-card">
+        {/* Card Header */}
+        <div className="wt-card-header">
+          <div className="wt-card-title-group">
+            <div className="wt-card-icon-wrap">
+              <Recycle size={20} />
+            </div>
+            <div>
+              <h3 className="wt-card-title">Remnant &amp; Scrap Steel Tracker</h3>
+              <p className="wt-card-desc">Per-layout waste breakdown — cross-reference with Layout IDs in Cutting Layouts above.</p>
+            </div>
+          </div>
+          <div className="wt-legend-pills">
+            <span className="wt-pill wt-pill-remnant">
+              <span className="wt-pill-dot wt-dot-remnant" />
+              Reusable Remnant
+            </span>
+            <span className="wt-pill wt-pill-scrap">
+              <span className="wt-pill-dot wt-dot-scrap" />
+              Scrap
+            </span>
+          </div>
+        </div>
+
+        {/* Summary stat cards */}
+        <div className="wt-summary-strip">
+          <div className="wt-stat-card wt-stat-remnant">
+            <span className="wt-stat-val">{totalRemnantKgSum.toFixed(2)} <span className="wt-stat-unit">kg</span></span>
+            <span className="wt-stat-lbl">Total Reusable Remnant</span>
+          </div>
+          <div className="wt-stat-card wt-stat-scrap">
+            <span className="wt-stat-val">{totalScrapKgSum.toFixed(2)} <span className="wt-stat-unit">kg</span></span>
+            <span className="wt-stat-lbl">Total Scrap</span>
+          </div>
+          <div className="wt-stat-card wt-stat-total">
+            <span className="wt-stat-val">{(totalRemnantKgSum + totalScrapKgSum).toFixed(2)} <span className="wt-stat-unit">kg</span></span>
+            <span className="wt-stat-lbl">Total Waste Material</span>
+          </div>
+          <div className="wt-stat-card wt-stat-pct">
+            <span className="wt-stat-val">
+              {totalStockKgSum > 0 ? ((totalRemnantKgSum / (totalRemnantKgSum + totalScrapKgSum)) * 100).toFixed(0) : 0}
+              <span className="wt-stat-unit">%</span>
+            </span>
+            <span className="wt-stat-lbl">Waste Recovered as Remnant</span>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="wt-table-wrap">
+          <table className="wt-table">
+            <thead>
+              <tr>
+                <th className="wt-th-type">Type</th>
+                <th>Layout</th>
+                <th>Dia</th>
+                <th>Stock Length</th>
+                <th>Reps</th>
+                <th>Cuts</th>
+                <th>Waste / Bar</th>
+                <th>Total Waste Length</th>
+                <th>Weight (kg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {wasteTrackerDias.map(dia => {
+                const rows = wasteTrackerByDia[dia];
+                const subRemnantKg = rows.filter(r => r.type === 'remnant').reduce((s, r) => s + r.wasteWeightKg, 0);
+                const subScrapKg = rows.filter(r => r.type === 'scrap').reduce((s, r) => s + r.wasteWeightKg, 0);
+                const subRemnantLen = rows.filter(r => r.type === 'remnant').reduce((s, r) => s + r.totalWasteLen, 0);
+                const subScrapLen = rows.filter(r => r.type === 'scrap').reduce((s, r) => s + r.totalWasteLen, 0);
+                return (
+                  <React.Fragment key={dia}>
+                    {/* Diameter group header */}
+                    <tr className="wt-group-row">
+                      <td colSpan={9}>
+                        <div className="wt-group-inner">
+                          <span className="wt-group-dia">{dia} mm</span>
+                          <span className="wt-group-threshold">Remnant threshold ≥ {rows[0].threshold} mm</span>
+                          {subRemnantKg > 0 && (
+                            <span className="wt-group-chip wt-chip-remnant">↩ {subRemnantKg.toFixed(2)} kg remnant</span>
+                          )}
+                          {subScrapKg > 0 && (
+                            <span className="wt-group-chip wt-chip-scrap">✕ {subScrapKg.toFixed(2)} kg scrap</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Per-layout rows */}
+                    {rows.map((row, i) => (
+                      <tr
+                        key={`${dia}-${i}`}
+                        className={`wt-data-row wt-type-${row.type}${row.isVirtual ? ' wt-virtual' : ''}`}
+                      >
+                        {/* Left type indicator */}
+                        <td className="wt-type-cell">
+                          <span className={`wt-type-pip wt-pip-${row.type}`} />
+                          {row.type === 'remnant' && <span className="wt-type-label wt-type-remnant">Remnant</span>}
+                          {row.type === 'scrap' && <span className="wt-type-label wt-type-scrap">Scrap</span>}
+                          {row.type === 'none' && <span className="wt-type-label wt-type-none">—</span>}
+                        </td>
+                        <td>
+                          <span className={`wt-layout-chip wt-layout-chip-${row.type}`}>{row.layoutId}</span>
+                          {row.isVirtual && <span className="wt-unavail-tag">Unavail.</span>}
+                        </td>
+                        <td className="wt-cell-bold">{row.diameter} mm</td>
+                        <td className="wt-cell-muted">{row.stockLength.toLocaleString()} mm</td>
+                        <td className="wt-cell-center">{row.repetition}</td>
+                        <td className="wt-cell-center">{row.cutsCount}</td>
+                        <td>
+                          {row.wasteLenPerBar > 0
+                            ? <span className={row.type === 'remnant' ? 'wt-val-remnant' : row.type === 'scrap' ? 'wt-val-scrap' : ''}>
+                                {row.wasteLenPerBar.toLocaleString()} <span className="wt-unit">mm</span>
+                              </span>
+                            : <span className="wt-zero">—</span>
+                          }
+                        </td>
+                        <td>
+                          {row.totalWasteLen > 0
+                            ? <span className={row.type === 'remnant' ? 'wt-val-remnant' : row.type === 'scrap' ? 'wt-val-scrap' : ''}>
+                                {row.totalWasteLen.toLocaleString()} <span className="wt-unit">mm</span>
+                              </span>
+                            : <span className="wt-zero">—</span>
+                          }
+                        </td>
+                        <td>
+                          {row.wasteWeightKg > 0
+                            ? <span className={`wt-weight ${row.type === 'remnant' ? 'wt-val-remnant' : row.type === 'scrap' ? 'wt-val-scrap' : ''}`}>
+                                {row.wasteWeightKg.toFixed(3)}
+                              </span>
+                            : <span className="wt-zero">—</span>
+                          }
+                        </td>
+                      </tr>
+                    ))}
+
+                    {/* Diameter subtotal */}
+                    <tr className="wt-subtotal-row">
+                      <td colSpan={6} className="wt-subtotal-label">Subtotal — {dia} mm</td>
+                      <td colSpan={2}>
+                        <div className="wt-subtotal-lens">
+                          {subRemnantLen > 0 && (
+                            <span className="wt-sub-chip wt-sub-remnant">{subRemnantLen.toLocaleString()} mm remnant</span>
+                          )}
+                          {subScrapLen > 0 && (
+                            <span className="wt-sub-chip wt-sub-scrap">{subScrapLen.toLocaleString()} mm scrap</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="wt-subtotal-lens">
+                          {subRemnantKg > 0 && (
+                            <span className="wt-sub-chip wt-sub-remnant">{subRemnantKg.toFixed(3)} kg</span>
+                          )}
+                          {subScrapKg > 0 && (
+                            <span className="wt-sub-chip wt-sub-scrap">{subScrapKg.toFixed(3)} kg</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Grand Total Banner */}
+        <div className="wt-grand-banner">
+          <div className="wt-grand-label">
+            <Recycle size={16} style={{ marginRight: '6px', opacity: 0.7 }} />
+            Grand Total
+          </div>
+          <div className="wt-grand-stats">
+            <div className="wt-grand-stat">
+              <span className="wt-grand-stat-val wt-grand-remnant">
+                {wasteTracker.filter(r => r.type === 'remnant').reduce((s, r) => s + r.totalWasteLen, 0).toLocaleString()} mm
+              </span>
+              <span className="wt-grand-stat-sub">{totalRemnantKgSum.toFixed(2)} kg Remnant</span>
+            </div>
+            <div className="wt-grand-divider" />
+            <div className="wt-grand-stat">
+              <span className="wt-grand-stat-val wt-grand-scrap">
+                {wasteTracker.filter(r => r.type === 'scrap').reduce((s, r) => s + r.totalWasteLen, 0).toLocaleString()} mm
+              </span>
+              <span className="wt-grand-stat-sub">{totalScrapKgSum.toFixed(2)} kg Scrap</span>
+            </div>
+            <div className="wt-grand-divider" />
+            <div className="wt-grand-stat">
+              <span className="wt-grand-stat-val">
+                {(totalRemnantKgSum + totalScrapKgSum).toFixed(2)} kg
+              </span>
+              <span className="wt-grand-stat-sub">Total Waste</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       {/* Brand signature (visible on print only) */}
       <div className="print-footer print-only">
         <span>© 2026-2027 RebarOptima. All rights reserved.</span>
-        <span>Generated by RebarOptima Cut Optimizer</span>
+        <span>Generated: {reportDate} &nbsp;·&nbsp; RebarOptima Cut Optimizer &nbsp;·&nbsp; Confidential</span>
       </div>
     </div>
   );

@@ -1,18 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
 const getInitialState = () => {
   try {
-    const token = localStorage.getItem('accessToken');
-    const storedUser = localStorage.getItem('user');
+    const token = sessionStorage.getItem('accessToken');
+    const storedUser = sessionStorage.getItem('user');
+    const lastActivity = sessionStorage.getItem('lastActivity');
+
     if (token && storedUser) {
-      return {
-        accessToken: token,
-        user: JSON.parse(storedUser),
-        isAuthenticated: true,
-      };
+      if (lastActivity && (Date.now() - parseInt(lastActivity, 10) > SESSION_TIMEOUT_MS)) {
+        sessionStorage.clear();
+      } else {
+        return {
+          accessToken: token,
+          user: JSON.parse(storedUser),
+          isAuthenticated: true,
+        };
+      }
     }
   } catch (err) {
-    console.error('Failed to load session from localStorage:', err);
+    console.error('Failed to load session from sessionStorage:', err);
   }
   return {
     accessToken: null,
@@ -27,21 +35,29 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess: (state, action) => {
       const { accessToken, user } = action.payload;
+      const now = Date.now().toString();
       state.accessToken = accessToken;
       state.user = user;
       state.isAuthenticated = true;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem('accessToken', accessToken);
+      sessionStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem('lastActivity', now);
     },
     logout: (state) => {
       state.accessToken = null;
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('lastActivity');
     },
+    updateActivity: () => {
+      if (sessionStorage.getItem('accessToken')) {
+        sessionStorage.setItem('lastActivity', Date.now().toString());
+      }
+    }
   },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, logout, updateActivity } = authSlice.actions;
 export default authSlice.reducer;

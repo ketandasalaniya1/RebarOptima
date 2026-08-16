@@ -865,8 +865,8 @@
     "semantic_hash": ""
   },
   "frontend/index.html": {
-    "mtime": 1783111172.2261167,
-    "ast_hash": "89150e536c4a99f73625f46f41f0f437",
+    "mtime": 1786873191.682346,
+    "ast_hash": "2f4e0fbbbb0fa13ce310952615d54e4a",
     "semantic_hash": ""
   },
   "graph.html": {
@@ -905,8 +905,8 @@
     "semantic_hash": ""
   },
   ".agents/AGENTS.md": {
-    "mtime": 1786573132.9626691,
-    "ast_hash": "d157c6fa260ccf4ac72ecb1ec964dc0d",
+    "mtime": 1786873233.83505,
+    "ast_hash": "b956b00a2c5dd6a3c1985ff7d9158b6f",
     "semantic_hash": ""
   }
 }

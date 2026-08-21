@@ -29,7 +29,7 @@ export class InventoryService {
 
     return {
       standardStock: items.filter(item => !item.isRemnant),
-      remnantsStock: items.filter(item => item.isRemnant),
+      remnantsStock: items.filter(item => item.isRemnant).sort((a, b) => Number(a.length) - Number(b.length)),
     };
   }
 
@@ -112,24 +112,23 @@ export class InventoryService {
     const standardDiameters = [8, 10, 12, 16, 20, 25, 32];
     
     if (rules.length < standardDiameters.length) {
-      // Seed missing rules
-      const existingDiams = new Set(rules.map(r => r.diameter));
-      const newRules: any[] = [];
+      // Seed missing rules safely to prevent E11000 duplicate key race conditions
+      const existingDiams = new Set(rules.map(r => Number(r.diameter)));
       
       for (const d of standardDiameters) {
         if (!existingDiams.has(d)) {
-          newRules.push({
-            companyId: cid,
-            diameter: d,
-            scrapLengthThreshold: 1000, // default 1000 mm (1 meter)
-          });
+          try {
+            await this.scrapRuleModel.updateOne(
+              { companyId: cid as any, diameter: d },
+              { $setOnInsert: { companyId: cid as any, diameter: d, scrapLengthThreshold: 1000 } },
+              { upsert: true }
+            ).exec();
+          } catch (err: any) {
+            if (!err.message?.includes('E11000')) throw err;
+          }
         }
       }
-      
-      if (newRules.length > 0) {
-        await this.scrapRuleModel.insertMany(newRules);
-        rules = await this.scrapRuleModel.find({ companyId: cid as any }).exec();
-      }
+      rules = await this.scrapRuleModel.find({ companyId: cid as any }).exec();
     }
     
     return rules.sort((a, b) => a.diameter - b.diameter);

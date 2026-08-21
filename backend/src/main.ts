@@ -69,15 +69,35 @@ function getSingleBarWeight(diameter: number, lengthMm = 12000): number {
 
 const STD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32];
 
-async function ensureScrapRules(db: Db, companyId: ObjectId) {
+async function ensureScrapRules(db: Db, rawCompanyId: ObjectId | string) {
+  if (!rawCompanyId) return [];
+  const companyId = typeof rawCompanyId === 'string' ? new ObjectId(rawCompanyId) : rawCompanyId;
   const coll = db.collection('scraprules');
-  const existing = await coll.find({ companyId }).toArray();
-  const existingSet = new Set(existing.map((r: any) => r.diameter));
+
+  const existing = await coll.find({
+    $or: [{ companyId }, { companyId: companyId.toString() }]
+  }).toArray();
+
+  const existingSet = new Set(existing.map((r: any) => Number(r.diameter)));
   const missing = STD_DIAMETERS.filter(d => !existingSet.has(d));
+
   if (missing.length) {
-    await coll.insertMany(missing.map(d => ({ companyId, diameter: d, scrapLengthThreshold: 1000, createdAt: new Date() })));
+    for (const d of missing) {
+      try {
+        await coll.updateOne(
+          { companyId, diameter: Number(d) },
+          { $setOnInsert: { companyId, diameter: Number(d), scrapLengthThreshold: 1000, createdAt: new Date() } },
+          { upsert: true }
+        );
+      } catch (err: any) {
+        if (!err.message?.includes('E11000')) throw err;
+      }
+    }
   }
-  return coll.find({ companyId }).sort({ diameter: 1 }).toArray();
+
+  return coll.find({
+    $or: [{ companyId }, { companyId: companyId.toString() }]
+  }).sort({ diameter: 1 }).toArray();
 }
 
 // ── AUTH ROUTES ───────────────────────────────────────────────────────────────
@@ -127,7 +147,7 @@ app.get('/api/inventory', authMiddleware, async (req: any, res) => {
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const items = await db.collection('stockitems').find({ companyId, quantity: { $gt: 0 } }).sort({ createdAt: 1 }).toArray();
-    res.json({ standardStock: items.filter((i: any) => !i.isRemnant), remnantsStock: items.filter((i: any) => i.isRemnant) });
+    res.json({ standardStock: items.filter((i: any) => !i.isRemnant), remnantsStock: items.filter((i: any) => i.isRemnant).sort((a: any, b: any) => Number(a.length) - Number(b.length)) });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
@@ -163,11 +183,21 @@ app.post('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => 
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    if (!companyId) return res.status(400).json({ message: 'Company not found' });
     const { rules } = req.body;
-    await Promise.all(rules.map((r: any) =>
-      db.collection('scraprules').findOneAndUpdate({ companyId, diameter: r.diameter }, { $set: { scrapLengthThreshold: r.scrapLengthThreshold } }, { upsert: true })
-    ));
-    res.json(await db.collection('scraprules').find({ companyId }).sort({ diameter: 1 }).toArray());
+    if (Array.isArray(rules)) {
+      await Promise.all(rules.map((r: any) =>
+        db.collection('scraprules').findOneAndUpdate(
+          { companyId, diameter: Number(r.diameter) },
+          { $set: { scrapLengthThreshold: Number(r.scrapLengthThreshold) }, $setOnInsert: { companyId, diameter: Number(r.diameter), createdAt: new Date() } },
+          { upsert: true }
+        )
+      ));
+    }
+    const updatedRules = await db.collection('scraprules').find({
+      $or: [{ companyId }, { companyId: companyId.toString() }]
+    }).sort({ diameter: 1 }).toArray();
+    res.json(updatedRules);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
@@ -511,10 +541,14 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
       }
     });
 
-    const dailyScrapGraph = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(); d.setDate(d.getDate() - (6 - i));
+    const dailyScrapGraph = Array.from({ length: 30 }, (_, i) => {
+      const d = new Date(); d.setDate(d.getDate() - (29 - i));
       const key = d.toISOString().split('T')[0];
-      return { date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), scrapKg: Math.round((dailyScrapMap.get(key) || 0) * 100) / 100 };
+      return { 
+        date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), 
+        fullDate: key,
+        scrapKg: Math.round((dailyScrapMap.get(key) || 0) * 100) / 100 
+      };
     });
 
     const wastagePercentage = totalStockUsedKg > 0 ? (totalScrapKg / totalStockUsedKg) * 100 : 0;

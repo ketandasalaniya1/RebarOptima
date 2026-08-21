@@ -86,16 +86,26 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
     });
     flatParts.sort((a, b) => b.length - a.length);
 
-    // Expand available stocks and preserve their dbId and isRemnant status
-    const availableStocks = [];
+    // Separate available stocks into remnants and standard bars
+    const availableRemnants = [];
+    const availableStandards = [];
+    
     diaStocks.forEach(s => {
       for (let i = 0; i < s.quantity; i++) {
-        availableStocks.push({ length: s.length, dbId: s.dbId, isRemnant: s.isRemnant });
+        const item = { length: s.length, dbId: s.dbId, isRemnant: s.isRemnant };
+        if (s.isRemnant) {
+          availableRemnants.push(item);
+        } else {
+          availableStandards.push(item);
+        }
       }
     });
-    
-    // Sort available stocks by length descending, but we will scan remnants first inside the loop!
-    availableStocks.sort((a, b) => b.length - a.length);
+
+    // Remnants sorted in ASCENDING order (lower to higher length) so shortest fitting remnant is consumed first!
+    availableRemnants.sort((a, b) => a.length - b.length);
+
+    // Standard stock bars sorted in DESCENDING order (longest stock first, e.g. 12000 mm)
+    availableStandards.sort((a, b) => b.length - a.length);
 
     const usedBars = [];
 
@@ -112,28 +122,33 @@ export function solve1DCSP(stockRows, partsRows, options = {}) {
       if (!targetBar) {
         // Start a new bar from available stocks
         let stockIndex = -1;
-        
-        // ponytail: prioritize remnants first as requested: "for Remanant use first in next Batch of Optimisation"
-        for (let i = 0; i < availableStocks.length; i++) {
-          if (availableStocks[i].isRemnant && availableStocks[i].length >= part.length + trimMargin * 2) {
+        let isFromRemnant = false;
+
+        // 1. Prioritize remnants first in LOWER to HIGHER length order (ascending)
+        for (let i = 0; i < availableRemnants.length; i++) {
+          if (availableRemnants[i].length >= part.length + trimMargin * 2) {
             stockIndex = i;
+            isFromRemnant = true;
             break;
           }
         }
-        
-        // If no remnant was found that fits, check the standard stock bars
+
+        // 2. If no remnant was found that fits, check standard stock bars (descending order)
         if (stockIndex === -1) {
-          for (let i = 0; i < availableStocks.length; i++) {
-            if (!availableStocks[i].isRemnant && availableStocks[i].length >= part.length + trimMargin * 2) {
+          for (let i = 0; i < availableStandards.length; i++) {
+            if (availableStandards[i].length >= part.length + trimMargin * 2) {
               stockIndex = i;
+              isFromRemnant = false;
               break;
             }
           }
         }
 
         if (stockIndex !== -1) {
-          const selectedStock = availableStocks[stockIndex];
-          availableStocks.splice(stockIndex, 1);
+          const selectedStock = isFromRemnant
+            ? availableRemnants.splice(stockIndex, 1)[0]
+            : availableStandards.splice(stockIndex, 1)[0];
+
           targetBar = {
             stockLength: selectedStock.length,
             diameter: dia,

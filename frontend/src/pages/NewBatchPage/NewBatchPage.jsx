@@ -133,7 +133,10 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
         const combined = []
         let index = 1
 
-        stockData.standardStock.forEach(s => {
+        const sortedStandard = [...(stockData.standardStock || [])].sort((a, b) => Number(b.length) - Number(a.length))
+        const sortedRemnants = [...(stockData.remnantsStock || [])].sort((a, b) => Number(a.length) - Number(b.length))
+
+        sortedStandard.forEach(s => {
           combined.push({
             id: index++,
             dbId: s._id,
@@ -145,7 +148,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
           })
         })
 
-        stockData.remnantsStock.forEach(s => {
+        sortedRemnants.forEach(s => {
           combined.push({
             id: index++,
             dbId: s._id,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import {
@@ -100,6 +100,72 @@ export default function InventoryPage() {
   const getSingleBarWeight = (dia, lengthMm = 12000) => {
     return (lengthMm / 1000) * ((dia * dia) / 162)
   }
+
+  // Diawise and total summary calculations for Standard Bar Stock
+  const standardDiaSummary = useMemo(() => {
+    const summary = {}
+    let grandTotalWeight = 0
+    let grandTotalQty = 0
+
+    ;(inventory.standardStock || []).forEach((item) => {
+      const dia = Number(item.diameter)
+      if (!summary[dia]) {
+        summary[dia] = { diameter: dia, totalWeight: 0, totalQty: 0 }
+      }
+      summary[dia].totalWeight += Number(item.weightInKgs) || 0
+      summary[dia].totalQty += Number(item.quantity) || 0
+      grandTotalWeight += Number(item.weightInKgs) || 0
+      grandTotalQty += Number(item.quantity) || 0
+    })
+
+    const standardDias = [8, 10, 12, 16, 20, 25, 32]
+    const presentDias = Object.keys(summary).map(Number)
+    const allDias = Array.from(new Set([...standardDias, ...presentDias])).sort((a, b) => a - b)
+
+    const items = allDias.map((dia) => ({
+      diameter: dia,
+      totalWeight: summary[dia]?.totalWeight || 0,
+      totalQty: summary[dia]?.totalQty || 0,
+      hasStock: !!summary[dia] && summary[dia].totalQty > 0
+    }))
+
+    const inStockCount = items.filter((i) => i.hasStock).length
+
+    return { items, grandTotalWeight, grandTotalQty, inStockCount }
+  }, [inventory.standardStock])
+
+  // Diawise and total summary calculations for Reusable Remnants Stock
+  const remnantsDiaSummary = useMemo(() => {
+    const summary = {}
+    let grandTotalWeight = 0
+    let grandTotalQty = 0
+
+    ;(inventory.remnantsStock || []).forEach((item) => {
+      const dia = Number(item.diameter)
+      if (!summary[dia]) {
+        summary[dia] = { diameter: dia, totalWeight: 0, totalQty: 0 }
+      }
+      summary[dia].totalWeight += Number(item.weightInKgs) || 0
+      summary[dia].totalQty += Number(item.quantity) || 0
+      grandTotalWeight += Number(item.weightInKgs) || 0
+      grandTotalQty += Number(item.quantity) || 0
+    })
+
+    const standardDias = [8, 10, 12, 16, 20, 25, 32]
+    const presentDias = Object.keys(summary).map(Number)
+    const allDias = Array.from(new Set([...standardDias, ...presentDias])).sort((a, b) => a - b)
+
+    const items = allDias.map((dia) => ({
+      diameter: dia,
+      totalWeight: summary[dia]?.totalWeight || 0,
+      totalQty: summary[dia]?.totalQty || 0,
+      hasStock: !!summary[dia] && summary[dia].totalQty > 0
+    }))
+
+    const inStockCount = items.filter((i) => i.hasStock).length
+
+    return { items, grandTotalWeight, grandTotalQty, inStockCount }
+  }, [inventory.remnantsStock])
 
   // Multi-Diameter Voucher handlers
   const handleAddVoucherRow = () => {
@@ -559,9 +625,63 @@ export default function InventoryPage() {
         <div className="stock-list-container">
           {/* Standard Stock Section */}
           <section className="card stock-section">
-            <h3 className="section-title">
-              <Package size={18} style={{ marginRight: '6px' }} /> Standard Bar Stock
-            </h3>
+            <div className="section-header-row">
+              <h3 className="section-title">
+                <Package size={18} style={{ marginRight: '6px' }} /> Standard Bar Stock
+              </h3>
+              <div className="section-header-stats">
+                <span className="header-stat-pill">
+                  <strong>{Math.round(standardDiaSummary.grandTotalWeight).toLocaleString()} kg</strong>
+                  {standardDiaSummary.grandTotalWeight >= 1000 && (
+                    <span className="header-stat-sub">({(standardDiaSummary.grandTotalWeight / 1000).toFixed(2)} MT)</span>
+                  )}
+                </span>
+                <span className="header-stat-pill secondary">
+                  <strong>{standardDiaSummary.grandTotalQty}</strong> Bars
+                </span>
+              </div>
+            </div>
+
+            {/* Diawise Summary Cards for Standard Stock */}
+            <div className="dia-summary-container">
+              <div className="dia-cards-grid">
+                {standardDiaSummary.items.map((item) => (
+                  <div
+                    key={item.diameter}
+                    className={`dia-stat-card ${item.hasStock ? 'has-stock' : 'no-stock'}`}
+                  >
+                    <div className="dia-card-top">
+                      <span className="dia-badge standard-dia-badge">Ø {item.diameter} mm</span>
+                      <span className="dia-qty-label">
+                        {item.hasStock ? `${item.totalQty} bars` : '0 bars'}
+                      </span>
+                    </div>
+                    <div className="dia-card-main">
+                      <span className="dia-weight-number">
+                        {Math.round(item.totalWeight).toLocaleString()}
+                      </span>
+                      <span className="dia-weight-unit">kg</span>
+                    </div>
+                    {item.totalWeight >= 1000 ? (
+                      <div className="dia-ton-label">{(item.totalWeight / 1000).toFixed(2)} MT</div>
+                    ) : (
+                      <div className="dia-ton-label muted">{item.hasStock ? 'In Stock' : 'Out of Stock'}</div>
+                    )}
+                    <div className="dia-card-bar-track">
+                      <div
+                        className="dia-card-bar-fill standard-fill"
+                        style={{
+                          width: standardDiaSummary.grandTotalWeight > 0
+                            ? `${Math.max(4, Math.min(100, (item.totalWeight / standardDiaSummary.grandTotalWeight) * 100))}%`
+                            : '0%'
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {inventory.standardStock.length === 0 ? (
               <div className="empty-stock-state">
                 <p>No standard stock items found in inventory. Add stock using the Inward Entry tab.</p>
@@ -680,12 +800,65 @@ export default function InventoryPage() {
 
           {/* Remnants Stock Section */}
           <section className="card stock-section remnant-card">
-            <h3 className="section-title">
-              <Sparkles size={18} color="#059669" style={{ marginRight: '6px' }} /> Reusable Remnants Stock
-            </h3>
+            <div className="section-header-row">
+              <h3 className="section-title">
+                <Sparkles size={18} color="#059669" style={{ marginRight: '6px' }} /> Reusable Remnants Stock
+              </h3>
+              <div className="section-header-stats">
+                <span className="header-stat-pill remnant-pill">
+                  <strong>{Math.round(remnantsDiaSummary.grandTotalWeight).toLocaleString()} kg</strong>
+                  {remnantsDiaSummary.grandTotalWeight >= 1000 && (
+                    <span className="header-stat-sub">({(remnantsDiaSummary.grandTotalWeight / 1000).toFixed(2)} MT)</span>
+                  )}
+                </span>
+                <span className="header-stat-pill remnant-pill-secondary">
+                  <strong>{remnantsDiaSummary.grandTotalQty}</strong> Remnants
+                </span>
+              </div>
+            </div>
             <p className="remnant-disclaimer">
               These are reusable remnants generated automatically from previous cutting optimizations. They are prioritised first in next optimizations.
             </p>
+
+            {/* Diawise Summary Cards for Reusable Remnants Stock */}
+            <div className="dia-summary-container">
+              <div className="dia-cards-grid">
+                {remnantsDiaSummary.items.map((item) => (
+                  <div
+                    key={item.diameter}
+                    className={`dia-stat-card remnant-card-style ${item.hasStock ? 'has-stock' : 'no-stock'}`}
+                  >
+                    <div className="dia-card-top">
+                      <span className="dia-badge remnant-dia-badge">Ø {item.diameter} mm</span>
+                      <span className="dia-qty-label remnant-qty">
+                        {item.hasStock ? `${item.totalQty} offcuts` : '0 offcuts'}
+                      </span>
+                    </div>
+                    <div className="dia-card-main">
+                      <span className="dia-weight-number remnant-text">
+                        {Math.round(item.totalWeight).toLocaleString()}
+                      </span>
+                      <span className="dia-weight-unit">kg</span>
+                    </div>
+                    {item.totalWeight >= 1000 ? (
+                      <div className="dia-ton-label remnant-ton">{(item.totalWeight / 1000).toFixed(2)} MT</div>
+                    ) : (
+                      <div className="dia-ton-label muted">{item.hasStock ? 'Ready for reuse' : 'None in stock'}</div>
+                    )}
+                    <div className="dia-card-bar-track">
+                      <div
+                        className="dia-card-bar-fill remnant-fill"
+                        style={{
+                          width: remnantsDiaSummary.grandTotalWeight > 0
+                            ? `${Math.max(4, Math.min(100, (item.totalWeight / remnantsDiaSummary.grandTotalWeight) * 100))}%`
+                            : '0%'
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
             {inventory.remnantsStock.length === 0 ? (
               <div className="empty-stock-state">
                 <p>No remnants currently available in stock. Run optimization to generate remnants.</p>

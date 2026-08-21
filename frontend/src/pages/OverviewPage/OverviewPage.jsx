@@ -217,14 +217,14 @@ export default function OverviewPage({ onNavigate }) {
 
         {/* Lower Section: 3 Compact Cards Side-by-Side in 1 Row */}
         <div className="dashboard-compact-grid">
-          {/* Card 1: Daily Scrap Generation */}
+          {/* Card 1: Daily Scrap Generation (Line Chart - 30 Days) */}
           <div className="card compact-card graph-card">
             <div className="panel-header">
               <div className="panel-header-left">
-                <BarChart2 size={15} className="panel-icon text-accent" />
+                <Activity size={15} className="panel-icon text-emerald" />
                 <h3 className="graph-card-title">Daily Scrap Generation</h3>
               </div>
-              <span className="chart-legend-badge">Last 7 Days</span>
+              <span className="chart-legend-badge">Last 30 Days</span>
             </div>
 
             <div className="svg-chart-container">
@@ -234,96 +234,185 @@ export default function OverviewPage({ onNavigate }) {
                   <p>No batch runs logged yet.</p>
                 </div>
               ) : (
-                <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="scrap-svg-chart">
-                  <defs>
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.95" />
-                      <stop offset="100%" stopColor="#059669" stopOpacity="0.4" />
-                    </linearGradient>
-                    <linearGradient id="barGradientHover" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#34d399" stopOpacity="1" />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
-                    </linearGradient>
-                  </defs>
+                (() => {
+                  const points = dailyScrapGraph.map((item, idx) => {
+                    const totalCount = Math.max(1, dailyScrapGraph.length - 1)
+                    const x = padLeft + (idx / totalCount) * graphWidth
+                    const y = chartHeight - padBottom - (item.scrapKg / maxScrap) * graphHeight
+                    return { x, y, item, idx }
+                  })
 
-                  {/* Horizontal gridlines */}
-                  {[0, 0.5, 1].map((ratio, idx) => {
-                    const y = padTop + graphHeight * (1 - ratio)
-                    const gridVal = Math.round(maxScrap * ratio)
-                    return (
-                      <g key={idx}>
-                        <line
-                          x1={padLeft}
-                          y1={y}
-                          x2={chartWidth - padRight}
-                          y2={y}
-                          stroke="rgba(255, 255, 255, 0.08)"
-                          strokeWidth="1"
-                          strokeDasharray="3 3"
+                  const getSmoothPath = (pts) => {
+                    if (pts.length === 0) return ''
+                    if (pts.length === 1) return `M ${pts[0].x},${pts[0].y}`
+                    let d = `M ${pts[0].x},${pts[0].y}`
+                    for (let i = 0; i < pts.length - 1; i++) {
+                      const p0 = pts[i === 0 ? 0 : i - 1]
+                      const p1 = pts[i]
+                      const p2 = pts[i + 1]
+                      const p3 = pts[i + 2] || p2
+                      const cp1x = p1.x + (p2.x - p0.x) / 6
+                      const cp1y = p1.y + (p2.y - p0.y) / 6
+                      const cp2x = p2.x - (p3.x - p1.x) / 6
+                      const cp2y = p2.y - (p3.y - p1.y) / 6
+                      d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`
+                    }
+                    return d
+                  }
+
+                  const smoothLinePath = getSmoothPath(points)
+                  const areaPath = points.length > 0
+                    ? `${smoothLinePath} L ${points[points.length - 1].x.toFixed(1)},${chartHeight - padBottom} L ${points[0].x.toFixed(1)},${chartHeight - padBottom} Z`
+                    : ''
+
+                  return (
+                    <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="scrap-svg-chart">
+                      <defs>
+                        <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#10b981" stopOpacity="0.38" />
+                          <stop offset="60%" stopColor="#10b981" stopOpacity="0.12" />
+                          <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                        </linearGradient>
+                        <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#059669" />
+                          <stop offset="50%" stopColor="#10b981" />
+                          <stop offset="100%" stopColor="#34d399" />
+                        </linearGradient>
+                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#10b981" floodOpacity="0.4" />
+                        </filter>
+                      </defs>
+
+                      {/* Horizontal gridlines */}
+                      {[0, 0.5, 1].map((ratio, idx) => {
+                        const y = padTop + graphHeight * (1 - ratio)
+                        const gridVal = Math.round(maxScrap * ratio)
+                        return (
+                          <g key={idx}>
+                            <line
+                              x1={padLeft}
+                              y1={y}
+                              x2={chartWidth - padRight}
+                              y2={y}
+                              stroke="rgba(255, 255, 255, 0.08)"
+                              strokeWidth="1"
+                              strokeDasharray="3 3"
+                            />
+                            <text
+                              x={padLeft - 6}
+                              y={y + 3}
+                              className="axis-text axis-y"
+                              textAnchor="end"
+                            >
+                              {gridVal} kg
+                            </text>
+                          </g>
+                        )
+                      })}
+
+                      {/* Area Fill */}
+                      {areaPath && (
+                        <path
+                          d={areaPath}
+                          fill="url(#areaGradient)"
+                          className="line-chart-area"
                         />
-                        <text
-                          x={padLeft - 6}
-                          y={y + 3}
-                          className="axis-text axis-y"
-                          textAnchor="end"
-                        >
-                          {gridVal} kg
-                        </text>
-                      </g>
-                    )
-                  })}
+                      )}
 
-                  {/* Bars */}
-                  {dailyScrapGraph.map((item, idx) => {
-                    const barCount = dailyScrapGraph.length
-                    const colWidth = graphWidth / barCount
-                    const barWidth = colWidth * 0.46
-                    const x = padLeft + idx * colWidth + (colWidth - barWidth) / 2
-
-                    const barHeight = item.scrapKg > 0 ? (item.scrapKg / maxScrap) * graphHeight : 3
-                    const y = chartHeight - padBottom - barHeight
-
-                    return (
-                      <g key={idx} className="chart-bar-group">
-                        <rect
-                          x={x}
-                          y={y}
-                          width={barWidth}
-                          height={barHeight}
-                          rx="3"
-                          ry="3"
-                          fill="url(#barGradient)"
-                          className="svg-bar"
+                      {/* Smooth Line */}
+                      {smoothLinePath && (
+                        <path
+                          d={smoothLinePath}
+                          fill="none"
+                          stroke="url(#lineGradient)"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          filter="url(#glow)"
+                          className="line-chart-path"
                         />
-                        <text
-                          x={x + barWidth / 2}
-                          y={y - 5}
-                          className="bar-value-lbl"
-                          textAnchor="middle"
-                        >
-                          {item.scrapKg > 0 ? `${item.scrapKg}k` : '0'}
-                        </text>
-                        <text
-                          x={x + barWidth / 2}
-                          y={chartHeight - padBottom + 13}
-                          className="axis-text axis-x"
-                          textAnchor="middle"
-                        >
-                          {item.date}
-                        </text>
-                      </g>
-                    )
-                  })}
+                      )}
 
-                  <line
-                    x1={padLeft}
-                    y1={chartHeight - padBottom}
-                    x2={chartWidth - padRight}
-                    y2={chartHeight - padBottom}
-                    stroke="rgba(255, 255, 255, 0.15)"
-                    strokeWidth="1"
-                  />
-                </svg>
+                      {/* Baseline */}
+                      <line
+                        x1={padLeft}
+                        y1={chartHeight - padBottom}
+                        x2={chartWidth - padRight}
+                        y2={chartHeight - padBottom}
+                        stroke="rgba(255, 255, 255, 0.15)"
+                        strokeWidth="1"
+                      />
+
+                      {/* X-axis tick labels (spaced evenly across 30 days) */}
+                      {points.map(({ x, item, idx }) => {
+                        const isTick = idx === 0 || idx === 7 || idx === 14 || idx === 21 || idx === points.length - 1
+                        if (!isTick) return null
+
+                        return (
+                          <g key={`label-${idx}`}>
+                            <line
+                              x1={x}
+                              y1={chartHeight - padBottom}
+                              x2={x}
+                              y2={chartHeight - padBottom + 4}
+                              stroke="rgba(255, 255, 255, 0.2)"
+                              strokeWidth="1"
+                            />
+                            <text
+                              x={x}
+                              y={chartHeight - padBottom + 14}
+                              className="axis-text axis-x"
+                              textAnchor={idx === 0 ? 'start' : idx === points.length - 1 ? 'end' : 'middle'}
+                            >
+                              {item.date}
+                            </text>
+                          </g>
+                        )
+                      })}
+
+                      {/* Interactive Point Markers */}
+                      {points.map(({ x, y, item, idx }) => {
+                        const hasScrap = item.scrapKg > 0
+                        return (
+                          <g key={`pt-${idx}`} className="chart-point-group">
+                            {/* Visible point dot for active scrap days */}
+                            {hasScrap && (
+                              <>
+                                <circle
+                                  cx={x}
+                                  cy={y}
+                                  r="4.5"
+                                  fill="#10b981"
+                                  stroke="#ffffff"
+                                  strokeWidth="1.5"
+                                  className="active-point-dot"
+                                />
+                                <text
+                                  x={x}
+                                  y={y - 8}
+                                  className="point-value-tag"
+                                  textAnchor="middle"
+                                >
+                                  {item.scrapKg >= 1000 ? `${(item.scrapKg / 1000).toFixed(1)}k` : Math.round(item.scrapKg)}
+                                </text>
+                              </>
+                            )}
+                            {/* Hover trigger zone */}
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r="8"
+                              fill="transparent"
+                              className="hover-trigger-circle"
+                            >
+                              <title>{`${item.date}: ${item.scrapKg} kg scrap`}</title>
+                            </circle>
+                          </g>
+                        )
+                      })}
+                    </svg>
+                  )
+                })()
               )}
             </div>
           </div>

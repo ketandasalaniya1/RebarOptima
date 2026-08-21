@@ -248,10 +248,10 @@ export class BatchesService {
       }
     });
 
-    // Format daily scrap graph data for the last 7 days
-    const dailyScrapGraph: { date: string; scrapKg: number }[] = [];
+    // Format daily scrap graph data for the last 30 days
+    const dailyScrapGraph: { date: string; fullDate: string; scrapKg: number }[] = [];
     const today = new Date();
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 29; i >= 0; i--) {
       const d = new Date();
       d.setDate(today.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
@@ -259,6 +259,7 @@ export class BatchesService {
       const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       dailyScrapGraph.push({
         date: label,
+        fullDate: dateStr,
         scrapKg: Math.round((dailyScrapMap.get(dateStr) || 0) * 100) / 100,
       });
     }

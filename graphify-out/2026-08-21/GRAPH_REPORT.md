@@ -1,18 +1,13 @@
-# Graph Report - RebarOptima  (2026-08-21)
+# Graph Report - RebarOptima  (2026-08-17)
 
 ## Corpus Check
-- 169 files · ~220,684 words
+- 169 files · ~219,742 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2407 nodes · 2893 edges · 198 communities (148 shown, 50 thin omitted)
+- 2407 nodes · 2904 edges · 197 communities (147 shown, 50 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
-
-## Graph Freshness
-- Built from commit: `fe36d564`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - App.jsx
@@ -30,7 +25,7 @@
 - compilerOptions
 - generate-slide.py
 - TailwindConfigGenerator
-- persist_design_system
+- design_system.py
 - inventory.module.ts
 - main
 - DesignSystemGenerator
@@ -51,7 +46,7 @@
 - test_tailwind_config_gen.py
 - inject-brand-context.cjs
 - embed-tokens.cjs
-- primitive
+- duration
 - patch
 - search
 - dependencies
@@ -65,8 +60,8 @@
 - BM25
 - jest
 - radius
-- ._generate_javascript
-- design_system.py
+- .generate_config_string
+- format_ascii_box
 - main.ts
 - exclude
 - scripts
@@ -74,12 +69,12 @@
 - devDependencies
 - Canvas Design System
 - Prerequisites
-- shadow
+- sm
 - nest-cli.json
 - lg
 - app.module.ts
-- InventoryService
-- _generate_intelligent_overrides
+- none
+- padding-y
 - is_server_ready
 - moduleFileExtensions
 - test_sync_brand_to_tokens.py
@@ -202,11 +197,10 @@
 - .test_base_config_structure
 - .test_default_content_paths_react
 - workflows/graphify.md
-- md
-- primary
+- dotenv
+- destructive
 - PROJECT_AI_PROMPT.md
-- bcryptjs
-- eslint-config-prettier
+- @eslint/eslintrc
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 58 edges
@@ -217,8 +211,8 @@
 6. `compilerOptions` - 22 edges
 7. `react` - 17 edges
 8. `UI Styling Skill` - 17 edges
-9. `InventoryService` - 15 edges
-10. `color` - 15 edges
+9. `color` - 15 edges
+10. `CurrentUser` - 15 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `TestShadcnInstaller` --uses--> `ShadcnInstaller`  [INFERRED]
@@ -229,13 +223,13 @@
   .agents/skills/ui-styling/scripts/tests/test_tailwind_config_gen.py → .agents/skills/ui-styling/scripts/tailwind_config_gen.py
 - `_generate_intelligent_overrides()` --calls--> `search()`  [EXTRACTED]
   .agents/skills/ui-ux-pro-max/scripts/design_system.py → .agents/skills/ui-ux-pro-max/scripts/core.py
-- `NewBatchPage()` --calls--> `solve1DCSP()`  [EXTRACTED]
-  frontend/src/pages/NewBatchPage/NewBatchPage.jsx → frontend/src/utils/optimizer.js
+- `main()` --calls--> `search()`  [EXTRACTED]
+  .agents/skills/design-system/scripts/search-slides.py → .agents/skills/design-system/scripts/slide_search_core.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (198 total, 50 thin omitted)
+## Communities (197 total, 50 thin omitted)
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.06
@@ -246,8 +240,8 @@ Cohesion: 0.05
 Nodes (53): $type, $value, $type, $value, $type, $value, $type, $value (+45 more)
 
 ### Community 2 - "batches.module.ts"
-Cohesion: 0.22
-Nodes (10): Batch, BatchSchema, Prop, Schema, BatchesService, Injectable, InventoryModule, Module (+2 more)
+Cohesion: 0.20
+Nodes (9): Batch, BatchSchema, Prop, Schema, BatchesService, Injectable, InjectModel, InventoryModule (+1 more)
 
 ### Community 3 - "search"
 Cohesion: 0.07
@@ -255,7 +249,7 @@ Nodes (42): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and re
 
 ### Community 4 - "color"
 Cohesion: 0.11
-Nodes (19): $type, $value, background, destructive, foreground, muted-foreground, primary-hover, secondary (+11 more)
+Nodes (19): $type, $value, background, foreground, muted-foreground, primary, primary-hover, secondary (+11 more)
 
 ### Community 5 - "card"
 Cohesion: 0.20
@@ -282,8 +276,8 @@ Cohesion: 0.12
 Nodes (19): BM25, detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+11 more)
 
 ### Community 11 - "CurrentUser"
-Cohesion: 0.15
-Nodes (9): CurrentUser, InventoryController, Body, Controller, Delete, Get, Param, Post (+1 more)
+Cohesion: 0.14
+Nodes (11): CurrentUser, InventoryController, Body, Controller, Delete, Get, Param, Post (+3 more)
 
 ### Community 12 - "compilerOptions"
 Cohesion: 0.09
@@ -297,33 +291,33 @@ Nodes (19): _e(), generate_chart_slide(), generate_cta_slide(), generate_deck(),
 Cohesion: 0.10
 Nodes (11): Generate Tailwind CSS configuration files., Add full color palette (50-950 shades) for a base color. Args: name: Color name…, TailwindConfigGenerator, Test adding custom fonts., Test adding custom spacing., Test that adding same plugin twice doesn't duplicate., Test initialization for JavaScript config., Test initialization with different frameworks. (+3 more)
 
-### Community 15 - "persist_design_system"
-Cohesion: 0.25
-Nodes (8): format_master_md(), persist_design_system(), Slugify a name into a single safe path segment. Only [a-z0-9_-] survives; every…, Persist design system to design-system/<project>/ folder using Master +…, Format design system as MASTER.md with hierarchical override logic., safe_slug(), format_output(), Format results for Claude consumption (token-optimized)
+### Community 15 - "design_system.py"
+Cohesion: 0.15
+Nodes (18): _detect_page_type(), format_markdown(), format_master_md(), format_page_override_md(), generate_design_system(), _generate_intelligent_overrides(), persist_design_system(), Format a page-specific override file with intelligent AI-generated content. (+10 more)
 
 ### Community 16 - "inventory.module.ts"
-Cohesion: 0.21
-Nodes (12): InventoryTransaction, InventoryTransactionSchema, Prop, Schema, ScrapRule, ScrapRuleSchema, Prop, Schema (+4 more)
+Cohesion: 0.17
+Nodes (13): InjectModel, InventoryTransaction, InventoryTransactionSchema, Prop, Schema, ScrapRule, ScrapRuleSchema, Prop (+5 more)
 
 ### Community 17 - "main"
-Cohesion: 0.11
-Nodes (10): main(), Add custom font families. Args: fonts: Dict of font_type: [font_names] e.g.,…, Add custom spacing values. Args: spacing: Dict of name: value e.g., {'18':…, Add custom breakpoints. Args: breakpoints: Dict of name: width e.g., {'3xl':…, Add plugin requirements. Args: plugins: List of plugin names e.g.,…, Get plugin recommendations based on configuration. Returns: List of recommended…, Generate configuration file content. Returns: Configuration file as string, Write configuration to file. Returns: Tuple of (success, message) (+2 more)
+Cohesion: 0.13
+Nodes (8): main(), Add custom font families. Args: fonts: Dict of font_type: [font_names] e.g.,…, Add custom spacing values. Args: spacing: Dict of name: value e.g., {'18':…, Add custom breakpoints. Args: breakpoints: Dict of name: width e.g., {'3xl':…, Add plugin requirements. Args: plugins: List of plugin names e.g.,…, Get plugin recommendations based on configuration. Returns: List of recommended…, Validate configuration. Returns: Tuple of (valid, message), Add custom colors to theme. Args: colors: Dict of color_name: color_value Value…
 
 ### Community 18 - "DesignSystemGenerator"
-Cohesion: 0.16
-Nodes (9): DesignSystemGenerator, Find matching reasoning rule for a category., Apply reasoning rules to search results., Select best matching result based on priority keywords., Extract results list from search result dict., Generate complete design system recommendation. variance/motion/density are…, Generates design system recommendations from aggregated searches., Load reasoning rules from CSV. (+1 more)
+Cohesion: 0.14
+Nodes (11): DesignSystemGenerator, Find matching reasoning rule for a category., Apply reasoning rules to search results., Select best matching result based on priority keywords., Extract results list from search result dict., Generate complete design system recommendation. variance/motion/density are…, Bucket a 1-10 dial value into its tier config. Returns None if value is None., Generates design system recommendations from aggregated searches. (+3 more)
 
 ### Community 19 - "dependencies"
 Cohesion: 0.11
-Nodes (19): dependencies, dotenv, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
+Nodes (19): dependencies, bcryptjs, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
 
 ### Community 20 - "fetch-background.py"
 Cohesion: 0.17
 Nodes (17): generate_css_for_background(), get_background_image(), get_curated_images(), get_overlay_css(), get_pexels_search_url(), load_backgrounds_config(), load_brand_colors(), main() (+9 more)
 
 ### Community 21 - "User"
-Cohesion: 0.18
-Nodes (9): JwtAuthGuard, Injectable, Prop, Schema, User, UserSchema, Injectable, InjectModel (+1 more)
+Cohesion: 0.16
+Nodes (11): JwtAuthGuard, Injectable, Prop, Schema, User, UserSchema, Module, UsersModule (+3 more)
 
 ### Community 22 - "icon/generate.py"
 Cohesion: 0.20
@@ -338,7 +332,7 @@ Cohesion: 0.12
 Nodes (10): Test ShadcnInstaller class., Test adding all components without config., Test adding all components in dry run mode., Create temporary project structure., Test listing installed components when none exist., Test listing installed components when they exist., Test checking for existing shadcn config., Test getting installed components without config. (+2 more)
 
 ### Community 25 - "BatchesController"
-Cohesion: 0.11
+Cohesion: 0.13
 Nodes (9): BatchesController, Body, Controller, Delete, Get, Param, Post, UseGuards (+1 more)
 
 ### Community 26 - "Tailwind CSS Utility Reference"
@@ -381,9 +375,9 @@ Nodes (10): extractColorsFromTable(), extractCoreAttributes(), extractHexColors(
 Cohesion: 0.20
 Nodes (9): args, extractTokens(), fs, minimal, MINIMAL_TOKENS, path, projectRoot, tokensPath (+1 more)
 
-### Community 36 - "primitive"
-Cohesion: 0.18
-Nodes (11): fast, normal, slow, $type, $value, $type, $value, primitive (+3 more)
+### Community 36 - "duration"
+Cohesion: 0.20
+Nodes (10): fast, normal, slow, $type, $value, $type, $value, duration (+2 more)
 
 ### Community 37 - "patch"
 Cohesion: 0.18
@@ -434,16 +428,16 @@ Cohesion: 0.22
 Nodes (9): jest, collectCoverageFrom, coverageDirectory, rootDir, testEnvironment, testRegex, transform, ^.+\\.(t|j)s$ (+1 more)
 
 ### Community 49 - "radius"
-Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, none, none
+Cohesion: 0.24
+Nodes (10): $type, $value, $type, $value, primitive, radius, shadow, full (+2 more)
 
-### Community 50 - "._generate_javascript"
-Cohesion: 0.29
-Nodes (4): Generate TypeScript configuration., Generate JavaScript configuration., Format plugins array for config. Validates each plugin name against a strict…, Add indentation to JSON string.
+### Community 50 - ".generate_config_string"
+Cohesion: 0.20
+Nodes (6): Generate configuration file content. Returns: Configuration file as string, Generate TypeScript configuration., Generate JavaScript configuration., Format plugins array for config. Validates each plugin name against a strict…, Add indentation to JSON string., Write configuration to file. Returns: Tuple of (success, message)
 
-### Community 51 - "design_system.py"
-Cohesion: 0.18
-Nodes (14): ansi_ljust(), format_ascii_box(), format_markdown(), generate_design_system(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤ (+6 more)
+### Community 51 - "format_ascii_box"
+Cohesion: 0.25
+Nodes (8): ansi_ljust(), format_ascii_box(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤, Format design system as Unicode box with ANSI color swatches., section_header()
 
 ### Community 53 - "exclude"
 Cohesion: 0.25
@@ -459,7 +453,7 @@ Nodes (6): author, description, license, name, private, version
 
 ### Community 56 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): devDependencies, eslint, @eslint/eslintrc, @types/jsonwebtoken, eslint, @eslint/eslintrc, @types/jsonwebtoken
+Nodes (7): devDependencies, eslint, eslint-config-prettier, @types/jsonwebtoken, eslint, eslint-config-prettier, @types/jsonwebtoken
 
 ### Community 57 - "Canvas Design System"
 Cohesion: 0.06
@@ -469,9 +463,9 @@ Nodes (35): 1. Visual Communication First, 2. Minimal Text Integration, 3. Exper
 Cohesion: 0.06
 Nodes (33): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+25 more)
 
-### Community 59 - "shadow"
-Cohesion: 0.47
-Nodes (6): sm, shadow, sm, sm, $type, $value
+### Community 59 - "sm"
+Cohesion: 0.60
+Nodes (5): sm, sm, sm, $type, $value
 
 ### Community 60 - "nest-cli.json"
 Cohesion: 0.33
@@ -485,13 +479,13 @@ Nodes (5): lg, $type, $value, lg, lg
 Cohesion: 0.07
 Nodes (27): AppController, Controller, Get, AppModule, Module, AppService, Injectable, AuthController (+19 more)
 
-### Community 63 - "InventoryService"
-Cohesion: 0.24
-Nodes (4): InjectModel, InventoryService, Injectable, InjectModel
+### Community 63 - "none"
+Cohesion: 0.67
+Nodes (4): $type, $value, none, none
 
-### Community 64 - "_generate_intelligent_overrides"
-Cohesion: 0.33
-Nodes (6): _detect_page_type(), format_page_override_md(), _generate_intelligent_overrides(), Format a page-specific override file with intelligent AI-generated content., Generate intelligent overrides based on page type using layered search. Uses…, Detect page type from context and search results.
+### Community 64 - "padding-y"
+Cohesion: 0.67
+Nodes (4): padding-y, padding-y, $type, $value
 
 ### Community 65 - "is_server_ready"
 Cohesion: 0.67
@@ -710,8 +704,8 @@ Cohesion: 0.22
 Nodes (8): 1. Project Purpose & Core Domain, 2. Codebase Architecture, 3. Database Entity Schema Summary, 4. Key Files to Know, 5. Current Implementation Status, A. Frontend (React + Vite), B. Backend (NestJS + Mongoose + MongoDB), RebarOptima Project Overview
 
 ### Community 156 - "input"
-Cohesion: 0.20
-Nodes (12): padding-x, padding-y, input, $type, $value, focus-ring, padding-x, padding-y (+4 more)
+Cohesion: 0.29
+Nodes (8): padding-x, input, $type, $value, focus-ring, padding-x, $type, $value
 
 ### Community 157 - "Ponytail Help"
 Cohesion: 0.25
@@ -797,31 +791,27 @@ Nodes (3): ring, $type, $value
 Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
-### Community 193 - "md"
+### Community 194 - "destructive"
 Cohesion: 0.67
-Nodes (4): $type, $value, md, md
-
-### Community 194 - "primary"
-Cohesion: 0.67
-Nodes (3): primary, $type, $value
+Nodes (3): destructive, $type, $value
 
 ## Knowledge Gaps
-- **1118 isolated node(s):** `app`, `STD_DIAMETERS`, `initialStock`, `initialParts`, `fs` (+1113 more)
+- **1118 isolated node(s):** `fs`, `path`, `fs`, `path`, `fs` (+1113 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **50 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `radius`, `design-tokens-starter.json`, `fontSize`, `shadow`?**
-  _High betweenness centrality (0.010) - this node is a cross-community bridge._
-- **Why does `color` connect `color` to `primary`, `$type`, `destructive-foreground`, `muted`, `primary-foreground`, `ring`, `secondary-foreground`, `design-tokens-starter.json`?**
+- **Why does `primitive` connect `radius` to `gray`, `duration`, `spacing`, `design-tokens-starter.json`, `fontSize`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `semantic` connect `design-tokens-starter.json` to `color`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `color` connect `gray` to `primitive`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `color` connect `color` to `destructive`, `$type`, `destructive-foreground`, `muted`, `primary-foreground`, `ring`, `secondary-foreground`, `design-tokens-starter.json`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `app`, `STD_DIAMETERS`, `initialStock` to the rest of the system?**
+- **What connects `fs`, `path`, `fs` to the rest of the system?**
   _1118 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `App.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06299603174603174 - nodes in this community are weakly interconnected._

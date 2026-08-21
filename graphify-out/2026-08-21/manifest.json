@@ -255,8 +255,8 @@
     "semantic_hash": "07667010a28a606ec6c5c5a4c1b9dc1d"
   },
   "backend/src/batches/batches.service.ts": {
-    "mtime": 1787245237.510202,
-    "ast_hash": "74c9516e49864fb103a3f69037cfef4f",
+    "mtime": 1786570412.808726,
+    "ast_hash": "363148b3dd73ffc82bc5b72974425a97",
     "semantic_hash": ""
   },
   "backend/src/companies/companies.module.ts": {
@@ -295,8 +295,8 @@
     "semantic_hash": "0f9c2230db3b4e42c0aa413cf7f36c50"
   },
   "backend/src/inventory/inventory.service.ts": {
-    "mtime": 1787242971.6507041,
-    "ast_hash": "aaaa91e4704c7127f8f8164dd9ed308b",
+    "mtime": 1786960721.5207136,
+    "ast_hash": "8cf1ad08a98ce3af4fabefec18d82bab",
     "semantic_hash": ""
   },
   "backend/src/inventory/scrap-rule.schema.ts": {
@@ -310,8 +310,8 @@
     "semantic_hash": "6e4521d67f0f2faf70a50cb6f42f9fd1"
   },
   "backend/src/main.ts": {
-    "mtime": 1787245243.6158607,
-    "ast_hash": "661f3b3a7518b6ee6f7505b96c8d3a05",
+    "mtime": 1786960671.666187,
+    "ast_hash": "faa5f00c24f248dea30cbc7d3fe14f67",
     "semantic_hash": ""
   },
   "backend/src/users/user.schema.ts": {
@@ -390,9 +390,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/InventoryPage/InventoryPage.jsx": {
-    "mtime": 1787243471.1250465,
-    "ast_hash": "cd58b682e97fce4fec053ccddd5ee356",
-    "semantic_hash": ""
+    "mtime": 1786561479.9784105,
+    "ast_hash": "75a70ea88dadb6585c938bbac3b1f84e",
+    "semantic_hash": "75a70ea88dadb6585c938bbac3b1f84e"
   },
   "frontend/src/pages/LedgerPage/LedgerPage.jsx": {
     "mtime": 1786561562.5970619,
@@ -400,13 +400,13 @@
     "semantic_hash": "7ec7de902887b728dde4391424c85599"
   },
   "frontend/src/pages/NewBatchPage/NewBatchPage.jsx": {
-    "mtime": 1787242944.9582703,
-    "ast_hash": "a77b9977fd8d81b20b5baefe9a17ef78",
+    "mtime": 1786570318.0769944,
+    "ast_hash": "737dc13e36ec8e4895d13b079135c06e",
     "semantic_hash": ""
   },
   "frontend/src/pages/OverviewPage/OverviewPage.jsx": {
-    "mtime": 1787245265.084908,
-    "ast_hash": "eca33983e88bbc5739d2760182aa019d",
+    "mtime": 1786568937.7952569,
+    "ast_hash": "3c025e916e9abb2da0fe308561773f47",
     "semantic_hash": ""
   },
   "frontend/src/pages/ResultsPage/ResultsPage.jsx": {
@@ -465,9 +465,9 @@
     "semantic_hash": "574f144e2b29666fa0e7bce31ba9e9fd"
   },
   "frontend/src/utils/optimizer.js": {
-    "mtime": 1787242935.7350454,
-    "ast_hash": "2f75be626c378b69c8823e59c86d85d2",
-    "semantic_hash": ""
+    "mtime": 1784077363.0480216,
+    "ast_hash": "561d32183d53827419d9aa4e5b86ff93",
+    "semantic_hash": "561d32183d53827419d9aa4e5b86ff93"
   },
   "frontend/vite.config.js": {
     "mtime": 1783111171.5211582,

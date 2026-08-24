@@ -163,7 +163,7 @@ app.post('/api/inventory/inward', authMiddleware, async (req: any, res) => {
     else if (quantity > 0 && weightInKgs === 0) weightInKgs = quantity * singleWeight;
     const filter = { companyId, diameter: Number(diameter), length: Number(length), costPerKg: Number(costPerKg), typeOfBar, brandName, vendorName, isRemnant: false };
     const result = await db.collection('stockitems').findOneAndUpdate(filter, { $inc: { quantity, weightInKgs }, $setOnInsert: { createdAt: new Date() } }, { upsert: true, returnDocument: 'after' });
-    await db.collection('inventorytransactions').insertOne({ companyId, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
+    await db.collection('inventorytransactions').insertOne({ companyId, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
     res.json(result);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -565,6 +565,29 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
       totalScrapLossDifferential += ((estPurchasePriceWithGst - (s.pricePerKg || 0)) * (s.weight || 0));
     });
 
+    // Compute Inward Steel Purchased Value and Weight Till Date
+    const inwardTransactions = await db.collection('inventorytransactions').find({ companyId, type: 'INWARD' }).toArray();
+    let totalSteelPurchasedCost = 0;
+    let totalSteelPurchasedKg = 0;
+    inwardTransactions.forEach((t: any) => {
+      const wt = Number(t.weightInKgs) || 0;
+      const cost = Number(t.costPerKg) || 60;
+      totalSteelPurchasedKg += wt;
+      totalSteelPurchasedCost += wt * cost;
+    });
+
+    if (totalSteelPurchasedCost === 0 && liveStock.length > 0) {
+      liveStock.forEach((i: any) => {
+        const wt = Number(i.weightInKgs) || 0;
+        const cost = Number(i.costPerKg) || 60;
+        totalSteelPurchasedKg += wt;
+        totalSteelPurchasedCost += wt * cost;
+      });
+    }
+
+    const liveScrapKg = Math.max(0, totalScrapKg - totalScrapSoldWeight);
+    const lostMaterialValue = Math.max(0, totalScrapLossDifferential);
+
     // Format remnant weights rounded to 2 decimals
     const formattedRemnantWeights: { [key: number]: number } = {};
     Object.keys(remnantDiameterWeights).forEach(dia => {
@@ -576,14 +599,18 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
       liveStandardKg: Math.round(liveStandardKg * 100) / 100,
       liveRemnantsKg: Math.round(liveRemnantsKg * 100) / 100,
       totalLiveStockKg: Math.round((liveStandardKg + liveRemnantsKg) * 100) / 100,
+      liveScrapKg: Math.round(liveScrapKg * 100) / 100,
       totalScrapKg: Math.round(totalScrapKg * 100) / 100,
       wastagePercentage: Math.round(wastagePercentage * 100) / 100,
       dailyScrapGraph,
       diameterWeights,
       remnantDiameterWeights: formattedRemnantWeights,
+      totalSteelPurchasedCost: Math.round(totalSteelPurchasedCost),
+      totalSteelPurchasedKg: Math.round(totalSteelPurchasedKg * 100) / 100,
       totalScrapSoldWeight: Math.round(totalScrapSoldWeight * 100) / 100,
       totalScrapRevenue: Math.round(totalScrapRevenue * 100) / 100,
       totalScrapLossDifferential: Math.round(totalScrapLossDifferential * 100) / 100,
+      lostMaterialValue: Math.round(lostMaterialValue * 100) / 100,
     });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });

@@ -203,15 +203,25 @@ export class BatchesService {
   async getDashboardStats(companyId: string) {
     const cid = new Types.ObjectId(companyId);
 
-    // 1. Fetch live stock weight
+    // 1. Fetch live stock weight and diameter breakdowns
     const liveStock = await this.stockItemModel.find({ companyId: cid as any, quantity: { $gt: 0 } as any }).exec();
     let liveStandardKg = 0;
     let liveRemnantsKg = 0;
+    const diameterWeights: { [key: number]: number } = { 8: 0, 10: 0, 12: 0, 16: 0, 20: 0, 25: 0, 32: 0 };
+    const remnantDiameterWeights: { [key: number]: number } = { 8: 0, 10: 0, 12: 0, 16: 0, 20: 0, 25: 0, 32: 0 };
+
     liveStock.forEach(item => {
+      const dia = Number(item.diameter);
       if (item.isRemnant) {
-        liveRemnantsKg += item.weightInKgs;
+        liveRemnantsKg += item.weightInKgs || 0;
+        if (remnantDiameterWeights[dia] !== undefined) {
+          remnantDiameterWeights[dia] += item.weightInKgs || 0;
+        }
       } else {
-        liveStandardKg += item.weightInKgs;
+        liveStandardKg += item.weightInKgs || 0;
+      }
+      if (diameterWeights[dia] !== undefined) {
+        diameterWeights[dia] += item.weightInKgs || 0;
       }
     });
 
@@ -228,8 +238,6 @@ export class BatchesService {
       const scrap = b.summary?.totalScrapKg || 0;
       totalScrapKg += scrap;
       
-      const usedStockLength = b.summary?.totalUsedStockLength || 0;
-      // Approximate used stock kg by summing layouts or using average rebar weight
       let batchStockKg = 0;
       if (b.layouts) {
         b.layouts.forEach(l => {
@@ -266,13 +274,45 @@ export class BatchesService {
 
     const wastagePercentage = totalStockUsedKg > 0 ? (totalScrapKg / totalStockUsedKg) * 100 : 0;
 
+    // Fetch inward steel transactions
+    const inwardTransactions = await this.transactionModel.find({ companyId: cid as any, type: 'INWARD' as any }).exec();
+    let totalSteelPurchasedCost = 0;
+    let totalSteelPurchasedKg = 0;
+    inwardTransactions.forEach((t: any) => {
+      const wt = Number(t.weightInKgs) || 0;
+      const cost = Number(t.costPerKg) || 60;
+      totalSteelPurchasedKg += wt;
+      totalSteelPurchasedCost += wt * cost;
+    });
+
+    if (totalSteelPurchasedCost === 0 && liveStock.length > 0) {
+      liveStock.forEach(i => {
+        const wt = Number(i.weightInKgs) || 0;
+        const cost = Number(i.costPerKg) || 60;
+        totalSteelPurchasedKg += wt;
+        totalSteelPurchasedCost += wt * cost;
+      });
+    }
+
+    const liveScrapKg = Math.max(0, totalScrapKg);
+    const lostMaterialValue = Math.max(0, (totalScrapKg * 60));
+
     return {
       liveStandardKg: Math.round(liveStandardKg * 100) / 100,
       liveRemnantsKg: Math.round(liveRemnantsKg * 100) / 100,
       totalLiveStockKg: Math.round((liveStandardKg + liveRemnantsKg) * 100) / 100,
+      liveScrapKg: Math.round(liveScrapKg * 100) / 100,
       totalScrapKg: Math.round(totalScrapKg * 100) / 100,
       wastagePercentage: Math.round(wastagePercentage * 100) / 100,
       dailyScrapGraph,
+      diameterWeights,
+      remnantDiameterWeights,
+      totalSteelPurchasedCost: Math.round(totalSteelPurchasedCost),
+      totalSteelPurchasedKg: Math.round(totalSteelPurchasedKg * 100) / 100,
+      totalScrapSoldWeight: 0,
+      totalScrapRevenue: 0,
+      totalScrapLossDifferential: 0,
+      lostMaterialValue: Math.round(lostMaterialValue * 100) / 100,
     };
   }
 

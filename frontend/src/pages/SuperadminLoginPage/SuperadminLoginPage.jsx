@@ -1,83 +1,116 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setView } from '../../store/slices/routingSlice';
-import { ShieldAlert, Key, Mail, Lock } from 'lucide-react';
+import { loginSuccess } from '../../store/slices/authSlice';
+import { ShieldAlert, Mail, Lock, Eye, EyeOff, Terminal, Server, Database } from 'lucide-react';
+import { authApi } from '../../utils/api';
 import './SuperadminLoginPage.css';
 
 export default function SuperadminLoginPage() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    // ponytail: Simple hardcoded check or mock client validation for superadmin session in local sandbox env.
-    if (email === 'admin@rebaroptima.com' && password === 'SuperSecureAdmin2026!') {
-      sessionStorage.setItem('superadminToken', 'mock-superadmin-token-xyz');
+    try {
+      const data = await authApi.developerSignin(email, password);
+      dispatch(loginSuccess(data));
       dispatch(setView('superadmin'));
-    } else {
-      setError('Invalid Superadmin access keys.');
+    } catch (err) {
+      setError(err.message || 'Invalid Developer access credentials.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="superadmin-login-wrapper">
-      <div className="superadmin-login-card card">
-        <div className="superadmin-login-header">
-          <div className="shield-icon-container">
-            <ShieldAlert size={28} color="#dc2626" />
+    <div className="dev-login-wrapper">
+      <div className="dev-login-bg-effects">
+        <div className="dev-bg-grid"></div>
+        <div className="dev-bg-glow dev-bg-glow-1"></div>
+        <div className="dev-bg-glow dev-bg-glow-2"></div>
+      </div>
+
+      <div className="dev-login-card">
+        <div className="dev-login-header">
+          <div className="dev-shield-badge">
+            <ShieldAlert size={32} />
           </div>
-          <h2>RebarOptima Operator Control</h2>
-          <p className="subtitle">Authorized business administration & system operations console only.</p>
+          <h1>Platform Developer Console</h1>
+          <p className="dev-subtitle">Authorized platform administration access only</p>
         </div>
 
-        {error && <div className="superadmin-error-banner">{error}</div>}
+        {error && <div className="dev-error-banner">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="superadmin-login-form">
-          <div className="input-group">
-            <label>Operator Email</label>
-            <div className="input-wrapper">
-              <Mail size={18} className="input-icon" color="#8d86b8" />
+        <form onSubmit={handleSubmit} className="dev-login-form">
+          <div className="dev-input-group">
+            <label>Developer Email</label>
+            <div className="dev-input-wrapper">
+              <Mail size={18} className="dev-input-icon" />
               <input 
                 type="email" 
-                placeholder="operator@rebaroptima.com" 
+                placeholder="developer@rebaroptima.com" 
                 required 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
               />
             </div>
           </div>
 
-          <div className="input-group">
+          <div className="dev-input-group">
             <label>Security Key</label>
-            <div className="input-wrapper">
-              <Lock size={18} className="input-icon" color="#8d86b8" />
+            <div className="dev-input-wrapper">
+              <Lock size={18} className="dev-input-icon" />
               <input 
-                type="password" 
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••••••••••" 
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
               />
+              <button 
+                type="button" 
+                className="dev-toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+              </button>
             </div>
           </div>
 
-          <button type="submit" className="superadmin-login-btn" disabled={loading}>
-            {loading ? 'Decrypting Console...' : 'Access Administration Console'}
+          <button type="submit" className="dev-login-btn" disabled={loading}>
+            {loading ? (
+              <><span className="dev-spinner"></span> Authenticating...</>
+            ) : (
+              <><Terminal size={16} /> Access Developer Console</>
+            )}
           </button>
         </form>
 
-        <p className="superadmin-back-prompt">
-          Builder Client? <a href="#" onClick={(e) => {
-            e.preventDefault();
-            dispatch(setView('signin'));
-          }}>Standard Login</a>
+        <div className="dev-security-badges">
+          <div className="dev-badge">
+            <Server size={14} />
+            <span>Backend Authenticated</span>
+          </div>
+          <div className="dev-badge">
+            <Database size={14} />
+            <span>Platform Level Access</span>
+          </div>
+        </div>
+
+        <p className="dev-back-prompt">
+          Builder Firm Client?{' '}
+          <a href="#" onClick={(e) => { e.preventDefault(); dispatch(setView('signin')); }}>
+            Standard Login
+          </a>
         </p>
       </div>
     </div>

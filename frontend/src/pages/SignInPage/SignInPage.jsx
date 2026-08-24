@@ -3,9 +3,12 @@ import { User, Lock, EyeOff, Eye, Map, ClipboardList, TrendingUp, Shield, Users 
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
 import { authApi } from '../../utils/api';
+import { useDispatch } from 'react-redux';
+import { setPermissions } from '../../store/slices/permissionsSlice';
 import './SignInPage.css';
 
-const SignInPage = ({ onSignIn, onNavigateToSignUp }) => {
+const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +21,9 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp }) => {
     setIsLoading(true);
     try {
       const data = await authApi.signin(email, password);
+      if (data.permissions) {
+        dispatch(setPermissions(data.permissions));
+      }
       if (onSignIn) {
         onSignIn(data);
       }
@@ -150,6 +156,13 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp }) => {
                   e.preventDefault();
                   if (onNavigateToSignUp) onNavigateToSignUp();
                 }}>Sign Up</a>
+              </p>
+              
+              <p className="signup-prompt" style={{ marginTop: '12px', opacity: 0.6 }}>
+                Platform admin? <a href="#" onClick={(e) => {
+                  e.preventDefault();
+                  if (onNavigateToDeveloper) onNavigateToDeveloper();
+                }}>Developer Console</a>
               </p>
             </div>
           </div>

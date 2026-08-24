@@ -39,17 +39,257 @@ async function connectDB(): Promise<Db> {
   return db as Db;
 }
 
-// ── AUTH HELPERS ─────────────────────────────────────────────────────────────
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback-access-secret';
+// ══════════════════════════════════════════════════════════════════════════════
+// MODULE & FEATURE DEFINITIONS
+// ══════════════════════════════════════════════════════════════════════════════
+const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<string, string> }> = {
+  overview: {
+    displayName: 'Overview / Dashboard',
+    features: { view: 'View Dashboard', export: 'Export Reports' }
+  },
+  inventory: {
+    displayName: 'Inventory',
+    features: { view: 'View Stock', inward: 'Add Stock (Inward)', edit: 'Edit Stock', delete: 'Delete Stock', export: 'Export Inventory' }
+  },
+  optimizer: {
+    displayName: 'Run Optimizer',
+    features: { view: 'View Optimizer', create: 'Run Optimization' }
+  },
+  history: {
+    displayName: 'Batch History',
+    features: { view: 'View History', edit: 'Edit Batch', delete: 'Delete Batch', export: 'Export History' }
+  },
+  ledger: {
+    displayName: 'Ledger & Orders',
+    features: { view: 'View Ledger', export: 'Export Ledger' }
+  },
+  scrapSales: {
+    displayName: 'Scrap Sales',
+    features: { view: 'View Scrap Sales', create: 'Create Scrap Sale', edit: 'Edit Scrap Sale', delete: 'Delete Scrap Sale' }
+  },
+  settings: {
+    displayName: 'Settings',
+    features: { view: 'View Settings', edit: 'Edit Settings' }
+  },
+  users: {
+    displayName: 'User Management',
+    features: { view: 'View Users', create: 'Create Users', edit: 'Edit Users', delete: 'Deactivate Users' }
+  },
+  roles: {
+    displayName: 'Roles & Permissions',
+    features: { view: 'View Roles', create: 'Create Roles', edit: 'Edit Roles', delete: 'Delete Roles' }
+  }
+};
 
-function generateTokens(userId: string, email: string, role: string) {
-  const refreshSecret = process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret';
-  const accessToken = jwt.sign({ sub: userId, email, role }, ACCESS_SECRET, { expiresIn: (process.env.ACCESS_TOKEN_EXPIRATION || '15m') as any });
-  const refreshToken = jwt.sign({ sub: userId }, refreshSecret, { expiresIn: (process.env.REFRESH_TOKEN_EXPIRATION || '7d') as any });
+// Default System Roles with permissions
+function buildFullPermissions(): Record<string, Record<string, boolean>> {
+  const perms: Record<string, Record<string, boolean>> = {};
+  for (const [mod, def] of Object.entries(PLATFORM_MODULES)) {
+    perms[mod] = {};
+    for (const feat of Object.keys(def.features)) {
+      perms[mod][feat] = true;
+    }
+  }
+  return perms;
+}
+
+const DEFAULT_SYSTEM_ROLES = [
+  {
+    name: 'Admin',
+    description: 'Full access to all modules and features within the organization',
+    permissions: buildFullPermissions(),
+    dataScope: 'organization'
+  },
+  {
+    name: 'Project Manager',
+    description: 'Manages projects, inventory, optimization, and team operations',
+    permissions: {
+      overview: { view: true, export: true },
+      inventory: { view: true, inward: true, edit: true, delete: true, export: true },
+      optimizer: { view: true, create: true },
+      history: { view: true, edit: true, delete: true, export: true },
+      ledger: { view: true, export: true },
+      scrapSales: { view: true, create: true, edit: true, delete: true },
+      settings: { view: true, edit: true },
+      users: { view: true },
+      roles: { view: true }
+    },
+    dataScope: 'organization'
+  },
+  {
+    name: 'Senior Site Engineer',
+    description: 'Senior engineer with access to inventory, optimization, and batch history',
+    permissions: {
+      overview: { view: true, export: true },
+      inventory: { view: true, inward: true, edit: true, delete: false, export: true },
+      optimizer: { view: true, create: true },
+      history: { view: true, edit: true, delete: false, export: true },
+      ledger: { view: true, export: true },
+      scrapSales: { view: true, create: true, edit: true, delete: false },
+      settings: { view: true, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'project'
+  },
+  {
+    name: 'Junior Site Engineer',
+    description: 'Junior engineer with basic access to view and run optimizer',
+    permissions: {
+      overview: { view: true, export: false },
+      inventory: { view: true, inward: true, edit: false, delete: false, export: false },
+      optimizer: { view: true, create: true },
+      history: { view: true, edit: false, delete: false, export: false },
+      ledger: { view: true, export: false },
+      scrapSales: { view: true, create: false, edit: false, delete: false },
+      settings: { view: true, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'project'
+  },
+  {
+    name: 'Site Supervisor',
+    description: 'Supervisor with inventory and batch monitoring access',
+    permissions: {
+      overview: { view: true, export: false },
+      inventory: { view: true, inward: true, edit: false, delete: false, export: false },
+      optimizer: { view: true, create: false },
+      history: { view: true, edit: false, delete: false, export: false },
+      ledger: { view: true, export: false },
+      scrapSales: { view: true, create: false, edit: false, delete: false },
+      settings: { view: false, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'project'
+  },
+  {
+    name: 'Accountant',
+    description: 'Financial operations including ledger and scrap sales management',
+    permissions: {
+      overview: { view: true, export: true },
+      inventory: { view: true, inward: false, edit: false, delete: false, export: true },
+      optimizer: { view: false, create: false },
+      history: { view: true, edit: false, delete: false, export: true },
+      ledger: { view: true, export: true },
+      scrapSales: { view: true, create: true, edit: true, delete: true },
+      settings: { view: true, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'organization'
+  },
+  {
+    name: 'Sales Executive',
+    description: 'Sales operations with ledger and basic overview access',
+    permissions: {
+      overview: { view: true, export: false },
+      inventory: { view: true, inward: false, edit: false, delete: false, export: false },
+      optimizer: { view: false, create: false },
+      history: { view: true, edit: false, delete: false, export: false },
+      ledger: { view: true, export: true },
+      scrapSales: { view: true, create: true, edit: true, delete: false },
+      settings: { view: false, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'organization'
+  },
+  {
+    name: 'Purchase Manager',
+    description: 'Procurement and inventory management operations',
+    permissions: {
+      overview: { view: true, export: true },
+      inventory: { view: true, inward: true, edit: true, delete: true, export: true },
+      optimizer: { view: true, create: false },
+      history: { view: true, edit: false, delete: false, export: true },
+      ledger: { view: true, export: true },
+      scrapSales: { view: true, create: false, edit: false, delete: false },
+      settings: { view: true, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'organization'
+  },
+  {
+    name: 'Store Keeper',
+    description: 'Store operations with full inventory management access',
+    permissions: {
+      overview: { view: true, export: false },
+      inventory: { view: true, inward: true, edit: true, delete: true, export: true },
+      optimizer: { view: false, create: false },
+      history: { view: true, edit: false, delete: false, export: false },
+      ledger: { view: true, export: false },
+      scrapSales: { view: true, create: false, edit: false, delete: false },
+      settings: { view: false, edit: false },
+      users: { view: false },
+      roles: { view: false }
+    },
+    dataScope: 'project'
+  }
+];
+
+const DEFAULT_SUBSCRIPTION_PACKAGES = [
+  {
+    name: 'FREE',
+    displayName: 'Free',
+    description: 'Basic access for small teams getting started',
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: false, roles: false },
+    features: {},
+    limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
+    isActive: true
+  },
+  {
+    name: 'BASIC',
+    displayName: 'Basic',
+    description: 'Essential features for growing construction firms',
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: false },
+    features: {},
+    limits: { maxUsers: 10, maxProjects: 5, maxStorageMB: 500 },
+    isActive: true
+  },
+  {
+    name: 'PRO',
+    displayName: 'Professional',
+    description: 'Full-featured plan for professional construction management',
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: true },
+    features: {},
+    limits: { maxUsers: 50, maxProjects: 25, maxStorageMB: 5000 },
+    isActive: true
+  },
+  {
+    name: 'ENTERPRISE',
+    displayName: 'Enterprise',
+    description: 'Unlimited access with priority support for large organizations',
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: true },
+    features: {},
+    limits: { maxUsers: null, maxProjects: null, maxStorageMB: null },
+    isActive: true
+  }
+];
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AUTH HELPERS
+// ══════════════════════════════════════════════════════════════════════════════
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback-access-secret';
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret';
+
+function generateTokens(userId: string, email: string, role: string, accountType: 'developer' | 'user' = 'user') {
+  const accessToken = jwt.sign(
+    { sub: userId, email, role, accountType },
+    ACCESS_SECRET,
+    { expiresIn: (process.env.ACCESS_TOKEN_EXPIRATION || '15m') as any }
+  );
+  const refreshToken = jwt.sign(
+    { sub: userId, accountType },
+    REFRESH_SECRET,
+    { expiresIn: (process.env.REFRESH_TOKEN_EXPIRATION || '7d') as any }
+  );
   return { accessToken, refreshToken };
 }
 
-// JWT middleware — attaches decoded token to req.user
+// Standard user auth middleware
 function authMiddleware(req: any, res: any, next: any) {
   const header = req.headers['authorization'] || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
@@ -59,6 +299,233 @@ function authMiddleware(req: any, res: any, next: any) {
     next();
   } catch {
     return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+}
+
+// Developer-only auth middleware
+function developerAuthMiddleware(req: any, res: any, next: any) {
+  const header = req.headers['authorization'] || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  try {
+    const decoded = jwt.verify(token, ACCESS_SECRET) as any;
+    if (decoded.accountType !== 'developer') {
+      return res.status(403).json({ message: 'Developer access required' });
+    }
+    req.user = decoded;
+    next();
+  } catch {
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+}
+
+// Admin-only middleware (must be Builder Firm Admin or Developer)
+function adminMiddleware(req: any, res: any, next: any) {
+  const header = req.headers['authorization'] || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  try {
+    const decoded = jwt.verify(token, ACCESS_SECRET) as any;
+    req.user = decoded;
+    // Developers always pass
+    if (decoded.accountType === 'developer') return next();
+    // For users, check if they have Admin role
+    if (decoded.role === 'Admin' || decoded.role === 'OWNER' || decoded.role === 'ADMIN') return next();
+    return res.status(403).json({ message: 'Admin access required' });
+  } catch {
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PERMISSION ENGINE
+// ══════════════════════════════════════════════════════════════════════════════
+interface AccessResult {
+  allowed: boolean;
+  reason: string;
+}
+
+async function canAccess(
+  db: Db,
+  userId: string,
+  moduleName: string,
+  featureName?: string,
+  _action?: string
+): Promise<AccessResult> {
+  try {
+    // 1. Load user
+    const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+    if (!user) return { allowed: false, reason: 'User not found' };
+    if (user.isActive === false) return { allowed: false, reason: 'Account is inactive' };
+
+    // 2. Check company status
+    const company = await db.collection('companies').findOne({ _id: user.companyId });
+    if (!company) return { allowed: false, reason: 'Organization not found' };
+    if (company.status === 'inactive') return { allowed: false, reason: 'Organization is inactive' };
+    if (company.status === 'suspended') return { allowed: false, reason: 'Organization is suspended' };
+
+    // 3. Check subscription
+    const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial'] } });
+    if (subscription) {
+      const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+      if (pkg) {
+        // Check module override first
+        const moduleOverride = subscription.moduleOverrides?.[moduleName];
+        const moduleEnabled = moduleOverride !== undefined ? moduleOverride : (pkg.modules?.[moduleName] !== false);
+        if (!moduleEnabled) {
+          return { allowed: false, reason: `Module "${moduleName}" is not available in your subscription (${pkg.displayName})` };
+        }
+
+        // Check feature override
+        if (featureName) {
+          const featureKey = `${moduleName}.${featureName}`;
+          const featureOverride = subscription.featureOverrides?.[featureKey];
+          const featureEnabled = featureOverride !== undefined ? featureOverride : (pkg.features?.[featureKey] !== false);
+          if (!featureEnabled) {
+            return { allowed: false, reason: `Feature "${featureName}" is not available in your subscription` };
+          }
+        }
+      }
+    }
+    // If no subscription exists, allow access (backward compatibility for existing users)
+
+    // 4. Check role permissions
+    if (user.roleId) {
+      const role = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
+      if (role && role.isActive !== false) {
+        const modulePerms = role.permissions?.[moduleName];
+        if (!modulePerms) {
+          return { allowed: false, reason: `You do not have access to the "${moduleName}" module` };
+        }
+        if (featureName && modulePerms[featureName] === false) {
+          return { allowed: false, reason: `You do not have "${featureName}" permission in "${moduleName}"` };
+        }
+      }
+    }
+    // If no roleId, allow access (backward compatibility)
+
+    return { allowed: true, reason: 'Access granted' };
+  } catch (err: any) {
+    console.error('Permission check error:', err);
+    return { allowed: false, reason: 'Permission check failed' };
+  }
+}
+
+async function getEffectivePermissions(db: Db, userId: string): Promise<any> {
+  const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+  if (!user) return null;
+
+  const company = await db.collection('companies').findOne({ _id: user.companyId });
+
+  // Start with all modules/features enabled
+  const modules: Record<string, boolean> = {};
+  const features: Record<string, boolean> = {};
+  for (const [mod, def] of Object.entries(PLATFORM_MODULES)) {
+    modules[mod] = true;
+    for (const feat of Object.keys(def.features)) {
+      features[`${mod}.${feat}`] = true;
+    }
+  }
+
+  // Apply subscription restrictions
+  let subscriptionInfo: any = null;
+  const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial'] } });
+  if (subscription) {
+    const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+    if (pkg) {
+      subscriptionInfo = { name: pkg.name, displayName: pkg.displayName, status: subscription.status, limits: pkg.limits };
+      for (const mod of Object.keys(modules)) {
+        const override = subscription.moduleOverrides?.[mod];
+        const pkgEnabled = pkg.modules?.[mod] !== false;
+        modules[mod] = override !== undefined ? override : pkgEnabled;
+        if (!modules[mod]) {
+          // Disable all features of disabled module
+          for (const feat of Object.keys(PLATFORM_MODULES[mod]?.features || {})) {
+            features[`${mod}.${feat}`] = false;
+          }
+        }
+      }
+    }
+  }
+
+  // Apply role restrictions
+  let roleInfo: any = null;
+  if (user.roleId) {
+    const role = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
+    if (role && role.isActive !== false) {
+      roleInfo = { id: role._id.toString(), name: role.name, dataScope: role.dataScope || 'organization' };
+      for (const [mod, modPerms] of Object.entries(role.permissions || {})) {
+        if (!modules[mod]) continue; // Already disabled by subscription
+        for (const [feat, allowed] of Object.entries(modPerms as Record<string, boolean>)) {
+          if (!allowed) {
+            features[`${mod}.${feat}`] = false;
+          }
+        }
+        // If no features are enabled, disable the module
+        const anyFeatureEnabled = Object.keys(PLATFORM_MODULES[mod]?.features || {}).some(f => features[`${mod}.${f}`]);
+        if (!anyFeatureEnabled) modules[mod] = false;
+      }
+    }
+  }
+
+  return {
+    modules,
+    features,
+    subscription: subscriptionInfo,
+    role: roleInfo,
+    companyStatus: company?.status || 'active',
+    assignedProjects: user.assignedProjects || [],
+    dataScope: roleInfo?.dataScope || 'organization'
+  };
+}
+
+// Permission middleware factory
+function requirePermission(moduleName: string, featureName?: string) {
+  return async (req: any, res: any, next: any) => {
+    // Developer bypass
+    if (req.user?.accountType === 'developer') return next();
+
+    try {
+      const database = await connectDB();
+      const result = await canAccess(database, req.user.sub, moduleName, featureName);
+      if (!result.allowed) {
+        return res.status(403).json({ message: result.reason, code: 'PERMISSION_DENIED' });
+      }
+      next();
+    } catch (err: any) {
+      console.error('Permission middleware error:', err);
+      res.status(500).json({ message: 'Permission check failed' });
+    }
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AUDIT LOG HELPER
+// ══════════════════════════════════════════════════════════════════════════════
+async function logAudit(db: Db, params: {
+  actorId: string;
+  actorType: 'developer' | 'user';
+  companyId?: string | ObjectId | null;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  previousValue?: any;
+  newValue?: any;
+}) {
+  try {
+    await db.collection('auditlogs').insertOne({
+      actorId: params.actorId,
+      actorType: params.actorType,
+      companyId: params.companyId ? (typeof params.companyId === 'string' ? new ObjectId(params.companyId) : params.companyId) : null,
+      action: params.action,
+      resource: params.resource,
+      resourceId: params.resourceId || null,
+      previousValue: params.previousValue || null,
+      newValue: params.newValue || null,
+      timestamp: new Date()
+    });
+  } catch (err) {
+    console.error('Audit log error:', err);
   }
 }
 
@@ -100,23 +567,426 @@ async function ensureScrapRules(db: Db, rawCompanyId: ObjectId | string) {
   }).sort({ diameter: 1 }).toArray();
 }
 
-// ── AUTH ROUTES ───────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// SEED / INITIALIZATION HELPER
+// ══════════════════════════════════════════════════════════════════════════════
+async function seedDefaults(db: Db) {
+  // 1. Seed subscription packages
+  const pkgsColl = db.collection('subscriptionpackages');
+  for (const pkg of DEFAULT_SUBSCRIPTION_PACKAGES) {
+    const existing = await pkgsColl.findOne({ name: pkg.name });
+    if (!existing) {
+      await pkgsColl.insertOne({ ...pkg, createdAt: new Date(), updatedAt: new Date() });
+      console.log(`  ✅ Created subscription package: ${pkg.name}`);
+    }
+  }
+
+  // 2. Seed system roles (companyId = null means system-level)
+  const rolesColl = db.collection('roles');
+  for (const roleDef of DEFAULT_SYSTEM_ROLES) {
+    const existing = await rolesColl.findOne({ name: roleDef.name, isSystem: true, companyId: null });
+    if (!existing) {
+      await rolesColl.insertOne({
+        companyId: null,
+        name: roleDef.name,
+        description: roleDef.description,
+        isSystem: true,
+        isActive: true,
+        permissions: roleDef.permissions,
+        dataScope: roleDef.dataScope,
+        projectScope: 'all',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      console.log(`  ✅ Created system role: ${roleDef.name}`);
+    }
+  }
+
+  // 3. Seed developer account from env
+  const devEmail = process.env.DEVELOPER_EMAIL || 'developer@rebaroptima.com';
+  const devPassword = process.env.DEVELOPER_PASSWORD || 'DevSecure2026!@#';
+  const devColl = db.collection('platformusers');
+  const existingDev = await devColl.findOne({ email: devEmail.toLowerCase().trim() });
+  if (!existingDev) {
+    const hash = await bcrypt.hash(devPassword, 10);
+    await devColl.insertOne({
+      email: devEmail.toLowerCase().trim(),
+      passwordHash: hash,
+      firstName: 'Platform',
+      lastName: 'Developer',
+      role: 'DEVELOPER',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    console.log(`  ✅ Created developer account: ${devEmail}`);
+  }
+
+  // 4. Backfill existing companies with status and subscription
+  const companiesColl = db.collection('companies');
+  const companies = await companiesColl.find({ status: { $exists: false } }).toArray();
+  if (companies.length > 0) {
+    const freePkg = await pkgsColl.findOne({ name: 'FREE' });
+    for (const company of companies) {
+      await companiesColl.updateOne(
+        { _id: company._id },
+        { $set: { status: 'active' } }
+      );
+      // Create free subscription if none exists
+      if (freePkg) {
+        const existingSub = await db.collection('subscriptions').findOne({ companyId: company._id });
+        if (!existingSub) {
+          await db.collection('subscriptions').insertOne({
+            companyId: company._id,
+            packageId: freePkg._id,
+            status: 'active',
+            startDate: new Date(),
+            endDate: null,
+            moduleOverrides: {},
+            featureOverrides: {},
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+        }
+      }
+    }
+    console.log(`  ✅ Backfilled ${companies.length} existing companies`);
+  }
+
+  // 5. Backfill existing users with isActive and Admin role
+  const usersColl = db.collection('users');
+  const usersToUpdate = await usersColl.find({ isActive: { $exists: false } }).toArray();
+  if (usersToUpdate.length > 0) {
+    const adminRole = await rolesColl.findOne({ name: 'Admin', isSystem: true, companyId: null });
+    for (const user of usersToUpdate) {
+      const updateFields: any = { isActive: true };
+      // Map OWNER/ADMIN/SUPPORT to Admin role
+      if (adminRole && (user.role === 'OWNER' || user.role === 'ADMIN' || user.role === 'SUPPORT')) {
+        updateFields.roleId = adminRole._id;
+      }
+      await usersColl.updateOne({ _id: user._id }, { $set: updateFields });
+    }
+    console.log(`  ✅ Backfilled ${usersToUpdate.length} existing users`);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DEVELOPER AUTH ROUTES
+// ══════════════════════════════════════════════════════════════════════════════
+app.post('/api/auth/developer/signin', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
+    const db = await connectDB();
+    const dev = await db.collection('platformusers').findOne({ email: email.toLowerCase().trim() });
+    if (!dev) return res.status(401).json({ message: 'Invalid credentials' });
+    if (dev.isActive === false) return res.status(403).json({ message: 'Account is inactive' });
+    if (!await bcrypt.compare(password, dev.passwordHash)) return res.status(401).json({ message: 'Invalid credentials' });
+    const tokens = generateTokens(dev._id.toString(), dev.email, 'DEVELOPER', 'developer');
+    await logAudit(db, { actorId: dev._id.toString(), actorType: 'developer', action: 'DEVELOPER_LOGIN', resource: 'platformusers', resourceId: dev._id.toString() });
+    res.json({
+      ...tokens,
+      user: { id: dev._id.toString(), email: dev.email, firstName: dev.firstName, lastName: dev.lastName, role: 'DEVELOPER', accountType: 'developer' }
+    });
+  } catch (e: any) {
+    console.error(e);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/api/developer/me', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const dev = await db.collection('platformusers').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!dev) return res.status(404).json({ message: 'Developer not found' });
+    res.json({ id: dev._id.toString(), email: dev.email, firstName: dev.firstName, lastName: dev.lastName, role: 'DEVELOPER' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DEVELOPER MANAGEMENT ROUTES
+// ══════════════════════════════════════════════════════════════════════════════
+
+// -- Platform Stats --
+app.get('/api/developer/stats', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const totalCompanies = await db.collection('companies').countDocuments({ status: { $ne: 'deleted' } });
+    const activeCompanies = await db.collection('companies').countDocuments({ status: 'active' });
+    const totalUsers = await db.collection('users').countDocuments({ isActive: { $ne: false } });
+    const totalBatches = await db.collection('batches').countDocuments();
+    const totalSubscriptions = await db.collection('subscriptions').countDocuments({ status: { $in: ['active', 'trial'] } });
+    res.json({ totalCompanies, activeCompanies, totalUsers, totalBatches, totalSubscriptions });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// -- Companies (Builder Firms) Management --
+app.get('/api/developer/companies', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const companies = await db.collection('companies').find({ status: { $ne: 'deleted' } }).sort({ createdAt: -1 }).toArray();
+    // Enrich with user count and subscription info
+    const enriched = await Promise.all(companies.map(async (c: any) => {
+      const userCount = await db.collection('users').countDocuments({ companyId: c._id, isActive: { $ne: false } });
+      const subscription = await db.collection('subscriptions').findOne({ companyId: c._id, status: { $in: ['active', 'trial'] } });
+      let pkgName = 'None';
+      if (subscription) {
+        const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+        pkgName = pkg?.displayName || pkg?.name || 'Unknown';
+      }
+      return {
+        id: c._id.toString(),
+        name: c.name,
+        projectName: c.projectName || '',
+        location: c.location || '',
+        status: c.status || 'active',
+        userCount,
+        subscriptionPlan: pkgName,
+        subscriptionStatus: subscription?.status || 'none',
+        createdAt: c.createdAt
+      };
+    }));
+    res.json(enriched);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.get('/api/developer/companies/:id', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const company = await db.collection('companies').findOne({ _id: new ObjectId(req.params.id) });
+    if (!company) return res.status(404).json({ message: 'Company not found' });
+    const users = await db.collection('users').find({ companyId: company._id }).project({ passwordHash: 0 }).toArray();
+    const subscription = await db.collection('subscriptions').findOne({ companyId: company._id });
+    let pkg: any = null;
+    if (subscription) {
+      pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+    }
+    res.json({ company: { ...company, id: company._id.toString() }, users, subscription, package: pkg });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/developer/companies/:id/status', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const { status } = req.body;
+    if (!['active', 'inactive', 'suspended'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Must be: active, inactive, suspended' });
+    }
+    const db = await connectDB();
+    const company = await db.collection('companies').findOne({ _id: new ObjectId(req.params.id) });
+    if (!company) return res.status(404).json({ message: 'Company not found' });
+    const previousStatus = company.status || 'active';
+    await db.collection('companies').updateOne({ _id: company._id }, { $set: { status } });
+    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', companyId: company._id, action: 'COMPANY_STATUS_CHANGED', resource: 'companies', resourceId: company._id.toString(), previousValue: { status: previousStatus }, newValue: { status } });
+    res.json({ message: `Company status updated to ${status}`, status });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// -- Subscription Packages Management --
+app.get('/api/developer/packages', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const packages = await db.collection('subscriptionpackages').find({}).sort({ createdAt: 1 }).toArray();
+    res.json(packages.map((p: any) => ({ ...p, id: p._id.toString() })));
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.post('/api/developer/packages', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const { name, displayName, description, modules, features, limits } = req.body;
+    if (!name || !displayName) return res.status(400).json({ message: 'Name and displayName required' });
+    const db = await connectDB();
+    const existing = await db.collection('subscriptionpackages').findOne({ name: name.toUpperCase() });
+    if (existing) return res.status(409).json({ message: 'Package with this name already exists' });
+    const result = await db.collection('subscriptionpackages').insertOne({
+      name: name.toUpperCase(), displayName, description: description || '',
+      modules: modules || {}, features: features || {}, limits: limits || {},
+      isActive: true, createdAt: new Date(), updatedAt: new Date()
+    });
+    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', action: 'PACKAGE_CREATED', resource: 'subscriptionpackages', resourceId: result.insertedId.toString(), newValue: { name } });
+    res.status(201).json({ id: result.insertedId.toString(), name });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/developer/packages/:id', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const { displayName, description, modules, features, limits, isActive } = req.body;
+    const db = await connectDB();
+    const pkg = await db.collection('subscriptionpackages').findOne({ _id: new ObjectId(req.params.id) });
+    if (!pkg) return res.status(404).json({ message: 'Package not found' });
+    const updateFields: any = { updatedAt: new Date() };
+    if (displayName !== undefined) updateFields.displayName = displayName;
+    if (description !== undefined) updateFields.description = description;
+    if (modules !== undefined) updateFields.modules = modules;
+    if (features !== undefined) updateFields.features = features;
+    if (limits !== undefined) updateFields.limits = limits;
+    if (isActive !== undefined) updateFields.isActive = isActive;
+    await db.collection('subscriptionpackages').updateOne({ _id: pkg._id }, { $set: updateFields });
+    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', action: 'PACKAGE_UPDATED', resource: 'subscriptionpackages', resourceId: pkg._id.toString(), previousValue: { displayName: pkg.displayName, modules: pkg.modules }, newValue: updateFields });
+    res.json({ message: 'Package updated', id: pkg._id.toString() });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// -- Subscription Management --
+app.get('/api/developer/subscriptions', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const subs = await db.collection('subscriptions').find({}).sort({ createdAt: -1 }).toArray();
+    const enriched = await Promise.all(subs.map(async (s: any) => {
+      const company = await db.collection('companies').findOne({ _id: s.companyId });
+      const pkg = await db.collection('subscriptionpackages').findOne({ _id: s.packageId });
+      return { ...s, id: s._id.toString(), companyName: company?.name || 'Unknown', packageName: pkg?.displayName || pkg?.name || 'Unknown' };
+    }));
+    res.json(enriched);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.post('/api/developer/subscriptions', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const { companyId, packageId, status } = req.body;
+    if (!companyId || !packageId) return res.status(400).json({ message: 'companyId and packageId required' });
+    const db = await connectDB();
+    // Deactivate existing active subscription
+    await db.collection('subscriptions').updateMany({ companyId: new ObjectId(companyId), status: { $in: ['active', 'trial'] } }, { $set: { status: 'expired', updatedAt: new Date() } });
+    const result = await db.collection('subscriptions').insertOne({
+      companyId: new ObjectId(companyId), packageId: new ObjectId(packageId),
+      status: status || 'active', startDate: new Date(), endDate: null,
+      moduleOverrides: {}, featureOverrides: {},
+      createdAt: new Date(), updatedAt: new Date()
+    });
+    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', companyId, action: 'SUBSCRIPTION_ASSIGNED', resource: 'subscriptions', resourceId: result.insertedId.toString(), newValue: { packageId, status } });
+    res.status(201).json({ id: result.insertedId.toString(), message: 'Subscription assigned' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/developer/subscriptions/:id', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const { packageId, status, moduleOverrides, featureOverrides } = req.body;
+    const db = await connectDB();
+    const sub = await db.collection('subscriptions').findOne({ _id: new ObjectId(req.params.id) });
+    if (!sub) return res.status(404).json({ message: 'Subscription not found' });
+    const updateFields: any = { updatedAt: new Date() };
+    if (packageId) updateFields.packageId = new ObjectId(packageId);
+    if (status) updateFields.status = status;
+    if (moduleOverrides !== undefined) updateFields.moduleOverrides = moduleOverrides;
+    if (featureOverrides !== undefined) updateFields.featureOverrides = featureOverrides;
+    await db.collection('subscriptions').updateOne({ _id: sub._id }, { $set: updateFields });
+    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', companyId: sub.companyId, action: 'SUBSCRIPTION_UPDATED', resource: 'subscriptions', resourceId: sub._id.toString(), previousValue: { packageId: sub.packageId, status: sub.status }, newValue: updateFields });
+    res.json({ message: 'Subscription updated' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// -- Platform Users --
+app.get('/api/developer/users', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const { companyId } = req.query as any;
+    const filter: any = {};
+    if (companyId) filter.companyId = new ObjectId(companyId);
+    const users = await db.collection('users').find(filter).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
+    const enriched = await Promise.all(users.map(async (u: any) => {
+      const company = await db.collection('companies').findOne({ _id: u.companyId });
+      let roleName = u.role || 'Unknown';
+      if (u.roleId) {
+        const role = await db.collection('roles').findOne({ _id: new ObjectId(u.roleId) });
+        if (role) roleName = role.name;
+      }
+      return { ...u, id: u._id.toString(), companyName: company?.name || 'Unknown', roleName };
+    }));
+    res.json(enriched);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// -- Audit Logs --
+app.get('/api/developer/audit-logs', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const { limit = 100, companyId } = req.query as any;
+    const filter: any = {};
+    if (companyId) filter.companyId = new ObjectId(companyId);
+    const logs = await db.collection('auditlogs').find(filter).sort({ timestamp: -1 }).limit(Number(limit)).toArray();
+    res.json(logs);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// -- Module/Feature Definitions (for UI) --
+app.get('/api/developer/modules', developerAuthMiddleware, async (req: any, res) => {
+  res.json(PLATFORM_MODULES);
+});
+
+app.get('/api/modules', authMiddleware, async (req: any, res) => {
+  res.json(PLATFORM_MODULES);
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// BUILDER FIRM AUTH ROUTES
+// ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/auth/signup', async (req, res) => {
   try {
-    const { email, password, firstName, lastName, role, companyName, projectName, location, mobileNumber, promoConsent, newsletterConsent } = req.body;
+    const { email, password, firstName, lastName, companyName, projectName, location, mobileNumber, promoConsent, newsletterConsent } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
+    if (!companyName) return res.status(400).json({ message: 'Firm name is required' });
+    if (!firstName || !lastName) return res.status(400).json({ message: 'First name and last name are required' });
+
+    // Password validation
+    if (password.length < 8) return res.status(400).json({ message: 'Password must be at least 8 characters' });
+    if (!/[A-Z]/.test(password)) return res.status(400).json({ message: 'Password must contain at least one uppercase letter' });
+    if (!/[0-9]/.test(password)) return res.status(400).json({ message: 'Password must contain at least one number' });
+    if (!/[^A-Za-z0-9]/.test(password)) return res.status(400).json({ message: 'Password must contain at least one special character' });
+
     const db = await connectDB();
     const usersColl = db.collection('users');
     const existing = await usersColl.findOne({ email: email.toLowerCase().trim() });
     if (existing) return res.status(409).json({ message: 'Email already registered' });
+
+    // Create company
     const companiesColl = db.collection('companies');
-    const companyResult = await companiesColl.insertOne({ name: companyName, projectName, location, createdAt: new Date() });
+    const companyResult = await companiesColl.insertOne({ name: companyName, projectName, location, status: 'active', createdAt: new Date() });
     const companyId = companyResult.insertedId;
+
+    // Assign default subscription (FREE)
+    const freePkg = await db.collection('subscriptionpackages').findOne({ name: 'FREE' });
+    if (freePkg) {
+      await db.collection('subscriptions').insertOne({
+        companyId, packageId: freePkg._id,
+        status: 'trial', startDate: new Date(), endDate: null,
+        moduleOverrides: {}, featureOverrides: {},
+        createdAt: new Date(), updatedAt: new Date()
+      });
+    }
+
+    // Find Admin system role
+    const adminRole = await db.collection('roles').findOne({ name: 'Admin', isSystem: true, companyId: null });
+
+    // Create user as Admin
     const passwordHash = await bcrypt.hash(password, 10);
-    const userDoc: any = { email: email.toLowerCase().trim(), passwordHash, firstName, lastName, role: role || 'OWNER', companyId, mobileNumber, promoConsent: !!promoConsent, newsletterConsent: !!newsletterConsent, createdAt: new Date() };
+    const userDoc: any = {
+      email: email.toLowerCase().trim(), passwordHash, firstName, lastName,
+      role: 'Admin', companyId,
+      roleId: adminRole?._id || null,
+      mobileNumber, promoConsent: !!promoConsent, newsletterConsent: !!newsletterConsent,
+      isActive: true, assignedProjects: [],
+      createdAt: new Date()
+    };
     const userResult = await usersColl.insertOne(userDoc);
-    const tokens = generateTokens(userResult.insertedId.toString(), userDoc.email, userDoc.role);
-    res.status(201).json({ ...tokens, user: { id: userResult.insertedId.toString(), email: userDoc.email, firstName, lastName, role: userDoc.role, companyId: companyId.toString(), companyName, projectName: projectName || '' } });
+    const userId = userResult.insertedId.toString();
+
+    // Generate tokens
+    const tokens = generateTokens(userId, userDoc.email, 'Admin', 'user');
+
+    // Get effective permissions
+    const permissions = await getEffectivePermissions(db, userId);
+
+    await logAudit(db, { actorId: userId, actorType: 'user', companyId, action: 'SIGNUP', resource: 'users', resourceId: userId, newValue: { email: userDoc.email, companyName } });
+
+    res.status(201).json({
+      ...tokens,
+      user: {
+        id: userId, email: userDoc.email, firstName, lastName,
+        role: 'Admin', companyId: companyId.toString(), companyName,
+        projectName: projectName || '', accountType: 'user'
+      },
+      permissions
+    });
   } catch (e: any) {
     console.error(e);
     res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -128,20 +998,342 @@ app.post('/api/auth/signin', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
     const db = await connectDB();
+
+    // Check if user is a regular user
     const user = await db.collection('users').findOne({ email: email.toLowerCase().trim() });
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-    if (!await bcrypt.compare(password, user.passwordHash)) return res.status(401).json({ message: 'Invalid credentials' });
+    if (!user) return res.status(401).json({ message: 'Invalid email or password' });
+    if (user.isActive === false) return res.status(403).json({ message: 'Account is inactive. Contact your administrator.' });
+    if (!await bcrypt.compare(password, user.passwordHash)) return res.status(401).json({ message: 'Invalid email or password' });
+
+    // Check company status
     const company = await db.collection('companies').findOne({ _id: user.companyId });
-    const tokens = generateTokens(user._id.toString(), user.email, user.role);
-    res.json({ ...tokens, user: { id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, companyId: user.companyId.toString(), companyName: company?.name ?? 'Unknown', projectName: company?.projectName ?? '' } });
+    if (!company) return res.status(403).json({ message: 'Organization not found' });
+    if (company.status === 'inactive') return res.status(403).json({ message: 'Your organization is inactive. Contact platform support.' });
+    if (company.status === 'suspended') return res.status(403).json({ message: 'Your organization is suspended. Contact platform support.' });
+
+    // Get role name
+    let roleName = user.role || 'Admin';
+    if (user.roleId) {
+      const role = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
+      if (role) roleName = role.name;
+    }
+
+    const tokens = generateTokens(user._id.toString(), user.email, roleName, 'user');
+
+    // Get effective permissions
+    const permissions = await getEffectivePermissions(db, user._id.toString());
+
+    res.json({
+      ...tokens,
+      user: {
+        id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName,
+        role: roleName, companyId: user.companyId.toString(),
+        companyName: company?.name ?? 'Unknown', projectName: company?.projectName ?? '',
+        accountType: 'user'
+      },
+      permissions
+    });
   } catch (e: any) {
     console.error(e);
     res.status(500).json({ message: 'Internal server error', error: e.message });
   }
 });
 
-// ── INVENTORY ROUTES (protected) ─────────────────────────────────────────────
-app.get('/api/inventory', authMiddleware, async (req: any, res) => {
+// ══════════════════════════════════════════════════════════════════════════════
+// EFFECTIVE PERMISSIONS ROUTE
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/permissions/effective', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const permissions = await getEffectivePermissions(db, req.user.sub);
+    if (!permissions) return res.status(404).json({ message: 'User not found' });
+    res.json(permissions);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// BUILDER FIRM ADMIN — ROLE MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/roles', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const user = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Get system roles + company-specific roles
+    const roles = await db.collection('roles').find({
+      $or: [
+        { companyId: null, isSystem: true },
+        { companyId: user.companyId }
+      ],
+      isActive: { $ne: false }
+    }).sort({ isSystem: -1, name: 1 }).toArray();
+
+    // Add user count per role
+    const enriched = await Promise.all(roles.map(async (r: any) => {
+      const userCount = await db.collection('users').countDocuments({
+        companyId: user.companyId,
+        roleId: r._id,
+        isActive: { $ne: false }
+      });
+      return { ...r, id: r._id.toString(), userCount };
+    }));
+
+    res.json(enriched);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.post('/api/roles', adminMiddleware, async (req: any, res) => {
+  try {
+    const { name, description, permissions, dataScope, projectScope } = req.body;
+    if (!name) return res.status(400).json({ message: 'Role name is required' });
+    const db = await connectDB();
+
+    // Get company from user (unless developer)
+    let companyId: ObjectId | null = null;
+    if (req.user.accountType !== 'developer') {
+      const user = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+      if (!user) return res.status(404).json({ message: 'User not found' });
+      companyId = user.companyId;
+    }
+
+    // Check for duplicate role name within company
+    const existing = await db.collection('roles').findOne({
+      $or: [
+        { companyId, name, isActive: { $ne: false } },
+        { companyId: null, isSystem: true, name }
+      ]
+    });
+    if (existing) return res.status(409).json({ message: 'A role with this name already exists' });
+
+    // Validate permissions against subscription
+    if (companyId) {
+      const subscription = await db.collection('subscriptions').findOne({ companyId, status: { $in: ['active', 'trial'] } });
+      if (subscription) {
+        const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+        if (pkg && permissions) {
+          for (const mod of Object.keys(permissions)) {
+            const moduleEnabled = subscription.moduleOverrides?.[mod] !== undefined ? subscription.moduleOverrides[mod] : (pkg.modules?.[mod] !== false);
+            if (!moduleEnabled) {
+              return res.status(400).json({ message: `Cannot grant permissions for module "${mod}" — not available in your subscription` });
+            }
+          }
+        }
+      }
+    }
+
+    const result = await db.collection('roles').insertOne({
+      companyId, name, description: description || '',
+      isSystem: false, isActive: true,
+      permissions: permissions || {},
+      dataScope: dataScope || 'organization',
+      projectScope: projectScope || 'all',
+      createdAt: new Date(), updatedAt: new Date()
+    });
+
+    await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId, action: 'ROLE_CREATED', resource: 'roles', resourceId: result.insertedId.toString(), newValue: { name, permissions } });
+
+    res.status(201).json({ id: result.insertedId.toString(), name, message: 'Role created successfully' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/roles/:id', adminMiddleware, async (req: any, res) => {
+  try {
+    const { name, description, permissions, dataScope, projectScope, isActive } = req.body;
+    const db = await connectDB();
+    const role = await db.collection('roles').findOne({ _id: new ObjectId(req.params.id) });
+    if (!role) return res.status(404).json({ message: 'Role not found' });
+    if (role.isSystem && role.companyId === null) return res.status(403).json({ message: 'Cannot modify system roles' });
+
+    const updateFields: any = { updatedAt: new Date() };
+    if (name !== undefined) updateFields.name = name;
+    if (description !== undefined) updateFields.description = description;
+    if (permissions !== undefined) updateFields.permissions = permissions;
+    if (dataScope !== undefined) updateFields.dataScope = dataScope;
+    if (projectScope !== undefined) updateFields.projectScope = projectScope;
+    if (isActive !== undefined) updateFields.isActive = isActive;
+
+    await db.collection('roles').updateOne({ _id: role._id }, { $set: updateFields });
+    await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId: role.companyId, action: 'ROLE_UPDATED', resource: 'roles', resourceId: role._id.toString(), previousValue: { name: role.name, permissions: role.permissions }, newValue: updateFields });
+
+    res.json({ message: 'Role updated successfully' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.delete('/api/roles/:id', adminMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const role = await db.collection('roles').findOne({ _id: new ObjectId(req.params.id) });
+    if (!role) return res.status(404).json({ message: 'Role not found' });
+    if (role.isSystem && role.companyId === null) return res.status(403).json({ message: 'Cannot delete system roles' });
+
+    // Check if users are assigned
+    const assignedCount = await db.collection('users').countDocuments({ roleId: role._id, isActive: { $ne: false } });
+    if (assignedCount > 0) {
+      return res.status(400).json({ message: `Cannot delete: ${assignedCount} user(s) are assigned to this role. Reassign them first.` });
+    }
+
+    // Soft delete
+    await db.collection('roles').updateOne({ _id: role._id }, { $set: { isActive: false, deletedAt: new Date() } });
+    await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId: role.companyId, action: 'ROLE_DELETED', resource: 'roles', resourceId: role._id.toString(), previousValue: { name: role.name } });
+
+    res.json({ message: 'Role deactivated successfully' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// BUILDER FIRM ADMIN — USER MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/users', adminMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+
+    if (req.user.accountType === 'developer') {
+      // Developer sees all users
+      const users = await db.collection('users').find({}).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
+      return res.json(users.map((u: any) => ({ ...u, id: u._id.toString() })));
+    }
+
+    const user = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const users = await db.collection('users').find({ companyId: user.companyId, isActive: { $ne: false } }).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
+
+    const enriched = await Promise.all(users.map(async (u: any) => {
+      let roleName = u.role || 'Unknown';
+      if (u.roleId) {
+        const role = await db.collection('roles').findOne({ _id: new ObjectId(u.roleId) });
+        if (role) roleName = role.name;
+      }
+      return { ...u, id: u._id.toString(), roleName };
+    }));
+
+    res.json(enriched);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.post('/api/users', adminMiddleware, async (req: any, res) => {
+  try {
+    const { email, password, firstName, lastName, roleId, mobileNumber } = req.body;
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ message: 'Email, password, first name, and last name are required' });
+    }
+    const db = await connectDB();
+
+    // Get admin's company
+    const admin = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!admin && req.user.accountType !== 'developer') return res.status(404).json({ message: 'Admin user not found' });
+    const companyId = admin?.companyId;
+
+    // Check subscription user limits
+    if (companyId) {
+      const subscription = await db.collection('subscriptions').findOne({ companyId, status: { $in: ['active', 'trial'] } });
+      if (subscription) {
+        const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+        if (pkg?.limits?.maxUsers) {
+          const currentCount = await db.collection('users').countDocuments({ companyId, isActive: { $ne: false } });
+          if (currentCount >= pkg.limits.maxUsers) {
+            return res.status(400).json({ message: `User limit reached (${pkg.limits.maxUsers}). Upgrade your subscription to add more users.` });
+          }
+        }
+      }
+    }
+
+    // Check duplicate email
+    const existing = await db.collection('users').findOne({ email: email.toLowerCase().trim() });
+    if (existing) return res.status(409).json({ message: 'Email already registered' });
+
+    // Validate roleId
+    let roleName = 'Admin';
+    if (roleId) {
+      const role = await db.collection('roles').findOne({ _id: new ObjectId(roleId) });
+      if (!role) return res.status(400).json({ message: 'Invalid role ID' });
+      roleName = role.name;
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const userDoc: any = {
+      email: email.toLowerCase().trim(), passwordHash, firstName, lastName,
+      role: roleName, companyId,
+      roleId: roleId ? new ObjectId(roleId) : null,
+      mobileNumber: mobileNumber || '', isActive: true, assignedProjects: [],
+      createdAt: new Date()
+    };
+    const result = await db.collection('users').insertOne(userDoc);
+
+    await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId, action: 'USER_CREATED', resource: 'users', resourceId: result.insertedId.toString(), newValue: { email: userDoc.email, role: roleName } });
+
+    res.status(201).json({ id: result.insertedId.toString(), email: userDoc.email, firstName, lastName, role: roleName, message: 'User created successfully' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/users/:id', adminMiddleware, async (req: any, res) => {
+  try {
+    const { firstName, lastName, roleId, mobileNumber, assignedProjects } = req.body;
+    const db = await connectDB();
+    const targetUser = await db.collection('users').findOne({ _id: new ObjectId(req.params.id) });
+    if (!targetUser) return res.status(404).json({ message: 'User not found' });
+
+    // Ensure same company (unless developer)
+    if (req.user.accountType !== 'developer') {
+      const admin = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+      if (!admin || admin.companyId.toString() !== targetUser.companyId.toString()) {
+        return res.status(403).json({ message: 'Cannot modify users from another organization' });
+      }
+    }
+
+    const updateFields: any = {};
+    if (firstName !== undefined) updateFields.firstName = firstName;
+    if (lastName !== undefined) updateFields.lastName = lastName;
+    if (mobileNumber !== undefined) updateFields.mobileNumber = mobileNumber;
+    if (assignedProjects !== undefined) updateFields.assignedProjects = assignedProjects;
+    if (roleId !== undefined) {
+      const role = await db.collection('roles').findOne({ _id: new ObjectId(roleId) });
+      if (!role) return res.status(400).json({ message: 'Invalid role ID' });
+      updateFields.roleId = new ObjectId(roleId);
+      updateFields.role = role.name;
+    }
+
+    await db.collection('users').updateOne({ _id: targetUser._id }, { $set: updateFields });
+    await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId: targetUser.companyId, action: 'USER_UPDATED', resource: 'users', resourceId: targetUser._id.toString(), previousValue: { role: targetUser.role, roleId: targetUser.roleId }, newValue: updateFields });
+
+    res.json({ message: 'User updated successfully' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/users/:id/status', adminMiddleware, async (req: any, res) => {
+  try {
+    const { isActive } = req.body;
+    if (typeof isActive !== 'boolean') return res.status(400).json({ message: 'isActive must be a boolean' });
+    const db = await connectDB();
+    const targetUser = await db.collection('users').findOne({ _id: new ObjectId(req.params.id) });
+    if (!targetUser) return res.status(404).json({ message: 'User not found' });
+
+    // Cannot deactivate yourself
+    if (req.user.sub === req.params.id) return res.status(400).json({ message: 'Cannot deactivate your own account' });
+
+    await db.collection('users').updateOne({ _id: targetUser._id }, { $set: { isActive } });
+    await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId: targetUser.companyId, action: isActive ? 'USER_ACTIVATED' : 'USER_DEACTIVATED', resource: 'users', resourceId: targetUser._id.toString() });
+
+    res.json({ message: `User ${isActive ? 'activated' : 'deactivated'} successfully` });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SYSTEM ROLES ENDPOINT (public list of default system roles for reference)
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/system-roles', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const roles = await db.collection('roles').find({ isSystem: true, companyId: null, isActive: true }).sort({ name: 1 }).toArray();
+    res.json(roles.map((r: any) => ({ ...r, id: r._id.toString() })));
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INVENTORY ROUTES (protected with permissions)
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -151,7 +1343,7 @@ app.get('/api/inventory', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.post('/api/inventory/inward', authMiddleware, async (req: any, res) => {
+app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory', 'inward'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -168,7 +1360,7 @@ app.post('/api/inventory/inward', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.get('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => {
+app.get('/api/inventory/scrap-rules', authMiddleware, requirePermission('settings', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -178,7 +1370,7 @@ app.get('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.post('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => {
+app.post('/api/inventory/scrap-rules', authMiddleware, requirePermission('settings', 'edit'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -201,7 +1393,7 @@ app.post('/api/inventory/scrap-rules', authMiddleware, async (req: any, res) => 
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.get('/api/inventory/ledger', authMiddleware, async (req: any, res) => {
+app.get('/api/inventory/ledger', authMiddleware, requirePermission('ledger', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -211,7 +1403,7 @@ app.get('/api/inventory/ledger', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.delete('/api/inventory/:id', authMiddleware, async (req: any, res) => {
+app.delete('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'delete'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -221,7 +1413,7 @@ app.delete('/api/inventory/:id', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.put('/api/inventory/:id', authMiddleware, async (req: any, res) => {
+app.put('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'edit'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -253,7 +1445,7 @@ app.put('/api/inventory/:id', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.get('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
+app.get('/api/inventory/scrapsales', authMiddleware, requirePermission('scrapSales', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -265,7 +1457,7 @@ app.get('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.post('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
+app.post('/api/inventory/scrapsales', authMiddleware, requirePermission('scrapSales', 'create'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -290,7 +1482,7 @@ app.post('/api/inventory/scrapsales', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.put('/api/inventory/scrapsales/:id', authMiddleware, async (req: any, res) => {
+app.put('/api/inventory/scrapsales/:id', authMiddleware, requirePermission('scrapSales', 'edit'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -320,7 +1512,7 @@ app.put('/api/inventory/scrapsales/:id', authMiddleware, async (req: any, res) =
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.delete('/api/inventory/scrapsales/:id', authMiddleware, async (req: any, res) => {
+app.delete('/api/inventory/scrapsales/:id', authMiddleware, requirePermission('scrapSales', 'delete'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -331,7 +1523,7 @@ app.delete('/api/inventory/scrapsales/:id', authMiddleware, async (req: any, res
 });
 
 // ── BATCHES ROUTES (protected) ────────────────────────────────────────────────
-app.post('/api/batches', authMiddleware, async (req: any, res) => {
+app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -394,7 +1586,7 @@ app.post('/api/batches', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.get('/api/batches', authMiddleware, async (req: any, res) => {
+app.get('/api/batches', authMiddleware, requirePermission('history', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -404,7 +1596,7 @@ app.get('/api/batches', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.put('/api/batches/:id', authMiddleware, async (req: any, res) => {
+app.put('/api/batches/:id', authMiddleware, requirePermission('history', 'edit'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -422,7 +1614,7 @@ app.put('/api/batches/:id', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.delete('/api/batches/:id', authMiddleware, async (req: any, res) => {
+app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'delete'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -432,7 +1624,7 @@ app.delete('/api/batches/:id', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.get('/api/batches/scrap-records', authMiddleware, async (req: any, res) => {
+app.get('/api/batches/scrap-records', authMiddleware, requirePermission('history', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -500,7 +1692,7 @@ app.get('/api/batches/scrap-records', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
+app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
@@ -615,6 +1807,21 @@ app.get('/api/batches/stats', authMiddleware, async (req: any, res) => {
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 
-// ── START ─────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// START — with seed initialization
+// ══════════════════════════════════════════════════════════════════════════════
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Express server listening on port ${PORT}`));
+
+async function startServer() {
+  try {
+    const database = await connectDB();
+    console.log('🌱 Seeding defaults...');
+    await seedDefaults(database);
+    console.log('🌱 Seeding complete.');
+  } catch (err) {
+    console.error('⚠️  Seed failed (non-fatal):', err);
+  }
+  app.listen(PORT, () => console.log(`🚀 Express server listening on port ${PORT}`));
+}
+
+startServer();

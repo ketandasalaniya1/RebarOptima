@@ -1,115 +1,239 @@
-.superadmin-login-wrapper {
+.dev-login-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f172a; /* Slate 900 exclusively for superadmin black console feel */
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
-  padding: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a12;
 }
 
-.superadmin-login-card {
-  width: 100%;
-  max-width: 460px;
-  padding: 40px;
-  background: #1e293b; /* Slate 800 */
-  border: 1px solid #334155;
-  border-top: 4px solid #dc2626; /* Warning red */
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  color: #f8fafc;
+.dev-login-bg-effects {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.superadmin-login-header {
-  text-align: center;
-  margin-bottom: 30px;
+.dev-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
 }
 
-.shield-icon-container {
-  width: 60px;
-  height: 60px;
+.dev-bg-glow {
+  position: absolute;
   border-radius: 50%;
-  background: rgba(220, 38, 38, 0.1);
+  filter: blur(120px);
+  opacity: 0.3;
+}
+.dev-bg-glow-1 {
+  width: 400px; height: 400px;
+  background: #dc2626;
+  top: -100px; left: -100px;
+}
+.dev-bg-glow-2 {
+  width: 300px; height: 300px;
+  background: #7c3aed;
+  bottom: -80px; right: -80px;
+}
+
+.dev-login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  background: rgba(20, 20, 35, 0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 40px 36px;
+  backdrop-filter: blur(20px);
+}
+
+.dev-login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.dev-shield-badge {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
 }
 
-.superadmin-login-header h2 {
-  font-size: 20px;
+.dev-login-header h1 {
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 8px;
+  color: #f8fafc;
+  margin: 0 0 6px;
 }
 
-.superadmin-login-header .subtitle {
-  font-size: 12.5px;
-  color: #94a3b8;
-  line-height: 1.5;
+.dev-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
 }
 
-.superadmin-login-form {
+.dev-error-banner {
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dev-login-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.superadmin-login-form input {
-  background: #0f172a !important;
-  border-color: #334155 !important;
-  color: #ffffff !important;
-}
-
-.superadmin-login-form input:focus {
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
-}
-
-.superadmin-error-banner {
-  background: rgba(220, 38, 38, 0.15);
-  border: 1px solid rgba(220, 38, 38, 0.3);
-  color: #f87171;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 13px;
+.dev-input-group label {
+  display: block;
+  font-size: 12px;
   font-weight: 600;
-  text-align: center;
-  margin-bottom: 20px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
 }
 
-.superadmin-login-btn {
-  background: #dc2626;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 12px;
+.dev-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 15, 30, 0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 0 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dev-input-wrapper:focus-within {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.dev-input-icon {
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.dev-input-wrapper input {
+  flex: 1;
+  background: none;
   border: none;
-  border-radius: 6px;
+  outline: none;
+  color: #e2e8f0;
+  font-size: 14px;
+  padding: 12px 10px;
+}
+
+.dev-input-wrapper input::placeholder {
+  color: #475569;
+}
+
+.dev-toggle-password {
+  background: none;
+  border: none;
+  color: #475569;
+  padding: 4px;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
-  margin-top: 8px;
+  display: flex;
+  transition: color 0.2s;
 }
-
-.superadmin-login-btn:hover {
-  background: #b91c1c;
-}
-
-.superadmin-back-prompt {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 12.5px;
+.dev-toggle-password:hover {
   color: #94a3b8;
 }
 
-.superadmin-back-prompt a {
-  color: #dc2626;
-  text-decoration: none;
-  font-weight: 700;
+.dev-login-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-top: 8px;
+}
+.dev-login-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.dev-login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.superadmin-back-prompt a:hover {
+.dev-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: dev-spin 0.6s linear infinite;
+}
+@keyframes dev-spin {
+  to { transform: rotate(360deg); }
+}
+
+.dev-security-badges {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.dev-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #475569;
+  background: rgba(255,255,255,0.03);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.dev-back-prompt {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #64748b;
+}
+.dev-back-prompt a {
+  color: #dc2626;
+  text-decoration: none;
+  font-weight: 500;
+}
+.dev-back-prompt a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .dev-login-card {
+    padding: 28px 20px;
+  }
+  .dev-security-badges {
+    flex-direction: column;
+    align-items: center;
+  }
 }

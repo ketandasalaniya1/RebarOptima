@@ -11,6 +11,8 @@ import InventoryPage from './pages/InventoryPage/InventoryPage';
 import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage';
 import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
+import UsersPage from './pages/UsersPage/UsersPage';
+import RolesPage from './pages/RolesPage/RolesPage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
@@ -117,6 +119,9 @@ function App() {
           onNavigateToSignUp={() => {
             dispatch(setView('signup'));
           }}
+          onNavigateToDeveloper={() => {
+            dispatch(setView('superadmin-login'));
+          }}
         />
       ) : view === 'signup' ? (
         <SignUpPage 
@@ -173,6 +178,12 @@ function App() {
             )}
             {view === 'settings' && (
               <SettingsPage />
+            )}
+            {view === 'users' && (
+              <UsersPage />
+            )}
+            {view === 'roles' && (
+              <RolesPage />
             )}
           </div>
         </div>

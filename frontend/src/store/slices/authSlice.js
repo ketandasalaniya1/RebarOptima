@@ -12,10 +12,12 @@ const getInitialState = () => {
       if (lastActivity && (Date.now() - parseInt(lastActivity, 10) > SESSION_TIMEOUT_MS)) {
         sessionStorage.clear();
       } else {
+        const user = JSON.parse(storedUser);
         return {
           accessToken: token,
-          user: JSON.parse(storedUser),
+          user,
           isAuthenticated: true,
+          isDeveloper: user.accountType === 'developer',
         };
       }
     }
@@ -26,6 +28,7 @@ const getInitialState = () => {
     accessToken: null,
     user: null,
     isAuthenticated: false,
+    isDeveloper: false,
   };
 };
 
@@ -39,6 +42,7 @@ const authSlice = createSlice({
       state.accessToken = accessToken;
       state.user = user;
       state.isAuthenticated = true;
+      state.isDeveloper = user.accountType === 'developer';
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('user', JSON.stringify(user));
       sessionStorage.setItem('lastActivity', now);
@@ -47,9 +51,11 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.user = null;
       state.isAuthenticated = false;
+      state.isDeveloper = false;
       sessionStorage.removeItem('accessToken');
       sessionStorage.removeItem('user');
       sessionStorage.removeItem('lastActivity');
+      sessionStorage.removeItem('permissions');
     },
     updateActivity: () => {
       if (sessionStorage.getItem('accessToken')) {

@@ -3,14 +3,16 @@ import { User, Lock, EyeOff, Eye, Mail, Building2, CheckCircle2, Shield, BarChar
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
 import { authApi } from '../../utils/api';
+import { useDispatch } from 'react-redux';
+import { setPermissions } from '../../store/slices/permissionsSlice';
 import './SignUpPage.css';
 
 const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [role, setRole] = useState('OWNER');
   const [companyName, setCompanyName] = useState('');
   const [projectName, setProjectName] = useState('');
   const [location, setLocation] = useState('');
@@ -54,7 +56,6 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
         password,
         firstName,
         lastName,
-        role,
         companyName,
         projectName,
         location,
@@ -62,6 +63,9 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
         promoConsent,
         newsletterConsent
       });
+      if (data.permissions) {
+        dispatch(setPermissions(data.permissions));
+      }
       if (onSignUp) {
         onSignUp(data);
       }
@@ -171,23 +175,6 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
 
                 <div className="form-row">
                   <div className="input-group">
-                    <label>Account Role</label>
-                    <div className="input-wrapper">
-                      <Users size={18} className="input-icon" color="#8d86b8" />
-                      <select 
-                        className="signup-select"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        required
-                      >
-                        <option value="OWNER">Owner</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="ENGINEER">Engineer</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="input-group">
                     <label>Firm Name</label>
                     <div className="input-wrapper">
                       <Building2 size={18} className="input-icon" color="#8d86b8" />
@@ -200,9 +187,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="form-row">
                   <div className="input-group">
                     <label>Initial Project Name</label>
                     <div className="input-wrapper">
@@ -216,7 +201,9 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
+                </div>
 
+                <div className="form-row">
                   <div className="input-group">
                     <label>Project Location</label>
                     <div className="input-wrapper">
@@ -230,9 +217,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="form-row">
                   <div className="input-group">
                     <label>Email Address</label>
                     <div className="input-wrapper">
@@ -246,7 +231,9 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
+                </div>
 
+                <div className="form-row">
                   <div className="input-group">
                     <label>Mobile Number</label>
                     <div className="input-wrapper">
@@ -261,6 +248,9 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Empty group for layout balance */}
+                  <div className="input-group"></div>
                 </div>
 
                 <div className="form-row">

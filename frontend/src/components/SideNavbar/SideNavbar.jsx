@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -8,8 +8,9 @@ import './SideNavbar.css';
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
+  const permissions = useSelector((state) => state.permissions.modules);
 
-  const menuItems = [
+  const ALL_MENU_ITEMS = [
     {
       id: 'overview',
       label: 'Overview',
@@ -18,29 +19,56 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     {
       id: 'inventory',
       label: 'Inventory',
-      icon: <Package size={18} />
+      icon: <Package size={18} />,
+      moduleKey: 'inventory'
     },
     {
       id: 'inputs',
       label: 'Run Optimizer',
-      icon: <PlusSquare size={18} />
+      icon: <PlusSquare size={18} />,
+      moduleKey: 'optimizer'
     },
     {
       id: 'history',
       label: 'Batch History',
-      icon: <ClipboardList size={18} />
+      icon: <ClipboardList size={18} />,
+      moduleKey: 'history'
     },
     {
       id: 'ledger',
       label: 'Ledger & Orders',
-      icon: <BookOpen size={18} />
+      icon: <BookOpen size={18} />,
+      moduleKey: 'ledger'
     },
     {
       id: 'settings',
       label: 'Settings',
-      icon: <SettingsIcon size={18} />
+      icon: <SettingsIcon size={18} />,
+      moduleKey: 'settings'
+    },
+    {
+      id: 'users',
+      label: 'User Management',
+      icon: <Users size={18} />,
+      moduleKey: 'users'
+    },
+    {
+      id: 'roles',
+      label: 'Roles & Permissions',
+      icon: <Shield size={18} />,
+      moduleKey: 'roles'
     }
   ];
+
+  // Filter menu items based on permissions
+  // If modules object is empty (e.g. initial load or legacy), default to showing everything except users/roles
+  const menuItems = ALL_MENU_ITEMS.filter(item => {
+    if (!item.moduleKey) return true; // Always show overview/dashboard if no key
+    if (Object.keys(permissions || {}).length === 0) {
+      return item.moduleKey !== 'users' && item.moduleKey !== 'roles';
+    }
+    return permissions[item.moduleKey] !== false;
+  });
 
   const initials = user 
     ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() 

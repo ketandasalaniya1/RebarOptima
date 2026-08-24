@@ -1,241 +1,462 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setView } from '../../store/slices/routingSlice';
+import { logout } from '../../store/slices/authSlice';
 import { 
-  ShieldAlert, 
-  Users, 
-  CreditCard, 
-  Database, 
-  Mail, 
-  Search, 
-  CheckCircle, 
-  XCircle, 
-  LogOut, 
-  Bell, 
-  Clock, 
-  Cpu 
+  ShieldAlert, Users, CreditCard, Database, Search, CheckCircle, XCircle, 
+  LogOut, Clock, Cpu, Building2, Package, ToggleLeft, ToggleRight,
+  ChevronDown, ChevronRight, AlertTriangle, Activity, FileText, RefreshCw,
+  Plus, Edit3, Eye, Layers
 } from 'lucide-react';
+import { developerApi } from '../../utils/api';
 import './SuperadminDashboard.css';
 
 export default function SuperadminDashboard() {
   const dispatch = useDispatch();
-  
-  // Mock Builder Accounts List
-  const [builders, setBuilders] = useState([
-    { id: 'BLD-9812', name: 'L&T Construction', sitesCount: 22, staffCount: 180, plan: 'Enterprise Pro', billingStatus: 'Paid', renewalDate: '2026-12-01', verified: true },
-    { id: 'BLD-4521', name: 'Godrej Properties', sitesCount: 14, staffCount: 95, plan: 'Enterprise', billingStatus: 'Paid', renewalDate: '2026-10-15', verified: true },
-    { id: 'BLD-1190', name: 'Tata Projects', sitesCount: 31, staffCount: 240, plan: 'Enterprise Pro', billingStatus: 'Paid', renewalDate: '2027-01-20', verified: true },
-    { id: 'BLD-8823', name: 'K Raheja Corp', sitesCount: 8, staffCount: 45, plan: 'Standard', billingStatus: 'Pending', renewalDate: '2026-07-28', verified: false },
-    { id: 'BLD-0412', name: 'Shapoorji Pallonji', sitesCount: 18, staffCount: 130, plan: 'Enterprise', billingStatus: 'Paid', renewalDate: '2026-09-05', verified: true },
-  ]);
-
+  const [activeTab, setActiveTab] = useState('companies');
+  const [stats, setStats] = useState(null);
+  const [companies, setCompanies] = useState([]);
+  const [packages, setPackages] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [auditLogs, setAuditLogs] = useState([]);
   const [search, setSearch] = useState('');
-  const [notificationMsg, setNotificationMsg] = useState('');
-  const [promoSuccess, setPromoSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState('');
+  const [error, setError] = useState('');
+  const [expandedCompany, setExpandedCompany] = useState(null);
+  const [companyDetail, setCompanyDetail] = useState(null);
+  const [showAssignSub, setShowAssignSub] = useState(null);
+  const [selectedPkgId, setSelectedPkgId] = useState('');
 
-  const handleVerifyToggle = (id) => {
-    setBuilders(prev => prev.map(b => b.id === id ? { ...b, verified: !b.verified } : b));
-  };
+  useEffect(() => { loadData(); }, []);
 
-  const handleSendPromotion = (e) => {
-    e.preventDefault();
-    if (!notificationMsg.trim()) return;
-    setPromoSuccess(true);
-    setTimeout(() => {
-      setPromoSuccess(false);
-      setNotificationMsg('');
-    }, 2500);
+  const loadData = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [s, c, p, sub, logs] = await Promise.all([
+        developerApi.getStats().catch(() => null),
+        developerApi.getCompanies().catch(() => []),
+        developerApi.getPackages().catch(() => []),
+        developerApi.getSubscriptions().catch(() => []),
+        developerApi.getAuditLogs({ limit: 50 }).catch(() => []),
+      ]);
+      setStats(s);
+      setCompanies(c || []);
+      setPackages(p || []);
+      setSubscriptions(sub || []);
+      setAuditLogs(logs || []);
+    } catch (err) {
+      setError('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('superadminToken');
+    dispatch(logout());
     dispatch(setView('superadmin-login'));
   };
 
-  const filteredBuilders = builders.filter(b => b.name.toLowerCase().includes(search.toLowerCase()));
+  const handleStatusChange = async (companyId, newStatus) => {
+    setActionLoading(companyId);
+    try {
+      await developerApi.updateCompanyStatus(companyId, newStatus);
+      setCompanies(prev => prev.map(c => c.id === companyId ? { ...c, status: newStatus } : c));
+    } catch (err) { setError(err.message); }
+    finally { setActionLoading(''); }
+  };
 
-  // Telemetry estimations
-  const totalBuildersCount = 1042; // Simulated scaling count
-  const totalSitesCount = 5120;
-  const activeStaffCount = 12450;
-  const estDbGrowthPerMonth = '7.5 GB';
+  const handleViewCompany = async (companyId) => {
+    if (expandedCompany === companyId) {
+      setExpandedCompany(null);
+      setCompanyDetail(null);
+      return;
+    }
+    try {
+      const detail = await developerApi.getCompany(companyId);
+      setCompanyDetail(detail);
+      setExpandedCompany(companyId);
+    } catch (err) { setError(err.message); }
+  };
+
+  const handleAssignSubscription = async (companyId) => {
+    if (!selectedPkgId) return;
+    setActionLoading(`sub-${companyId}`);
+    try {
+      await developerApi.createSubscription({ companyId, packageId: selectedPkgId, status: 'active' });
+      setShowAssignSub(null);
+      setSelectedPkgId('');
+      await loadData();
+    } catch (err) { setError(err.message); }
+    finally { setActionLoading(''); }
+  };
+
+  const handleUpdatePackageModules = async (pkgId, modules) => {
+    try {
+      await developerApi.updatePackage(pkgId, { modules });
+      setPackages(prev => prev.map(p => p.id === pkgId ? { ...p, modules } : p));
+    } catch (err) { setError(err.message); }
+  };
+
+  const filteredCompanies = companies.filter(c => c.name?.toLowerCase().includes(search.toLowerCase()));
+
+  const tabs = [
+    { id: 'companies', label: 'Builder Firms', icon: <Building2 size={16} /> },
+    { id: 'packages', label: 'Packages', icon: <Package size={16} /> },
+    { id: 'subscriptions', label: 'Subscriptions', icon: <CreditCard size={16} /> },
+    { id: 'audit', label: 'Audit Logs', icon: <FileText size={16} /> },
+  ];
+
+  const MODULE_LABELS = {
+    overview: 'Overview', inventory: 'Inventory', optimizer: 'Optimizer',
+    history: 'Batch History', ledger: 'Ledger', scrapSales: 'Scrap Sales',
+    settings: 'Settings', users: 'User Mgmt', roles: 'Roles & Perms'
+  };
 
   return (
-    <div className="superadmin-dashboard">
-      {/* Top Navbar */}
-      <header className="superadmin-nav">
-        <div className="nav-brand">
+    <div className="dev-dashboard">
+      {/* Top Nav */}
+      <header className="dev-nav">
+        <div className="dev-nav-brand">
           <ShieldAlert size={20} color="#dc2626" />
-          <span className="brand-txt">RebarOptima Operator Panel</span>
-          <span className="badge-console">v2.1-Prod</span>
+          <span className="dev-brand-txt">RebarOptima Developer Console</span>
+          <span className="dev-badge-version">Platform Admin</span>
         </div>
-        <div className="nav-actions">
-          <div className="telemetry-info">
-            <Cpu size={14} /> System Health: <span className="text-green">99.98%</span>
-          </div>
-          <button className="superadmin-logout-btn" onClick={handleLogout}>
-            <LogOut size={16} /> Exit Operator Panel
+        <div className="dev-nav-actions">
+          <button className="dev-nav-btn refresh-btn" onClick={loadData} title="Refresh">
+            <RefreshCw size={16} />
+          </button>
+          <button className="dev-logout-btn" onClick={handleLogout}>
+            <LogOut size={16} /> Exit Console
           </button>
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="superadmin-content">
-        {/* Analytics Summary */}
-        <section className="superadmin-metrics-row">
-          <div className="card metric-panel">
-            <div className="metric-info">
-              <span className="panel-lbl">Total SaaS Builders</span>
-              <span className="panel-val">{totalBuildersCount}</span>
+      <main className="dev-content">
+        {error && <div className="dev-global-error"><AlertTriangle size={14} /> {error} <button onClick={() => setError('')}>×</button></div>}
+
+        {/* Stats Row */}
+        <section className="dev-metrics-row">
+          <div className="dev-metric-card">
+            <div className="dev-metric-info">
+              <span className="dev-metric-label">Builder Firms</span>
+              <span className="dev-metric-value">{stats?.totalCompanies ?? '—'}</span>
             </div>
-            <div className="panel-icon purple"><Users size={22} /></div>
+            <div className="dev-metric-icon purple"><Building2 size={22} /></div>
           </div>
-          <div className="card metric-panel">
-            <div className="metric-info">
-              <span className="panel-lbl">Active Project Sites</span>
-              <span className="panel-val">{totalSitesCount}</span>
+          <div className="dev-metric-card">
+            <div className="dev-metric-info">
+              <span className="dev-metric-label">Active Firms</span>
+              <span className="dev-metric-value">{stats?.activeCompanies ?? '—'}</span>
             </div>
-            <div className="panel-icon blue"><Clock size={22} /></div>
+            <div className="dev-metric-icon green"><CheckCircle size={22} /></div>
           </div>
-          <div className="card metric-panel">
-            <div className="metric-info">
-              <span className="panel-lbl">Active Builder Staff</span>
-              <span className="panel-val">{activeStaffCount}</span>
+          <div className="dev-metric-card">
+            <div className="dev-metric-info">
+              <span className="dev-metric-label">Total Users</span>
+              <span className="dev-metric-value">{stats?.totalUsers ?? '—'}</span>
             </div>
-            <div className="panel-icon orange"><Users size={22} /></div>
+            <div className="dev-metric-icon blue"><Users size={22} /></div>
           </div>
-          <div className="card metric-panel">
-            <div className="metric-info">
-              <span className="panel-lbl">DB Volume (Monthly Growth)</span>
-              <span className="panel-val">{estDbGrowthPerMonth}</span>
+          <div className="dev-metric-card">
+            <div className="dev-metric-info">
+              <span className="dev-metric-label">Active Subscriptions</span>
+              <span className="dev-metric-value">{stats?.totalSubscriptions ?? '—'}</span>
             </div>
-            <div className="panel-icon red"><Database size={22} /></div>
+            <div className="dev-metric-icon orange"><CreditCard size={22} /></div>
           </div>
         </section>
 
-        {/* Dual Column Layout */}
-        <div className="superadmin-grid">
-          {/* Left Column - Builders Verification & billing */}
-          <div className="grid-left-col">
-            <div className="card list-panel">
-              <div className="panel-header">
-                <h3 className="panel-title">Registered Builder Firms</h3>
-                <div className="search-bar">
-                  <Search size={14} className="s-icon" />
-                  <input 
-                    type="text" 
-                    placeholder="Search builders..." 
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="superadmin-search"
-                  />
-                </div>
-              </div>
+        {/* Tab Bar */}
+        <div className="dev-tab-bar">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              className={`dev-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </div>
 
-              <div className="table-responsive">
-                <table className="superadmin-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Builder Name</th>
-                      <th>Sites</th>
-                      <th>Staff Count</th>
-                      <th>Sub Plan</th>
-                      <th>Renewal Date</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredBuilders.map(b => (
-                      <tr key={b.id}>
-                        <td className="text-secondary">{b.id}</td>
-                        <td className="font-bold">{b.name}</td>
-                        <td>{b.sitesCount}</td>
-                        <td>{b.staffCount}</td>
-                        <td><span className="plan-badge">{b.plan}</span></td>
-                        <td>{b.renewalDate}</td>
-                        <td>
-                          {b.billingStatus === 'Paid' ? (
-                            <span className="billing-status status-paid">Paid</span>
-                          ) : (
-                            <span className="billing-status status-pending">Pending</span>
-                          )}
-                        </td>
-                        <td>
-                          <button 
-                            className={`btn-verify ${b.verified ? 'verified' : 'unverified'}`}
-                            onClick={() => handleVerifyToggle(b.id)}
-                          >
-                            {b.verified ? <CheckCircle size={14} /> : <XCircle size={14} />}
-                            {b.verified ? 'Verified' : 'Verify'}
-                          </button>
-                        </td>
-                      </tr>
+        {/* Tab Content */}
+        <div className="dev-tab-content">
+          {loading ? (
+            <div className="dev-loading">
+              <div className="dev-spinner-lg"></div>
+              <p>Loading platform data...</p>
+            </div>
+          ) : (
+            <>
+              {/* COMPANIES TAB */}
+              {activeTab === 'companies' && (
+                <div className="dev-panel">
+                  <div className="dev-panel-header">
+                    <h3>Registered Builder Firms</h3>
+                    <div className="dev-search-bar">
+                      <Search size={14} />
+                      <input placeholder="Search firms..." value={search} onChange={e => setSearch(e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="dev-table-wrap">
+                    <table className="dev-table">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>Firm Name</th>
+                          <th>Users</th>
+                          <th>Subscription</th>
+                          <th>Status</th>
+                          <th>Created</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCompanies.map(c => (
+                          <React.Fragment key={c.id}>
+                            <tr className={expandedCompany === c.id ? 'expanded-row' : ''}>
+                              <td>
+                                <button className="dev-expand-btn" onClick={() => handleViewCompany(c.id)}>
+                                  {expandedCompany === c.id ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                </button>
+                              </td>
+                              <td className="dev-bold">{c.name}</td>
+                              <td>{c.userCount}</td>
+                              <td>
+                                <span className="dev-plan-badge">{c.subscriptionPlan}</span>
+                                {showAssignSub === c.id && (
+                                  <div className="dev-inline-assign">
+                                    <select value={selectedPkgId} onChange={e => setSelectedPkgId(e.target.value)}>
+                                      <option value="">Select Package</option>
+                                      {packages.filter(p => p.isActive).map(p => (
+                                        <option key={p.id} value={p.id}>{p.displayName}</option>
+                                      ))}
+                                    </select>
+                                    <button className="dev-btn-sm green" onClick={() => handleAssignSubscription(c.id)} disabled={actionLoading === `sub-${c.id}`}>
+                                      {actionLoading === `sub-${c.id}` ? '...' : 'Assign'}
+                                    </button>
+                                    <button className="dev-btn-sm" onClick={() => { setShowAssignSub(null); setSelectedPkgId(''); }}>✕</button>
+                                  </div>
+                                )}
+                              </td>
+                              <td>
+                                <span className={`dev-status-badge ${c.status}`}>{c.status}</span>
+                              </td>
+                              <td className="dev-muted">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '—'}</td>
+                              <td>
+                                <div className="dev-action-group">
+                                  {c.status === 'active' ? (
+                                    <button className="dev-btn-sm warning" onClick={() => handleStatusChange(c.id, 'suspended')} disabled={actionLoading === c.id}>
+                                      Suspend
+                                    </button>
+                                  ) : (
+                                    <button className="dev-btn-sm green" onClick={() => handleStatusChange(c.id, 'active')} disabled={actionLoading === c.id}>
+                                      Activate
+                                    </button>
+                                  )}
+                                  <button className="dev-btn-sm" onClick={() => { setShowAssignSub(showAssignSub === c.id ? null : c.id); setSelectedPkgId(''); }}>
+                                    <CreditCard size={12} /> Sub
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                            {expandedCompany === c.id && companyDetail && (
+                              <tr className="dev-detail-row">
+                                <td colSpan={7}>
+                                  <div className="dev-company-detail">
+                                    <div className="dev-detail-section">
+                                      <h4>Organization Info</h4>
+                                      <div className="dev-detail-grid">
+                                        <div><span className="dev-lbl">Name:</span> {companyDetail.company?.name}</div>
+                                        <div><span className="dev-lbl">Project:</span> {companyDetail.company?.projectName || '—'}</div>
+                                        <div><span className="dev-lbl">Location:</span> {companyDetail.company?.location || '—'}</div>
+                                        <div><span className="dev-lbl">Status:</span> {companyDetail.company?.status || 'active'}</div>
+                                      </div>
+                                    </div>
+                                    <div className="dev-detail-section">
+                                      <h4>Users ({companyDetail.users?.length || 0})</h4>
+                                      <div className="dev-mini-table">
+                                        {(companyDetail.users || []).map((u, i) => (
+                                          <div key={i} className="dev-mini-row">
+                                            <span className="dev-bold">{u.firstName} {u.lastName}</span>
+                                            <span className="dev-muted">{u.email}</span>
+                                            <span className="dev-plan-badge">{u.role}</span>
+                                            <span className={`dev-status-badge ${u.isActive !== false ? 'active' : 'inactive'}`}>
+                                              {u.isActive !== false ? 'Active' : 'Inactive'}
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    {companyDetail.package && (
+                                      <div className="dev-detail-section">
+                                        <h4>Subscription: {companyDetail.package.displayName}</h4>
+                                        <div className="dev-detail-grid">
+                                          <div><span className="dev-lbl">Status:</span> {companyDetail.subscription?.status || '—'}</div>
+                                          <div><span className="dev-lbl">Max Users:</span> {companyDetail.package.limits?.maxUsers ?? 'Unlimited'}</div>
+                                          <div><span className="dev-lbl">Max Projects:</span> {companyDetail.package.limits?.maxProjects ?? 'Unlimited'}</div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        ))}
+                        {filteredCompanies.length === 0 && (
+                          <tr><td colSpan={7} className="dev-empty">No builder firms found</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* PACKAGES TAB */}
+              {activeTab === 'packages' && (
+                <div className="dev-panel">
+                  <div className="dev-panel-header">
+                    <h3>Subscription Packages</h3>
+                  </div>
+                  <div className="dev-packages-grid">
+                    {packages.map(pkg => (
+                      <div key={pkg.id} className={`dev-package-card ${!pkg.isActive ? 'inactive' : ''}`}>
+                        <div className="dev-pkg-header">
+                          <h4>{pkg.displayName || pkg.name}</h4>
+                          <span className={`dev-status-badge ${pkg.isActive ? 'active' : 'inactive'}`}>
+                            {pkg.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                        <p className="dev-pkg-desc">{pkg.description}</p>
+                        <div className="dev-pkg-limits">
+                          <div><span className="dev-lbl">Users:</span> {pkg.limits?.maxUsers ?? '∞'}</div>
+                          <div><span className="dev-lbl">Projects:</span> {pkg.limits?.maxProjects ?? '∞'}</div>
+                          <div><span className="dev-lbl">Storage:</span> {pkg.limits?.maxStorageMB ? `${pkg.limits.maxStorageMB} MB` : '∞'}</div>
+                        </div>
+                        <div className="dev-pkg-modules">
+                          <h5>Modules</h5>
+                          <div className="dev-module-toggles">
+                            {Object.entries(MODULE_LABELS).map(([key, label]) => {
+                              const enabled = pkg.modules?.[key] !== false;
+                              return (
+                                <button
+                                  key={key}
+                                  className={`dev-module-toggle ${enabled ? 'on' : 'off'}`}
+                                  onClick={() => {
+                                    const newModules = { ...pkg.modules, [key]: !enabled };
+                                    handleUpdatePackageModules(pkg.id, newModules);
+                                  }}
+                                >
+                                  {enabled ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                                  {label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column - Backup Audit & Communications */}
-          <div className="grid-right-col">
-            {/* Backup Status panel */}
-            <div className="card control-panel">
-              <h3 className="panel-title">
-                <Database size={16} style={{ marginRight: '6px' }} /> Database Backup Telemetry
-              </h3>
-              <div className="backup-telemetry-list">
-                <div className="backup-item">
-                  <div className="backup-info">
-                    <span className="backup-name">Daily Automated Snapshots</span>
-                    <span className="backup-date text-secondary">Scheduled at 03:00 AM UTC</span>
                   </div>
-                  <span className="badge-ok">Active (OK)</span>
                 </div>
-                <div className="backup-item">
-                  <div className="backup-info">
-                    <span className="backup-name">Weekly Encrypted S3 Archive</span>
-                    <span className="backup-date text-secondary">Last Sync: 2 days ago</span>
-                  </div>
-                  <span className="badge-ok">Active (OK)</span>
-                </div>
-                <div className="backup-item">
-                  <div className="backup-info">
-                    <span className="backup-name">Atlas Cluster Sharding Integrity</span>
-                    <span className="backup-date text-secondary">Replica Set: Cluster0-Primary</span>
-                  </div>
-                  <span className="badge-ok">Healthy</span>
-                </div>
-              </div>
-            </div>
+              )}
 
-            {/* Notification/Promotion panel */}
-            <div className="card control-panel">
-              <h3 className="panel-title">
-                <Bell size={16} style={{ marginRight: '6px' }} /> Broadcast Operator Notifications
-              </h3>
-              <p className="panel-desc">Dispatch global renewal alerts or promotional campaign notifications to all builder tenants.</p>
+              {/* SUBSCRIPTIONS TAB */}
+              {activeTab === 'subscriptions' && (
+                <div className="dev-panel">
+                  <div className="dev-panel-header">
+                    <h3>Active Subscriptions</h3>
+                  </div>
+                  <div className="dev-table-wrap">
+                    <table className="dev-table">
+                      <thead>
+                        <tr>
+                          <th>Company</th>
+                          <th>Package</th>
+                          <th>Status</th>
+                          <th>Start Date</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {subscriptions.map(s => (
+                          <tr key={s.id}>
+                            <td className="dev-bold">{s.companyName}</td>
+                            <td><span className="dev-plan-badge">{s.packageName}</span></td>
+                            <td><span className={`dev-status-badge ${s.status}`}>{s.status}</span></td>
+                            <td className="dev-muted">{s.startDate ? new Date(s.startDate).toLocaleDateString() : '—'}</td>
+                            <td>
+                              <div className="dev-action-group">
+                                {s.status === 'active' && (
+                                  <button className="dev-btn-sm warning" onClick={async () => {
+                                    try { await developerApi.updateSubscription(s.id, { status: 'suspended' }); loadData(); } catch (err) { setError(err.message); }
+                                  }}>Suspend</button>
+                                )}
+                                {s.status === 'suspended' && (
+                                  <button className="dev-btn-sm green" onClick={async () => {
+                                    try { await developerApi.updateSubscription(s.id, { status: 'active' }); loadData(); } catch (err) { setError(err.message); }
+                                  }}>Restore</button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                        {subscriptions.length === 0 && (
+                          <tr><td colSpan={5} className="dev-empty">No subscriptions found</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
-              <form onSubmit={handleSendPromotion} className="promo-form">
-                <textarea
-                  className="superadmin-textarea"
-                  rows={4}
-                  required
-                  placeholder="Enter broadcast message text here (e.g. 'Renewal Reminder: RebarOptima subscriptions will renew on...')"
-                  value={notificationMsg}
-                  onChange={(e) => setNotificationMsg(e.target.value)}
-                />
-                <button type="submit" className="btn-broadcast">
-                  <Mail size={14} /> Send Broadcast Message
-                </button>
-                {promoSuccess && (
-                  <span className="broadcast-success">Broadcast message sent successfully to all tenants!</span>
-                )}
-              </form>
-            </div>
-          </div>
+              {/* AUDIT LOGS TAB */}
+              {activeTab === 'audit' && (
+                <div className="dev-panel">
+                  <div className="dev-panel-header">
+                    <h3>Audit Logs</h3>
+                    <button className="dev-btn-sm" onClick={async () => {
+                      const logs = await developerApi.getAuditLogs({ limit: 100 }).catch(() => []);
+                      setAuditLogs(logs);
+                    }}><RefreshCw size={12} /> Refresh</button>
+                  </div>
+                  <div className="dev-table-wrap">
+                    <table className="dev-table">
+                      <thead>
+                        <tr>
+                          <th>Timestamp</th>
+                          <th>Actor</th>
+                          <th>Action</th>
+                          <th>Resource</th>
+                          <th>Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {auditLogs.map((log, i) => (
+                          <tr key={i}>
+                            <td className="dev-muted">{log.timestamp ? new Date(log.timestamp).toLocaleString() : '—'}</td>
+                            <td>
+                              <span className={`dev-actor-badge ${log.actorType}`}>{log.actorType}</span>
+                            </td>
+                            <td><span className="dev-action-label">{log.action}</span></td>
+                            <td className="dev-muted">{log.resource}</td>
+                            <td className="dev-muted" style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {log.newValue ? JSON.stringify(log.newValue).substring(0, 60) : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                        {auditLogs.length === 0 && (
+                          <tr><td colSpan={5} className="dev-empty">No audit logs yet</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </main>
     </div>

@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2409 nodes, 2887 edges, 199 communities. Commit: eee8a17</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2441 nodes, 2930 edges, 194 communities. Commit: 53805ca</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -90,17 +90,17 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>26 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>622 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>582 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>25 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
     OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>134 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>289 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>320 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>51 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>160 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>184 nodes</small>")
     class SERVE_API_35EC8E86 module;
     TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>161 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
@@ -116,20 +116,20 @@ flowchart LR
     class LOGO_USAGE_RULES_91E51D96 module;
     COMPONENT_SPECIFICATIONS_B4AF2A34("Component Specifications<br/><small>29 nodes</small>")
     class COMPONENT_SPECIFICATIONS_B4AF2A34 module;
-    OTHER_D0941E68("Other<br/><small>737 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>754 nodes</small>")
     class OTHER_D0941E68 module;
-    OTHER_D0941E68 -->|references x26| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|contains x19| OTHER_D0941E68
+    OTHER_D0941E68 -->|imports x18| BUILD_GRAPH_321CBB04
     TESTS_FIXTURES_B84B1DCC -->|method x11| CLI_SKILLS_9964CBB8
     ANALYSIS_CLUSTERING_C79796DA -->|contains x11| SERVE_API_35EC8E86
-    BUILD_GRAPH_321CBB04 -->|imports x5| OTHER_D0941E68
+    CLI_SKILLS_9964CBB8 -->|imports x10| SERVE_API_35EC8E86
+    CLI_SKILLS_9964CBB8 -->|imports x9| OTHER_D0941E68
+    CLI_SKILLS_9964CBB8 -->|imports x6| BUILD_GRAPH_321CBB04
+    SERVE_API_35EC8E86 -->|imports x6| BUILD_GRAPH_321CBB04
+    OTHER_D0941E68 -->|calls x5| SERVE_API_35EC8E86
+    SERVE_API_35EC8E86 -->|contains x5| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
     TESTS_FIXTURES_B84B1DCC -->|method x4| EXTRACT_PIPELINE_5F350230
-    OTHER_D0941E68 -->|calls x3| SERVE_API_35EC8E86
-    SERVE_API_35EC8E86 -->|calls x3| ANALYSIS_CLUSTERING_C79796DA
-    CLI_SKILLS_9964CBB8 -->|calls x2| EXTRACT_PIPELINE_5F350230
-    BUILD_GRAPH_321CBB04 -->|contains x2| EXTRACT_PIPELINE_5F350230
-    TESTS_FIXTURES_B84B1DCC -->|method| OTHER_D0941E68
-    SERVE_API_35EC8E86 -->|contains| OTHER_D0941E68
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>26</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>622</td><td><code>0, 1, 62, 39, 7, 12, 54, 124, 19, 4, 16, 23, 21, 116, 31, 49, 156, 5, 36, 151, 2, 48, 53, 162, 55, 56, 60, 165, 166, 59, 61, 117, 193, 66, 174, 175, 176, 177, 178, 194, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 196, 197, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>25</td><td><code>51, 43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>289</td><td><code>44, 58, 69, 89, 120, 122, 17, 136, 86, 148, 154, 157, 158, 52, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>160</td><td><code>3, 6, 10, 18, 38, 15, 64</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>161</td><td><code>9, 14, 24, 29, 30, 33, 37, 46, 67, 119, 183, 184, 185, 186, 187, 188, 189, 190, 191, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Component Specifications</td><td>29</td><td><code>74</code></td></tr><tr><td>Other</td><td>737</td><td><code>79, 25, 80, 82, 83, 84, 88, 121, 11, 123, 125, 126, 127, 128, 129, 130, 131, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 173, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 159, 164, 172, 65, 179, 73, 170, 180, 181, 182, 192, 195, 85, 111, 113, 114, 198, 63</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>26</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>582</td><td><code>1, 4, 5, 39, 62, 7, 25, 12, 21, 54, 124, 19, 16, 23, 31, 49, 36, 48, 165, 53, 162, 55, 56, 173, 60, 59, 61, 117, 193, 66, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 196, 197, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>25</td><td><code>51, 43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>320</td><td><code>44, 58, 69, 89, 120, 52, 122, 17, 0, 136, 86, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>184</td><td><code>3, 6, 10, 18, 151, 156, 38, 15, 64</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>161</td><td><code>9, 14, 24, 29, 30, 33, 37, 46, 67, 119, 183, 184, 185, 186, 187, 188, 189, 190, 191, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Component Specifications</td><td>29</td><td><code>74</code></td></tr><tr><td>Other</td><td>754</td><td><code>79, 11, 80, 82, 83, 84, 88, 121, 2, 123, 125, 126, 127, 128, 129, 130, 131, 116, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 159, 166, 164, 174, 172, 65, 179, 73, 170, 180, 181, 182, 192, 195, 85, 111, 113, 114, 198, 63</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,8 +158,8 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>2409 nodes · 2887 edges · 199 communities (147 shown, 52 thin omitted)</li>
-      <li>Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.5)</li>
+      <li>2441 nodes · 2930 edges · 194 communities (142 shown, 52 thin omitted)</li>
+      <li>Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.5)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `TailwindConfigGenerator` - 58 edges</li>
       <li>2. `TestTailwindConfigGenerator` - 35 edges</li>
@@ -482,74 +482,71 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 622 nodes and 816 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 582 nodes and 732 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (622 nodes, 816 edges)
-    subgraph build_graph_src_auth_auth_controller_ts_2e6b55d1["src/auth/auth.controller.ts"]
-        backend_src_auth_auth_controller_authcontroller_abc12de8("AuthController<br/><small>src/auth/auth.controller.ts</small>")
-        backend_src_auth_auth_controller_authcontroller_eee7c059("constructor()<br/><small>src/auth/auth.controller.ts</small>")
-        backend_src_auth_auth_controller_authcontroller_abf4cf72("signin()<br/><small>src/auth/auth.controller.ts</small>")
-        backend_src_auth_auth_controller_authcontroller_fdafb8c2("signup()<br/><small>src/auth/auth.controller.ts</small>")
+    %% Section: Graph Build (582 nodes, 732 edges)
+    subgraph build_graph_src_batches_batches_service_ts_eda289fe["src/batches/batches.service.ts"]
+        backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
+        backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_d075144b("commitBatch()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_7b0e3880("constructor()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_6df6e253("deleteBatch()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_a5728714("getBatchHistory()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_aae40981("getBatchScrapRecords()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_f01c5444("getDashboardStats()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_d6fe95bf("updateBatch()<br/><small>src/batches/batches.service.ts</small>")
     end
-    subgraph build_graph_backend_src_app_controller_ts_033839ad["backend/src/app.controller.ts"]
-        backend_src_app_controller_appcontroller_e9dae26a("AppController<br/><small>backend/src/app.controller.ts</small>")
-        backend_src_app_controller_appcontroller_constru_aeaa0aad("constructor()<br/><small>backend/src/app.controller.ts</small>")
-        backend_src_app_controller_appcontroller_gethell_45809fd0("getHello()<br/><small>backend/src/app.controller.ts</small>")
+    subgraph build_graph_src_batches_batches_controller_ts_15d02307["src/batches/batches.controller.ts"]
+        backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_c52c26f7("commitBatch()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_26e1e091("getBatchHistory()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_a3855cd0("getDashboardStats()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_219fd2fa("getBatchScrapRecords()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_358428a0("updateBatch()<br/><small>src/batches/batches.controller.ts</small>")
     end
-    subgraph build_graph_pages_NewBatchPage_NewBatchPage_jsx_f7be02c7["pages/NewBatchPage/NewBatchPage.jsx"]
-        frontend_src_pages_newbatchpage_newbatchpage_ca7c7cca("NewBatchPage.jsx")
-        frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20("useTableRows()<br/><small>pages/NewBatchPage/NewBatchPage.jsx</small>")
-        frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d("NewBatchPage()<br/><small>pages/NewBatchPage/NewBatchPage.jsx</small>")
-    end
-    subgraph build_graph_backend_src_app_service_ts_11838f46["backend/src/app.service.ts"]
-        backend_src_app_service_appservice_gethello_af4679e4("getHello()<br/><small>backend/src/app.service.ts</small>")
-        backend_src_app_service_appservice_47100258("AppService<br/><small>backend/src/app.service.ts</small>")
-    end
-    backend_src_app_module_97b3bc74("app.module.ts")
-    ref_react_47bfb9fb("react<br/><small>frontend/.oxlintrc.json</small>")
-    frontend_src_app_7da8908b("App.jsx")
-    backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
+    backend_src_auth_auth_controller_authcontroller_abc12de8("AuthController<br/><small>src/auth/auth.controller.ts</small>")
+    backend_src_companies_companies_module_94ea8dac("companies.module.ts")
     backend_src_inventory_inventory_service_ba4c78fb("inventory.service.ts")
-    frontend_src_utils_optimizer_solve1dcsp_a2c5ff3d("solve1DCSP()<br/><small>src/utils/optimizer.js</small>")
-    frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20 -->|calls| frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d
-    frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d -->|calls| frontend_src_utils_optimizer_solve1dcsp_a2c5ff3d
-    backend_src_app_controller_appcontroller_e9dae26a -->|method| backend_src_app_controller_appcontroller_constru_aeaa0aad
-    backend_src_app_controller_appcontroller_e9dae26a -->|method| backend_src_app_controller_appcontroller_gethell_45809fd0
-    backend_src_app_controller_appcontroller_gethell_45809fd0 -->|calls| backend_src_app_service_appservice_gethello_af4679e4
-    backend_src_app_service_appservice_47100258 -->|method| backend_src_app_service_appservice_gethello_af4679e4
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|method| backend_src_auth_auth_controller_authcontroller_eee7c059
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|method| backend_src_auth_auth_controller_authcontroller_abf4cf72
-    backend_src_auth_auth_controller_authcontroller_abc12de8 -->|method| backend_src_auth_auth_controller_authcontroller_fdafb8c2
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d075144b
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_7b0e3880
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_6df6e253
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_a5728714
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_aae40981
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_f01c5444
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d6fe95bf
+    backend_src_batches_batches_service_batchesservi_d075144b -->|calls| backend_src_batches_batches_controller_batchesco_c52c26f7
+    backend_src_batches_batches_service_batchesservi_a5728714 -->|calls| backend_src_batches_batches_controller_batchesco_26e1e091
+    backend_src_batches_batches_service_batchesservi_f01c5444 -->|calls| backend_src_batches_batches_controller_batchesco_a3855cd0
+    backend_src_batches_batches_service_batchesservi_aae40981 -->|calls| backend_src_batches_batches_controller_batchesco_219fd2fa
+    backend_src_batches_batches_service_batchesservi_d6fe95bf -->|calls| backend_src_batches_batches_controller_batchesco_358428a0
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_26e1e091
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_219fd2fa
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_a3855cd0
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_358428a0
     backend_src_batches_batches_service_4ee6c1f9 -->|imports| backend_src_inventory_inventory_service_ba4c78fb
-    frontend_src_pages_newbatchpage_newbatchpage_ca7c7cca -->|imports| frontend_src_app_7da8908b
-    frontend_src_pages_newbatchpage_newbatchpage_ca7c7cca -->|imports| frontend_src_utils_optimizer_solve1dcsp_a2c5ff3d
-    frontend_src_pages_newbatchpage_newbatchpage_ca7c7cca -->|imports| ref_react_47bfb9fb
-    frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d -->|imports| frontend_src_app_7da8908b
-    backend_src_app_controller_appcontroller_e9dae26a -->|imports| backend_src_app_module_97b3bc74
-    backend_src_app_module_97b3bc74 -->|imports| backend_src_app_service_appservice_47100258
-    ref_react_47bfb9fb -->|imports| frontend_src_app_7da8908b
-    %% Omitted for readability: 604 nodes, 0 edges
-    class backend_src_auth_auth_controller_authcontroller_abc12de8 klass;
-    class backend_src_auth_auth_controller_authcontroller_eee7c059 function;
-    class backend_src_auth_auth_controller_authcontroller_abf4cf72 function;
-    class backend_src_auth_auth_controller_authcontroller_fdafb8c2 function;
-    class backend_src_app_controller_appcontroller_e9dae26a klass;
-    class backend_src_app_controller_appcontroller_constru_aeaa0aad function;
-    class backend_src_app_controller_appcontroller_gethell_45809fd0 function;
-    class frontend_src_pages_newbatchpage_newbatchpage_ca7c7cca ui;
-    class frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20 ui;
-    class frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d ui;
-    class backend_src_app_service_appservice_gethello_af4679e4 function;
-    class backend_src_app_service_appservice_47100258 klass;
-    class backend_src_app_module_97b3bc74 module;
-    class ref_react_47bfb9fb function;
-    class frontend_src_app_7da8908b ui;
+    %% Omitted for readability: 564 nodes, 0 edges
     class backend_src_batches_batches_service_4ee6c1f9 module;
+    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
+    class backend_src_batches_batches_service_batchesservi_d075144b function;
+    class backend_src_batches_batches_service_batchesservi_7b0e3880 function;
+    class backend_src_batches_batches_service_batchesservi_6df6e253 function;
+    class backend_src_batches_batches_service_batchesservi_a5728714 function;
+    class backend_src_batches_batches_service_batchesservi_aae40981 function;
+    class backend_src_batches_batches_service_batchesservi_f01c5444 function;
+    class backend_src_batches_batches_service_batchesservi_d6fe95bf function;
+    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
+    class backend_src_batches_batches_controller_batchesco_c52c26f7 function;
+    class backend_src_batches_batches_controller_batchesco_26e1e091 function;
+    class backend_src_batches_batches_controller_batchesco_a3855cd0 function;
+    class backend_src_batches_batches_controller_batchesco_219fd2fa function;
+    class backend_src_batches_batches_controller_batchesco_358428a0 function;
+    class backend_src_auth_auth_controller_authcontroller_abc12de8 klass;
+    class backend_src_companies_companies_module_94ea8dac module;
     class backend_src_inventory_inventory_service_ba4c78fb module;
-    class frontend_src_utils_optimizer_solve1dcsp_a2c5ff3d function;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -573,243 +570,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>OverviewPage.jsx</code><br><small style="color:var(--muted)">pages/OverviewPage/OverviewPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>color</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+1 more</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td>No direct outbound edge</td>
+  <td>color node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>OverviewPage()</code><br><small style="color:var(--muted)">pages/OverviewPage/OverviewPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>gray</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td>No direct outbound edge</td>
+  <td>gray node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>50</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+2 more</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td>No direct outbound edge</td>
+  <td>50 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>InventoryPage()</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>NewBatchPage.jsx</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small><br>+4 more</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>initialStock</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>100</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>initialStock node in pages/NewBatchPage/NewBatchPage.jsx.</td>
+  <td>100 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>initialParts</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>initialParts node in pages/NewBatchPage/NewBatchPage.jsx.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>useTableRows()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>NewBatchPage()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td>useTableRows() node in pages/NewBatchPage/NewBatchPage.jsx.</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>NewBatchPage()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>useTableRows()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>solve1DCSP()</code><br><small style="color:var(--muted)">src/utils/optimizer.js</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td><code>200</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>200 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>optimizer.js</code><br><small style="color:var(--muted)">src/utils/optimizer.js</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>NewBatchPage.jsx</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>optimizer.js node in src/utils/optimizer.js.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>solve1DCSP()</code><br><small style="color:var(--muted)">src/utils/optimizer.js</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>NewBatchPage()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small><br><code>NewBatchPage.jsx</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>solve1DCSP() node in src/utils/optimizer.js.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>.oxlintrc.json</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>300</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.oxlintrc.json node in frontend/.oxlintrc.json.</td>
+  <td>300 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>$schema</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>$schema node in frontend/.oxlintrc.json.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>plugins</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>plugins node in frontend/.oxlintrc.json.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>400</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br><code>NewBatchPage.jsx</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small><br><code>OverviewPage.jsx</code><br><small style="color:var(--muted)">pages/OverviewPage/OverviewPage.jsx</small></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>LedgerPage.jsx</code><br><small style="color:var(--muted)">pages/LedgerPage/LedgerPage.jsx</small><br>+10 more</td>
-  <td>react node in frontend/.oxlintrc.json.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>400 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>oxc</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>oxc node in frontend/.oxlintrc.json.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>rules</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>rules node in frontend/.oxlintrc.json.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>react/rules-of-hooks</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>react/rules-of-hooks node in frontend/.oxlintrc.json.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>react/only-export-components</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>warn</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>500</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>warn node in frontend/.oxlintrc.json.</td>
+  <td>500 node in design-system/templates/design-tokens-starter.json.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>InventoryPage()</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br><code>InventoryPage.jsx</code><br><small style="color:var(--muted)">pages/InventoryPage/InventoryPage.jsx</small><br><code>NewBatchPage()</code><br><small style="color:var(--muted)">pages/NewBatchPage/NewBatchPage.jsx</small><br>+4 more</td>
-  <td><code>authSlice.js</code><br><small style="color:var(--muted)">store/slices/authSlice.js</small><br><code>BatchHistoryPage()</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small><br>+20 more</td>
-  <td>App.jsx node in frontend/src/App.jsx.</td>
+  <td><code>600</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>600 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>main.jsx</code><br><small style="color:var(--muted)">frontend/src/main.jsx</small></td>
-  <td>App() node in frontend/src/App.jsx.</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>ScrollToTop.jsx</code><br><small style="color:var(--muted)">components/ScrollToTop/ScrollToTop.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>ScrollToTop.jsx node in components/ScrollToTop/ScrollToTop.jsx.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>ScrollToTop()</code><br><small style="color:var(--muted)">components/ScrollToTop/ScrollToTop.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td><code>700</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>ScrollToTop() node in components/ScrollToTop/ScrollToTop.jsx.</td>
+  <td>700 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>ThemeToggle()</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small><br><code>ThemeToggle.jsx</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
-  <td>SideNavbar.jsx node in components/SideNavbar/SideNavbar.jsx.</td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>SideNavbar()</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>SideNavbar() node in components/SideNavbar/SideNavbar.jsx.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>ThemeToggle.jsx</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small><br><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><code>SignInPage.jsx</code><br><small style="color:var(--muted)">pages/SignInPage/SignInPage.jsx</small><br><code>SignUpPage.jsx</code><br><small style="color:var(--muted)">pages/SignUpPage/SignUpPage.jsx</small></td>
-  <td>ThemeToggle.jsx node in components/ThemeToggle/ThemeToggle.jsx.</td>
+  <td><code>800</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>800 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>ThemeToggle()</code><br><small style="color:var(--muted)">components/ThemeToggle/ThemeToggle.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>SideNavbar.jsx</code><br><small style="color:var(--muted)">components/SideNavbar/SideNavbar.jsx</small></td>
-  <td><code>SignInPage.jsx</code><br><small style="color:var(--muted)">pages/SignInPage/SignInPage.jsx</small><br><code>SignUpPage.jsx</code><br><small style="color:var(--muted)">pages/SignUpPage/SignUpPage.jsx</small></td>
-  <td>ThemeToggle() node in components/ThemeToggle/ThemeToggle.jsx.</td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>main.jsx</code><br><small style="color:var(--muted)">frontend/src/main.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>store</code><br><small style="color:var(--muted)">src/store/store.js</small><br><code>store.js</code><br><small style="color:var(--muted)">src/store/store.js</small></td>
-  <td>main.jsx node in frontend/src/main.jsx.</td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>BatchHistoryPage.jsx</code><br><small style="color:var(--muted)">pages/BatchHistoryPage/BatchHistoryPage.jsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.jsx</code><br><small style="color:var(--muted)">frontend/src/App.jsx</small><br><code>react</code><br><small style="color:var(--muted)">frontend/.oxlintrc.json</small></td>
-  <td><code>api.js</code><br><small style="color:var(--muted)">src/utils/api.js</small><br><code>batchesApi</code><br><small style="color:var(--muted)">src/utils/api.js</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
+  <td><code>900</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>900 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 </table>
 
@@ -824,13 +821,13 @@ flowchart LR
 <tr><td><code>backend/tsconfig.json</code></td><td>23 nodes</td></tr>
 <tr><td><code>package.json</code></td><td>20 nodes</td></tr>
 <tr><td><code>brand/references/asset-organization.md</code></td><td>19 nodes</td></tr>
-<tr><td><code>frontend/.oxlintrc.json</code></td><td>9 nodes</td></tr>
-<tr><td><code>backend/tsconfig.build.json</code></td><td>8 nodes</td></tr>
+<tr><td><code>src/batches/batches.controller.ts</code></td><td>9 nodes</td></tr>
+<tr><td><code>src/batches/batches.service.ts</code></td><td>9 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x511, imports x123, imports x91, references x45. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x478, imports x87, references x64, imports x42. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1487,34 +1484,38 @@ flowchart LR
 
 <!-- ====== 6. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">6. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around skills, agents, skillmd, design, mostly in skills/design/SKILL.md, skills/ui-ux-pro-max/SKILL.md, ui-styling/references/shadcn-components.md. This section covers 289 nodes and 270 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around skills, agents, skillmd, design, mostly in skills/design/SKILL.md, skills/ui-ux-pro-max/SKILL.md, ui-styling/references/shadcn-components.md. This section covers 320 nodes and 315 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (289 nodes, 270 edges)
+    %% Section: CLI &amp; Skill Installers (320 nodes, 315 edges)
     subgraph cli_skills_ui_styling_scripts_tailwind_config_ge_9d2c28ec["ui-styling/scripts/tailwind_config_gen.py"]
         agents_skills_ui_styling_scripts_tailwind_config_e1d5999b("generate_config_string()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_657fde92("add_breakpoints()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_75066976("add_colors()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
-        agents_skills_ui_styling_scripts_tailwind_config_3223dc1a("add_fonts()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
-        agents_skills_ui_styling_scripts_tailwind_config_edb77aa6("add_plugins()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
-        agents_skills_ui_styling_scripts_tailwind_config_488f3080("add_spacing()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_38156463("main()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
+        agents_skills_ui_styling_scripts_tailwind_config_3223dc1a("add_fonts()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
+        agents_skills_ui_styling_scripts_tailwind_config_488f3080("add_spacing()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
+        agents_skills_ui_styling_scripts_tailwind_config_edb77aa6("add_plugins()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_88c6c620("recommend_plugins()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_be35801a("write_config()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_ff7caa88("validate_config()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
     end
     subgraph cli_skills_backend_src_main_ts_c59242b1["backend/src/main.ts"]
-        backend_src_main_std_diameters_ec6fa987("STD_DIAMETERS<br/><small>backend/src/main.ts</small>")
-        backend_src_main_app_b959e2c5("app<br/><small>backend/src/main.ts</small>")
-        backend_src_main_authmiddleware_d603c562("authMiddleware()<br/><small>backend/src/main.ts</small>")
         backend_src_main_connectdb_b60f44d1("connectDB()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_ensurescraprules_1c3d1075("ensureScrapRules()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_generatetokens_0f4804ab("generateTokens()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_getsinglebarweight_cee966e9("getSingleBarWeight()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_e825e778("main.ts")
+        backend_src_main_requirepermission_2f203678("requirePermission()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_startserver_ba5d5674("startServer()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_canaccess_35c9340c("canAccess()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_seeddefaults_81b569a2("seedDefaults()<br/><small>backend/src/main.ts</small>")
     end
+    frontend_src_app_7da8908b("App.jsx")
+    frontend_src_pages_superadmindashboard_superadmi_d43850e6("SuperadminDashboard.jsx")
+    frontend_src_pages_superadminloginpage_superadmi_186b02d2("SuperadminLoginPage.jsx")
+    backend_src_main_connectdb_b60f44d1 -->|calls| backend_src_main_requirepermission_2f203678
+    backend_src_main_connectdb_b60f44d1 -->|calls| backend_src_main_startserver_ba5d5674
+    backend_src_main_canaccess_35c9340c -->|calls| backend_src_main_requirepermission_2f203678
+    backend_src_main_seeddefaults_81b569a2 -->|calls| backend_src_main_startserver_ba5d5674
     agents_skills_ui_styling_scripts_tailwind_config_75066976 -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
     agents_skills_ui_styling_scripts_tailwind_config_3223dc1a -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
     agents_skills_ui_styling_scripts_tailwind_config_488f3080 -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
@@ -1525,25 +1526,27 @@ flowchart LR
     agents_skills_ui_styling_scripts_tailwind_config_e1d5999b -->|calls| agents_skills_ui_styling_scripts_tailwind_config_be35801a
     agents_skills_ui_styling_scripts_tailwind_config_be35801a -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
     agents_skills_ui_styling_scripts_tailwind_config_ff7caa88 -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
-    %% Omitted for readability: 271 nodes, 0 edges
+    frontend_src_app_7da8908b -->|imports| frontend_src_pages_superadmindashboard_superadmi_d43850e6
+    frontend_src_app_7da8908b -->|imports| frontend_src_pages_superadminloginpage_superadmi_186b02d2
+    %% Omitted for readability: 302 nodes, 0 edges
     class agents_skills_ui_styling_scripts_tailwind_config_e1d5999b function;
     class agents_skills_ui_styling_scripts_tailwind_config_657fde92 function;
     class agents_skills_ui_styling_scripts_tailwind_config_75066976 function;
-    class agents_skills_ui_styling_scripts_tailwind_config_3223dc1a function;
-    class agents_skills_ui_styling_scripts_tailwind_config_edb77aa6 function;
-    class agents_skills_ui_styling_scripts_tailwind_config_488f3080 function;
     class agents_skills_ui_styling_scripts_tailwind_config_38156463 function;
+    class agents_skills_ui_styling_scripts_tailwind_config_3223dc1a function;
+    class agents_skills_ui_styling_scripts_tailwind_config_488f3080 function;
+    class agents_skills_ui_styling_scripts_tailwind_config_edb77aa6 function;
     class agents_skills_ui_styling_scripts_tailwind_config_88c6c620 function;
     class agents_skills_ui_styling_scripts_tailwind_config_be35801a function;
     class agents_skills_ui_styling_scripts_tailwind_config_ff7caa88 function;
-    class backend_src_main_std_diameters_ec6fa987 klass;
-    class backend_src_main_app_b959e2c5 function;
-    class backend_src_main_authmiddleware_d603c562 function;
     class backend_src_main_connectdb_b60f44d1 function;
-    class backend_src_main_ensurescraprules_1c3d1075 function;
-    class backend_src_main_generatetokens_0f4804ab function;
-    class backend_src_main_getsinglebarweight_cee966e9 function;
-    class backend_src_main_e825e778 module;
+    class backend_src_main_requirepermission_2f203678 function;
+    class backend_src_main_startserver_ba5d5674 function;
+    class backend_src_main_canaccess_35c9340c function;
+    class backend_src_main_seeddefaults_81b569a2 function;
+    class frontend_src_app_7da8908b ui;
+    class frontend_src_pages_superadmindashboard_superadmi_d43850e6 ui;
+    class frontend_src_pages_superadminloginpage_superadmi_186b02d2 ui;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1817,14 +1820,14 @@ flowchart LR
 <tr><td><code>ui-styling/references/shadcn-components.md</code></td><td>33 nodes</td></tr>
 <tr><td><code>skills/ui-styling/SKILL.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>skills/design-system/SKILL.md</code></td><td>23 nodes</td></tr>
+<tr><td><code>backend/src/main.ts</code></td><td>21 nodes</td></tr>
 <tr><td><code>design/references/design-routing.md</code></td><td>20 nodes</td></tr>
 <tr><td><code>ui-styling/scripts/tailwind_config_gen.py</code></td><td>19 nodes</td></tr>
-<tr><td><code>skills/banner-design/SKILL.md</code></td><td>14 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x249, explains x10, calls x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x269, calls x14, imports x13, explains x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2177,12 +2180,12 @@ flowchart LR
 
 <!-- ====== 8. Serving API ====== -->
 <h2 id="serve-api">8. Serving API</h2>
-<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 160 nodes and 248 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 184 nodes and 283 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (160 nodes, 248 edges)
+    %% Section: Serving API (184 nodes, 283 edges)
     subgraph serve_api_design_system_scripts_slide_search_cor_25be5dc3["design-system/scripts/slide_search_core.py"]
         agents_skills_design_system_scripts_slide_search_03dc6de6("search()<br/><small>design-system/scripts/slide_search_core.py</small>")
         agents_skills_design_system_scripts_slide_search_74348786("search_all()<br/><small>design-system/scripts/slide_search_core.py</small>")
@@ -2228,7 +2231,7 @@ flowchart LR
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_03dc6de6
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_74348786
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_33fcfc39
-    %% Omitted for readability: 142 nodes, 0 edges
+    %% Omitted for readability: 166 nodes, 0 edges
     class agents_skills_design_system_scripts_slide_search_03dc6de6 function;
     class agents_skills_design_system_scripts_slide_search_74348786 function;
     class agents_skills_design_system_scripts_slide_search_33fcfc39 function;
@@ -2522,12 +2525,12 @@ flowchart LR
 <tr><td><code>scripts/cip/generate.py</code></td><td>14 nodes</td></tr>
 <tr><td><code>ui-ux-pro-max/scripts/core.py</code></td><td>11 nodes</td></tr>
 <tr><td><code>scripts/cip/render-html.py</code></td><td>8 nodes</td></tr>
-<tr><td><code>design-system/scripts/search-slides.py</code></td><td>6 nodes</td></tr>
+<tr><td><code>src/utils/api.js</code></td><td>7 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: calls x84, explains x71, contains x52, imports x20. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x85, explains x71, contains x69, imports x31. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4916,69 +4919,70 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around agents, skills, references, design, mostly in ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md, design/references/logo-prompt-engineering.md. This section covers 737 nodes and 759 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around agents, skills, references, design, mostly in ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md, design/references/logo-prompt-engineering.md. This section covers 754 nodes and 758 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (737 nodes, 759 edges)
-    subgraph other_src_batches_batches_service_ts_a125da9f["src/batches/batches.service.ts"]
-        backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_d075144b("commitBatch()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_7b0e3880("constructor()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_6df6e253("deleteBatch()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_a5728714("getBatchHistory()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_aae40981("getBatchScrapRecords()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_f01c5444("getDashboardStats()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_d6fe95bf("updateBatch()<br/><small>src/batches/batches.service.ts</small>")
+    %% Section: Other (754 nodes, 758 edges)
+    subgraph other_src_inventory_inventory_service_ts_80796eac["src/inventory/inventory.service.ts"]
+        backend_src_inventory_inventory_service_inventor_9c4e3c1a("InventoryService<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_64a2cc8c("constructor()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_45e75a8f("deleteStockItem()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_6d6b0870("getInventory()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_9068537b("getLedger()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_43ceebdf("getScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_1819b19c("getSingleBarWeight()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_440c1b98("inwardEntry()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_b1e6121d("updateScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
     end
-    subgraph other_src_batches_batches_controller_ts_0ac29545["src/batches/batches.controller.ts"]
-        backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_c52c26f7("commitBatch()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_26e1e091("getBatchHistory()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_a3855cd0("getDashboardStats()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_219fd2fa("getBatchScrapRecords()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_358428a0("updateBatch()<br/><small>src/batches/batches.controller.ts</small>")
+    subgraph other_src_inventory_inventory_controller_ts_3c6b9196["src/inventory/inventory.controller.ts"]
+        backend_src_inventory_inventory_controller_inven_1a33e367("InventoryController<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_b9e9de2a("getInventory()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_67405f62("inwardEntry()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_4ee6fb47("getScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_9f307d0d("updateScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
     end
-    agents_skills_brand_scripts_sync_brand_to_tokens_18717bd4("generateColorScale()<br/><small>brand/scripts/sync-brand-to-tokens.cjs</small>")
-    backend_src_inventory_inventory_controller_inven_1a33e367("InventoryController<br/><small>src/inventory/inventory.controller.ts</small>")
-    backend_src_inventory_inventory_service_inventor_9c4e3c1a("InventoryService<br/><small>src/inventory/inventory.service.ts</small>")
+    backend_src_app_controller_spec_8af750bc("app.controller.spec.ts")
+    backend_src_app_module_97b3bc74("app.module.ts")
+    frontend_src_pages_signinpage_signinpage_30245039("SignInPage.jsx")
     agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933("BM25<br/><small>ui-ux-pro-max/scripts/core.py</small>")
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d075144b
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_7b0e3880
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_6df6e253
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_a5728714
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_aae40981
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_f01c5444
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d6fe95bf
-    backend_src_batches_batches_service_batchesservi_d075144b -->|calls| backend_src_batches_batches_controller_batchesco_c52c26f7
-    backend_src_batches_batches_service_batchesservi_a5728714 -->|calls| backend_src_batches_batches_controller_batchesco_26e1e091
-    backend_src_batches_batches_service_batchesservi_f01c5444 -->|calls| backend_src_batches_batches_controller_batchesco_a3855cd0
-    backend_src_batches_batches_service_batchesservi_aae40981 -->|calls| backend_src_batches_batches_controller_batchesco_219fd2fa
-    backend_src_batches_batches_service_batchesservi_d6fe95bf -->|calls| backend_src_batches_batches_controller_batchesco_358428a0
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_26e1e091
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_219fd2fa
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_a3855cd0
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_358428a0
-    %% Omitted for readability: 719 nodes, 0 edges
-    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
-    class backend_src_batches_batches_service_batchesservi_d075144b function;
-    class backend_src_batches_batches_service_batchesservi_7b0e3880 function;
-    class backend_src_batches_batches_service_batchesservi_6df6e253 function;
-    class backend_src_batches_batches_service_batchesservi_a5728714 function;
-    class backend_src_batches_batches_service_batchesservi_aae40981 function;
-    class backend_src_batches_batches_service_batchesservi_f01c5444 function;
-    class backend_src_batches_batches_service_batchesservi_d6fe95bf function;
-    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
-    class backend_src_batches_batches_controller_batchesco_c52c26f7 function;
-    class backend_src_batches_batches_controller_batchesco_26e1e091 function;
-    class backend_src_batches_batches_controller_batchesco_a3855cd0 function;
-    class backend_src_batches_batches_controller_batchesco_219fd2fa function;
-    class backend_src_batches_batches_controller_batchesco_358428a0 function;
-    class agents_skills_brand_scripts_sync_brand_to_tokens_18717bd4 function;
-    class backend_src_inventory_inventory_controller_inven_1a33e367 klass;
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_64a2cc8c
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_45e75a8f
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_6d6b0870
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_9068537b
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_43ceebdf
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_1819b19c
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_440c1b98
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_b1e6121d
+    backend_src_inventory_inventory_service_inventor_1819b19c -->|calls| backend_src_inventory_inventory_service_inventor_440c1b98
+    backend_src_inventory_inventory_service_inventor_6d6b0870 -->|calls| backend_src_inventory_inventory_controller_inven_b9e9de2a
+    backend_src_inventory_inventory_service_inventor_440c1b98 -->|calls| backend_src_inventory_inventory_controller_inven_67405f62
+    backend_src_inventory_inventory_service_inventor_43ceebdf -->|calls| backend_src_inventory_inventory_controller_inven_4ee6fb47
+    backend_src_inventory_inventory_service_inventor_43ceebdf -->|calls| backend_src_inventory_inventory_service_inventor_b1e6121d
+    backend_src_inventory_inventory_service_inventor_b1e6121d -->|calls| backend_src_inventory_inventory_controller_inven_9f307d0d
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_b9e9de2a
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_4ee6fb47
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_67405f62
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_9f307d0d
+    %% Omitted for readability: 736 nodes, 0 edges
     class backend_src_inventory_inventory_service_inventor_9c4e3c1a klass;
+    class backend_src_inventory_inventory_service_inventor_64a2cc8c function;
+    class backend_src_inventory_inventory_service_inventor_45e75a8f function;
+    class backend_src_inventory_inventory_service_inventor_6d6b0870 function;
+    class backend_src_inventory_inventory_service_inventor_9068537b function;
+    class backend_src_inventory_inventory_service_inventor_43ceebdf function;
+    class backend_src_inventory_inventory_service_inventor_1819b19c function;
+    class backend_src_inventory_inventory_service_inventor_440c1b98 function;
+    class backend_src_inventory_inventory_service_inventor_b1e6121d function;
+    class backend_src_inventory_inventory_controller_inven_1a33e367 klass;
+    class backend_src_inventory_inventory_controller_inven_b9e9de2a function;
+    class backend_src_inventory_inventory_controller_inven_67405f62 function;
+    class backend_src_inventory_inventory_controller_inven_4ee6fb47 function;
+    class backend_src_inventory_inventory_controller_inven_9f307d0d function;
+    class backend_src_app_controller_spec_8af750bc test;
+    class backend_src_app_module_97b3bc74 module;
+    class frontend_src_pages_signinpage_signinpage_30245039 ui;
     class agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 klass;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -5235,11 +5239,11 @@ flowchart LR
 </tr>
 <tr>
   <td>30</td>
-  <td><code>BatchesService</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
-  <td><span class="tag tag-async">Async</span></td>
+  <td><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>batches.controller.ts</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small><br><code>commitBatch()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>constructor()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br>+5 more</td>
-  <td>BatchesService node in src/batches/batches.service.ts.</td>
+  <td><code>constructor()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br>+5 more</td>
+  <td>InventoryService node in src/inventory/inventory.service.ts.</td>
 </tr>
 </table>
 
@@ -5260,7 +5264,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x608, calls x54, references x44, method x33. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x625, calls x51, references x25, method x22. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5271,18 +5275,18 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>2409</td></tr>
-      <tr><td>Edges</td><td>2887</td></tr>
+      <tr><td>Nodes</td><td>2441</td></tr>
+      <tr><td>Edges</td><td>2930</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>199</td></tr>
+      <tr><td>Communities</td><td>194</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>2869</td></tr>
-      <tr><td>INFERRED</td><td>18</td></tr>
+      <tr><td>EXTRACTED</td><td>2910</td></tr>
+      <tr><td>INFERRED</td><td>20</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
   </div>
@@ -5290,7 +5294,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-08-24 12:49 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-08-24 15:26 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

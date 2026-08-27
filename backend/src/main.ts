@@ -781,6 +781,47 @@ app.put('/api/developer/companies/:id/status', developerAuthMiddleware, async (r
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
+app.delete('/api/developer/companies/:id', developerAuthMiddleware, async (req: any, res) => {
+  try {
+    const { password } = req.body;
+    if (!password) return res.status(400).json({ message: 'Developer password is required for this action' });
+    
+    const db = await connectDB();
+    const dev = await db.collection('platformusers').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!dev || !await bcrypt.compare(password, dev.passwordHash)) {
+      return res.status(403).json({ message: 'Invalid developer password' });
+    }
+
+    const companyId = new ObjectId(req.params.id);
+    const company = await db.collection('companies').findOne({ _id: companyId });
+    if (!company) return res.status(404).json({ message: 'Company not found' });
+
+    await db.collection('users').deleteMany({ companyId });
+    await db.collection('roles').deleteMany({ companyId });
+    await db.collection('subscriptions').deleteMany({ companyId });
+    await db.collection('inventory').deleteMany({ companyId });
+    await db.collection('batches').deleteMany({ companyId });
+    await db.collection('ledger').deleteMany({ companyId });
+    await db.collection('scrapsales').deleteMany({ companyId });
+    await db.collection('scraprules').deleteMany({ companyId });
+    await db.collection('projects').deleteMany({ companyId });
+    await db.collection('auditlogs').deleteMany({ companyId });
+    await db.collection('companies').deleteOne({ _id: companyId });
+
+    await logAudit(db, { 
+      actorId: req.user.sub, 
+      actorType: 'developer', 
+      companyId: null, 
+      action: 'FIRM_HARD_DELETED', 
+      resource: 'companies', 
+      resourceId: companyId.toString(), 
+      previousValue: { name: company.name } 
+    });
+
+    res.json({ message: 'Company and all associated data permanently deleted' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
 // -- Subscription Packages Management --
 app.get('/api/developer/packages', developerAuthMiddleware, async (req: any, res) => {
   try {
@@ -842,18 +883,25 @@ app.get('/api/developer/subscriptions', developerAuthMiddleware, async (req: any
 
 app.post('/api/developer/subscriptions', developerAuthMiddleware, async (req: any, res) => {
   try {
-    const { companyId, packageId, status } = req.body;
+    const { companyId, packageId, status, duration } = req.body;
     if (!companyId || !packageId) return res.status(400).json({ message: 'companyId and packageId required' });
+    
+    let endDate = null;
+    if (duration === '1_month') endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    else if (duration === '6_months') endDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+    else if (duration === '1_year') endDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+    else if (duration === '2_years') endDate = new Date(Date.now() + 730 * 24 * 60 * 60 * 1000);
+
     const db = await connectDB();
     // Deactivate existing active subscription
     await db.collection('subscriptions').updateMany({ companyId: new ObjectId(companyId), status: { $in: ['active', 'trial'] } }, { $set: { status: 'expired', updatedAt: new Date() } });
     const result = await db.collection('subscriptions').insertOne({
       companyId: new ObjectId(companyId), packageId: new ObjectId(packageId),
-      status: status || 'active', startDate: new Date(), endDate: null,
+      status: status || 'active', startDate: new Date(), endDate,
       moduleOverrides: {}, featureOverrides: {},
       createdAt: new Date(), updatedAt: new Date()
     });
-    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', companyId, action: 'SUBSCRIPTION_ASSIGNED', resource: 'subscriptions', resourceId: result.insertedId.toString(), newValue: { packageId, status } });
+    await logAudit(db, { actorId: req.user.sub, actorType: 'developer', companyId, action: 'SUBSCRIPTION_ASSIGNED', resource: 'subscriptions', resourceId: result.insertedId.toString(), newValue: { packageId, status, duration } });
     res.status(201).json({ id: result.insertedId.toString(), message: 'Subscription assigned' });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
@@ -1052,6 +1100,40 @@ app.get('/api/permissions/effective', authMiddleware, async (req: any, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
+// TENANT STORAGE
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/companies/storage', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!userDoc || !userDoc.companyId) return res.status(400).json({ message: 'Company not found' });
+    const companyId = new ObjectId(userDoc.companyId);
+    
+    let totalBytes = 0;
+    const collections = ['inventory', 'batches', 'ledger', 'scrapsales', 'scraprules', 'projects'];
+    for (const collName of collections) {
+      const docs = await db.collection(collName).find({ companyId: new ObjectId(companyId) }).toArray();
+      if (docs.length > 0) {
+        totalBytes += Buffer.byteLength(JSON.stringify(docs), 'utf8');
+      }
+    }
+    const users = await db.collection('users').find({ companyId: new ObjectId(companyId) }).toArray();
+    totalBytes += Buffer.byteLength(JSON.stringify(users), 'utf8');
+
+    const consumedMB = totalBytes / (1024 * 1024);
+    
+    const subscription = await db.collection('subscriptions').findOne({ companyId: new ObjectId(companyId), status: { $in: ['active', 'trial'] } });
+    let maxMB = 100;
+    if (subscription) {
+      const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
+      if (pkg?.limits?.maxStorageMB) maxMB = pkg.limits.maxStorageMB;
+    }
+
+    res.json({ consumedMB, maxMB, totalBytes });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
 // BUILDER FIRM ADMIN — ROLE MANAGEMENT
 // ══════════════════════════════════════════════════════════════════════════════
 app.get('/api/roles', authMiddleware, async (req: any, res) => {
@@ -1061,13 +1143,36 @@ app.get('/api/roles', authMiddleware, async (req: any, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     // Get system roles + company-specific roles
-    const roles = await db.collection('roles').find({
+    let roles = await db.collection('roles').find({
       $or: [
         { companyId: null, isSystem: true },
         { companyId: user.companyId }
       ],
       isActive: { $ne: false }
-    }).sort({ isSystem: -1, name: 1 }).toArray();
+    }).toArray();
+
+    const ROLE_POWER_ORDER = [
+      'Admin',
+      'Project Manager',
+      'Senior Site Engineer',
+      'Site Supervisor',
+      'Junior Site Engineer',
+      'Purchase Manager',
+      'Accountant',
+      'Sales Executive',
+      'Store Keeper'
+    ];
+
+    roles.sort((a, b) => {
+      if (a.isSystem && b.isSystem) {
+        const idxA = ROLE_POWER_ORDER.indexOf(a.name);
+        const idxB = ROLE_POWER_ORDER.indexOf(b.name);
+        return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+      }
+      if (a.isSystem) return -1;
+      if (b.isSystem) return 1;
+      return a.name.localeCompare(b.name);
+    });
 
     // Add user count per role
     const enriched = await Promise.all(roles.map(async (r: any) => {

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setThemeMode, setThemeColor, setDefaults } from '../../store/slices/settingsSlice';
-import { Save, Palette, Sliders, Moon, Sun, Settings } from 'lucide-react';
+import { Save, Palette, Sliders, Moon, Sun, Settings, Database } from 'lucide-react';
+import { companyApi } from '../../utils/api';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -11,6 +12,22 @@ export default function SettingsPage() {
   const [kerf, setKerf] = useState(settings.defaultKerf);
   const [trimMargin, setTrimMargin] = useState(settings.defaultTrimMargin);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [storageData, setStorageData] = useState(null);
+  const [loadingStorage, setLoadingStorage] = useState(true);
+
+  useEffect(() => {
+    const fetchStorage = async () => {
+      try {
+        const res = await companyApi.getStorage();
+        setStorageData(res);
+      } catch (err) {
+        console.error("Failed to fetch storage:", err);
+      } finally {
+        setLoadingStorage(false);
+      }
+    };
+    fetchStorage();
+  }, []);
 
   const handleSaveDefaults = (e) => {
     e.preventDefault();
@@ -130,6 +147,39 @@ export default function SettingsPage() {
               <span className="settings-save-success">Settings saved successfully!</span>
             )}
           </form>
+        </div>
+
+        {/* Storage Stats Card */}
+        <div className="card settings-card">
+          <h3 className="settings-card-title">
+            <Database size={18} style={{ marginRight: '8px' }} /> Subscription & Storage
+          </h3>
+          <p className="settings-card-desc">Monitor your organization's database storage usage.</p>
+          
+          <div className="setting-group" style={{ marginTop: '20px' }}>
+            {loadingStorage ? (
+              <p>Loading storage statistics...</p>
+            ) : storageData ? (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+                  <span>Consumed Storage</span>
+                  <span>{storageData.consumedMB < 0.01 ? '< 0.01' : storageData.consumedMB.toFixed(2)} MB / {storageData.maxMB} MB</span>
+                </div>
+                <div style={{ width: '100%', height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ 
+                    height: '100%', 
+                    background: (storageData.consumedMB / storageData.maxMB) > 0.9 ? '#ef4444' : 'var(--primary-color)', 
+                    width: `${Math.min((storageData.consumedMB / storageData.maxMB) * 100, 100)}%` 
+                  }}></div>
+                </div>
+                <p className="field-hint" style={{ marginTop: '12px' }}>
+                  Approximate raw data size: {storageData.totalBytes.toLocaleString()} bytes. Storage is calculated based on database records and history logs.
+                </p>
+              </div>
+            ) : (
+              <p style={{ color: '#ef4444' }}>Unable to load storage details.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

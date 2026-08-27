@@ -1,16 +1,16 @@
-# Graph Report - RebarOptima  (2026-08-27)
+# Graph Report - RebarOptima  (2026-08-24)
 
 ## Corpus Check
-- 172 files · ~230,557 words
+- 172 files · ~230,536 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2441 nodes · 2923 edges · 196 communities (142 shown, 54 thin omitted)
+- 2441 nodes · 2930 edges · 194 communities (142 shown, 52 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9ad78081`
+- Built from commit: `53805ca8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -74,7 +74,7 @@
 - devDependencies
 - Canvas Design System
 - Prerequisites
-- shadow
+- sm
 - nest-cli.json
 - lg
 - auth.module.ts
@@ -184,9 +184,6 @@
 - React + Vite
 - .oxlintrc.json
 - SettingsPage.jsx
-- default
-- md
-- BatchHistoryPage.jsx
 - .__init__
 - rules/graphify.md
 - slides-create.md
@@ -201,6 +198,7 @@
 - .test_base_config_structure
 - .test_default_content_paths_react
 - workflows/graphify.md
+- none
 - PROJECT_AI_PROMPT.md
 - dotenv
 - eslint-config-prettier
@@ -233,11 +231,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (196 total, 54 thin omitted)
+## Communities (194 total, 52 thin omitted)
 
 ### Community 0 - "App.jsx"
-Cohesion: 0.19
-Nodes (5): App(), authSlice, routingSlice, store, developerApi
+Cohesion: 0.18
+Nodes (8): App(), SideNavbar(), SuperadminDashboard(), SuperadminLoginPage(), authSlice, routingSlice, store, developerApi
 
 ### Community 1 - "gray"
 Cohesion: 0.05
@@ -432,8 +430,8 @@ Cohesion: 0.22
 Nodes (9): jest, collectCoverageFrom, coverageDirectory, rootDir, testEnvironment, testRegex, transform, ^.+\\.(t|j)s$ (+1 more)
 
 ### Community 49 - "radius"
-Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, none, none
+Cohesion: 0.19
+Nodes (13): $type, $value, $type, $value, $type, $value, radius, shadow (+5 more)
 
 ### Community 50 - "._generate_javascript"
 Cohesion: 0.29
@@ -471,9 +469,9 @@ Nodes (35): 1. Visual Communication First, 2. Minimal Text Integration, 3. Exper
 Cohesion: 0.06
 Nodes (33): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+25 more)
 
-### Community 59 - "shadow"
-Cohesion: 0.47
-Nodes (6): sm, shadow, sm, sm, $type, $value
+### Community 59 - "sm"
+Cohesion: 0.60
+Nodes (5): sm, sm, sm, $type, $value
 
 ### Community 60 - "nest-cli.json"
 Cohesion: 0.33
@@ -550,6 +548,10 @@ Nodes (24): Accessibility, Accessibility Requirements, ARIA States, Color Contra
 ### Community 89 - "UI Styling Skill"
 Cohesion: 0.08
 Nodes (24): Accessibility Patterns, Alternative: Tailwind-Only Setup, Best Practices, Common Patterns, Component Layer: shadcn/ui, Component Library Guide, Component + Styling Setup, Core Stack (+16 more)
+
+### Community 116 - "permissionsSlice.js"
+Cohesion: 0.15
+Nodes (4): SignInPage(), SignUpPage(), permissionsSlice, authApi
 
 ### Community 117 - "xl"
 Cohesion: 0.67
@@ -705,7 +707,7 @@ Nodes (8): 1. Project Purpose & Core Domain, 2. Codebase Architecture, 3. Databa
 
 ### Community 156 - "api.js"
 Cohesion: 0.23
-Nodes (6): DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, permissionsApi, rolesApi, usersApi
+Nodes (8): DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, RolesPermissionsPage(), UserManagementPage(), permissionsApi, rolesApi, usersApi
 
 ### Community 157 - "Ponytail Help"
 Cohesion: 0.25
@@ -740,8 +742,8 @@ Cohesion: 0.40
 Nodes (4): Brand Guidelines Template, Document Structure, Extractable Fields, Usage
 
 ### Community 165 - "react"
-Cohesion: 0.19
-Nodes (4): plugins, authApi, oxc, react
+Cohesion: 0.29
+Nodes (5): plugins, BatchHistoryPage(), getTextStyle(), oxc, react
 
 ### Community 166 - "NewBatchPage.jsx"
 Cohesion: 0.43
@@ -771,25 +773,21 @@ Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 Cohesion: 0.33
 Nodes (5): rules, react/only-export-components, react/rules-of-hooks, $schema, warn
 
-### Community 175 - "default"
+### Community 193 - "none"
 Cohesion: 0.67
-Nodes (4): $type, $value, default, default
-
-### Community 176 - "md"
-Cohesion: 0.67
-Nodes (4): $type, $value, md, md
+Nodes (4): $type, $value, none, none
 
 ## Knowledge Gaps
 - **1126 isolated node(s):** `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES`, `AccessResult` (+1121 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **52 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`, `shadow`?**
+- **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `fontSize` connect `fontSize` to `xl`, `shadow`, `primitive`, `lg`?**
+- **Why does `fontSize` connect `fontSize` to `xl`, `sm`, `primitive`, `lg`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._

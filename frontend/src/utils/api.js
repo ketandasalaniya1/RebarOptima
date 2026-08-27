@@ -89,6 +89,7 @@ export const developerApi = {
   getCompanies: () => apiRequest('/developer/companies'),
   getCompany: (id) => apiRequest(`/developer/companies/${id}`),
   updateCompanyStatus: (id, status) => apiRequest(`/developer/companies/${id}/status`, { method: 'PUT', body: { status } }),
+  deleteCompany: (id, password) => apiRequest(`/developer/companies/${id}`, { method: 'DELETE', body: { password } }),
   // Packages
   getPackages: () => apiRequest('/developer/packages'),
   createPackage: (dto) => apiRequest('/developer/packages', { method: 'POST', body: dto }),
@@ -113,7 +114,21 @@ export const developerApi = {
 
 // Roles API
 export const rolesApi = {
-  getRoles: () => apiRequest('/roles'),
+  getRoles: async () => {
+    const roles = await apiRequest('/roles');
+    if (!Array.isArray(roles)) return roles;
+    const order = ['Admin', 'Project Manager', 'Senior Site Engineer', 'Site Supervisor', 'Junior Site Engineer', 'Purchase Manager', 'Accountant', 'Sales Executive', 'Store Keeper'];
+    return roles.sort((a, b) => {
+      if (a.isSystem && b.isSystem) {
+        const idxA = order.indexOf(a.name);
+        const idxB = order.indexOf(b.name);
+        return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+      }
+      if (a.isSystem) return -1;
+      if (b.isSystem) return 1;
+      return a.name.localeCompare(b.name);
+    });
+  },
   createRole: (dto) => apiRequest('/roles', { method: 'POST', body: dto }),
   updateRole: (id, dto) => apiRequest(`/roles/${id}`, { method: 'PUT', body: dto }),
   deleteRole: (id) => apiRequest(`/roles/${id}`, { method: 'DELETE' }),
@@ -132,4 +147,9 @@ export const usersApi = {
 export const permissionsApi = {
   getEffective: () => apiRequest('/permissions/effective'),
   getModules: () => apiRequest('/modules'),
+};
+
+// Company API
+export const companyApi = {
+  getStorage: () => apiRequest('/companies/storage'),
 };

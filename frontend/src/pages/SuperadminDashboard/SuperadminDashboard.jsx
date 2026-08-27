@@ -6,7 +6,7 @@ import {
   ShieldAlert, Users, CreditCard, Database, Search, CheckCircle, XCircle, 
   LogOut, Clock, Cpu, Building2, Package, ToggleLeft, ToggleRight,
   ChevronDown, ChevronRight, AlertTriangle, Activity, FileText, RefreshCw,
-  Plus, Edit3, Eye, Layers
+  Plus, Edit3, Eye, Layers, Trash2
 } from 'lucide-react';
 import { developerApi } from '../../utils/api';
 import './SuperadminDashboard.css';
@@ -27,6 +27,14 @@ export default function SuperadminDashboard() {
   const [companyDetail, setCompanyDetail] = useState(null);
   const [showAssignSub, setShowAssignSub] = useState(null);
   const [selectedPkgId, setSelectedPkgId] = useState('');
+  const [selectedDuration, setSelectedDuration] = useState('lifetime');
+  const [showDeleteModal, setShowDeleteModal] = useState(null);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [showFinalWarning, setShowFinalWarning] = useState(false);
+  const [modalError, setModalError] = useState('');
+  const [expandedSubHistory, setExpandedSubHistory] = useState(null);
+  const [showEditPkgModal, setShowEditPkgModal] = useState(null);
+  const [editPkgData, setEditPkgData] = useState(null);
 
   useEffect(() => { loadData(); }, []);
 
@@ -84,9 +92,10 @@ export default function SuperadminDashboard() {
     if (!selectedPkgId) return;
     setActionLoading(`sub-${companyId}`);
     try {
-      await developerApi.createSubscription({ companyId, packageId: selectedPkgId, status: 'active' });
+      await developerApi.createSubscription({ companyId, packageId: selectedPkgId, status: 'active', duration: selectedDuration });
       setShowAssignSub(null);
       setSelectedPkgId('');
+      setSelectedDuration('lifetime');
       await loadData();
     } catch (err) { setError(err.message); }
     finally { setActionLoading(''); }
@@ -99,7 +108,73 @@ export default function SuperadminDashboard() {
     } catch (err) { setError(err.message); }
   };
 
+  const handleSavePackage = async () => {
+    setActionLoading(`save-pkg-${showEditPkgModal}`);
+    try {
+      await developerApi.updatePackage(showEditPkgModal, {
+        displayName: editPkgData.displayName,
+        description: editPkgData.description,
+        limits: {
+          ...editPkgData.limits,
+          maxUsers: editPkgData.maxUsers === '' ? null : parseInt(editPkgData.maxUsers, 10)
+        }
+      });
+      setShowEditPkgModal(null);
+      await loadData();
+    } catch (err) { setError(err.message); }
+    finally { setActionLoading(''); }
+  };
+
+  const handlePasswordSubmit = () => {
+    setModalError('');
+    if (!deletePassword) {
+      setModalError('Developer password is required');
+      return;
+    }
+    setShowFinalWarning(true);
+  };
+
+  const handleFinalDelete = async () => {
+    setActionLoading(`del-${showDeleteModal}`);
+    try {
+      await developerApi.deleteCompany(showDeleteModal, deletePassword);
+      setShowDeleteModal(null);
+      setDeletePassword('');
+      setShowFinalWarning(false);
+      setModalError('');
+      await loadData();
+    } catch (err) {
+      setModalError(err.message);
+      setShowFinalWarning(false);
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   const filteredCompanies = companies.filter(c => c.name?.toLowerCase().includes(search.toLowerCase()));
+  const companyToDelete = companies.find(c => c.id === showDeleteModal);
+  const companyToDeleteName = companyToDelete ? companyToDelete.name : 'this firm';
+
+  const subGroups = [];
+  const compMap = {};
+  subscriptions.forEach(s => {
+    if (!compMap[s.companyId]) {
+      compMap[s.companyId] = { companyId: s.companyId, companyName: s.companyName, active: null, history: [] };
+      subGroups.push(compMap[s.companyId]);
+    }
+    if (s.status === 'active' || s.status === 'trial') {
+      compMap[s.companyId].active = s;
+    } else {
+      compMap[s.companyId].history.push(s);
+    }
+  });
+
+  subGroups.forEach(g => {
+    if (!g.active && g.history.length > 0) {
+      g.active = g.history[0];
+      g.history = g.history.slice(1);
+    }
+  });
 
   const tabs = [
     { id: 'companies', label: 'Builder Firms', icon: <Building2 size={16} /> },
@@ -109,9 +184,20 @@ export default function SuperadminDashboard() {
   ];
 
   const MODULE_LABELS = {
-    overview: 'Overview', inventory: 'Inventory', optimizer: 'Optimizer',
-    history: 'Batch History', ledger: 'Ledger', scrapSales: 'Scrap Sales',
-    settings: 'Settings', users: 'User Mgmt', roles: 'Roles & Perms'
+    overview: 'Dashboard Analytics', 
+    inventory: 'Rebar Inventory', 
+    optimizer: 'Cut-Length Optimizer',
+    history: 'Historical Batch Tracking', 
+    ledger: 'Stock Ledger & Auditing', 
+    scrapSales: 'Scrap Management & Sales',
+    settings: 'Firm Configuration', 
+    users: 'Multi-User Management', 
+    roles: 'Custom Roles & Permissions',
+    // Future Scope
+    attendance: 'Attendance (Future)',
+    generalInventory: 'General Materials Inventory (Future)',
+    tasks: 'Task Management (Future)',
+    sales: 'Sales Department (Future)'
   };
 
   return (
@@ -234,10 +320,17 @@ export default function SuperadminDashboard() {
                                         <option key={p.id} value={p.id}>{p.displayName}</option>
                                       ))}
                                     </select>
+                                    <select value={selectedDuration} onChange={e => setSelectedDuration(e.target.value)}>
+                                      <option value="1_month">1 Month</option>
+                                      <option value="6_months">6 Months</option>
+                                      <option value="1_year">1 Year</option>
+                                      <option value="2_years">2 Years</option>
+                                      <option value="lifetime">Lifetime</option>
+                                    </select>
                                     <button className="dev-btn-sm green" onClick={() => handleAssignSubscription(c.id)} disabled={actionLoading === `sub-${c.id}`}>
                                       {actionLoading === `sub-${c.id}` ? '...' : 'Assign'}
                                     </button>
-                                    <button className="dev-btn-sm" onClick={() => { setShowAssignSub(null); setSelectedPkgId(''); }}>✕</button>
+                                    <button className="dev-btn-sm" onClick={() => { setShowAssignSub(null); setSelectedPkgId(''); setSelectedDuration('lifetime'); }}>✕</button>
                                   </div>
                                 )}
                               </td>
@@ -258,6 +351,9 @@ export default function SuperadminDashboard() {
                                   )}
                                   <button className="dev-btn-sm" onClick={() => { setShowAssignSub(showAssignSub === c.id ? null : c.id); setSelectedPkgId(''); }}>
                                     <CreditCard size={12} /> Sub
+                                  </button>
+                                  <button className="dev-btn-sm warning" onClick={() => { setShowDeleteModal(c.id); setDeletePassword(''); setShowFinalWarning(false); setModalError(''); }} title="Hard Delete Firm">
+                                    <Trash2 size={12} />
                                   </button>
                                 </div>
                               </td>
@@ -325,7 +421,16 @@ export default function SuperadminDashboard() {
                     {packages.map(pkg => (
                       <div key={pkg.id} className={`dev-package-card ${!pkg.isActive ? 'inactive' : ''}`}>
                         <div className="dev-pkg-header">
-                          <h4>{pkg.displayName || pkg.name}</h4>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <h4>{pkg.displayName || pkg.name}</h4>
+                            <button className="dev-expand-btn" onClick={() => {
+                              setShowEditPkgModal(pkg.id);
+                              setEditPkgData({
+                                ...pkg,
+                                maxUsers: pkg.limits?.maxUsers !== undefined && pkg.limits?.maxUsers !== null ? pkg.limits.maxUsers : ''
+                              });
+                            }}><Edit3 size={14} /></button>
+                          </div>
                           <span className={`dev-status-badge ${pkg.isActive ? 'active' : 'inactive'}`}>
                             {pkg.isActive ? 'Active' : 'Inactive'}
                           </span>
@@ -377,33 +482,73 @@ export default function SuperadminDashboard() {
                           <th>Package</th>
                           <th>Status</th>
                           <th>Start Date</th>
+                          <th>End Date</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {subscriptions.map(s => (
-                          <tr key={s.id}>
-                            <td className="dev-bold">{s.companyName}</td>
-                            <td><span className="dev-plan-badge">{s.packageName}</span></td>
-                            <td><span className={`dev-status-badge ${s.status}`}>{s.status}</span></td>
-                            <td className="dev-muted">{s.startDate ? new Date(s.startDate).toLocaleDateString() : '—'}</td>
-                            <td>
-                              <div className="dev-action-group">
-                                {s.status === 'active' && (
-                                  <button className="dev-btn-sm warning" onClick={async () => {
-                                    try { await developerApi.updateSubscription(s.id, { status: 'suspended' }); loadData(); } catch (err) { setError(err.message); }
-                                  }}>Suspend</button>
+                        {subGroups.map(g => (
+                          <React.Fragment key={g.companyId}>
+                            <tr className={expandedSubHistory === g.companyId ? 'expanded-row' : ''}>
+                              <td className="dev-bold">
+                                {g.history.length > 0 ? (
+                                  <button className="dev-expand-btn" onClick={() => setExpandedSubHistory(expandedSubHistory === g.companyId ? null : g.companyId)} style={{ display: 'inline', marginRight: '8px' }}>
+                                    {expandedSubHistory === g.companyId ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                  </button>
+                                ) : (
+                                  <span style={{ display: 'inline-block', width: '22px' }}></span>
                                 )}
-                                {s.status === 'suspended' && (
-                                  <button className="dev-btn-sm green" onClick={async () => {
-                                    try { await developerApi.updateSubscription(s.id, { status: 'active' }); loadData(); } catch (err) { setError(err.message); }
-                                  }}>Restore</button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
+                                {g.companyName}
+                              </td>
+                              {g.active ? (
+                                <>
+                                  <td><span className="dev-plan-badge">{g.active.packageName}</span></td>
+                                  <td><span className={`dev-status-badge ${g.active.status}`}>{g.active.status}</span></td>
+                                  <td className="dev-muted">{g.active.startDate ? new Date(g.active.startDate).toLocaleDateString() : '—'}</td>
+                                  <td className="dev-muted">{g.active.endDate ? new Date(g.active.endDate).toLocaleDateString() : 'Lifetime'}</td>
+                                  <td>
+                                    <div className="dev-action-group">
+                                      {g.active.status === 'active' && (
+                                        <button className="dev-btn-sm warning" onClick={async () => {
+                                          try { await developerApi.updateSubscription(g.active.id, { status: 'suspended' }); loadData(); } catch (err) { setError(err.message); }
+                                        }}>Suspend</button>
+                                      )}
+                                      {g.active.status === 'suspended' && (
+                                        <button className="dev-btn-sm green" onClick={async () => {
+                                          try { await developerApi.updateSubscription(g.active.id, { status: 'active' }); loadData(); } catch (err) { setError(err.message); }
+                                        }}>Restore</button>
+                                      )}
+                                    </div>
+                                  </td>
+                                </>
+                              ) : (
+                                <td colSpan={5} className="dev-muted">No active subscription</td>
+                              )}
+                            </tr>
+                            {expandedSubHistory === g.companyId && g.history.length > 0 && (
+                              <tr>
+                                <td colSpan={6} style={{ padding: '0' }}>
+                                  <div style={{ padding: '10px 20px 10px 40px', background: 'rgba(0,0,0,0.2)' }}>
+                                    <h4 style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px', marginTop: 0 }}>Historical Records</h4>
+                                    <table className="dev-table" style={{ background: 'transparent' }}>
+                                      <tbody>
+                                        {g.history.map(hs => (
+                                          <tr key={hs.id}>
+                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }}><span className="dev-plan-badge">{hs.packageName}</span></td>
+                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }}><span className={`dev-status-badge ${hs.status}`}>{hs.status}</span></td>
+                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }} className="dev-muted">{hs.startDate ? new Date(hs.startDate).toLocaleDateString() : '—'}</td>
+                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px' }} className="dev-muted">{hs.endDate ? new Date(hs.endDate).toLocaleDateString() : 'Lifetime'}</td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
                         ))}
-                        {subscriptions.length === 0 && (
+                        {subGroups.length === 0 && (
                           <tr><td colSpan={5} className="dev-empty">No subscriptions found</td></tr>
                         )}
                       </tbody>
@@ -458,6 +603,97 @@ export default function SuperadminDashboard() {
             </>
           )}
         </div>
+
+        {/* Delete Modal */}
+        {showDeleteModal && (
+          <div className="dev-modal-overlay">
+            <div className="dev-modal">
+              {!showFinalWarning ? (
+                <>
+                  <div className="dev-modal-header">
+                    <h3 className="danger-text"><AlertTriangle size={18} /> Delete Builder Firm</h3>
+                    <button className="dev-close-btn" onClick={() => setShowDeleteModal(null)}>×</button>
+                  </div>
+                  <div className="dev-modal-body">
+                    <p>You are about to hard-delete <span className="dev-highlight-name">{companyToDeleteName}</span>. This requires Developer authorization.</p>
+                    {modalError && (
+                      <div className="dev-alert danger" style={{ marginTop: '15px' }}>
+                        <AlertTriangle size={14} style={{ display: 'inline', marginRight: '5px' }} />
+                        {modalError}
+                      </div>
+                    )}
+                    <div className="dev-form-group">
+                      <label>Developer Password</label>
+                      <input 
+                        type="password" 
+                        value={deletePassword} 
+                        onChange={(e) => setDeletePassword(e.target.value)}
+                        placeholder="Enter master password"
+                      />
+                    </div>
+                  </div>
+                  <div className="dev-modal-footer">
+                    <button className="dev-btn cancel" onClick={() => { setShowDeleteModal(null); setModalError(''); }}>Cancel</button>
+                    <button className="dev-btn danger" onClick={handlePasswordSubmit}>Continue</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="dev-modal-header">
+                    <h3 className="danger-text"><AlertTriangle size={18} /> FINAL WARNING</h3>
+                    <button className="dev-close-btn" onClick={() => { setShowDeleteModal(null); setShowFinalWarning(false); }}>×</button>
+                  </div>
+                  <div className="dev-modal-body">
+                    <div className="dev-alert danger">
+                      <strong>WARNING: Data Destruction</strong>
+                      <p>This action will permanently wipe ALL data associated with this firm, including inventory, users, roles, and history. It is completely unrecoverable.</p>
+                    </div>
+                    <p style={{ marginTop: '15px', textAlign: 'center' }}>Are you absolutely sure you want to delete <span className="dev-highlight-name">{companyToDeleteName}</span>?</p>
+                  </div>
+                  <div className="dev-modal-footer">
+                    <button className="dev-btn cancel" onClick={() => setShowFinalWarning(false)}>No, Go Back</button>
+                    <button className="dev-btn danger" onClick={handleFinalDelete} disabled={actionLoading === `del-${showDeleteModal}`}>
+                      {actionLoading === `del-${showDeleteModal}` ? 'Deleting...' : 'YES, PERMANENTLY DELETE'}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Edit Package Modal */}
+        {showEditPkgModal && editPkgData && (
+          <div className="dev-modal-overlay">
+            <div className="dev-modal">
+              <div className="dev-modal-header">
+                <h3><Edit3 size={16} style={{ display: 'inline', marginRight: '8px' }} /> Edit Package: {editPkgData.displayName || editPkgData.name}</h3>
+                <button className="dev-close-btn" onClick={() => setShowEditPkgModal(null)}>×</button>
+              </div>
+              <div className="dev-modal-body">
+                <div className="dev-form-group" style={{ marginTop: '0' }}>
+                  <label>Package Name (Display)</label>
+                  <input type="text" value={editPkgData.displayName} onChange={e => setEditPkgData({...editPkgData, displayName: e.target.value})} />
+                </div>
+                <div className="dev-form-group">
+                  <label>Description</label>
+                  <input type="text" value={editPkgData.description} onChange={e => setEditPkgData({...editPkgData, description: e.target.value})} />
+                </div>
+                <div className="dev-form-group">
+                  <label>Max Users (Leave empty for Unlimited)</label>
+                  <input type="number" min="1" placeholder="e.g. 5" value={editPkgData.maxUsers} onChange={e => setEditPkgData({...editPkgData, maxUsers: e.target.value})} />
+                </div>
+              </div>
+              <div className="dev-modal-footer">
+                <button className="dev-btn cancel" onClick={() => setShowEditPkgModal(null)}>Cancel</button>
+                <button className="dev-btn" style={{ background: '#059669', color: 'white' }} onClick={handleSavePackage} disabled={actionLoading === `save-pkg-${showEditPkgModal}`}>
+                  {actionLoading === `save-pkg-${showEditPkgModal}` ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   );

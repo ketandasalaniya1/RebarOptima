@@ -58,8 +58,15 @@ function App() {
   useEffect(() => {
     if (!isAuthenticated) return;
 
+    let throttleTimeout = null;
+
     const handleUserActivity = () => {
-      dispatch(updateActivity());
+      if (!throttleTimeout) {
+        dispatch(updateActivity());
+        throttleTimeout = setTimeout(() => {
+          throttleTimeout = null;
+        }, 10000);
+      }
     };
 
     // Activity event listeners
@@ -89,6 +96,7 @@ function App() {
       window.removeEventListener('click', handleUserActivity);
       window.removeEventListener('scroll', handleUserActivity);
       clearInterval(intervalId);
+      if (throttleTimeout) clearTimeout(throttleTimeout);
     };
   }, [isAuthenticated, dispatch]);
 

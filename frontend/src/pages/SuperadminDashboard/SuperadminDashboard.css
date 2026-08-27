@@ -644,6 +644,38 @@
   margin: 0 4px;
 }
 
+/* ── Storage Column ── */
+.dev-storage-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 110px;
+}
+.dev-storage-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.dev-storage-bar-fill {
+  height: 100%;
+  background: #3b82f6; /* Blue by default */
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.dev-storage-bar-fill.warning {
+  background: #f59e0b; /* Orange/Yellow for > 70% */
+}
+.dev-storage-bar-fill.danger {
+  background: #ef4444; /* Red for > 90% */
+}
+.dev-storage-text {
+  font-size: 10px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .dev-metrics-row { grid-template-columns: repeat(2, 1fr); }

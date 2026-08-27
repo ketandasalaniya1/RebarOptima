@@ -368,7 +368,7 @@ export default function LedgerPage() {
                     const date = new Date(order.createdAt).toLocaleDateString('en-GB', {
                       day: '2-digit',
                       month: '2-digit',
-                      year: '2-digit'
+                      year: 'numeric'
                     });
 
                     const totalBars = order.layouts?.reduce((sum, l) => sum + Number(l.repetition), 0) || 0;

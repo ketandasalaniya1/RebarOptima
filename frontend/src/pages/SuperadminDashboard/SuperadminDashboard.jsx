@@ -294,6 +294,7 @@ export default function SuperadminDashboard() {
                           <th>Firm Name</th>
                           <th>Users</th>
                           <th>Subscription</th>
+                          <th>Storage</th>
                           <th>Status</th>
                           <th>Created</th>
                           <th>Actions</th>
@@ -335,9 +336,22 @@ export default function SuperadminDashboard() {
                                 )}
                               </td>
                               <td>
+                                <div className="dev-storage-cell">
+                                  <div className="dev-storage-bar-bg">
+                                    <div 
+                                      className={`dev-storage-bar-fill ${(c.consumedStorageMB || 0) > (c.maxStorageMB || 100) * 0.9 ? 'danger' : (c.consumedStorageMB || 0) > (c.maxStorageMB || 100) * 0.7 ? 'warning' : ''}`}
+                                      style={{ width: `${Math.min(((c.consumedStorageMB || 0) / (c.maxStorageMB || 100)) * 100, 100)}%` }}
+                                    ></div>
+                                  </div>
+                                  <div className="dev-storage-text">
+                                    {(c.consumedStorageMB || 0) < 0.01 && (c.consumedStorageMB || 0) > 0 ? '< 0.01' : (c.consumedStorageMB || 0).toFixed(2)} MB / {c.maxStorageMB || '∞'} MB
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
                                 <span className={`dev-status-badge ${c.status}`}>{c.status}</span>
                               </td>
-                              <td className="dev-muted">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '—'}</td>
+                              <td className="dev-muted">{c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-GB') : '—'}</td>
                               <td>
                                 <div className="dev-action-group">
                                   {c.status === 'active' ? (
@@ -504,8 +518,8 @@ export default function SuperadminDashboard() {
                                 <>
                                   <td><span className="dev-plan-badge">{g.active.packageName}</span></td>
                                   <td><span className={`dev-status-badge ${g.active.status}`}>{g.active.status}</span></td>
-                                  <td className="dev-muted">{g.active.startDate ? new Date(g.active.startDate).toLocaleDateString() : '—'}</td>
-                                  <td className="dev-muted">{g.active.endDate ? new Date(g.active.endDate).toLocaleDateString() : 'Lifetime'}</td>
+                                  <td className="dev-muted">{g.active.startDate ? new Date(g.active.startDate).toLocaleDateString('en-GB') : '—'}</td>
+                                  <td className="dev-muted">{g.active.endDate ? new Date(g.active.endDate).toLocaleDateString('en-GB') : 'Lifetime'}</td>
                                   <td>
                                     <div className="dev-action-group">
                                       {g.active.status === 'active' && (
@@ -536,8 +550,8 @@ export default function SuperadminDashboard() {
                                           <tr key={hs.id}>
                                             <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }}><span className="dev-plan-badge">{hs.packageName}</span></td>
                                             <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }}><span className={`dev-status-badge ${hs.status}`}>{hs.status}</span></td>
-                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }} className="dev-muted">{hs.startDate ? new Date(hs.startDate).toLocaleDateString() : '—'}</td>
-                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px' }} className="dev-muted">{hs.endDate ? new Date(hs.endDate).toLocaleDateString() : 'Lifetime'}</td>
+                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px', width: '16%' }} className="dev-muted">{hs.startDate ? new Date(hs.startDate).toLocaleDateString('en-GB') : '—'}</td>
+                                            <td style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', padding: '8px 16px' }} className="dev-muted">{hs.endDate ? new Date(hs.endDate).toLocaleDateString('en-GB') : 'Lifetime'}</td>
                                           </tr>
                                         ))}
                                       </tbody>
@@ -581,7 +595,7 @@ export default function SuperadminDashboard() {
                       <tbody>
                         {auditLogs.map((log, i) => (
                           <tr key={i}>
-                            <td className="dev-muted">{log.timestamp ? new Date(log.timestamp).toLocaleString() : '—'}</td>
+                            <td className="dev-muted">{log.timestamp ? new Date(log.timestamp).toLocaleString('en-GB') : '—'}</td>
                             <td>
                               <span className={`dev-actor-badge ${log.actorType}`}>{log.actorType}</span>
                             </td>

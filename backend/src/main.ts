@@ -730,10 +730,24 @@ app.get('/api/developer/companies', developerAuthMiddleware, async (req: any, re
       const userCount = await db.collection('users').countDocuments({ companyId: c._id, isActive: { $ne: false } });
       const subscription = await db.collection('subscriptions').findOne({ companyId: c._id, status: { $in: ['active', 'trial'] } });
       let pkgName = 'None';
+      let maxStorageMB = 100;
       if (subscription) {
         const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
         pkgName = pkg?.displayName || pkg?.name || 'Unknown';
+        if (pkg?.limits?.maxStorageMB) maxStorageMB = pkg.limits.maxStorageMB;
       }
+
+      let totalBytes = 0;
+      const collections = ['inventory', 'batches', 'ledger', 'scrapsales', 'scraprules', 'projects'];
+      for (const collName of collections) {
+        const docs = await db.collection(collName).find({ companyId: c._id }).toArray();
+        if (docs.length > 0) totalBytes += Buffer.byteLength(JSON.stringify(docs), 'utf8');
+      }
+      const usersDocs = await db.collection('users').find({ companyId: c._id }).toArray();
+      if (usersDocs.length > 0) totalBytes += Buffer.byteLength(JSON.stringify(usersDocs), 'utf8');
+      
+      const consumedStorageMB = totalBytes / (1024 * 1024);
+
       return {
         id: c._id.toString(),
         name: c.name,
@@ -743,6 +757,8 @@ app.get('/api/developer/companies', developerAuthMiddleware, async (req: any, re
         userCount,
         subscriptionPlan: pkgName,
         subscriptionStatus: subscription?.status || 'none',
+        consumedStorageMB,
+        maxStorageMB,
         createdAt: c.createdAt
       };
     }));

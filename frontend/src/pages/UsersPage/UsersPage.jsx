@@ -284,7 +284,7 @@ export default function UserManagementPage() {
                           {isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="users-muted">{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td className="users-muted">{new Date(user.createdAt).toLocaleDateString('en-GB')}</td>
                       <td className="actions-cell">
                         <div className="users-action-group">
                           <button 

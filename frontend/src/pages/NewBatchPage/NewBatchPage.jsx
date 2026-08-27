@@ -78,7 +78,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     label: '',
   }))
 
-  const [batchName, setBatchName] = useState(() => `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`)
+  const [batchName, setBatchName] = useState(() => `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`)
   const [error, setError] = useState(null)
   const [isStockExpanded, setIsStockExpanded] = useState(false)
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false)
@@ -531,7 +531,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                     <div className="batch-item-header">
                       <span className="batch-item-name">{b.batchName}</span>
                       <span className="batch-item-date">
-                        {new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                        {new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </span>
                     </div>
                     <div className="batch-item-body">

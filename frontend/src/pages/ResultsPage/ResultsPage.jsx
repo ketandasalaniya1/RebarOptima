@@ -161,7 +161,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const [saveError, setSaveError] = useState('');
   const [scrapRulesMap, setScrapRulesMap] = useState({});
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const [batchNameInput, setBatchNameInput] = useState(() => data?.batchName || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`);
+  const [batchNameInput, setBatchNameInput] = useState(() => data?.batchName || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`);
 
   useEffect(() => {
     if (data?.batchName) {
@@ -193,7 +193,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   };
 
   const handleConfirmSaveBatch = async () => {
-    const nameToSave = batchNameInput.trim() || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}`;
+    const nameToSave = batchNameInput.trim() || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`;
     setSaveLoading(true);
     setSaveError('');
     try {
@@ -521,7 +521,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       <div className="results-metadata-grid">
         <div>
           <span className="meta-lbl">Date</span>
-          <span className="meta-v">{new Date().toLocaleString()}</span>
+          <span className="meta-v">{new Date().toLocaleString('en-GB')}</span>
         </div>
         <div>
           <span className="meta-lbl">Total Parts Length</span>

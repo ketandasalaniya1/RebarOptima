@@ -193,7 +193,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
             const date = `${new Date(batch.createdAt).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
-              year: '2-digit'
+              year: 'numeric'
             })}, ${new Date(batch.createdAt).toLocaleTimeString(undefined, {
               hour: '2-digit',
               minute: '2-digit'

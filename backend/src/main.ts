@@ -886,7 +886,7 @@ app.post('/api/developer/subscriptions', developerAuthMiddleware, async (req: an
     const { companyId, packageId, status, duration } = req.body;
     if (!companyId || !packageId) return res.status(400).json({ message: 'companyId and packageId required' });
     
-    let endDate = null;
+    let endDate: Date | null = null;
     if (duration === '1_month') endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     else if (duration === '6_months') endDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
     else if (duration === '1_year') endDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);

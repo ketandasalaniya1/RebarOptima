@@ -310,8 +310,8 @@
     "semantic_hash": "6e4521d67f0f2faf70a50cb6f42f9fd1"
   },
   "backend/src/main.ts": {
-    "mtime": 1787845228.0451343,
-    "ast_hash": "fcb336697ef6bc01009c2c1efa8d18a3",
+    "mtime": 1787846509.499408,
+    "ast_hash": "e293dfc3114db1eea6ff6131810098e3",
     "semantic_hash": ""
   },
   "backend/src/users/user.schema.ts": {

@@ -360,8 +360,8 @@
     "semantic_hash": "339c7c9f5919665928ca72056ba164c7"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1787584258.6591604,
-    "ast_hash": "890ae2660bd1a8c5cdbbad65f33e1515",
+    "mtime": 1787838237.6297245,
+    "ast_hash": "30a57080790083f035d4ffc0d6cba2f4",
     "semantic_hash": ""
   },
   "frontend/src/components/ScrollToTop/ScrollToTop.jsx": {

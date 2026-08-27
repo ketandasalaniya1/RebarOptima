@@ -176,7 +176,7 @@
   "174": "SettingsPage.jsx",
   "175": "default",
   "176": "md",
-  "177": "BatchHistoryPage.jsx",
+  "177": "bcryptjs",
   "179": ".__init__",
   "180": "rules/graphify.md",
   "181": "slides-create.md",
@@ -192,7 +192,6 @@
   "191": ".test_default_content_paths_react",
   "192": "workflows/graphify.md",
   "195": "PROJECT_AI_PROMPT.md",
-  "196": "dotenv",
   "197": "eslint-config-prettier",
   "198": "Injectable"
 }

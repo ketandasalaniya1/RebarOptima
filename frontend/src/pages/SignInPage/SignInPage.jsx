@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Lock, EyeOff, Eye, Map, ClipboardList, TrendingUp, Shield, Users } from 'lucide-react';
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
@@ -14,6 +14,29 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+Shift+D (or Cmd+Shift+D on Mac) for Developer Console
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        if (onNavigateToDeveloper) onNavigateToDeveloper();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onNavigateToDeveloper]);
+
+  const handleLogoClick = () => {
+    const newClicks = logoClicks + 1;
+    setLogoClicks(newClicks);
+    if (newClicks >= 5) {
+      setLogoClicks(0); // Reset
+      if (onNavigateToDeveloper) onNavigateToDeveloper();
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,7 +71,7 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
           <div className="signin-left">
             <div className="signin-left-content">
               <div className="logo-container">
-                <div className="logo-img-wrapper">
+                <div className="logo-img-wrapper" onClick={handleLogoClick} style={{ cursor: 'pointer' }} title="RebarOptima">
                   <img src={logo} alt="RebarOptima" className="logo-img" />
                 </div>
               </div>
@@ -89,7 +112,7 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
           {/* Right Section */}
           <div className="signin-right">
             <div className="signin-form-container">
-              <div className="mobile-logo">
+              <div className="mobile-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }} title="RebarOptima">
                   <img src={logo} alt="RebarOptima" className="logo-img" />
               </div>
 
@@ -156,13 +179,6 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
                   e.preventDefault();
                   if (onNavigateToSignUp) onNavigateToSignUp();
                 }}>Sign Up</a>
-              </p>
-              
-              <p className="signup-prompt" style={{ marginTop: '12px', opacity: 0.6 }}>
-                Platform admin? <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  if (onNavigateToDeveloper) onNavigateToDeveloper();
-                }}>Developer Console</a>
               </p>
             </div>
           </div>

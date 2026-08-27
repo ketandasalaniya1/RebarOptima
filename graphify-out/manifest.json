@@ -310,8 +310,8 @@
     "semantic_hash": "6e4521d67f0f2faf70a50cb6f42f9fd1"
   },
   "backend/src/main.ts": {
-    "mtime": 1787846509.499408,
-    "ast_hash": "e293dfc3114db1eea6ff6131810098e3",
+    "mtime": 1787847487.637791,
+    "ast_hash": "a3754ba2ab3ce66ca89ad1427e47487e",
     "semantic_hash": ""
   },
   "backend/src/users/user.schema.ts": {
@@ -385,23 +385,23 @@
     "semantic_hash": "c4931efa716e5ce134aea30ca162f0ca"
   },
   "frontend/src/pages/BatchHistoryPage/BatchHistoryPage.jsx": {
-    "mtime": 1786570378.3765967,
-    "ast_hash": "7c3d111f7e6665bf5320be0c880f19b3",
+    "mtime": 1787847226.8150406,
+    "ast_hash": "2d47f86c04331852c156d98f9dc14889",
     "semantic_hash": ""
   },
   "frontend/src/pages/InventoryPage/InventoryPage.jsx": {
-    "mtime": 1787243471.1250465,
-    "ast_hash": "cd58b682e97fce4fec053ccddd5ee356",
+    "mtime": 1787847224.6965766,
+    "ast_hash": "44dfac3ddff6837572ef98a6d1d8576c",
     "semantic_hash": ""
   },
   "frontend/src/pages/LedgerPage/LedgerPage.jsx": {
-    "mtime": 1786561562.5970619,
-    "ast_hash": "7ec7de902887b728dde4391424c85599",
-    "semantic_hash": "7ec7de902887b728dde4391424c85599"
+    "mtime": 1787847222.5484796,
+    "ast_hash": "176ae7fd5c68ce5157548af004b27e5b",
+    "semantic_hash": ""
   },
   "frontend/src/pages/NewBatchPage/NewBatchPage.jsx": {
-    "mtime": 1787242944.9582703,
-    "ast_hash": "a77b9977fd8d81b20b5baefe9a17ef78",
+    "mtime": 1787847220.5167992,
+    "ast_hash": "5ec36cd070de58b45478bb7b95ea5b3b",
     "semantic_hash": ""
   },
   "frontend/src/pages/OverviewPage/OverviewPage.jsx": {
@@ -410,8 +410,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/ResultsPage/ResultsPage.jsx": {
-    "mtime": 1786570365.3183918,
-    "ast_hash": "3a3363f998203c8eccb96dfe3bb72443",
+    "mtime": 1787847217.9311068,
+    "ast_hash": "334b8cfa678f8eff37e35c96b66d883c",
     "semantic_hash": ""
   },
   "frontend/src/pages/SettingsPage/SettingsPage.jsx": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/SuperadminDashboard/SuperadminDashboard.jsx": {
-    "mtime": 1787842855.7584245,
-    "ast_hash": "0e6dfcb98bdf58404adec6cce5efbfd3",
+    "mtime": 1787847519.2905428,
+    "ast_hash": "a3ade7bf994ef87e45010345494f22a1",
     "semantic_hash": ""
   },
   "frontend/src/pages/SuperadminLoginPage/SuperadminLoginPage.jsx": {
@@ -915,8 +915,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/UsersPage/UsersPage.jsx": {
-    "mtime": 1787583790.5602086,
-    "ast_hash": "5fbda73c044a368e9242869594877127",
+    "mtime": 1787847215.8959148,
+    "ast_hash": "232192ebfe532c1886793bb0623d0acf",
     "semantic_hash": ""
   },
   "frontend/src/store/slices/permissionsSlice.js": {

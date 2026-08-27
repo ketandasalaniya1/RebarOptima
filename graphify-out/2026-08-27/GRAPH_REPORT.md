@@ -1,16 +1,16 @@
 # Graph Report - RebarOptima  (2026-08-27)
 
 ## Corpus Check
-- 172 files · ~230,557 words
+- 172 files · ~232,179 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2441 nodes · 2923 edges · 196 communities (142 shown, 54 thin omitted)
+- 2442 nodes · 2926 edges · 195 communities (142 shown, 53 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9ad78081`
+- Built from commit: `9a91b1f7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -186,7 +186,7 @@
 - SettingsPage.jsx
 - default
 - md
-- BatchHistoryPage.jsx
+- bcryptjs
 - .__init__
 - rules/graphify.md
 - slides-create.md
@@ -202,7 +202,6 @@
 - .test_default_content_paths_react
 - workflows/graphify.md
 - PROJECT_AI_PROMPT.md
-- dotenv
 - eslint-config-prettier
 - Injectable
 
@@ -233,7 +232,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (196 total, 54 thin omitted)
+## Communities (195 total, 53 thin omitted)
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.19
@@ -313,7 +312,7 @@ Nodes (9): DesignSystemGenerator, Find matching reasoning rule for a category., 
 
 ### Community 19 - "dependencies"
 Cohesion: 0.11
-Nodes (19): dependencies, bcryptjs, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
+Nodes (19): dependencies, dotenv, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
 
 ### Community 20 - "fetch-background.py"
 Cohesion: 0.17
@@ -684,8 +683,8 @@ Cohesion: 0.20
 Nodes (9): Alert Tokens, Badge Tokens, Button Tokens, Card Tokens, Component Tokens, Dialog/Modal Tokens, Input Tokens, Table Tokens (+1 more)
 
 ### Community 151 - "ResultsPage.jsx"
-Cohesion: 0.21
-Nodes (5): getTextStyle(), mockLayouts, ResultsPage(), batchesApi, inventoryApi
+Cohesion: 0.17
+Nodes (7): BatchHistoryPage(), getTextStyle(), getTextStyle(), mockLayouts, ResultsPage(), batchesApi, inventoryApi
 
 ### Community 152 - "Slide Strategies"
 Cohesion: 0.20
@@ -782,16 +781,16 @@ Nodes (4): $type, $value, md, md
 ## Knowledge Gaps
 - **1126 isolated node(s):** `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES`, `AccessResult` (+1121 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **53 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`, `shadow`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `fontSize` connect `fontSize` to `xl`, `shadow`, `primitive`, `lg`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+  _High betweenness centrality (0.008) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `spacing` connect `spacing` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._

@@ -1,16 +1,16 @@
 # Graph Report - RebarOptima  (2026-08-27)
 
 ## Corpus Check
-- 172 files · ~232,179 words
+- 172 files · ~232,330 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2442 nodes · 2926 edges · 195 communities (142 shown, 53 thin omitted)
+- 2442 nodes · 2925 edges · 206 communities (153 shown, 53 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9a91b1f7`
+- Built from commit: `d2f7af8a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,7 +20,7 @@
 - app.module.ts
 - search
 - color
-- button
+- card
 - slide_search_core.py
 - spacing
 - html-token-validator.py
@@ -186,7 +186,8 @@
 - SettingsPage.jsx
 - default
 - md
-- bcryptjs
+- design-tokens-starter.json
+- input
 - .__init__
 - rules/graphify.md
 - slides-create.md
@@ -201,9 +202,19 @@
 - .test_base_config_structure
 - .test_default_content_paths_react
 - workflows/graphify.md
+- button
+- $type
 - PROJECT_AI_PROMPT.md
+- radius
 - eslint-config-prettier
 - Injectable
+- destructive-foreground
+- muted
+- primary
+- primary-foreground
+- ring
+- secondary-foreground
+- dotenv
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 58 edges
@@ -226,13 +237,13 @@
   .agents/skills/ui-styling/scripts/tests/test_tailwind_config_gen.py → .agents/skills/ui-styling/scripts/tailwind_config_gen.py
 - `_generate_intelligent_overrides()` --calls--> `search()`  [EXTRACTED]
   .agents/skills/ui-ux-pro-max/scripts/design_system.py → .agents/skills/ui-ux-pro-max/scripts/core.py
-- `NewBatchPage()` --calls--> `solve1DCSP()`  [EXTRACTED]
-  frontend/src/pages/NewBatchPage/NewBatchPage.jsx → frontend/src/utils/optimizer.js
+- `main()` --calls--> `search()`  [EXTRACTED]
+  .agents/skills/design-system/scripts/search-slides.py → .agents/skills/design-system/scripts/slide_search_core.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (195 total, 53 thin omitted)
+## Communities (206 total, 53 thin omitted)
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.19
@@ -251,12 +262,12 @@ Cohesion: 0.07
 Nodes (42): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection (+34 more)
 
 ### Community 4 - "color"
-Cohesion: 0.04
-Nodes (48): $type, $value, background, destructive, destructive-foreground, foreground, muted, muted-foreground (+40 more)
+Cohesion: 0.11
+Nodes (19): $type, $value, background, destructive, foreground, muted-foreground, primary-hover, secondary (+11 more)
 
-### Community 5 - "button"
-Cohesion: 0.06
-Nodes (45): $type, $value, $type, $value, bg, fg, font-size, hover-bg (+37 more)
+### Community 5 - "card"
+Cohesion: 0.20
+Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
 
 ### Community 6 - "slide_search_core.py"
 Cohesion: 0.09
@@ -312,7 +323,7 @@ Nodes (9): DesignSystemGenerator, Find matching reasoning rule for a category., 
 
 ### Community 19 - "dependencies"
 Cohesion: 0.11
-Nodes (19): dependencies, dotenv, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
+Nodes (19): dependencies, bcryptjs, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
 
 ### Community 20 - "fetch-background.py"
 Cohesion: 0.17
@@ -743,7 +754,7 @@ Cohesion: 0.19
 Nodes (4): plugins, authApi, oxc, react
 
 ### Community 166 - "NewBatchPage.jsx"
-Cohesion: 0.43
+Cohesion: 0.38
 Nodes (5): initialParts, initialStock, NewBatchPage(), useTableRows(), solve1DCSP()
 
 ### Community 167 - "ponytail-audit/SKILL.md"
@@ -778,6 +789,50 @@ Nodes (4): $type, $value, default, default
 Cohesion: 0.67
 Nodes (4): $type, $value, md, md
 
+### Community 177 - "design-tokens-starter.json"
+Cohesion: 0.15
+Nodes (12): component, $type, $value, dark, semantic, $schema, $type, $value (+4 more)
+
+### Community 178 - "input"
+Cohesion: 0.20
+Nodes (12): padding-x, padding-y, input, $type, $value, focus-ring, padding-x, padding-y (+4 more)
+
+### Community 193 - "button"
+Cohesion: 0.20
+Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 more)
+
+### Community 194 - "$type"
+Cohesion: 0.60
+Nodes (5): $type, $value, border, border, border
+
+### Community 196 - "radius"
+Cohesion: 0.60
+Nodes (5): radius, radius, radius, $type, $value
+
+### Community 199 - "destructive-foreground"
+Cohesion: 0.67
+Nodes (3): destructive-foreground, $type, $value
+
+### Community 200 - "muted"
+Cohesion: 0.67
+Nodes (3): muted, $type, $value
+
+### Community 201 - "primary"
+Cohesion: 0.67
+Nodes (3): primary, $type, $value
+
+### Community 202 - "primary-foreground"
+Cohesion: 0.67
+Nodes (3): primary-foreground, $type, $value
+
+### Community 203 - "ring"
+Cohesion: 0.67
+Nodes (3): ring, $type, $value
+
+### Community 204 - "secondary-foreground"
+Cohesion: 0.67
+Nodes (3): secondary-foreground, $type, $value
+
 ## Knowledge Gaps
 - **1126 isolated node(s):** `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES`, `AccessResult` (+1121 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -786,8 +841,8 @@ Nodes (4): $type, $value, md, md
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`, `shadow`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `design-tokens-starter.json`, `radius`, `fontSize`, `shadow`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `spacing` connect `spacing` to `primitive`?**

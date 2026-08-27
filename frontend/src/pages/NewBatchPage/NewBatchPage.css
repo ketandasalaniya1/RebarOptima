@@ -549,17 +549,6 @@
     font-size: 12.5px;
   }
 
-  .table-responsive {
-    border-radius: 8px;
-    border: 1px solid var(--card-border);
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 8px 6px;
-    font-size: 12px;
-  }
-
   .section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -570,6 +559,101 @@
     width: 100%;
     padding: 14px 20px;
     border-radius: 8px;
+  }
+
+  /* ═══ Data Table → Stacked Card Layout ═══ */
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table {
+    border: none;
+  }
+
+  .data-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .data-table tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--accent, #6366f1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    gap: 0;
+    animation: none;
+  }
+
+  .data-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.08);
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .data-table td:last-child {
+    border-bottom: none;
+    padding-top: 10px;
+    justify-content: flex-end;
+  }
+
+  .data-table td::before {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  /* ── Stock table labels (5 cols) — #, Dia, Length, Qty, Actions ── */
+  .data-table td:nth-child(1)::before { content: "#"; }
+  .data-table td:nth-child(2)::before { content: "Diameter"; }
+  .data-table td:nth-child(3)::before { content: "Length"; }
+  .data-table td:nth-child(4)::before { content: "Quantity"; }
+  .data-table td:nth-child(5)::before { content: ""; }
+  /* Parts table has 6 cols, the 5th is Label */
+  .data-table td:nth-child(6)::before { content: ""; }
+
+  /* Row number - make it a pill-style header for the card */
+  .data-table td.col-num {
+    justify-content: flex-start;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--text-label);
+    border-bottom: 1px solid rgba(150, 150, 150, 0.12);
+    padding-bottom: 8px;
+  }
+  .data-table td.col-num::before { content: "Row "; }
+
+  /* Make inputs wider in card mode */
+  .data-table td .form-input,
+  .data-table td .form-select {
+    flex: 1;
+    max-width: 60%;
+    margin-left: auto;
+  }
+
+  /* Actions button alignment */
+  .data-table td.col-actions {
+    justify-content: flex-end;
+    border-bottom: none;
+    padding-top: 8px;
+  }
+
+  /* Table responsive wrapper - remove horizontal scroll */
+  .table-responsive {
+    overflow-x: visible;
+    border: none;
   }
 }
 

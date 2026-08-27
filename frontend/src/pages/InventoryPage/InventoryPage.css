@@ -1295,5 +1295,213 @@
 }
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE: Tables → Stacked Card Layout (≤ 768px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
 
+  /* ── Shared: hide table headers, make rows into cards ── */
+  .inventory-table thead,
+  .voucher-entry-table thead,
+  .stock-table.scrap-records-table thead {
+    display: none;
+  }
 
+  .inventory-table,
+  .voucher-entry-table,
+  .stock-table.scrap-records-table {
+    border: none;
+  }
+
+  .inventory-table tbody,
+  .voucher-entry-table tbody,
+  .stock-table.scrap-records-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .inventory-table tr,
+  .voucher-entry-table tr,
+  .stock-table.scrap-records-table tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--accent, #6366f1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    gap: 0;
+    position: relative;
+  }
+
+  .inventory-table td,
+  .voucher-entry-table td,
+  .stock-table.scrap-records-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.08);
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .inventory-table td:last-child,
+  .voucher-entry-table td:last-child,
+  .stock-table.scrap-records-table td:last-child {
+    border-bottom: none;
+    padding-top: 10px;
+    justify-content: flex-end;
+  }
+
+  .inventory-table td::before,
+  .voucher-entry-table td::before,
+  .stock-table.scrap-records-table td::before {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  /* ── Standard Stock table (10 cols) ── */
+  .stock-section:not(.remnant-card) .inventory-table tr {
+    border-left-color: var(--accent, #6366f1);
+  }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(1)::before { content: "Diameter"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(2)::before { content: "Length"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(3)::before { content: "Qty (Bars)"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(4)::before { content: "Weight"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(5)::before { content: "Cost/kg"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(6)::before { content: "Type"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(7)::before { content: "Brand"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(8)::before { content: "Vendor"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(9)::before { content: "Inward Date"; }
+  .stock-section:not(.remnant-card) .inventory-table td:nth-child(10)::before { content: "Actions"; }
+
+  /* ── Remnants Stock table (9 cols) ── */
+  .remnant-card .inventory-table tr {
+    border-left-color: #059669;
+  }
+  .remnant-card .inventory-table td:nth-child(1)::before { content: "Diameter"; }
+  .remnant-card .inventory-table td:nth-child(2)::before { content: "Length"; }
+  .remnant-card .inventory-table td:nth-child(3)::before { content: "Qty"; }
+  .remnant-card .inventory-table td:nth-child(4)::before { content: "Weight"; }
+  .remnant-card .inventory-table td:nth-child(5)::before { content: "Type"; }
+  .remnant-card .inventory-table td:nth-child(6)::before { content: "Brand"; }
+  .remnant-card .inventory-table td:nth-child(7)::before { content: "Vendor"; }
+  .remnant-card .inventory-table td:nth-child(8)::before { content: "Generated"; }
+  .remnant-card .inventory-table td:nth-child(9)::before { content: "Actions"; }
+
+  /* ── Scrap Sales History table (6 cols — inside .scrap-history-card) ── */
+  .scrap-history-card .inventory-table tr {
+    border-left-color: #f59e0b;
+  }
+  .scrap-history-card .inventory-table td:nth-child(1)::before { content: "Date"; }
+  .scrap-history-card .inventory-table td:nth-child(2)::before { content: "Buyer"; }
+  .scrap-history-card .inventory-table td:nth-child(3)::before { content: "Weight"; }
+  .scrap-history-card .inventory-table td:nth-child(4)::before { content: "Rate/Kg"; }
+  .scrap-history-card .inventory-table td:nth-child(5)::before { content: "Total Earned"; }
+  .scrap-history-card .inventory-table td:nth-child(6)::before { content: "Actions"; }
+
+  /* ── Voucher Inward table (8 cols) ── */
+  .voucher-entry-table tr {
+    border-left-color: #3b82f6;
+  }
+  .voucher-entry-table td:nth-child(1)::before { content: "Diameter"; }
+  .voucher-entry-table td:nth-child(2)::before { content: "Weight (Tons)"; }
+  .voucher-entry-table td:nth-child(3)::before { content: "Price/Ton"; }
+  .voucher-entry-table td:nth-child(4)::before { content: "GST (18%)"; }
+  .voucher-entry-table td:nth-child(5)::before { content: "Total Price"; }
+  .voucher-entry-table td:nth-child(6)::before { content: "Brand"; }
+  .voucher-entry-table td:nth-child(7)::before { content: "Vendor"; }
+  .voucher-entry-table td:nth-child(8)::before { content: ""; }
+
+  .voucher-entry-table td { text-align: right; }
+  .voucher-entry-table td input,
+  .voucher-entry-table td select {
+    max-width: 60%;
+    margin-left: auto;
+  }
+
+  /* ── Batch Scrap Records table (7 cols) ── */
+  .stock-table.scrap-records-table tr {
+    border-left-color: #ef4444;
+  }
+  .stock-table.scrap-records-table td:nth-child(1)::before { content: "Date & Time"; }
+  .stock-table.scrap-records-table td:nth-child(2)::before { content: "Batch"; }
+  .stock-table.scrap-records-table td:nth-child(3)::before { content: "Total Scrap"; }
+  .stock-table.scrap-records-table td:nth-child(4)::before { content: "Breakdown"; }
+  .stock-table.scrap-records-table td:nth-child(5)::before { content: "Remnants"; }
+  .stock-table.scrap-records-table td:nth-child(6)::before { content: "Utilization"; }
+  .stock-table.scrap-records-table td:nth-child(7)::before { content: "Status"; }
+
+  /* Batch scrap breakdown chips wrap properly */
+  .stock-table.scrap-records-table td:nth-child(4) {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .stock-table.scrap-records-table td:nth-child(4)::before {
+    margin-bottom: 6px;
+  }
+  .dia-chip-group {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* ── Tab buttons horizontal scroll on mobile ── */
+  .tab-buttons {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 6px;
+  }
+  .tab-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  /* ── Inventory header stack on mobile ── */
+  .inventory-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* ── Section header stats wrap ── */
+  .section-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .section-header-stats {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ── Voucher header stack ── */
+  .voucher-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* ── Scrap portal grid stack ── */
+  .scrap-portal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Batch scrap header stack ── */
+  .batch-scrap-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

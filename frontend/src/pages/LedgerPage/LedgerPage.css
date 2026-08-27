@@ -473,18 +473,88 @@
     padding: 12px 10px;
   }
 
-  .ledger-table th,
-  .ledger-table td {
-    padding: 8px 6px;
-    font-size: 12px;
-  }
-
   .table-card,
   .request-form-card,
   .requests-history-card {
     padding: 14px 10px;
-    overflow-x: auto;
+    overflow-x: visible;
   }
+
+  /* ── Requests grid → single column ── */
+  .requests-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ═══ Ledger Table → Stacked Card Layout ═══ */
+  .ledger-table thead {
+    display: none;
+  }
+
+  .ledger-table {
+    border: none;
+  }
+
+  .ledger-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ledger-table tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--accent, #6366f1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    gap: 0;
+  }
+
+  .ledger-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.08);
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .ledger-table td:last-child {
+    border-bottom: none;
+  }
+
+  .ledger-table td::before {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  /* ── Stock Ledger tab labels (8 cols) ── */
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(1)::before { content: "Date & Time"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(2)::before { content: "Type"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(3)::before { content: "Diameter"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(4)::before { content: "Length"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(5)::before { content: "Qty (Bars)"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(6)::before { content: "Weight"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(7)::before { content: "Cost/kg"; }
+  .table-card:not(.requests-history-card) .ledger-table td:nth-child(8)::before { content: "Ref / Vendor"; }
+
+  /* ── Order Requests tab labels (8 cols) ── */
+  .requests-history-card .ledger-table td:nth-child(1)::before { content: "Date"; }
+  .requests-history-card .ledger-table td:nth-child(2)::before { content: "Requester"; }
+  .requests-history-card .ledger-table td:nth-child(3)::before { content: "Diameter"; }
+  .requests-history-card .ledger-table td:nth-child(4)::before { content: "Requested"; }
+  .requests-history-card .ledger-table td:nth-child(5)::before { content: "Approved Qty"; }
+  .requests-history-card .ledger-table td:nth-child(6)::before { content: "Status"; }
+  .requests-history-card .ledger-table td:nth-child(7)::before { content: "Approved By"; }
+  .requests-history-card .ledger-table td:nth-child(8)::before { content: "Action"; }
 }
 
 @media (max-width: 380px) {

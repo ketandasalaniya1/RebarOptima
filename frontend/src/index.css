@@ -33,7 +33,7 @@
   --accent-hover: #047857;
   
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: clamp(14px, 1vw + 10px, 16px);
   color: var(--text-primary);
 }
 

@@ -1,7 +1,7 @@
-# Graph Report - RebarOptima  (2026-08-28)
+# Graph Report - RebarOptima  (2026-08-27)
 
 ## Corpus Check
-- 172 files · ~236,392 words
+- 172 files · ~232,330 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4fb2f4ad`
+- Built from commit: `d2f7af8a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -834,7 +834,7 @@ Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
 ## Knowledge Gaps
-- **1126 isolated node(s):** `initialStock`, `initialParts`, `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES` (+1121 more)
+- **1126 isolated node(s):** `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES`, `AccessResult` (+1121 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **53 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -849,7 +849,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `initialStock`, `initialParts`, `app` to the rest of the system?**
+- **What connects `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES` to the rest of the system?**
   _1126 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
   _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._

@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2442 nodes, 2925 edges, 206 communities. Commit: d2f7af8</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2442 nodes, 2925 edges, 206 communities. Commit: 4fb2f4a</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -125,11 +125,11 @@ flowchart LR
     SERVE_API_35EC8E86 -->|imports x10| BUILD_GRAPH_321CBB04
     SERVE_API_35EC8E86 -->|imports x7| CLI_SKILLS_9964CBB8
     OTHER_D0941E68 -->|calls x7| SERVE_API_35EC8E86
-    CLI_SKILLS_9964CBB8 -->|imports x7| BUILD_GRAPH_321CBB04
+    CLI_SKILLS_9964CBB8 -->|imports x6| BUILD_GRAPH_321CBB04
     TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
     TESTS_FIXTURES_B84B1DCC -->|method x4| EXTRACT_PIPELINE_5F350230
+    BUILD_GRAPH_321CBB04 -->|imports x3| CLI_SKILLS_9964CBB8
     OTHER_D0941E68 -->|imports x3| CLI_SKILLS_9964CBB8
-    CLI_SKILLS_9964CBB8 -->|imports x3| SERVE_API_35EC8E86
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -5292,7 +5292,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-08-27 16:23 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-08-28 16:06 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

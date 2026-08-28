@@ -247,7 +247,10 @@ export default function InventoryPage() {
   const handleRuleChange = (idx, value) => {
     setScrapRules(prev => {
       const updated = [...prev]
-      updated[idx].scrapLengthThreshold = parseInt(value) || 0
+      updated[idx] = {
+        ...updated[idx],
+        scrapLengthThreshold: value === '' ? '' : value
+      }
       return updated
     })
   }
@@ -257,7 +260,13 @@ export default function InventoryPage() {
     setSuccess('')
     setActionLoading(true)
     try {
-      const updatedRules = await inventoryApi.updateScrapRules(scrapRules)
+      const sanitizedRules = scrapRules.map(r => ({
+        ...r,
+        scrapLengthThreshold: r.scrapLengthThreshold === '' || isNaN(Number(r.scrapLengthThreshold))
+          ? 1000 
+          : Math.max(100, Math.min(12000, Number(r.scrapLengthThreshold)))
+      }))
+      const updatedRules = await inventoryApi.updateScrapRules(sanitizedRules)
       setScrapRules(updatedRules)
       setSuccess('Scrap rules updated successfully!')
       setTimeout(() => setSuccess(''), 2000)
@@ -1389,11 +1398,12 @@ export default function InventoryPage() {
                 <div className="rule-input-wrapper">
                   <input
                     type="number"
-                    value={rule.scrapLengthThreshold}
+                    value={rule.scrapLengthThreshold !== undefined && rule.scrapLengthThreshold !== null ? rule.scrapLengthThreshold : ''}
                     onChange={(e) => handleRuleChange(idx, e.target.value)}
                     className="rule-input"
                     min="100"
                     max="6000"
+                    placeholder="1000"
                   />
                   <span className="unit-label">mm</span>
                 </div>

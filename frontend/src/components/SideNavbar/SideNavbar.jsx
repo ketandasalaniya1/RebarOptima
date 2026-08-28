@@ -1,42 +1,59 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSteelOpen, setIsSteelOpen] = useState(true);
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
 
-  const ALL_MENU_ITEMS = [
+  const checkPermission = (moduleKey) => {
+    if (!moduleKey) return true;
+    if (Object.keys(permissions || {}).length === 0) {
+      return moduleKey !== 'users' && moduleKey !== 'roles';
+    }
+    return permissions[moduleKey] !== false;
+  };
+
+  const MENU_STRUCTURE = [
     {
       id: 'overview',
       label: 'Overview',
       icon: <LayoutDashboard size={18} />
     },
     {
-      id: 'inventory',
-      label: 'Inventory',
-      icon: <Package size={18} />,
-      moduleKey: 'inventory'
-    },
-    {
-      id: 'inputs',
-      label: 'Run Optimizer',
-      icon: <PlusSquare size={18} />,
-      moduleKey: 'optimizer'
-    },
-    {
-      id: 'history',
-      label: 'Batch History',
-      icon: <ClipboardList size={18} />,
-      moduleKey: 'history'
+      id: 'steel',
+      label: 'Steel',
+      icon: <Layers size={18} />,
+      isGroup: true,
+      children: [
+        {
+          id: 'inventory',
+          label: 'Inventory',
+          icon: <Package size={17} />,
+          moduleKey: 'inventory'
+        },
+        {
+          id: 'inputs',
+          label: 'Run Optimizer',
+          icon: <PlusSquare size={17} />,
+          moduleKey: 'optimizer'
+        },
+        {
+          id: 'history',
+          label: 'Batch History',
+          icon: <ClipboardList size={17} />,
+          moduleKey: 'history'
+        }
+      ]
     },
     {
       id: 'ledger',
-      label: 'Ledger & Orders',
+      label: 'Ledger & Procurement',
       icon: <BookOpen size={18} />,
       moduleKey: 'ledger'
     },
@@ -61,14 +78,17 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   ];
 
   // Filter menu items based on permissions
-  // If modules object is empty (e.g. initial load or legacy), default to showing everything except users/roles
-  const menuItems = ALL_MENU_ITEMS.filter(item => {
-    if (!item.moduleKey) return true; // Always show overview/dashboard if no key
-    if (Object.keys(permissions || {}).length === 0) {
-      return item.moduleKey !== 'users' && item.moduleKey !== 'roles';
+  const menuItems = MENU_STRUCTURE.map(item => {
+    if (item.isGroup && item.children) {
+      const allowedChildren = item.children.filter(child => checkPermission(child.moduleKey));
+      if (allowedChildren.length === 0) return null;
+      return { ...item, children: allowedChildren };
     }
-    return permissions[item.moduleKey] !== false;
-  });
+    if (!checkPermission(item.moduleKey)) return null;
+    return item;
+  }).filter(Boolean);
+
+  const isSteelActive = ['inventory', 'inputs', 'results', 'history'].includes(currentView);
 
   const initials = user 
     ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() 
@@ -101,19 +121,54 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
 
         {/* Menu Links */}
         <nav className="sidenav-menu">
-          {menuItems.map(item => (
-            <button
-              key={item.id}
-              className={`sidenav-item ${currentView === item.id || (currentView === 'results' && item.id === 'inputs') ? 'active' : ''}`}
-              onClick={() => {
-                onViewChange(item.id);
-                setIsOpen(false);
-              }}
-            >
-              <span className="sidenav-icon">{item.icon}</span>
-              <span className="sidenav-label">{item.label}</span>
-            </button>
-          ))}
+          {menuItems.map(item => {
+            if (item.isGroup) {
+              return (
+                <div key={item.id} className="sidenav-group-container">
+                  <button
+                    className={`sidenav-item sidenav-group-header ${isSteelActive && !isSteelOpen ? 'active-parent' : ''}`}
+                    onClick={() => setIsSteelOpen(prev => !prev)}
+                    aria-expanded={isSteelOpen}
+                  >
+                    <span className="sidenav-icon">{item.icon}</span>
+                    <span className="sidenav-label">{item.label}</span>
+                    <ChevronDown size={16} className={`sidenav-chevron ${isSteelOpen ? 'open' : ''}`} />
+                  </button>
+                  {isSteelOpen && (
+                    <div className="sidenav-submenu">
+                      {item.children.map(child => (
+                        <button
+                          key={child.id}
+                          className={`sidenav-item sidenav-subitem ${currentView === child.id || (currentView === 'results' && child.id === 'inputs') ? 'active' : ''}`}
+                          onClick={() => {
+                            onViewChange(child.id);
+                            setIsOpen(false);
+                          }}
+                        >
+                          <span className="sidenav-icon">{child.icon}</span>
+                          <span className="sidenav-label">{child.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <button
+                key={item.id}
+                className={`sidenav-item ${currentView === item.id || (currentView === 'results' && item.id === 'inputs') ? 'active' : ''}`}
+                onClick={() => {
+                  onViewChange(item.id);
+                  setIsOpen(false);
+                }}
+              >
+                <span className="sidenav-icon">{item.icon}</span>
+                <span className="sidenav-label">{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         {/* Sidebar Footer with Theme Toggle, User Profile & Logout */}

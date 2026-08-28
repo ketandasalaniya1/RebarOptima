@@ -81,7 +81,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
   const [batchName, setBatchName] = useState(() => `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`)
   const [error, setError] = useState(null)
   const [isStockExpanded, setIsStockExpanded] = useState(false)
-  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false)
   const [recentBatches, setRecentBatches] = useState([])
   
   const [kerf, setKerf] = useState(settingsState.defaultKerf)
@@ -333,46 +332,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
             ) : (
               <div className="stock-collapsed-hint">
                 Standard stocks are pre-loaded from live database counts. (Click Expand to add custom/manual stock simulated values)
-              </div>
-            )}
-          </section>
-
-          {/* Advanced Settings parameters */}
-          <section className="card advanced-params-card advanced-card">
-            <div className="advanced-header" onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}>
-              <span className="advanced-title">
-                <Settings size={18} /> Advanced Parameter Settings
-              </span>
-              {isAdvancedExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-            </div>
-
-            {isAdvancedExpanded && (
-              <div className="advanced-body">
-                <div className="advanced-inputs-grid">
-                  <div className="advanced-input-group">
-                    <label className="adv-lbl">Kerf Width (mm)</label>
-                    <input
-                      type="number"
-                      step="1"
-                      className="form-input"
-                      value={kerf}
-                      onChange={(e) => setKerf(Number(e.target.value))}
-                    />
-                    <span className="adv-hint">Blade cuts loss margin. (default: 0mm)</span>
-                  </div>
-
-                  <div className="advanced-input-group">
-                    <label className="adv-lbl">Trim Margin (mm)</label>
-                    <input
-                      type="number"
-                      step="1"
-                      className="form-input"
-                      value={trimMargin}
-                      onChange={(e) => setTrimMargin(Number(e.target.value))}
-                    />
-                    <span className="adv-hint">End waste margins. (default: 0mm)</span>
-                  </div>
-                </div>
               </div>
             )}
           </section>

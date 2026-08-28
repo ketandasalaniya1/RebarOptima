@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Users, Plus, Edit3, Shield, Mail, CheckCircle, XCircle, Search, Save, X, AlertTriangle } from 'lucide-react';
 import { usersApi, rolesApi } from '../../utils/api';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import './UsersPage.css';
 
 export default function UserManagementPage() {
@@ -135,7 +136,7 @@ export default function UserManagementPage() {
   );
 
   if (loading) {
-    return <div className="users-page"><div className="users-loading"><div className="users-spinner"></div><p>Loading users...</p></div></div>;
+    return <LoadingSpinner message="Loading users & access controls..." minHeight="65vh" />;
   }
 
   return (

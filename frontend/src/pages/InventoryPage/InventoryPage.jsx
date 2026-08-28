@@ -21,8 +21,14 @@ import {
   Search,
   Calendar,
   FileText,
-  Layers
+  Layers,
+  Scissors,
+  Target,
+  Calculator,
+  Recycle,
+  Wand2
 } from 'lucide-react'
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import './InventoryPage.css'
 
 export default function InventoryPage() {
@@ -45,6 +51,7 @@ export default function InventoryPage() {
 
   // Scrap Sales Portal State
   const [scrapSales, setScrapSales] = useState([])
+  const [ledgerHistory, setLedgerHistory] = useState([])
 
   const [scrapSaleForm, setScrapSaleForm] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -79,16 +86,18 @@ export default function InventoryPage() {
     try {
       setLoading(true)
       setError('')
-      const [invData, rulesData, salesData, scrapRecordsData] = await Promise.all([
+      const [invData, rulesData, salesData, scrapRecordsData, ledgerData] = await Promise.all([
         inventoryApi.getInventory(),
         inventoryApi.getScrapRules(),
         inventoryApi.getScrapSales(),
-        batchesApi.getScrapRecords().catch(() => [])
+        batchesApi.getScrapRecords().catch(() => []),
+        inventoryApi.getLedger().catch(() => [])
       ])
       setInventory(invData)
       setScrapRules(rulesData)
       setScrapSales(salesData)
       setBatchScrapRecords(scrapRecordsData || [])
+      setLedgerHistory(ledgerData || [])
     } catch (err) {
       setError(err.message || 'Failed to fetch inventory data.')
     } finally {
@@ -167,6 +176,95 @@ export default function InventoryPage() {
     return { items, grandTotalWeight, grandTotalQty, inStockCount }
   }, [inventory.remnantsStock])
 
+  // Smart Remnant Clearance & Cut Matcher State
+  const [showRemnantMatcher, setShowRemnantMatcher] = useState(false)
+  const [matcherDia, setMatcherDia] = useState(8)
+  const [matcherTargetLength, setMatcherTargetLength] = useState(300)
+  const [matcherTargetQty, setMatcherTargetQty] = useState('')
+
+  // Dynamic Remnant Clearance & Links Calculation
+  const remnantMatchAnalysis = useMemo(() => {
+    const targetL = Number(matcherTargetLength) || 0
+    const targetDia = Number(matcherDia) || 8
+    const reqQty = matcherTargetQty ? Number(matcherTargetQty) : null
+
+    if (targetL <= 0) return { items: [], totalPieces: 0, totalRemnantsUsed: 0, totalWeightCleared: 0, totalScrapWeight: 0, avgYield: 0 }
+
+    const matchingRemnants = (inventory.remnantsStock || [])
+      .filter(r => (targetDia === 0 || Number(r.diameter) === targetDia) && Number(r.length) >= targetL)
+      .sort((a, b) => Number(a.length) - Number(b.length))
+
+    let accumulatedPieces = 0
+    let totalRemnantsUsed = 0
+    let totalLengthCleared = 0
+    let totalUsableLength = 0
+    let totalScrapLength = 0
+    let totalWeightCleared = 0
+    let totalScrapWeight = 0
+
+    const matchedItems = []
+
+    for (const rem of matchingRemnants) {
+      if (reqQty !== null && accumulatedPieces >= reqQty) break
+
+      const len = Number(rem.length)
+      const dia = Number(rem.diameter)
+      const availQty = Number(rem.quantity) || 1
+      const pcsPerBar = Math.floor(len / targetL)
+      if (pcsPerBar <= 0) continue
+
+      let barsToUse = availQty
+      if (reqQty !== null) {
+        const remainingNeeded = reqQty - accumulatedPieces
+        barsToUse = Math.min(availQty, Math.ceil(remainingNeeded / pcsPerBar))
+      }
+
+      const extractedPcs = barsToUse * pcsPerBar
+      const usedL = extractedPcs * targetL
+      const barScrap = len - (pcsPerBar * targetL)
+      const totScrap = barScrap * barsToUse
+      const barYield = ((pcsPerBar * targetL) / len) * 100
+      const barWeight = ((len * barsToUse) / 1000) * ((dia * dia) / 162)
+      const scrapWt = (totScrap / 1000) * ((dia * dia) / 162)
+
+      accumulatedPieces += extractedPcs
+      totalRemnantsUsed += barsToUse
+      totalLengthCleared += len * barsToUse
+      totalUsableLength += usedL
+      totalScrapLength += totScrap
+      totalWeightCleared += barWeight
+      totalScrapWeight += scrapWt
+
+      matchedItems.push({
+        id: rem._id,
+        diameter: dia,
+        remnantLength: len,
+        availableQty: availQty,
+        barsUsed: barsToUse,
+        pcsPerBar,
+        extractedPieces: extractedPcs,
+        scrapPerBar: barScrap,
+        totalScrap: totScrap,
+        barYield,
+        weightCleared: barWeight,
+        scrapWeight: scrapWt,
+        brandName: rem.brandName || '',
+        vendorName: rem.vendorName || ''
+      })
+    }
+
+    const avgYield = totalLengthCleared > 0 ? (totalUsableLength / totalLengthCleared) * 100 : 0
+
+    return {
+      items: matchedItems,
+      totalPieces: accumulatedPieces,
+      totalRemnantsUsed,
+      totalWeightCleared,
+      totalScrapWeight,
+      avgYield
+    }
+  }, [inventory.remnantsStock, matcherDia, matcherTargetLength, matcherTargetQty])
+
   // Multi-Diameter Voucher handlers
   const handleAddVoucherRow = () => {
     setVoucherRows(prev => [
@@ -222,6 +320,22 @@ export default function InventoryPage() {
           brandName: row.brandName || '',
           vendorName: row.vendorName || '',
         })
+      }
+
+      // Persist newly submitted brands and vendors to localStorage for future instant suggestions
+      try {
+        const newBrands = voucherRows.map(r => r.brandName?.trim()).filter(Boolean);
+        const newVendors = voucherRows.map(r => r.vendorName?.trim()).filter(Boolean);
+        if (newBrands.length > 0) {
+          const storedB = JSON.parse(localStorage.getItem('rebar_recent_brands') || '[]');
+          localStorage.setItem('rebar_recent_brands', JSON.stringify(Array.from(new Set([...newBrands, ...storedB])).slice(0, 30)));
+        }
+        if (newVendors.length > 0) {
+          const storedV = JSON.parse(localStorage.getItem('rebar_recent_vendors') || '[]');
+          localStorage.setItem('rebar_recent_vendors', JSON.stringify(Array.from(new Set([...newVendors, ...storedV])).slice(0, 30)));
+        }
+      } catch (e) {
+        console.error('Failed to save recent suggestions', e);
       }
 
       setSuccess('Voucher inward entry recorded successfully!')
@@ -538,35 +652,92 @@ export default function InventoryPage() {
     return sum + loss
   }, 0)
 
-  if (loading) {
-    return (
-      <div className="inventory-page loading-state">
-        <div className="loader"></div>
-        <p>Loading steel bar inventory...</p>
-      </div>
-    )
-  }
+  // Default common Steel Brands & Vendors for immediate high-quality suggestions
+  const DEFAULT_POPULAR_BRANDS = [
+    'Tata Tiscon',
+    'Jindal Panther',
+    'JSW Neosteel',
+    'SAIL TMT',
+    'Kamdhenu Nxt',
+    'Vibrant TMT',
+    'Shyam Steel',
+    'Vizag Steel (RINL)',
+    'Electrotherm (ET TMT)',
+    'Rathi Steel'
+  ];
 
-  const uniqueBrands = Array.from(new Set([
-    ...(inventory.standardStock || []).map(item => item.brandName),
-    ...(inventory.remnantsStock || []).map(item => item.brandName)
-  ].map(b => b ? b.trim() : '').filter(Boolean)));
+  const DEFAULT_POPULAR_VENDORS = [
+    'Sai Traders',
+    'Apex Steel Corporation',
+    'Kalyan Traders',
+    'Mahalaxmi Steel Supplier',
+    'Jai Bharat Steel Agencies',
+    'Om Enterprise',
+    'Vibrant Steel Corporation'
+  ];
 
-  const uniqueVendors = Array.from(new Set([
-    ...(inventory.standardStock || []).map(item => item.vendorName),
-    ...(inventory.remnantsStock || []).map(item => item.vendorName)
-  ].map(v => v ? v.trim() : '').filter(Boolean)));
+  // Aggregated Brand suggestions from ledger history, active stock, localStorage, and defaults
+  const uniqueBrands = useMemo(() => {
+    let fromStorage = [];
+    try {
+      fromStorage = JSON.parse(localStorage.getItem('rebar_recent_brands') || '[]');
+    } catch {
+      fromStorage = [];
+    }
+
+    const fromLedger = (ledgerHistory || []).map(item => item.brandName);
+    const fromStock = (inventory.standardStock || []).map(item => item.brandName);
+    const fromRemnants = (inventory.remnantsStock || []).map(item => item.brandName);
+    const fromCurrentVoucher = (voucherRows || []).map(row => row.brandName);
+
+    const combined = [
+      ...fromStorage,
+      ...fromLedger,
+      ...fromStock,
+      ...fromRemnants,
+      ...fromCurrentVoucher,
+      ...DEFAULT_POPULAR_BRANDS
+    ];
+
+    return Array.from(new Set(combined.map(b => (b ? b.trim() : '')).filter(Boolean)));
+  }, [inventory, ledgerHistory, voucherRows]);
+
+  // Aggregated Vendor suggestions from ledger history, active stock, localStorage, and defaults
+  const uniqueVendors = useMemo(() => {
+    let fromStorage = [];
+    try {
+      fromStorage = JSON.parse(localStorage.getItem('rebar_recent_vendors') || '[]');
+    } catch {
+      fromStorage = [];
+    }
+
+    const fromLedger = (ledgerHistory || []).map(item => item.vendorName);
+    const fromStock = (inventory.standardStock || []).map(item => item.vendorName);
+    const fromRemnants = (inventory.remnantsStock || []).map(item => item.vendorName);
+    const fromCurrentVoucher = (voucherRows || []).map(row => row.vendorName);
+
+    const combined = [
+      ...fromStorage,
+      ...fromLedger,
+      ...fromStock,
+      ...fromRemnants,
+      ...fromCurrentVoucher,
+      ...DEFAULT_POPULAR_VENDORS
+    ];
+
+    return Array.from(new Set(combined.map(v => (v ? v.trim() : '')).filter(Boolean)));
+  }, [inventory, ledgerHistory, voucherRows]);
 
   const getFilteredBrands = (val) => {
     const term = (val || '').toLowerCase().trim();
-    if (!term) return uniqueBrands;
-    return uniqueBrands.filter(b => b.toLowerCase().includes(term));
+    if (!term) return uniqueBrands.slice(0, 10);
+    return uniqueBrands.filter(b => b.toLowerCase().includes(term)).slice(0, 10);
   };
 
   const getFilteredVendors = (val) => {
     const term = (val || '').toLowerCase().trim();
-    if (!term) return uniqueVendors;
-    return uniqueVendors.filter(v => v.toLowerCase().includes(term));
+    if (!term) return uniqueVendors.slice(0, 10);
+    return uniqueVendors.filter(v => v.toLowerCase().includes(term)).slice(0, 10);
   };
 
   const handleSelectSuggestion = (rowId, field, value) => {
@@ -705,7 +876,6 @@ export default function InventoryPage() {
                       <th>Qty (Bars)</th>
                       <th>Total Weight (kg)</th>
                       <th>Cost (per kg with GST)</th>
-                      <th>Type</th>
                       <th>Brand</th>
                       <th>Vendor</th>
                       <th>Inward Date</th>
@@ -741,7 +911,6 @@ export default function InventoryPage() {
                         </td>
                         <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
                         <td>₹{item.costPerKg?.toFixed(2)}</td>
-                        <td>{item.typeOfBar || '-'}</td>
                         <td>{item.brandName || '-'}</td>
                         <td>{item.vendorName || '-'}</td>
                         <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</td>
@@ -814,6 +983,13 @@ export default function InventoryPage() {
                 <Sparkles size={18} color="#059669" style={{ marginRight: '6px' }} /> Reusable Remnants Stock
               </h3>
               <div className="section-header-stats">
+                <button
+                  className={`btn-matcher-toggle ${showRemnantMatcher ? 'active' : ''}`}
+                  onClick={() => setShowRemnantMatcher(!showRemnantMatcher)}
+                  title="Match remnant stock with small cut lengths (links, ties, stirrups)"
+                >
+                  <Recycle size={15} /> Remnant Clearance Matcher
+                </button>
                 <span className="header-stat-pill remnant-pill">
                   <strong>{Math.round(remnantsDiaSummary.grandTotalWeight).toLocaleString()} kg</strong>
                   {remnantsDiaSummary.grandTotalWeight >= 1000 && (
@@ -828,6 +1004,149 @@ export default function InventoryPage() {
             <p className="remnant-disclaimer">
               These are reusable remnants generated automatically from previous cutting optimizations. They are prioritised first in next optimizations.
             </p>
+
+            {/* Smart Remnant Clearance & Links Matcher Panel */}
+            {showRemnantMatcher && (
+              <div className="remnant-matcher-panel">
+                <div className="matcher-header">
+                  <div className="matcher-header-title">
+                    <Recycle size={20} className="text-emerald" />
+                    <div>
+                      <h4>Smart Remnant Clearance & Takeout Matcher</h4>
+                      <p>Enter required link/stirrup cut length to discover total possible pieces extractable from current remnant offcuts.</p>
+                    </div>
+                  </div>
+                  <button className="matcher-close-btn" onClick={() => setShowRemnantMatcher(false)}>
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="matcher-controls-row">
+                  <div className="matcher-input-group">
+                    <label>Target Diameter</label>
+                    <select
+                      value={matcherDia}
+                      onChange={(e) => setMatcherDia(Number(e.target.value))}
+                      className="matcher-select"
+                    >
+                      <option value={0}>All Diameters</option>
+                      {[8, 10, 12, 16, 20, 25, 32].map(d => (
+                        <option key={d} value={d}>{d} mm</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="matcher-input-group flex-2">
+                    <label>Required Cut Length (mm)</label>
+                    <div className="input-with-presets">
+                      <input
+                        type="number"
+                        min="50"
+                        step="10"
+                        value={matcherTargetLength}
+                        onChange={(e) => setMatcherTargetLength(e.target.value)}
+                        placeholder="e.g. 300"
+                        className="matcher-input"
+                      />
+                      <div className="quick-presets-chips">
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 300 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(300)}>300 mm (Links)</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 450 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(450)}>450 mm (Stirrups)</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 600 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(600)}>600 mm (Chairs)</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 800 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(800)}>800 mm (Ties)</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="matcher-input-group">
+                    <label>Target Qty Needed (Optional)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={matcherTargetQty}
+                      onChange={(e) => setMatcherTargetQty(e.target.value)}
+                      placeholder="Max Possible"
+                      className="matcher-input"
+                    />
+                  </div>
+                </div>
+
+                {/* KPI Summary Tiles */}
+                <div className="matcher-results-grid">
+                  <div className="matcher-kpi-card highlight-green">
+                    <span className="kpi-lbl">Total Extractable Pieces</span>
+                    <span className="kpi-val">{remnantMatchAnalysis.totalPieces.toLocaleString()} <span className="kpi-unit">links/pcs</span></span>
+                    <span className="kpi-sub">@ {matcherTargetLength} mm cut length</span>
+                  </div>
+
+                  <div className="matcher-kpi-card highlight-blue">
+                    <span className="kpi-lbl">Steel Cleared from Yard</span>
+                    <span className="kpi-val">{Math.round(remnantMatchAnalysis.totalWeightCleared).toLocaleString()} <span className="kpi-unit">kg</span></span>
+                    <span className="kpi-sub">{remnantMatchAnalysis.totalRemnantsUsed} remnant bars consumed</span>
+                  </div>
+
+                  <div className="matcher-kpi-card highlight-purple">
+                    <span className="kpi-lbl">Clearance Yield</span>
+                    <span className="kpi-val">{remnantMatchAnalysis.avgYield.toFixed(1)}%</span>
+                    <span className="kpi-sub">Utilization efficiency</span>
+                  </div>
+
+                  <div className="matcher-kpi-card highlight-orange">
+                    <span className="kpi-lbl">Leftover Scrap</span>
+                    <span className="kpi-val">{Math.round(remnantMatchAnalysis.totalScrapWeight).toLocaleString()} <span className="kpi-unit">kg</span></span>
+                    <span className="kpi-sub">Offcut remainder</span>
+                  </div>
+                </div>
+
+                {/* Match Breakdown Schedule Table */}
+                {remnantMatchAnalysis.items.length > 0 ? (
+                  <div className="matcher-schedule-container">
+                    <h5 className="schedule-heading">
+                      <Scissors size={14} /> Recommended Remnant Takeout & Cutting Schedule
+                    </h5>
+                    <div className="table-responsive">
+                      <table className="matcher-table">
+                        <thead>
+                          <tr>
+                            <th>Diameter</th>
+                            <th>Remnant Length</th>
+                            <th>Available</th>
+                            <th>Bars to Use</th>
+                            <th>Yield / Bar</th>
+                            <th>Total Pieces</th>
+                            <th>Scrap / Bar</th>
+                            <th>Yield %</th>
+                            <th>Weight Cleared</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {remnantMatchAnalysis.items.map((item, idx) => (
+                            <tr key={idx}>
+                              <td className="font-bold">Ø {item.diameter} mm</td>
+                              <td className="font-bold">{(item.remnantLength / 1000).toFixed(2)} m ({item.remnantLength} mm)</td>
+                              <td>{item.availableQty} bars</td>
+                              <td className="font-bold text-emerald">{item.barsUsed} bars</td>
+                              <td className="font-bold">{item.pcsPerBar} pcs</td>
+                              <td className="font-bold text-emerald">+{item.extractedPieces} pcs</td>
+                              <td className="text-secondary">{item.scrapPerBar} mm</td>
+                              <td>
+                                <span className={`yield-pill ${item.barYield >= 90 ? 'high' : 'med'}`}>
+                                  {item.barYield.toFixed(1)}%
+                                </span>
+                              </td>
+                              <td className="font-bold">{item.weightCleared.toFixed(1)} kg</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="matcher-empty-state">
+                    <p>No remnants in stock with length ≥ {matcherTargetLength} mm for Ø {matcherDia === 0 ? 'All' : matcherDia} mm.</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Diawise Summary Cards for Reusable Remnants Stock */}
             <div className="dia-summary-container">
@@ -881,9 +1200,6 @@ export default function InventoryPage() {
                       <th>Length</th>
                       <th>Qty (Remnants)</th>
                       <th>Total Weight (kg)</th>
-                      <th>Original Type</th>
-                      <th>Original Brand</th>
-                      <th>Original Vendor</th>
                       <th>Generated Date</th>
                       <th>Actions</th>
                     </tr>
@@ -916,9 +1232,6 @@ export default function InventoryPage() {
                           )}
                         </td>
                         <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
-                        <td>{item.typeOfBar || '-'}</td>
-                        <td>{item.brandName || '-'}</td>
-                        <td>{item.vendorName || '-'}</td>
                         <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</td>
                         <td>
                           {editingRemnantId === item._id ? (
@@ -1061,9 +1374,10 @@ export default function InventoryPage() {
                           type="text"
                           placeholder="Brand name"
                           value={row.brandName}
+                          list="rebar-brands-list"
                           onChange={(e) => handleVoucherRowChange(row.id, 'brandName', e.target.value)}
                           onFocus={() => setFocusedDropdown({ id: row.id, field: 'brandName' })}
-                          onBlur={() => setFocusedDropdown(null)}
+                          onBlur={() => setTimeout(() => setFocusedDropdown(null), 200)}
                           className="voucher-input"
                           autoComplete="off"
                         />
@@ -1093,9 +1407,10 @@ export default function InventoryPage() {
                           type="text"
                           placeholder="Vendor name"
                           value={row.vendorName}
+                          list="rebar-vendors-list"
                           onChange={(e) => handleVoucherRowChange(row.id, 'vendorName', e.target.value)}
                           onFocus={() => setFocusedDropdown({ id: row.id, field: 'vendorName' })}
-                          onBlur={() => setFocusedDropdown(null)}
+                          onBlur={() => setTimeout(() => setFocusedDropdown(null), 200)}
                           className="voucher-input"
                           autoComplete="off"
                         />
@@ -1135,6 +1450,19 @@ export default function InventoryPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Native Browser Auto-Complete Datalists */}
+            <datalist id="rebar-brands-list">
+              {uniqueBrands.map(b => (
+                <option key={b} value={b} />
+              ))}
+            </datalist>
+
+            <datalist id="rebar-vendors-list">
+              {uniqueVendors.map(v => (
+                <option key={v} value={v} />
+              ))}
+            </datalist>
 
             <button type="submit" disabled={actionLoading} className="submit-inward-btn">
               {actionLoading ? 'Recording Voucher Entry...' : 'Submit Inward Voucher'}

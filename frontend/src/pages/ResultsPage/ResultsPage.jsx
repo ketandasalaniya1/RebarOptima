@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './ResultsPage.css'
 import html2pdf from 'html2pdf.js'
 import { batchesApi, inventoryApi } from '../../utils/api'
@@ -17,7 +17,10 @@ import {
   FileSpreadsheet,
   Recycle,
   Tag,
-  X
+  X,
+  Sparkles,
+  ChevronDown,
+  FileText
 } from 'lucide-react'
 
 
@@ -163,6 +166,19 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [batchNameInput, setBatchNameInput] = useState(() => data?.batchName || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`);
 
+  // A4 Print Engine Setup
+  const reportPrintRef = useRef(null);
+  const [printOption, setPrintOption] = useState('full'); // 'full' | 'workshop' | 'summary'
+  const [showPrintMenu, setShowPrintMenu] = useState(false);
+
+  const triggerCustomPrint = (option) => {
+    setPrintOption(option);
+    setShowPrintMenu(false);
+    setTimeout(() => {
+      window.print();
+    }, 150);
+  };
+
   useEffect(() => {
     if (data?.batchName) {
       setBatchNameInput(data.batchName);
@@ -246,18 +262,28 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   // Group layouts to show required stocks
   const requiredStocksMap = {};
   layouts.forEach(l => {
-    const key = `${l.diameter}-${l.stockLength}-${l.isVirtual ? 'v' : 'r'}`;
+    const key = `${l.diameter}-${l.stockLength}-${l.isVirtual ? 'v' : l.isRemnant ? 'rem' : 'std'}`;
+    const diaNum = parseFloat(l.diameter || '12');
+    const singleWeight = (l.stockLength / 1000) * ((diaNum * diaNum) / 162);
+    const totalWeight = singleWeight * l.repetition;
+
     if (!requiredStocksMap[key]) {
       requiredStocksMap[key] = {
         diameter: l.diameter || '12',
         length: l.stockLength,
         quantity: 0,
-        isVirtual: !!l.isVirtual
+        totalLength: 0,
+        weightInKgs: 0,
+        isVirtual: !!l.isVirtual,
+        isRemnant: !!l.isRemnant
       };
     }
     requiredStocksMap[key].quantity += l.repetition;
+    requiredStocksMap[key].totalLength += (l.stockLength * l.repetition) / 1000;
+    requiredStocksMap[key].weightInKgs += totalWeight;
   });
   const requiredStocks = Object.values(requiredStocksMap).sort((a, b) => parseFloat(a.diameter) - parseFloat(b.diameter));
+  const totalRequiredStockWeight = requiredStocks.reduce((sum, s) => sum + (s.weightInKgs || 0), 0);
 
   // Group layouts by diameter for wastage, remnant, scrap, and utilization in kg according to Scrap Rules
   const diaWeightSummaryMap = {};
@@ -474,9 +500,61 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
               <CheckCircle2 size={16} /> {saveLoading ? 'Saving Batch...' : 'Save & Commit Batch'}
             </button>
           )}
-          <button className="btn-print-report" onClick={() => window.print()}>
-            <Printer size={16} /> Print Report
-          </button>
+
+          {/* React-To-Print Options Dropdown */}
+          <div className="print-menu-wrapper">
+            <button 
+              className="btn-print-report" 
+              onClick={() => setShowPrintMenu(!showPrintMenu)}
+              title="Print options"
+            >
+              <Printer size={16} /> Print Options <ChevronDown size={14} />
+            </button>
+
+            {showPrintMenu && (
+              <div className="print-dropdown-menu">
+                <button
+                  className="print-opt-item"
+                  onClick={() => triggerCustomPrint('foreman')}
+                >
+                  <div className="print-opt-icon-box icon-foreman">
+                    <Scissors size={17} />
+                  </div>
+                  <div className="print-opt-text">
+                    <div className="print-opt-title">Steel Foreman Cut-Sheet</div>
+                    <div className="print-opt-desc">Layouts + Stocks & Wastage (No finances)</div>
+                  </div>
+                </button>
+
+                <button
+                  className="print-opt-item"
+                  onClick={() => triggerCustomPrint('full')}
+                >
+                  <div className="print-opt-icon-box icon-full">
+                    <FileText size={17} />
+                  </div>
+                  <div className="print-opt-text">
+                    <div className="print-opt-title">Complete Executive Report</div>
+                    <div className="print-opt-desc">All KPIs, layouts, wastage & financials</div>
+                  </div>
+                </button>
+
+                <button
+                  className="print-opt-item"
+                  onClick={() => triggerCustomPrint('summary')}
+                >
+                  <div className="print-opt-icon-box icon-summary">
+                    <BarChart3 size={17} />
+                  </div>
+                  <div className="print-opt-text">
+                    <div className="print-opt-title">1-Page Summary Sheet</div>
+                    <div className="print-opt-desc">Yield, scrap loss & remnant savings overview</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
           <button className="btn-download-pdf" onClick={downloadPDF}>
             <FileDown size={16} /> Download PDF
           </button>
@@ -491,6 +569,9 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           <span>⚠️ {saveError}</span>
         </div>
       )}
+
+      {/* Printable Wrapper (captured by react-to-print) */}
+      <div ref={reportPrintRef} className={`print-content-root print-mode-${printOption}`}>
 
       {/* ── Professional Print Header (hidden on screen) ── */}
       <div className="print-report-header print-only">
@@ -603,7 +684,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       <div className="tables-grid">
         <div className="tables-left-col">
           {/* Required Stocks */}
-          <div className="card table-card">
+          <div className="card table-card table-card-required-stocks">
             <h3 className="table-card-heading">Required Stocks</h3>
             <table className="summary-table">
               <thead>
@@ -612,35 +693,57 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                   <th>Stock Length (m)</th>
                   <th>Quantity (Bars)</th>
                   <th>Total Length (m)</th>
+                  <th>Total Weight</th>
                 </tr>
               </thead>
               <tbody>
                 {requiredStocks.map((s, idx) => (
-                  <tr key={idx} className={s.isVirtual ? 'tr-virtual' : ''}>
+                  <tr key={idx} className={s.isVirtual ? 'tr-virtual' : s.isRemnant ? 'tr-remnant-stock' : ''}>
                     <td>
-                      {s.diameter}
+                      {s.diameter} mm
                       {s.isVirtual && (
                         <span className="text-virtual" style={{ fontSize: '10px', marginLeft: '6px', fontWeight: 'bold' }}>
                           (Unavailable)
                         </span>
                       )}
+                      {s.isRemnant && (
+                        <span className="badge-remnant-pill">
+                          <Sparkles size={11} /> (Reused Remnant)
+                        </span>
+                      )}
                     </td>
-                    <td>{(s.length / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                    <td className={s.isVirtual ? 'text-virtual' : ''} style={s.isVirtual ? { fontWeight: 'bold' } : {}}>{s.quantity}</td>
-                    <td>{((s.length * s.quantity) / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                    <td>{(s.length / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} m</td>
+                    <td className={s.isVirtual ? 'text-virtual' : s.isRemnant ? 'text-cyan' : ''} style={s.isVirtual || s.isRemnant ? { fontWeight: 'bold' } : {}}>{s.quantity}</td>
+                    <td>{((s.length * s.quantity) / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                    <td className="font-bold">
+                      {Math.round(s.weightInKgs).toLocaleString()} kg
+                      {s.weightInKgs >= 1000 && (
+                        <span style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', fontWeight: 'normal' }}>
+                          ({(s.weightInKgs / 1000).toFixed(2)} MT)
+                        </span>
+                      )}
+                    </td>
                   </tr>
                 ))}
                 <tr className="total-row">
                   <td colSpan={2}>TOTAL</td>
                   <td>{totalBarsUsed}</td>
                   <td>{(summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  <td>
+                    {Math.round(totalRequiredStockWeight).toLocaleString()} kg
+                    {totalRequiredStockWeight >= 1000 && (
+                      <span style={{ fontSize: '10px', display: 'block', opacity: 0.85 }}>
+                        ({(totalRequiredStockWeight / 1000).toFixed(2)} MT)
+                      </span>
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* Wastage & Utilisation (dia-wise) */}
-          <div className="card table-card">
+          <div className="card table-card table-card-wastage">
             <h3 className="table-card-heading">Wastage & Utilisation (dia-wise)</h3>
             <table className="summary-table">
               <thead>
@@ -686,7 +789,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
         </div>
 
         {/* Summary Table */}
-        <div className="card table-card">
+        <div className="card table-card table-card-summary">
           <h3 className="table-card-heading">Summary</h3>
           <table className="info-summary-table">
             <tbody>
@@ -731,13 +834,13 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
         {layouts.map((layout, index) => (
           <div
             key={layout.id}
-            className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card layout-virtual' : ''} ${(index + 1) % 5 === 0 ? 'pdf-page-break' : ''}`}
+            className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card layout-virtual' : ''} ${layout.isRemnant ? 'layout-reused-remnant-card' : ''}`}
           >
             <div className="layout-grid-new">
 
               {/* Left Panel */}
               <div className="layout-left-panel">
-                <div className={`layout-avatar-id ${layout.isVirtual ? 'badge-virtual' : ''}`}>{layout.id}</div>
+                <div className={`layout-avatar-id ${layout.isVirtual ? 'badge-virtual' : ''} ${layout.isRemnant ? 'badge-remnant-avatar' : ''}`}>{layout.id}</div>
                 <div className="layout-info-stack">
                   <div className="layout-rep-info">
                     <span className="layout-rep-val">{layout.repetition}x</span>
@@ -749,9 +852,14 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                       <span className="detail-val">{layout.diameter || '12'} mm</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-lbl">{layout.isVirtual ? 'Stock (Unavailable)' : 'Stock Length'}</span>
-                      <span className={`detail-val ${layout.isVirtual ? 'text-virtual' : ''}`}>
+                      <span className="detail-lbl">{layout.isVirtual ? 'Stock (Unavailable)' : layout.isRemnant ? 'Stock (Remnant)' : 'Stock Length'}</span>
+                      <span className={`detail-val ${layout.isVirtual ? 'text-virtual' : layout.isRemnant ? 'text-cyan font-bold' : ''}`}>
                         {layout.stockLength.toLocaleString()} mm
+                        {layout.isRemnant && (
+                          <span className="reused-remnant-inline-badge">
+                            <Sparkles size={10} /> Reused
+                          </span>
+                        )}
                       </span>
                     </div>
                   </div>
@@ -771,13 +879,19 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                         </span>
                       );
                     })}
-                    {/* Wastage/Remnant pill removed from legend to save space and avoid redundancy */}
                   </div>
-                  {layout.isVirtual && (
-                    <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                      ⚠️ STOCK UNAVAILABLE (NEEDS PURCHASE)
-                    </span>
-                  )}
+                  <div className="layout-header-status-badges" style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    {layout.isRemnant && (
+                      <span className="badge-used-remnant">
+                        <Sparkles size={12} /> REUSED REMNANT BAR ({layout.stockLength.toLocaleString()} mm)
+                      </span>
+                    )}
+                    {layout.isVirtual && (
+                      <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                        ⚠️ STOCK UNAVAILABLE (NEEDS PURCHASE)
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="visual-bar-wrapper">
@@ -1162,10 +1276,11 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
         </div>
       )}
 
-      {/* Brand signature (visible on print only) */}
-      <div className="print-footer print-only">
-        <span>© 2026-2027 RebarOptima. All rights reserved.</span>
-        <span>Generated: {reportDate} &nbsp;·&nbsp; RebarOptima Cut Optimizer &nbsp;·&nbsp; Confidential</span>
+        {/* Brand signature (visible on print only) */}
+        <div className="print-footer print-only">
+          <span>© 2026-2027 RebarOptima. All rights reserved.</span>
+          <span>Generated: {reportDate} &nbsp;·&nbsp; RebarOptima Cut Optimizer &nbsp;·&nbsp; Confidential</span>
+        </div>
       </div>
     </div>
   );

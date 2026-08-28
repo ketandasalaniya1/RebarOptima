@@ -51,8 +51,14 @@
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
   transition: all 0.3s ease;
+}
+
+.batch-history-card.has-open-menu {
+  z-index: 1000 !important;
 }
 
 .batch-history-card.expanded {
@@ -64,9 +70,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
+}
+
+.batch-history-card.expanded .batch-card-header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .batch-card-header:hover {
@@ -670,4 +682,334 @@
     justify-content: center;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT OPTIONS DROPDOWN MENU
+   ═══════════════════════════════════════════════════════════════════ */
+
+.print-menu-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.print-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: var(--card-bg, #111827);
+  border: 1px solid var(--card-border, #334155);
+  border-radius: 12px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.7), 0 4px 16px rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: dropdownPop 0.15s ease-out;
+}
+
+.print-opt-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.print-opt-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(2px);
+}
+
+.print-opt-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.print-opt-icon-box.icon-foreman {
+  background: rgba(6, 182, 212, 0.12);
+  color: #06b6d4;
+}
+
+.print-opt-icon-box.icon-full {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.print-opt-icon-box.icon-summary {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.print-opt-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.print-opt-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+}
+
+.print-opt-desc {
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NATIVE BROWSER A4 PRINT ENGINE FOR BATCH HISTORY
+   ═══════════════════════════════════════════════════════════════════ */
+
+.batch-print-portal {
+  display: none;
+}
+
+@media print {
+  /* Hide the regular page UI */
+  .history-header,
+  .history-list,
+  .navbar,
+  .sidebar,
+  .topbar,
+  .btn-print-batch,
+  .print-menu-wrapper,
+  .alert {
+    display: none !important;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11pt !important;
+  }
+
+  .batch-print-portal {
+    display: block !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 10mm 12mm !important;
+  }
+
+  .print-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    border-bottom: 2px solid #000000 !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .print-title {
+    font-size: 18pt !important;
+    font-weight: 900 !important;
+    color: #000000 !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  .print-badge-row {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+
+  .print-batch-name {
+    font-size: 12pt !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+  }
+
+  .print-mode-indicator {
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+    background: #f1f5f9 !important;
+    color: #000000 !important;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .print-date {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+  }
+
+  /* In Foreman mode, hide high-level financials/KPIs */
+  .print-mode-foreman .print-kpi-grid {
+    display: none !important;
+  }
+
+  .print-kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .print-kpi-card {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 8px 10px !important;
+    background: #f8fafc !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .print-kpi-card .kpi-title {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+  }
+
+  .print-kpi-card .kpi-data {
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+  }
+
+  /* Layouts & Bars */
+  .print-section-title {
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
+    padding-bottom: 6px !important;
+    margin: 16px 0 12px 0 !important;
+  }
+
+  .print-layouts-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .print-layout-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    border: 1.5px solid #94a3b8 !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    background: #ffffff !important;
+    margin-bottom: 10px !important;
+  }
+
+  .visual-bar-ruler {
+    height: 32px !important;
+    border-radius: 4px !important;
+    border: 1px solid #475569 !important;
+  }
+
+  .bar-segment {
+    font-size: 11pt !important;
+    font-weight: 800 !important;
+  }
+
+  .layout-avatar-id {
+    background: #e2e8f0 !important;
+    color: #000000 !important;
+    border: 1px solid #94a3b8 !important;
+    font-size: 12pt !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BATCH DELETE CONFIRMATION POPOVER
+   ═══════════════════════════════════════════════════════════════════ */
+
+.batch-delete-confirm-popover {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg, #111827);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 5px 8px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: dropdownPop 0.15s ease-out;
+}
+
+.delete-popover-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.delete-popover-options {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.delete-opt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-delete-log-only {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete-log-only:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-delete-restore-stock {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.btn-delete-restore-stock:hover {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.btn-cancel-delete {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+}
+
+.btn-cancel-delete:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
 

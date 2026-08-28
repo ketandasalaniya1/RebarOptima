@@ -27,137 +27,144 @@ export class BatchesService {
   ): Promise<Batch> {
     const cid = new Types.ObjectId(companyId);
 
-    // 1. Fetch Scrap Rules to classify remnants
-    const scrapRules = await this.inventoryService.getScrapRules(companyId);
+    // 1. Fetch Scrap Rules and all referenced Stock Items in parallel
+    const dbIds = (dto.layouts || [])
+      .map(l => l.dbId)
+      .filter(id => id && Types.ObjectId.isValid(id))
+      .map(id => new Types.ObjectId(id));
+
+    const [scrapRules, originalStockItems] = await Promise.all([
+      this.inventoryService.getScrapRules(companyId),
+      dbIds.length > 0
+        ? this.stockItemModel.find({ _id: { $in: dbIds }, companyId: cid as any }).exec()
+        : Promise.resolve([]),
+    ]);
+
     const rulesMap = new Map<number, number>();
     scrapRules.forEach(r => rulesMap.set(r.diameter, r.scrapLengthThreshold));
+
+    const stockMap = new Map<string, StockItem>();
+    originalStockItems.forEach(item => stockMap.set(item._id.toString(), item));
 
     let totalScrapKg = 0;
     let totalRemnantKg = 0;
     let totalStockUsedKg = 0;
 
-    // 2. Process layouts
+    // Track in-memory balance for stock items that might be used across multiple layouts
+    const stockQuantityChanges = new Map<string, { deductionQty: number; deductionWeight: number }>();
+    const remnantUpsertMap = new Map<string, { filter: any; incQty: number; incWeight: number }>();
+    const transactionsToInsert: any[] = [];
+
+    // 2. Process layouts in-memory
     for (const layout of dto.layouts) {
       const diameter = Number(layout.diameter);
       const stockLength = Number(layout.stockLength);
       const repetition = Number(layout.repetition);
       const isVirtual = !!layout.isVirtual;
-      const dbId = layout.dbId;
+      const dbId = layout.dbId ? layout.dbId.toString() : null;
 
-      // Calculate weight of 1 bar used
       const singleWeight = this.inventoryService.getSingleBarWeight(diameter, stockLength);
       const layoutStockWeight = singleWeight * repetition;
 
-      if (!isVirtual) {
+      if (!isVirtual && dbId) {
         totalStockUsedKg += layoutStockWeight;
 
-        // Deduct from database stock item
-        if (dbId) {
-          const originalItem = await this.stockItemModel.findById(dbId).exec();
-          if (originalItem) {
-            const newQty = Math.max(0, originalItem.quantity - repetition);
-            const newWeight = Math.max(0, originalItem.weightInKgs - layoutStockWeight);
-            
-            if (newQty === 0) {
-              await this.stockItemModel.findByIdAndDelete(dbId).exec();
+        const originalItem = stockMap.get(dbId);
+        if (originalItem) {
+          // Accumulate stock deduction
+          const currentChange = stockQuantityChanges.get(dbId) || { deductionQty: 0, deductionWeight: 0 };
+          currentChange.deductionQty += repetition;
+          currentChange.deductionWeight += layoutStockWeight;
+          stockQuantityChanges.set(dbId, currentChange);
+
+          // Queue outward transaction
+          transactionsToInsert.push({
+            companyId: cid,
+            type: 'OUTWARD',
+            diameter,
+            length: stockLength,
+            quantity: repetition,
+            weightInKgs: layoutStockWeight,
+            costPerKg: originalItem.costPerKg || 0,
+            brandName: originalItem.brandName || '',
+            vendorName: originalItem.vendorName || '',
+            typeOfBar: originalItem.typeOfBar || '',
+            referenceName: dto.batchName || 'Cutting Batch',
+          });
+
+          // Handle waste
+          const waste = Number(layout.waste);
+          if (waste > 0) {
+            const threshold = rulesMap.get(diameter) ?? 1000;
+            const wasteWeight = this.inventoryService.getSingleBarWeight(diameter, waste) * repetition;
+
+            if (waste < threshold) {
+              // Scrap
+              totalScrapKg += wasteWeight;
+              transactionsToInsert.push({
+                companyId: cid,
+                type: 'SCRAP',
+                diameter,
+                length: waste,
+                quantity: repetition,
+                weightInKgs: wasteWeight,
+                costPerKg: originalItem.costPerKg || 0,
+                brandName: originalItem.brandName || '',
+                vendorName: originalItem.vendorName || '',
+                typeOfBar: originalItem.typeOfBar || '',
+                referenceName: dto.batchName || 'Cutting Batch',
+              });
             } else {
-              await this.stockItemModel.findByIdAndUpdate(dbId, {
-                quantity: newQty,
-                weightInKgs: newWeight,
-              } as any).exec();
-            }
+              // Reusable Remnant
+              totalRemnantKg += wasteWeight;
 
-            // ponytail: log outward stock consumption transaction
-            await new this.transactionModel({
-              companyId: cid,
-              type: 'OUTWARD',
-              diameter,
-              length: stockLength,
-              quantity: repetition,
-              weightInKgs: layoutStockWeight,
-              brandName: originalItem.brandName || '',
-              vendorName: originalItem.vendorName || '',
-              typeOfBar: originalItem.typeOfBar || '',
-              referenceName: dto.batchName || 'Cutting Batch',
-            }).save();
-
-            // Copy parent properties for remnants we are going to create
-            const waste = Number(layout.waste);
-            if (waste > 0) {
-              const threshold = rulesMap.get(diameter) ?? 1000;
-              const wasteWeight = this.inventoryService.getSingleBarWeight(diameter, waste) * repetition;
-
-              if (waste < threshold) {
-                // It is Scrap
-                totalScrapKg += wasteWeight;
-
-                // ponytail: log scrap transaction
-                await new this.transactionModel({
-                  companyId: cid,
-                  type: 'SCRAP',
-                  diameter,
-                  length: waste,
-                  quantity: repetition,
-                  weightInKgs: wasteWeight,
-                  brandName: originalItem.brandName || '',
-                  vendorName: originalItem.vendorName || '',
-                  typeOfBar: originalItem.typeOfBar || '',
-                  referenceName: dto.batchName || 'Cutting Batch',
-                }).save();
+              const remnantKey = `${diameter}_${waste}_${originalItem.costPerKg || 0}_${originalItem.brandName || ''}_${originalItem.vendorName || ''}_${originalItem.typeOfBar || ''}`;
+              const existingRemnant = remnantUpsertMap.get(remnantKey);
+              if (existingRemnant) {
+                existingRemnant.incQty += repetition;
+                existingRemnant.incWeight += wasteWeight;
               } else {
-                // It is a Reusable Remnant
-                totalRemnantKg += wasteWeight;
-                
-                // Save remnant in StockItem
-                const remnantFilter = {
-                  companyId: cid,
-                  diameter,
-                  length: waste,
-                  isRemnant: true,
-                  costPerKg: originalItem.costPerKg,
-                  typeOfBar: originalItem.typeOfBar || '',
-                  brandName: originalItem.brandName || '',
-                  vendorName: originalItem.vendorName || '',
-                };
-
-                await this.stockItemModel.findOneAndUpdate(
-                  remnantFilter as any,
-                  {
-                    $inc: {
-                      quantity: repetition,
-                      weightInKgs: wasteWeight,
-                    } as any,
-                  } as any,
-                  { upsert: true } as any
-                ).exec();
-
-                // ponytail: log remnant inward transaction
-                await new this.transactionModel({
-                  companyId: cid,
-                  type: 'REMNANT',
-                  diameter,
-                  length: waste,
-                  quantity: repetition,
-                  weightInKgs: wasteWeight,
-                  brandName: originalItem.brandName || '',
-                  vendorName: originalItem.vendorName || '',
-                  typeOfBar: originalItem.typeOfBar || '',
-                  referenceName: dto.batchName || 'Cutting Batch',
-                }).save();
+                remnantUpsertMap.set(remnantKey, {
+                  filter: {
+                    companyId: cid,
+                    diameter,
+                    length: waste,
+                    isRemnant: true,
+                    costPerKg: originalItem.costPerKg,
+                    typeOfBar: originalItem.typeOfBar || '',
+                    brandName: originalItem.brandName || '',
+                    vendorName: originalItem.vendorName || '',
+                  },
+                  incQty: repetition,
+                  incWeight: wasteWeight,
+                });
               }
+
+              transactionsToInsert.push({
+                companyId: cid,
+                type: 'REMNANT',
+                diameter,
+                length: waste,
+                quantity: repetition,
+                weightInKgs: wasteWeight,
+                costPerKg: originalItem.costPerKg || 0,
+                brandName: originalItem.brandName || '',
+                vendorName: originalItem.vendorName || '',
+                typeOfBar: originalItem.typeOfBar || '',
+                referenceName: dto.batchName || 'Cutting Batch',
+              });
             }
           }
         }
       } else {
-        // Virtual stock has no dbId and doesn't exist in DB, so no deduction.
-        // But waste from virtual stock goes to scrap or remnant.
+        // Virtual stock waste handling
         const waste = Number(layout.waste);
         if (waste > 0) {
           const threshold = rulesMap.get(diameter) ?? 1000;
           const wasteWeight = this.inventoryService.getSingleBarWeight(diameter, waste) * repetition;
           if (waste < threshold) {
             totalScrapKg += wasteWeight;
-            await new this.transactionModel({
+            transactionsToInsert.push({
               companyId: cid,
               type: 'SCRAP',
               diameter,
@@ -165,7 +172,7 @@ export class BatchesService {
               quantity: repetition,
               weightInKgs: wasteWeight,
               referenceName: dto.batchName || 'Cutting Batch',
-            }).save();
+            });
           } else {
             totalRemnantKg += wasteWeight;
           }
@@ -173,7 +180,55 @@ export class BatchesService {
       }
     }
 
-    // 3. Save Batch
+    // 3. Prepare Bulk Operations for Stock Updates & Remnant Upserts
+    const bulkStockOps: any[] = [];
+
+    // Deduct stock
+    for (const [dbId, change] of stockQuantityChanges.entries()) {
+      const originalItem = stockMap.get(dbId);
+      if (originalItem) {
+        const finalQty = originalItem.quantity - change.deductionQty;
+        const finalWeight = originalItem.weightInKgs - change.deductionWeight;
+
+        if (finalQty <= 0) {
+          bulkStockOps.push({
+            deleteOne: {
+              filter: { _id: new Types.ObjectId(dbId) },
+            },
+          });
+        } else {
+          bulkStockOps.push({
+            updateOne: {
+              filter: { _id: new Types.ObjectId(dbId) },
+              update: {
+                $set: {
+                  quantity: Math.max(0, finalQty),
+                  weightInKgs: Math.max(0, finalWeight),
+                },
+              },
+            },
+          });
+        }
+      }
+    }
+
+    // Upsert Remnants
+    for (const remnantData of remnantUpsertMap.values()) {
+      bulkStockOps.push({
+        updateOne: {
+          filter: remnantData.filter,
+          update: {
+            $inc: {
+              quantity: remnantData.incQty,
+              weightInKgs: remnantData.incWeight,
+            },
+          },
+          upsert: true,
+        },
+      });
+    }
+
+    // 4. Create Batch Document
     const batch = new this.batchModel({
       companyId: cid,
       batchName: dto.batchName,
@@ -191,7 +246,19 @@ export class BatchesService {
       },
     });
 
-    return batch.save();
+    // 5. Execute all database writes in parallel (Bulk Stock Ops, Bulk Insert Transactions, Save Batch)
+    const dbPromises: Promise<any>[] = [batch.save()];
+
+    if (bulkStockOps.length > 0) {
+      dbPromises.push(this.stockItemModel.bulkWrite(bulkStockOps, { ordered: false }));
+    }
+
+    if (transactionsToInsert.length > 0) {
+      dbPromises.push(this.transactionModel.insertMany(transactionsToInsert, { ordered: false }));
+    }
+
+    const [savedBatch] = await Promise.all(dbPromises);
+    return savedBatch;
   }
 
   async getBatchHistory(companyId: string): Promise<Batch[]> {
@@ -383,9 +450,75 @@ export class BatchesService {
     return existing.save();
   }
 
-  async deleteBatch(companyId: string, batchId: string): Promise<any> {
+  async deleteBatch(companyId: string, batchId: string, restoreStock: boolean = false): Promise<any> {
     const cid = new Types.ObjectId(companyId);
     const bid = new Types.ObjectId(batchId);
+
+    const batch = await this.batchModel.findOne({ _id: bid as any, companyId: cid as any }).exec();
+    if (!batch) {
+      throw new Error('Batch not found');
+    }
+
+    if (restoreStock) {
+      // 1. Fetch Scrap Rules
+      const scrapRules = await this.inventoryService.getScrapRules(companyId);
+      const rulesMap = new Map<number, number>();
+      scrapRules.forEach(r => rulesMap.set(r.diameter, r.scrapLengthThreshold));
+
+      // 2. Restore Consumed Stock Items & Deduct Generated Remnants
+      for (const layout of batch.layouts || []) {
+        const diameter = Number(layout.diameter);
+        const stockLength = Number(layout.stockLength);
+        const repetition = Number(layout.repetition) || 1;
+        const isVirtual = !!layout.isVirtual;
+
+        if (!isVirtual) {
+          const singleBarWeight = this.inventoryService.getSingleBarWeight(diameter, stockLength);
+          const restoredWeight = singleBarWeight * repetition;
+
+          // Re-increment consumed stock in inventory
+          await this.stockItemModel.updateOne(
+            { companyId: cid as any, diameter, length: stockLength, isRemnant: false },
+            { $inc: { quantity: repetition, weightInKgs: restoredWeight } },
+            { upsert: true }
+          );
+
+          // If this layout created a remnant, remove/decrement it from inventory
+          const waste = Number(layout.waste);
+          if (waste > 0) {
+            const threshold = rulesMap.get(diameter) ?? 1000;
+            if (waste >= threshold) {
+              const wasteWeight = this.inventoryService.getSingleBarWeight(diameter, waste) * repetition;
+              const remDoc = await this.stockItemModel.findOne({
+                companyId: cid as any,
+                diameter,
+                length: waste,
+                isRemnant: true,
+              }).exec();
+
+              if (remDoc) {
+                if (remDoc.quantity <= repetition) {
+                  await this.stockItemModel.deleteOne({ _id: remDoc._id }).exec();
+                } else {
+                  await this.stockItemModel.updateOne(
+                    { _id: remDoc._id },
+                    { $inc: { quantity: -repetition, weightInKgs: -wasteWeight } }
+                  ).exec();
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // 3. Remove inventory transactions tied to this batch
+      await this.transactionModel.deleteMany({
+        companyId: cid as any,
+        referenceName: batch.batchName,
+      }).exec();
+    }
+
+    // 4. Delete the batch document
     return this.batchModel.deleteOne({ _id: bid as any, companyId: cid as any }).exec();
   }
 }

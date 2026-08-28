@@ -33,6 +33,7 @@ import {
   BarChart3,
   FileSpreadsheet
 } from 'lucide-react';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import './LedgerPage.css';
 
 export default function LedgerPage() {
@@ -461,6 +462,10 @@ export default function LedgerPage() {
   const handleEditQtyChange = (id, val) => {
     setEditQtyMap(prev => ({ ...prev, [id]: val }));
   };
+
+  if (loading) {
+    return <LoadingSpinner message="Loading material ledger & procurement logs..." minHeight="65vh" />;
+  }
 
   return (
     <div className="ledger-page">
@@ -934,8 +939,11 @@ export default function LedgerPage() {
                       return (
                         <tr key={item._id}>
                           <td className="ledger-date-col">
-                            <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                            {new Date(item.createdAt).toLocaleString('en-GB')}
+                            <div className="date-with-toggle">
+                              <span className="batch-chevron-placeholder" />
+                              <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                              {new Date(item.createdAt).toLocaleString('en-GB')}
+                            </div>
                           </td>
                           <td>
                             <span className={`ledger-type-badge ${item.type.toLowerCase()}`}>
@@ -1425,7 +1433,7 @@ export default function LedgerPage() {
             </div>
           ) : (
             <div className="table-responsive">
-              <table className="ledger-table">
+              <table className="orders-table">
                 <thead>
                   <tr>
                     <th>Commit Date</th>
@@ -1551,14 +1559,14 @@ export default function LedgerPage() {
               <p className="form-card-subtitle">Approval status and procurement authorization history logs.</p>
 
               <div className="table-responsive">
-                <table className="ledger-table">
+                <table className="requests-table">
                   <thead>
                     <tr>
                       <th>Date</th>
                       <th>Requester / Site</th>
                       <th>Dia</th>
                       <th>Requested</th>
-                      <th>Approval Rate (Qty)</th>
+                      <th>Approved Qty</th>
                       <th>Status</th>
                       <th>Approved By</th>
                       {user?.role !== 'ENGINEER' && <th>Action</th>}

@@ -15,6 +15,7 @@ import {
   Layers,
   BarChart3
 } from 'lucide-react'
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import './OverviewPage.css'
 
 export default function OverviewPage({ onNavigate }) {
@@ -74,12 +75,7 @@ export default function OverviewPage({ onNavigate }) {
   }
 
   if (loading) {
-    return (
-      <div className="overview-page loading-state">
-        <div className="loader"></div>
-        <p>Loading Dashboard Overview...</p>
-      </div>
-    )
+    return <LoadingSpinner message="Loading Dashboard Overview..." minHeight="65vh" />
   }
 
   const {

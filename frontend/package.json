@@ -16,7 +16,8 @@
     "lucide-react": "^1.23.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-redux": "^9.3.0"
+    "react-redux": "^9.3.0",
+    "react-to-print": "^3.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

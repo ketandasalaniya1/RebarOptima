@@ -12,8 +12,14 @@ import {
   Trash2,
   Save,
   X,
-  Scale
+  Scale,
+  Scissors,
+  FileText,
+  BarChart3,
+  RotateCcw,
+  AlertCircle
 } from 'lucide-react'
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import './BatchHistoryPage.css'
 
 const getTextStyle = (hex) => {
@@ -39,6 +45,20 @@ export default function BatchHistoryPage({ onEditBatch }) {
   const [editBatchName, setEditBatchName] = useState('')
   const [confirmDeleteBatchId, setConfirmDeleteBatchId] = useState(null)
   const [actionLoading, setActionLoading] = useState(false)
+
+  // Print Menu states
+  const [printMenuBatchId, setPrintMenuBatchId] = useState(null)
+  const [printOption, setPrintOption] = useState('foreman')
+  const [activePrintBatch, setActivePrintBatch] = useState(null)
+
+  const triggerBatchPrint = (batch, mode) => {
+    setPrintOption(mode)
+    setActivePrintBatch(batch)
+    setPrintMenuBatchId(null)
+    setTimeout(() => {
+      window.print()
+    }, 120)
+  }
 
   useEffect(() => {
     async function loadHistory() {
@@ -105,17 +125,21 @@ export default function BatchHistoryPage({ onEditBatch }) {
     setConfirmDeleteBatchId(null)
   }
 
-  const handleConfirmDeleteBatch = async (e, id) => {
+  const handleConfirmDeleteBatch = async (e, id, restoreStock = false) => {
     if (e) e.stopPropagation()
     setError('')
     setSuccess('')
     try {
       setActionLoading(true)
-      await batchesApi.deleteBatch(id)
+      await batchesApi.deleteBatch(id, restoreStock)
       setHistory(prev => prev.filter(b => b._id !== id))
       setConfirmDeleteBatchId(null)
-      setSuccess('Batch optimization history entry deleted successfully!')
-      setTimeout(() => setSuccess(''), 2000)
+      if (restoreStock) {
+        setSuccess('Batch deleted and consumed steel stock successfully restored to inventory!')
+      } else {
+        setSuccess('Batch optimization history log deleted successfully!')
+      }
+      setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
       setError(err.message || 'Failed to delete batch entry.')
     } finally {
@@ -153,12 +177,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
   };
 
   if (loading) {
-    return (
-      <div className="history-page loading-state">
-        <div className="loader"></div>
-        <p>Loading batch history...</p>
-      </div>
-    )
+    return <LoadingSpinner message="Loading batch history..." minHeight="65vh" />
   }
 
   return (
@@ -206,7 +225,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
             }, 0) || 0
 
             return (
-              <div key={batch._id} className={`card batch-history-card ${isExpanded ? 'expanded' : ''}`}>
+              <div key={batch._id} className={`card batch-history-card ${isExpanded ? 'expanded' : ''} ${printMenuBatchId === batch._id ? 'has-open-menu' : ''}`}>
                 {/* Header block (Click to toggle) */}
                 <div className="batch-card-header" onClick={() => toggleExpand(batch._id)}>
                   <div className="batch-meta-left" onClick={(e) => e.stopPropagation()}>
@@ -261,29 +280,89 @@ export default function BatchHistoryPage({ onEditBatch }) {
                   </div>
 
                   <div className="batch-meta-right">
-                    <button 
-                      className="btn-print-batch animate-hover" 
-                      onClick={(e) => handlePrintBatch(e, batch)}
-                      title="Print Batch Report"
-                    >
-                      <Printer size={13} style={{ marginRight: '4px' }} /> Print
-                    </button>
+                    {/* Print Options Dropdown */}
+                    <div className="print-menu-wrapper" style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+                      <button 
+                        className="btn-print-batch animate-hover" 
+                        onClick={() => setPrintMenuBatchId(prev => prev === batch._id ? null : batch._id)}
+                        title="Choose Print Mode & Report Layout"
+                      >
+                        <Printer size={13} style={{ marginRight: '4px' }} /> Print Options <ChevronDown size={11} style={{ marginLeft: '2px' }} />
+                      </button>
+
+                      {printMenuBatchId === batch._id && (
+                        <div className="print-dropdown-menu">
+                          <button
+                            className="print-opt-item"
+                            onClick={() => triggerBatchPrint(batch, 'foreman')}
+                          >
+                            <div className="print-opt-icon-box icon-foreman">
+                              <Scissors size={15} />
+                            </div>
+                            <div className="print-opt-text">
+                              <div className="print-opt-title">Steel Foreman Cut-Sheet</div>
+                              <div className="print-opt-desc">Layouts + Stock & Wastage (Site Cutting)</div>
+                            </div>
+                          </button>
+
+                          <button
+                            className="print-opt-item"
+                            onClick={() => triggerBatchPrint(batch, 'full')}
+                          >
+                            <div className="print-opt-icon-box icon-full">
+                              <FileText size={15} />
+                            </div>
+                            <div className="print-opt-text">
+                              <div className="print-opt-title">Complete Executive Report</div>
+                              <div className="print-opt-desc">All KPIs, layouts, wastage & summary</div>
+                            </div>
+                          </button>
+
+                          <button
+                            className="print-opt-item"
+                            onClick={() => triggerBatchPrint(batch, 'summary')}
+                          >
+                            <div className="print-opt-icon-box icon-summary">
+                              <BarChart3 size={15} />
+                            </div>
+                            <div className="print-opt-text">
+                              <div className="print-opt-title">1-Page Summary Sheet</div>
+                              <div className="print-opt-desc">Yield, scrap loss & savings overview</div>
+                            </div>
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     {confirmDeleteBatchId === batch._id ? (
-                      <div className="batch-delete-confirm" onClick={(e) => e.stopPropagation()}>
-                        <span className="delete-confirm-text">Delete?</span>
-                        <button
-                          className="confirm-delete-btn"
-                          onClick={(e) => handleConfirmDeleteBatch(e, batch._id)}
-                          disabled={actionLoading}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          className="cancel-delete-btn"
-                          onClick={handleCancelDeleteBatch}
-                        >
-                          No
-                        </button>
+                      <div className="batch-delete-confirm-popover" onClick={(e) => e.stopPropagation()}>
+                        <div className="delete-popover-header">
+                          <AlertCircle size={14} className="text-rose" />
+                          <span>Delete Batch?</span>
+                        </div>
+                        <div className="delete-popover-options">
+                          <button
+                            className="delete-opt-btn btn-delete-log-only"
+                            onClick={(e) => handleConfirmDeleteBatch(e, batch._id, false)}
+                            disabled={actionLoading}
+                            title="Deletes the report log without modifying physical yard stock"
+                          >
+                            <Trash2 size={12} /> Delete Report Only
+                          </button>
+                          <button
+                            className="delete-opt-btn btn-delete-restore-stock"
+                            onClick={(e) => handleConfirmDeleteBatch(e, batch._id, true)}
+                            disabled={actionLoading}
+                            title="Restores consumed steel bars to stock and removes generated remnants"
+                          >
+                            <RotateCcw size={12} /> Delete & Restore Stock
+                          </button>
+                          <button
+                            className="delete-opt-btn btn-cancel-delete"
+                            onClick={handleCancelDeleteBatch}
+                          >
+                            <X size={12} /> Cancel
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <>
@@ -489,170 +568,153 @@ export default function BatchHistoryPage({ onEditBatch }) {
                     </div>
                   </div>
                 )}
-                {/* Hidden print template */}
-                <div id={`batch-print-content-${batch._id}`} className="batch-print-template no-screen">
-                  <div className="print-report-header" style={{ marginBottom: '24px', borderBottom: '2px solid #1a1259', paddingBottom: '16px' }}>
-                    <h2 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1a1259', margin: '0 0 6px 0' }}>RebarOptima Cutting Optimization Report</h2>
-                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#5e578c', margin: '0 0 12px 0' }}>{batch.batchName}</h3>
-                    <p style={{ fontSize: '12px', color: '#8d86b8', margin: 0 }}>Generated on: {date}</p>
-                  </div>
-
-                  {/* Summary Stats */}
-                  <div className="batch-metrics-subgrid" style={{ marginBottom: '24px', borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                    <div className="sub-metric-box">
-                      <span className="sub-lbl">Total Parts (Qty)</span>
-                      <span className="sub-val">
-                        {(batch.summary.totalPartsLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} m <span className="sub-unit">({totalParts})</span>
-                      </span>
-                    </div>
-                    <div className="sub-metric-box">
-                      <span className="sub-lbl">Total Stock Used</span>
-                      <span className="sub-val">
-                        {(batch.summary.totalUsedStockLength / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} m
-                      </span>
-                    </div>
-                    <div className="sub-metric-box">
-                      <span className="sub-lbl">Scrap (Wastage)</span>
-                      <span className="sub-val" style={{ color: '#ea4a4a', fontWeight: 'bold' }}>
-                        {batch.summary.totalScrapKg?.toFixed(2)} kg
-                      </span>
-                    </div>
-                    <div className="sub-metric-box">
-                      <span className="sub-lbl">Reusable Remnants</span>
-                      <span className="sub-val" style={{ color: '#17a2b8', fontWeight: 'bold' }}>
-                        {batch.summary.totalRemnantKg?.toFixed(2)} kg
-                      </span>
-                    </div>
-                    <div className="sub-metric-box">
-                      <span className="sub-lbl">Avg. Utilization</span>
-                      <span className="sub-val" style={{ color: '#2da44e', fontWeight: 'bold' }}>
-                        {batch.summary.avgUtilization?.toFixed(2)}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Layouts List */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {batch.layouts?.map((rawLayout, lIdx) => {
-                      const layout = {
-                        ...rawLayout,
-                        parts: rawLayout.parts && rawLayout.parts.length > 0
-                          ? rawLayout.parts
-                          : (rawLayout.stockLength > rawLayout.waste
-                            ? [{ length: rawLayout.stockLength - rawLayout.waste, color: '#71797E', label: 'Utilized' }]
-                            : [])
-                      };
-                      const cutsCount = layout.cutsCount ?? (layout.parts?.length > 0 ? (layout.waste > 0.1 ? layout.parts.length : layout.parts.length - 1) : 0);
-                      const utilization = layout.utilization ?? (layout.parts?.length > 0 ? (layout.parts.reduce((s, p) => s + p.length, 0) / layout.stockLength) * 100 : 0);
-                      return (
-                        <div
-                          key={lIdx}
-                          className={`card layout-card-new ${layout.isVirtual ? 'layout-virtual-card layout-virtual' : ''}`}
-                          style={{ margin: 0, pageBreakInside: 'avoid', breakInside: 'avoid' }}
-                        >
-                          <div className="layout-grid-new">
-                            {/* Left Panel */}
-                            <div className="layout-left-panel">
-                              <div className={`layout-avatar-id ${layout.isVirtual ? 'badge-virtual' : ''}`}>{lIdx + 1}</div>
-                              <div className="layout-info-stack">
-                                <div className="layout-rep-info">
-                                  <span className="layout-rep-val">{layout.repetition}x</span>
-                                  <span className="layout-rep-label">Repetition</span>
-                                </div>
-                                <div className="layout-details-grid">
-                                  <div className="detail-item">
-                                    <span className="detail-lbl">Diameter</span>
-                                    <span className="detail-val">{layout.diameter || '12'} mm</span>
-                                  </div>
-                                  <div className="detail-item">
-                                    <span className="detail-lbl">{layout.isVirtual ? 'Stock (Unavailable)' : 'Stock Length'}</span>
-                                    <span className={`detail-val ${layout.isVirtual ? 'text-virtual' : ''}`}>
-                                      {layout.stockLength.toLocaleString()} mm
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Middle Panel with ruler */}
-                            <div className="layout-middle-panel">
-                              <div className="layout-middle-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div className="colors-indicator-legend">
-                                  {layout.parts && Array.from(new Set(layout.parts.map(p => p.length))).map((len, idx) => {
-                                    const part = layout.parts.find(p => p.length === len);
-                                    return (
-                                      <span key={idx} className="legend-item" style={{ marginRight: '8px', display: 'inline-flex', alignItems: 'center' }}>
-                                        <span className="legend-dot" style={{ backgroundColor: part.color, width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block', marginRight: '4px' }} />
-                                        {len.toLocaleString()}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-
-                              <div className="visual-bar-wrapper">
-                                <div className="visual-bar-ruler">
-                                  {layout.parts?.map((p, idx) => {
-                                    const percent = (p.length / layout.stockLength) * 100;
-                                    return (
-                                      <div
-                                        key={idx}
-                                        className="bar-segment"
-                                        style={{
-                                          width: `${percent}%`,
-                                          backgroundColor: p.color,
-                                          ...getTextStyle(p.color)
-                                        }}
-                                      >
-                                        {percent >= 5.5 ? p.length.toLocaleString() : ''}
-                                      </div>
-                                    );
-                                  })}
-                                  {/* Waste / Remnant Segment */}
-                                  {(() => {
-                                    const partsLen = layout.parts?.reduce((sum, p) => sum + p.length, 0) || 0;
-                                    const remnantLen = layout.stockLength - partsLen;
-                                    const wastePercent = (remnantLen / layout.stockLength) * 100;
-                                    if (wastePercent > 0.1) {
-                                      return (
-                                        <div
-                                          className="bar-segment remnant-segment"
-                                          style={{ width: `${wastePercent}%` }}
-                                        >
-                                          {wastePercent >= 12 ? `Remnant: ${remnantLen} mm` : remnantLen}
-                                        </div>
-                                      );
-                                    }
-                                    return null;
-                                  })()}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Right Panel */}
-                            <div className="layout-right-panel">
-                              <div className="right-stat-box">
-                                <span className="right-stat-lbl">Cuts</span>
-                                <span className="right-stat-val">{cutsCount}</span>
-                              </div>
-                              <div className="right-stat-box">
-                                <span className="right-stat-lbl">Waste</span>
-                                <span className="right-stat-val text-dark">{layout.waste.toLocaleString()} mm</span>
-                              </div>
-                              <div className="right-stat-box">
-                                <span className="right-stat-lbl">Utilization</span>
-                                <span className="right-stat-val text-green">{utilization.toFixed(2)}%</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* ── Native Browser A4 Printable Engine ── */}
+      {activePrintBatch && (
+        <div className={`batch-print-portal print-content-root print-mode-${printOption}`}>
+          {/* Print Header */}
+          <div className="print-header">
+            <div>
+              <h2 className="print-title">RebarOptima Cutting Optimization Report</h2>
+              <div className="print-badge-row">
+                <span className="print-batch-name">{activePrintBatch.batchName}</span>
+                <span className="print-mode-indicator">
+                  {printOption === 'foreman' ? '👷 Steel Foreman Cut-Sheet' : printOption === 'summary' ? '📊 1-Page Summary' : '📄 Full A4 Report'}
+                </span>
+              </div>
+            </div>
+            <div className="print-date">
+              Generated: {new Date(activePrintBatch.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+            </div>
+          </div>
+
+          {/* KPI Dashboard (Hidden in Foreman mode) */}
+          <div className="print-kpi-grid">
+            <div className="print-kpi-card">
+              <span className="kpi-title">Average Utilization</span>
+              <span className="kpi-data text-emerald">{activePrintBatch.summary?.avgUtilization?.toFixed(2)}%</span>
+            </div>
+            <div className="print-kpi-card">
+              <span className="kpi-title">Total Cuts / Parts</span>
+              <span className="kpi-data">{(activePrintBatch.summary?.totalPartsLength / 1000).toFixed(1)} m</span>
+            </div>
+            <div className="print-kpi-card">
+              <span className="kpi-title">Yield Stock</span>
+              <span className="kpi-data">{(activePrintBatch.summary?.totalUsedStockLength / 1000).toFixed(1)} m</span>
+            </div>
+            <div className="print-kpi-card">
+              <span className="kpi-title">Scrap Generated</span>
+              <span className="kpi-data text-rose">{activePrintBatch.summary?.totalScrapKg?.toFixed(2)} kg</span>
+            </div>
+            <div className="print-kpi-card">
+              <span className="kpi-title">Remnants Saved</span>
+              <span className="kpi-data text-cyan">{activePrintBatch.summary?.totalRemnantKg?.toFixed(2)} kg</span>
+            </div>
+          </div>
+
+          {/* Cutting Layouts for Printing */}
+          <div className="print-layouts-section">
+            <h3 className="print-section-title">Cutting Layouts & Offcut Map</h3>
+            <div className="print-layouts-list">
+              {activePrintBatch.layouts?.map((rawLayout, lIdx) => {
+                const layout = {
+                  ...rawLayout,
+                  parts: rawLayout.parts && rawLayout.parts.length > 0
+                    ? rawLayout.parts
+                    : (rawLayout.stockLength > rawLayout.waste
+                      ? [{ length: rawLayout.stockLength - rawLayout.waste, color: '#71797E', label: 'Utilized' }]
+                      : [])
+                };
+                const cutsCount = layout.cutsCount ?? (layout.parts?.length > 0 ? (layout.waste > 0.1 ? layout.parts.length : layout.parts.length - 1) : 0);
+                const utilization = layout.utilization ?? (layout.parts?.length > 0 ? (layout.parts.reduce((s, p) => s + p.length, 0) / layout.stockLength) * 100 : 0);
+                return (
+                  <div key={lIdx} className="card layout-card-new print-layout-card" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                    <div className="layout-grid-new">
+                      {/* Left Panel */}
+                      <div className="layout-left-panel">
+                        <div className="layout-avatar-id">{lIdx + 1}</div>
+                        <div className="layout-info-stack">
+                          <div className="layout-rep-info">
+                            <span className="layout-rep-val">{layout.repetition}x</span>
+                            <span className="layout-rep-label">Repetition</span>
+                          </div>
+                          <div className="layout-details-grid">
+                            <div className="detail-item">
+                              <span className="detail-lbl">Dia</span>
+                              <span className="detail-val">{layout.diameter || '12'} mm</span>
+                            </div>
+                            <div className="detail-item">
+                              <span className="detail-lbl">Stock</span>
+                              <span className="detail-val">{layout.stockLength.toLocaleString()} mm</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Middle Panel Ruler */}
+                      <div className="layout-middle-panel">
+                        <div className="visual-bar-wrapper">
+                          <div className="visual-bar-ruler">
+                            {layout.parts?.map((p, idx) => {
+                              const percent = (p.length / layout.stockLength) * 100;
+                              return (
+                                <div
+                                  key={idx}
+                                  className="bar-segment"
+                                  style={{
+                                    width: `${percent}%`,
+                                    backgroundColor: p.color,
+                                    ...getTextStyle(p.color)
+                                  }}
+                                >
+                                  {percent >= 5.5 ? p.length.toLocaleString() : ''}
+                                </div>
+                              );
+                            })}
+                            {/* Waste / Remnant Segment */}
+                            {(() => {
+                              const partsLen = layout.parts?.reduce((sum, p) => sum + p.length, 0) || 0;
+                              const remnantLen = layout.stockLength - partsLen;
+                              const wastePercent = (remnantLen / layout.stockLength) * 100;
+                              if (wastePercent > 0.1) {
+                                return (
+                                  <div className="bar-segment remnant-segment" style={{ width: `${wastePercent}%` }}>
+                                    {wastePercent >= 12 ? `Remnant: ${remnantLen} mm` : remnantLen}
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })()}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Panel */}
+                      <div className="layout-right-panel">
+                        <div className="right-stat-box">
+                          <span className="right-stat-lbl">Cuts</span>
+                          <span className="right-stat-val">{cutsCount}</span>
+                        </div>
+                        <div className="right-stat-box">
+                          <span className="right-stat-lbl">Waste</span>
+                          <span className="right-stat-val">{layout.waste.toLocaleString()} mm</span>
+                        </div>
+                        <div className="right-stat-box">
+                          <span className="right-stat-lbl">Yield</span>
+                          <span className="right-stat-val text-green">{utilization.toFixed(1)}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>

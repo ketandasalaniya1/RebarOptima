@@ -429,15 +429,45 @@ async function getEffectivePermissions(db: Db, userId: string): Promise<any> {
 
   // Apply subscription restrictions
   let subscriptionInfo: any = null;
-  const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial'] } });
+  const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial', 'expired'] } });
   if (subscription) {
+    let isExpired = false;
+    if (subscription.status === 'trial' && subscription.endDate) {
+      const now = new Date();
+      const expiresAt = new Date(subscription.endDate);
+      if (now > expiresAt) {
+        isExpired = true;
+        if (subscription.status !== 'expired') {
+          await db.collection('subscriptions').updateOne({ _id: subscription._id }, { $set: { status: 'expired', updatedAt: now } });
+          subscription.status = 'expired';
+        }
+      }
+    }
+
     const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
     if (pkg) {
-      subscriptionInfo = { name: pkg.name, displayName: pkg.displayName, status: subscription.status, limits: pkg.limits };
+      const trialDaysRemaining = (subscription.status === 'trial' && subscription.endDate)
+        ? Math.max(0, Math.ceil((new Date(subscription.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+        : null;
+
+      subscriptionInfo = {
+        name: pkg.name,
+        displayName: subscription.status === 'trial' ? `${pkg.displayName} (7-Day Trial)` : pkg.displayName,
+        status: subscription.status,
+        limits: pkg.limits,
+        trialDaysRemaining,
+        trialExpiresAt: subscription.endDate,
+        isExpired
+      };
+
       for (const mod of Object.keys(modules)) {
-        const override = subscription.moduleOverrides?.[mod];
-        const pkgEnabled = pkg.modules?.[mod] !== false;
-        modules[mod] = override !== undefined ? override : pkgEnabled;
+        if (isExpired) {
+          modules[mod] = false;
+        } else {
+          const override = subscription.moduleOverrides?.[mod];
+          const pkgEnabled = pkg.modules?.[mod] !== false;
+          modules[mod] = override !== undefined ? override : pkgEnabled;
+        }
         if (!modules[mod]) {
           // Disable all features of disabled module
           for (const feat of Object.keys(PLATFORM_MODULES[mod]?.features || {})) {
@@ -1007,14 +1037,22 @@ app.post('/api/auth/signup', async (req, res) => {
     const companyResult = await companiesColl.insertOne({ name: companyName, projectName, location, status: 'active', createdAt: new Date() });
     const companyId = companyResult.insertedId;
 
-    // Assign default subscription (FREE)
+    // Assign default subscription (FREE) with 7 Days Full Access Trial Validity
     const freePkg = await db.collection('subscriptionpackages').findOne({ name: 'FREE' });
     if (freePkg) {
+      const startDate = new Date();
+      const trialEndDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 Days Validity
       await db.collection('subscriptions').insertOne({
-        companyId, packageId: freePkg._id,
-        status: 'trial', startDate: new Date(), endDate: null,
-        moduleOverrides: {}, featureOverrides: {},
-        createdAt: new Date(), updatedAt: new Date()
+        companyId,
+        packageId: freePkg._id,
+        status: 'trial',
+        startDate,
+        endDate: trialEndDate,
+        trialExpiresAt: trialEndDate,
+        moduleOverrides: {},
+        featureOverrides: {},
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
     }
 

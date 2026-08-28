@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/user.decorator';
 import { BatchesService } from './batches.service';
@@ -51,8 +51,10 @@ export class BatchesController {
   async deleteBatch(
     @CurrentUser() user: User,
     @Param('id') id: string,
+    @Query('restoreStock') restoreStock?: string,
   ) {
-    return this.batchesService.deleteBatch(user.companyId.toString(), id);
+    const shouldRestore = restoreStock === 'true' || restoreStock === '1';
+    return this.batchesService.deleteBatch(user.companyId.toString(), id, shouldRestore);
   }
 }
 

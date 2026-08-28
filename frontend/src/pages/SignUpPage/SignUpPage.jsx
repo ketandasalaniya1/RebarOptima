@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, EyeOff, Eye, Mail, Building2, CheckCircle2, Shield, BarChart3, Users, Phone, MapPin } from 'lucide-react';
+import { User, Lock, EyeOff, Eye, Mail, Building2, CheckCircle2, Shield, BarChart3, Users, Phone, MapPin, Sparkles } from 'lucide-react';
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
 import { authApi } from '../../utils/api';
@@ -136,8 +136,11 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
               </div>
 
               <div className="form-header">
+                <div className="signup-trial-badge">
+                  <Sparkles size={14} color="#10b981" /> 7-Day Free Trial Included
+                </div>
                 <h2>Create Your Account</h2>
-                <p className="subtitle">Let's get started with your free account</p>
+                <p className="subtitle">Instant full access for 7 days &bull; No credit card required</p>
               </div>
 
               {error && <div className="auth-error-message">{error}</div>}

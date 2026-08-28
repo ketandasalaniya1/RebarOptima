@@ -1,0 +1,114 @@
+/* ═════════════════════════════════════════════════════════════════════
+   RebarOptima - Global Centered Loading Animation System
+   ═════════════════════════════════════════════════════════════════════ */
+
+.app-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
+  margin: 0 auto;
+  text-align: center;
+  animation: loadingFadeIn 0.3s ease-out;
+}
+
+@keyframes loadingFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.app-loader-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.app-loader-wrapper.size-small {
+  width: 32px;
+  height: 32px;
+}
+
+.app-loader-wrapper.size-medium {
+  width: 52px;
+  height: 52px;
+}
+
+.app-loader-wrapper.size-large {
+  width: 72px;
+  height: 72px;
+}
+
+.app-loader-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(112, 22, 210, 0.08) 50%, transparent 75%);
+  animation: pulseGlow 1.8s ease-in-out infinite alternate;
+}
+
+.app-loader-spinner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid rgba(150, 150, 150, 0.15);
+  border-top-color: var(--accent, #059669);
+  border-right-color: var(--accent, #059669);
+  animation: appSpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.18);
+}
+
+.app-loader-wrapper.size-small .app-loader-spinner {
+  border-width: 2.5px;
+}
+
+.app-loader-wrapper.size-large .app-loader-spinner {
+  border-width: 4px;
+}
+
+.app-loading-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  letter-spacing: 0.3px;
+  margin: 0;
+  animation: textPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes appSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+@keyframes textPulse {
+  0% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}

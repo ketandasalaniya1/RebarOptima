@@ -38,7 +38,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  border-top: 4px solid var(--accent);
 }
 
 .settings-card-title {

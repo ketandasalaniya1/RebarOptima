@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Shield, Plus, Edit3, Trash2, Users, ChevronDown, ChevronRight, Save, X, ToggleLeft, ToggleRight, AlertTriangle } from 'lucide-react';
 import { rolesApi, permissionsApi } from '../../utils/api';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import './RolesPage.css';
 
 const MODULE_LABELS = {
@@ -150,7 +151,7 @@ export default function RolesPermissionsPage() {
   };
 
   if (loading) {
-    return <div className="roles-page"><div className="roles-loading"><div className="roles-spinner"></div><p>Loading roles...</p></div></div>;
+    return <LoadingSpinner message="Loading custom roles & permissions..." minHeight="65vh" />;
   }
 
   return (

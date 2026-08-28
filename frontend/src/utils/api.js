@@ -77,8 +77,8 @@ export const batchesApi = {
     apiRequest('/batches/scrap-records'),
   updateBatch: (id, batchName) =>
     apiRequest(`/batches/${id}`, { method: 'PUT', body: { batchName } }),
-  deleteBatch: (id) =>
-    apiRequest(`/batches/${id}`, { method: 'DELETE' }),
+  deleteBatch: (id, restoreStock = false) =>
+    apiRequest(`/batches/${id}?restoreStock=${restoreStock}`, { method: 'DELETE' }),
 };
 
 // Developer API

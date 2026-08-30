@@ -310,8 +310,8 @@
     "semantic_hash": "6e4521d67f0f2faf70a50cb6f42f9fd1"
   },
   "backend/src/main.ts": {
-    "mtime": 1788076024.2676747,
-    "ast_hash": "8238b7ae2945c0b4d3b2f418668adcf9",
+    "mtime": 1787943358.1350489,
+    "ast_hash": "3128a057009f212d178b5f1c61fd33cd",
     "semantic_hash": ""
   },
   "backend/src/users/user.schema.ts": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "frontend/src/App.jsx": {
-    "mtime": 1788075998.9112108,
-    "ast_hash": "ee5a331c56df87cfef6aa6dc2b9480e9",
+    "mtime": 1787838237.6297245,
+    "ast_hash": "30a57080790083f035d4ffc0d6cba2f4",
     "semantic_hash": ""
   },
   "frontend/src/components/ScrollToTop/ScrollToTop.jsx": {
@@ -370,8 +370,8 @@
     "semantic_hash": "0a922efe1fde69d14a9c8b0a8a5b3d79"
   },
   "frontend/src/components/SideNavbar/SideNavbar.jsx": {
-    "mtime": 1788075991.9457095,
-    "ast_hash": "4cdb413df854e5c3c9c612e08fcc6f3d",
+    "mtime": 1787929226.1660087,
+    "ast_hash": "73622d25158138fa9bbcefc462b4336d",
     "semantic_hash": ""
   },
   "frontend/src/components/ThemeToggle/ThemeToggle.jsx": {
@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/InventoryPage/InventoryPage.jsx": {
-    "mtime": 1787954318.4020908,
-    "ast_hash": "931957e2a8b41864cd83899ee7591ec3",
+    "mtime": 1787942135.5419412,
+    "ast_hash": "b21b048dbb82b047968598e85f9a3962",
     "semantic_hash": ""
   },
   "frontend/src/pages/LedgerPage/LedgerPage.jsx": {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import {
@@ -26,10 +26,26 @@ import {
   Target,
   Calculator,
   Recycle,
-  Wand2
+  Wand2,
+  RotateCcw
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import './InventoryPage.css'
+
+const STANDARD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32]
+
+const createDefaultVoucherRows = () => {
+  return STANDARD_DIAMETERS.map((dia, idx) => ({
+    id: Date.now() + idx,
+    diameter: dia,
+    weightInTons: '',
+    pricePerTonWithoutGst: '',
+    gstAmount: 0,
+    totalPriceWithGst: 0,
+    brandName: '',
+    vendorName: ''
+  }))
+}
 
 export default function InventoryPage() {
   const user = useSelector((state) => state.auth.user)
@@ -44,10 +60,8 @@ export default function InventoryPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Inward Multi-Diameter Voucher Form State
-  const [voucherRows, setVoucherRows] = useState([
-    { id: Date.now(), diameter: 8, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
-  ])
+  // Inward Multi-Diameter Voucher Form State (pre-populated with each standard diameter)
+  const [voucherRows, setVoucherRows] = useState(createDefaultVoucherRows)
 
   // Scrap Sales Portal State
   const [scrapSales, setScrapSales] = useState([])
@@ -274,6 +288,21 @@ export default function InventoryPage() {
     ])
   }
 
+  const handleResetAllDiameters = () => {
+    setVoucherRows(createDefaultVoucherRows())
+  }
+
+  const handleApplyBrandVendorToAll = () => {
+    const firstWithBrand = voucherRows.find(r => r.brandName?.trim())?.brandName || '';
+    const firstWithVendor = voucherRows.find(r => r.vendorName?.trim())?.vendorName || '';
+    if (!firstWithBrand && !firstWithVendor) return;
+    setVoucherRows(prev => prev.map(r => ({
+      ...r,
+      brandName: r.brandName?.trim() ? r.brandName : firstWithBrand,
+      vendorName: r.vendorName?.trim() ? r.vendorName : firstWithVendor
+    })));
+  }
+
   const handleDeleteVoucherRow = (id) => {
     if (voucherRows.length === 1) return
     setVoucherRows(prev => prev.filter(row => row.id !== id))
@@ -300,11 +329,22 @@ export default function InventoryPage() {
     setActionLoading(true)
 
     try {
-      for (const row of voucherRows) {
+      // Filter only rows that have weight or price entered
+      const filledRows = voucherRows.filter(row => {
+        const tons = parseFloat(row.weightInTons) || 0;
+        const price = parseFloat(row.pricePerTonWithoutGst) || 0;
+        return tons > 0 || price > 0 || (row.brandName && row.brandName.trim() !== '') || (row.vendorName && row.vendorName.trim() !== '');
+      });
+
+      if (filledRows.length === 0) {
+        throw new Error('Please enter Weight (Tons) and Price/Ton for at least one diameter.')
+      }
+
+      for (const row of filledRows) {
         const tons = parseFloat(row.weightInTons) || 0
         const price = parseFloat(row.pricePerTonWithoutGst) || 0
         if (tons <= 0 || price <= 0) {
-          throw new Error('Please fill in valid weights and prices for all rows in the voucher.')
+          throw new Error(`Please provide both valid Weight and Price for diameter ${row.diameter} mm.`)
         }
 
         const singleWeight = getSingleBarWeight(row.diameter, 12000)
@@ -323,26 +363,28 @@ export default function InventoryPage() {
         })
       }
 
-      // Persist newly submitted brands and vendors to localStorage for future instant suggestions
+      // Persist newly submitted brands and vendors to company-specific localStorage for future instant suggestions
       try {
-        const newBrands = voucherRows.map(r => r.brandName?.trim()).filter(Boolean);
-        const newVendors = voucherRows.map(r => r.vendorName?.trim()).filter(Boolean);
+        const companyKey = user?.companyId ? String(user.companyId) : (user?.companyName ? String(user.companyName) : 'default_company');
+        const newBrands = filledRows.map(r => r.brandName?.trim()).filter(Boolean);
+        const newVendors = filledRows.map(r => r.vendorName?.trim()).filter(Boolean);
         if (newBrands.length > 0) {
-          const storedB = JSON.parse(localStorage.getItem('rebar_recent_brands') || '[]');
-          localStorage.setItem('rebar_recent_brands', JSON.stringify(Array.from(new Set([...newBrands, ...storedB])).slice(0, 30)));
+          const storedB = JSON.parse(localStorage.getItem(`rebar_recent_brands_${companyKey}`) || '[]');
+          localStorage.setItem(`rebar_recent_brands_${companyKey}`, JSON.stringify(Array.from(new Set([...newBrands, ...storedB])).slice(0, 50)));
         }
         if (newVendors.length > 0) {
-          const storedV = JSON.parse(localStorage.getItem('rebar_recent_vendors') || '[]');
-          localStorage.setItem('rebar_recent_vendors', JSON.stringify(Array.from(new Set([...newVendors, ...storedV])).slice(0, 30)));
+          const storedV = JSON.parse(localStorage.getItem(`rebar_recent_vendors_${companyKey}`) || '[]');
+          localStorage.setItem(`rebar_recent_vendors_${companyKey}`, JSON.stringify(Array.from(new Set([...newVendors, ...storedV])).slice(0, 50)));
         }
+        // Clean up legacy unscoped keys
+        localStorage.removeItem('rebar_recent_brands');
+        localStorage.removeItem('rebar_recent_vendors');
       } catch (e) {
         console.error('Failed to save recent suggestions', e);
       }
 
-      setSuccess('Voucher inward entry recorded successfully!')
-      setVoucherRows([
-        { id: Date.now(), diameter: 8, weightInTons: '', pricePerTonWithoutGst: '', gstAmount: 0, totalPriceWithGst: 0, brandName: '', vendorName: '' }
-      ])
+      setSuccess(`Voucher inward entry recorded successfully for ${filledRows.length} diameter${filledRows.length > 1 ? 's' : ''}!`)
+      setVoucherRows(createDefaultVoucherRows())
       
       const invData = await inventoryApi.getInventory()
       setInventory(invData)
@@ -653,35 +695,12 @@ export default function InventoryPage() {
     return sum + loss
   }, 0)
 
-  // Default common Steel Brands & Vendors for immediate high-quality suggestions
-  const DEFAULT_POPULAR_BRANDS = [
-    'Tata Tiscon',
-    'Jindal Panther',
-    'JSW Neosteel',
-    'SAIL TMT',
-    'Kamdhenu Nxt',
-    'Vibrant TMT',
-    'Shyam Steel',
-    'Vizag Steel (RINL)',
-    'Electrotherm (ET TMT)',
-    'Rathi Steel'
-  ];
-
-  const DEFAULT_POPULAR_VENDORS = [
-    'Sai Traders',
-    'Apex Steel Corporation',
-    'Kalyan Traders',
-    'Mahalaxmi Steel Supplier',
-    'Jai Bharat Steel Agencies',
-    'Om Enterprise',
-    'Vibrant Steel Corporation'
-  ];
-
-  // Aggregated Brand suggestions from ledger history, active stock, localStorage, and defaults
+  // Company-Scoped Brand suggestions from company ledger history, active stock, and company localStorage
   const uniqueBrands = useMemo(() => {
+    const companyKey = user?.companyId ? String(user.companyId) : (user?.companyName ? String(user.companyName) : 'default_company');
     let fromStorage = [];
     try {
-      fromStorage = JSON.parse(localStorage.getItem('rebar_recent_brands') || '[]');
+      fromStorage = JSON.parse(localStorage.getItem(`rebar_recent_brands_${companyKey}`) || '[]');
     } catch {
       fromStorage = [];
     }
@@ -696,18 +715,18 @@ export default function InventoryPage() {
       ...fromLedger,
       ...fromStock,
       ...fromRemnants,
-      ...fromCurrentVoucher,
-      ...DEFAULT_POPULAR_BRANDS
+      ...fromCurrentVoucher
     ];
 
     return Array.from(new Set(combined.map(b => (b ? b.trim() : '')).filter(Boolean)));
-  }, [inventory, ledgerHistory, voucherRows]);
+  }, [inventory, ledgerHistory, voucherRows, user?.companyId, user?.companyName]);
 
-  // Aggregated Vendor suggestions from ledger history, active stock, localStorage, and defaults
+  // Company-Scoped Vendor suggestions from company ledger history, active stock, and company localStorage
   const uniqueVendors = useMemo(() => {
+    const companyKey = user?.companyId ? String(user.companyId) : (user?.companyName ? String(user.companyName) : 'default_company');
     let fromStorage = [];
     try {
-      fromStorage = JSON.parse(localStorage.getItem('rebar_recent_vendors') || '[]');
+      fromStorage = JSON.parse(localStorage.getItem(`rebar_recent_vendors_${companyKey}`) || '[]');
     } catch {
       fromStorage = [];
     }
@@ -722,12 +741,11 @@ export default function InventoryPage() {
       ...fromLedger,
       ...fromStock,
       ...fromRemnants,
-      ...fromCurrentVoucher,
-      ...DEFAULT_POPULAR_VENDORS
+      ...fromCurrentVoucher
     ];
 
     return Array.from(new Set(combined.map(v => (v ? v.trim() : '')).filter(Boolean)));
-  }, [inventory, ledgerHistory, voucherRows]);
+  }, [inventory, ledgerHistory, voucherRows, user?.companyId, user?.companyName]);
 
   const getFilteredBrands = (val) => {
     const term = (val || '').toLowerCase().trim();
@@ -739,6 +757,27 @@ export default function InventoryPage() {
     const term = (val || '').toLowerCase().trim();
     if (!term) return uniqueVendors;
     return uniqueVendors.filter(v => v.toLowerCase().includes(term));
+  };
+
+  const blurTimeoutRef = useRef(null);
+
+  const openDropdown = (rowId, field) => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
+    setFocusedDropdown({ id: rowId, field });
+    setHighlightedIndex(-1);
+  };
+
+  const closeDropdownDelayed = () => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+    }
+    blurTimeoutRef.current = setTimeout(() => {
+      setFocusedDropdown(null);
+      setHighlightedIndex(-1);
+    }, 250);
   };
 
   const scrollDropdownItemIntoView = () => {
@@ -753,7 +792,7 @@ export default function InventoryPage() {
   const handleDropdownKeyDown = (e, rowId, field, suggestions) => {
     if (!focusedDropdown || focusedDropdown.id !== rowId || focusedDropdown.field !== field) {
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        setFocusedDropdown({ id: rowId, field });
+        openDropdown(rowId, field);
         setHighlightedIndex(0);
         scrollDropdownItemIntoView();
         e.preventDefault();
@@ -784,12 +823,14 @@ export default function InventoryPage() {
       }
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
       setFocusedDropdown(null);
       setHighlightedIndex(-1);
     }
   };
 
   const handleSelectSuggestion = (rowId, field, value) => {
+    if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
     handleVoucherRowChange(rowId, field, value);
     setFocusedDropdown(null);
     setHighlightedIndex(-1);
@@ -800,7 +841,7 @@ export default function InventoryPage() {
       <div className="inventory-header-row">
         <div>
           <h1 className="inventory-title">Inventory Stock</h1>
-          <p className="inventory-subtitle">Manage standard rebar stock, remnants, and scrap thresholds.</p>
+          <p className="inventory-subtitle">Manage standard rebar stock, voucher entries, batch scrap history, and scrap sales.</p>
         </div>
         <div className="tab-buttons">
           <button 
@@ -826,12 +867,6 @@ export default function InventoryPage() {
             onClick={() => setActiveTab('scrapsales')}
           >
             <DollarSign size={16} /> Scrap Sales
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'rules' ? 'active' : ''}`}
-            onClick={() => setActiveTab('rules')}
-          >
-            <Settings size={16} /> Scrap Rules
           </button>
         </div>
       </div>
@@ -1334,12 +1369,30 @@ export default function InventoryPage() {
             <div>
               <h3 className="form-card-title">Multi-Diameter Inward Voucher Entry</h3>
               <p className="form-card-subtitle">
-                Log multiple diameters delivered in the truck. Weight must be entered in **Tons** (1 Ton = 1000 kg). Pricing fields assume price without GST; 18% GST is automatically calculated.
+                Pre-filled with all standard diameters (8mm – 32mm). Enter weight &amp; pricing for delivered diameters (1 Ton = 1000 kg).
               </p>
             </div>
-            <button className="add-voucher-row-btn" onClick={handleAddVoucherRow}>
-              <Plus size={14} /> Add Row
-            </button>
+            <div className="voucher-actions-group">
+              <button 
+                type="button" 
+                className="add-voucher-row-btn secondary-btn" 
+                onClick={handleResetAllDiameters} 
+                title="Reset to all standard diameters (8mm - 32mm)"
+              >
+                <RotateCcw size={14} /> All Diameters (8–32mm)
+              </button>
+              <button 
+                type="button" 
+                className="add-voucher-row-btn secondary-btn" 
+                onClick={handleApplyBrandVendorToAll} 
+                title="Copy brand & vendor to all rows"
+              >
+                <Sparkles size={14} /> Apply Brand/Vendor to All
+              </button>
+              <button type="button" className="add-voucher-row-btn" onClick={handleAddVoucherRow}>
+                <Plus size={14} /> Add Row
+              </button>
+            </div>
           </div>
 
           <form onSubmit={handleVoucherSubmit} className="inward-form">
@@ -1375,7 +1428,6 @@ export default function InventoryPage() {
                         <input
                           type="number"
                           step="0.01"
-                          required
                           placeholder="e.g. 2.5"
                           value={row.weightInTons}
                           onChange={(e) => handleVoucherRowChange(row.id, 'weightInTons', e.target.value)}
@@ -1386,7 +1438,6 @@ export default function InventoryPage() {
                         <input
                           type="number"
                           step="1"
-                          required
                           placeholder="e.g. 52000"
                           value={row.pricePerTonWithoutGst}
                           onChange={(e) => handleVoucherRowChange(row.id, 'pricePerTonWithoutGst', e.target.value)}
@@ -1406,16 +1457,17 @@ export default function InventoryPage() {
                           value={row.brandName}
                           onChange={(e) => {
                             handleVoucherRowChange(row.id, 'brandName', e.target.value);
-                            setHighlightedIndex(0);
+                            openDropdown(row.id, 'brandName');
                           }}
-                          onFocus={() => {
-                            setFocusedDropdown({ id: row.id, field: 'brandName' });
-                            setHighlightedIndex(-1);
+                          onFocus={() => openDropdown(row.id, 'brandName')}
+                          onClick={() => openDropdown(row.id, 'brandName')}
+                          onMouseDown={() => {
+                            if (blurTimeoutRef.current) {
+                              clearTimeout(blurTimeoutRef.current);
+                              blurTimeoutRef.current = null;
+                            }
                           }}
-                          onBlur={() => setTimeout(() => {
-                            setFocusedDropdown(null);
-                            setHighlightedIndex(-1);
-                          }, 200)}
+                          onBlur={closeDropdownDelayed}
                           onKeyDown={(e) => handleDropdownKeyDown(e, row.id, 'brandName', getFilteredBrands(row.brandName))}
                           className="voucher-input"
                           autoComplete="off"
@@ -1437,7 +1489,9 @@ export default function InventoryPage() {
                                 </div>
                               ))
                             ) : (
-                              <div className="custom-dropdown-no-item">No brands found</div>
+                              <div className="custom-dropdown-no-item">
+                                {row.brandName ? 'No matching company brand' : 'Type to add brand (saved for your company)'}
+                              </div>
                             )}
                           </div>
                         )}
@@ -1449,16 +1503,17 @@ export default function InventoryPage() {
                           value={row.vendorName}
                           onChange={(e) => {
                             handleVoucherRowChange(row.id, 'vendorName', e.target.value);
-                            setHighlightedIndex(0);
+                            openDropdown(row.id, 'vendorName');
                           }}
-                          onFocus={() => {
-                            setFocusedDropdown({ id: row.id, field: 'vendorName' });
-                            setHighlightedIndex(-1);
+                          onFocus={() => openDropdown(row.id, 'vendorName')}
+                          onClick={() => openDropdown(row.id, 'vendorName')}
+                          onMouseDown={() => {
+                            if (blurTimeoutRef.current) {
+                              clearTimeout(blurTimeoutRef.current);
+                              blurTimeoutRef.current = null;
+                            }
                           }}
-                          onBlur={() => setTimeout(() => {
-                            setFocusedDropdown(null);
-                            setHighlightedIndex(-1);
-                          }, 200)}
+                          onBlur={closeDropdownDelayed}
                           onKeyDown={(e) => handleDropdownKeyDown(e, row.id, 'vendorName', getFilteredVendors(row.vendorName))}
                           className="voucher-input"
                           autoComplete="off"
@@ -1480,7 +1535,9 @@ export default function InventoryPage() {
                                 </div>
                               ))
                             ) : (
-                              <div className="custom-dropdown-no-item">No vendors found</div>
+                              <div className="custom-dropdown-no-item">
+                                {row.vendorName ? 'No matching company vendor' : 'Type to add vendor (saved for your company)'}
+                              </div>
                             )}
                           </div>
                         )}
@@ -1741,48 +1798,6 @@ export default function InventoryPage() {
               </div>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Tab: Scrap Rules */}
-      {activeTab === 'rules' && (
-        <div className="card rules-card">
-          <h3 className="rules-card-title">Reusable Remnant & Scrap Rules</h3>
-          <p className="rules-card-subtitle">
-            Configure the threshold length for each diameter. Leftover pieces shorter than this length go to **Scrap/Waste** (logged). Leftover pieces greater than or equal to this length are saved as **Reusable Remnants** to be used first in future optimizations.
-          </p>
-
-          <div className="rules-grid">
-            <div className="rules-header-row">
-              <span className="col-lbl">Diameter (mm)</span>
-              <span className="col-lbl">Reusable Remnant Threshold Length (mm)</span>
-            </div>
-            {scrapRules.map((rule, idx) => (
-              <div key={rule._id || rule.diameter} className="rules-row">
-                <span className="rule-dia">{rule.diameter} mm</span>
-                <div className="rule-input-wrapper">
-                  <input
-                    type="number"
-                    value={rule.scrapLengthThreshold !== undefined && rule.scrapLengthThreshold !== null ? rule.scrapLengthThreshold : ''}
-                    onChange={(e) => handleRuleChange(idx, e.target.value)}
-                    className="rule-input"
-                    min="100"
-                    max="6000"
-                    placeholder="1000"
-                  />
-                  <span className="unit-label">mm</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button 
-            onClick={handleSaveRules} 
-            disabled={actionLoading} 
-            className="save-rules-btn"
-          >
-            {actionLoading ? 'Saving Rules...' : 'Save Scrap Rules'}
-          </button>
         </div>
       )}
 

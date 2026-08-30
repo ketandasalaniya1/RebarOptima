@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setThemeMode, setThemeColor, setDefaults } from '../../store/slices/settingsSlice';
-import { Save, Palette, Sliders, Moon, Sun, Settings, Database } from 'lucide-react';
-import { companyApi } from '../../utils/api';
+import { Save, Palette, Sliders, Moon, Sun, Settings, Database, Scale, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { companyApi, inventoryApi } from '../../utils/api';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -15,6 +15,13 @@ export default function SettingsPage() {
   const [storageData, setStorageData] = useState(null);
   const [loadingStorage, setLoadingStorage] = useState(true);
 
+  // Scrap & Remnant Rules State
+  const [scrapRules, setScrapRules] = useState([]);
+  const [loadingRules, setLoadingRules] = useState(true);
+  const [savingRules, setSavingRules] = useState(false);
+  const [rulesSuccess, setRulesSuccess] = useState('');
+  const [rulesError, setRulesError] = useState('');
+
   useEffect(() => {
     const fetchStorage = async () => {
       try {
@@ -26,7 +33,24 @@ export default function SettingsPage() {
         setLoadingStorage(false);
       }
     };
+
+    const fetchRules = async () => {
+      try {
+        setLoadingRules(true);
+        const res = await inventoryApi.getScrapRules();
+        if (Array.isArray(res)) {
+          setScrapRules(res);
+        }
+      } catch (err) {
+        console.error("Failed to fetch scrap rules:", err);
+        setRulesError(err.message || 'Failed to load scrap rules');
+      } finally {
+        setLoadingRules(false);
+      }
+    };
+
     fetchStorage();
+    fetchRules();
   }, []);
 
   const handleSaveDefaults = (e) => {
@@ -36,17 +60,136 @@ export default function SettingsPage() {
     setTimeout(() => setSaveSuccess(false), 2000);
   };
 
+  const handleRuleChange = (idx, value) => {
+    setScrapRules(prev => {
+      const updated = [...prev];
+      updated[idx] = {
+        ...updated[idx],
+        scrapLengthThreshold: value === '' ? '' : value
+      };
+      return updated;
+    });
+  };
+
+  const handleSaveRules = async (e) => {
+    e.preventDefault();
+    setRulesError('');
+    setRulesSuccess('');
+    setSavingRules(true);
+    try {
+      const sanitizedRules = scrapRules.map(r => ({
+        ...r,
+        scrapLengthThreshold: r.scrapLengthThreshold === '' || isNaN(Number(r.scrapLengthThreshold))
+          ? 1000 
+          : Math.max(100, Math.min(12000, Number(r.scrapLengthThreshold)))
+      }));
+      const updated = await inventoryApi.updateScrapRules(sanitizedRules);
+      setScrapRules(updated);
+      setRulesSuccess('Scrap rules updated successfully!');
+      setTimeout(() => setRulesSuccess(''), 2500);
+    } catch (err) {
+      setRulesError(err.message || 'Failed to save scrap rules');
+    } finally {
+      setSavingRules(false);
+    }
+  };
+
   return (
     <div className="settings-page">
       <div className="settings-header">
         <Settings className="settings-header-icon" size={24} />
         <div>
-          <h1 className="settings-title">User & Optimizer Settings</h1>
-          <p className="settings-subtitle">Configure interface colors, themes, and global cutting parameters.</p>
+          <h1 className="settings-title">Company & Optimizer Settings</h1>
+          <p className="settings-subtitle">Configure interface colors, scrap rules, cutting parameters, and storage.</p>
         </div>
       </div>
 
       <div className="settings-grid">
+        {/* Reusable Remnant & Scrap Rules Card */}
+        <div className="card settings-card rules-span-card">
+          <div className="settings-card-header-flex">
+            <div>
+              <h3 className="settings-card-title">
+                <Scale size={18} style={{ marginRight: '8px', color: 'var(--accent)' }} /> Reusable Remnant & Scrap Cut-Off Rules
+              </h3>
+              <p className="settings-card-desc">
+                Define the minimum threshold length for each bar diameter. Leftover pieces shorter than this length go to <strong>Scrap/Waste</strong> (logged as scrap). Leftover pieces equal to or longer than this length are saved as <strong>Reusable Remnants</strong> to be reused in future cutting batches.
+              </p>
+            </div>
+          </div>
+
+          {rulesError && (
+            <div className="settings-alert alert-error">
+              <AlertCircle size={16} />
+              <span>{rulesError}</span>
+            </div>
+          )}
+
+          {rulesSuccess && (
+            <div className="settings-alert alert-success">
+              <CheckCircle2 size={16} />
+              <span>{rulesSuccess}</span>
+            </div>
+          )}
+
+          {loadingRules ? (
+            <p className="settings-loading-text">Loading scrap threshold rules...</p>
+          ) : (
+            <form onSubmit={handleSaveRules} className="scrap-rules-form">
+              <div className="scrap-rules-table-wrapper">
+                <table className="scrap-rules-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '160px' }}>Diameter (mm)</th>
+                      <th>Remnant Threshold Length (mm)</th>
+                      <th style={{ width: '220px' }}>Behavior</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scrapRules.map((rule, idx) => {
+                      const threshold = rule.scrapLengthThreshold !== '' && rule.scrapLengthThreshold !== undefined && rule.scrapLengthThreshold !== null 
+                        ? Number(rule.scrapLengthThreshold) 
+                        : 1000;
+                      return (
+                        <tr key={rule._id || rule.diameter}>
+                          <td className="rule-dia-cell">
+                            <span className="dia-badge-pill">Ø {rule.diameter} mm</span>
+                          </td>
+                          <td>
+                            <div className="rule-input-group">
+                              <input
+                                type="number"
+                                value={rule.scrapLengthThreshold !== undefined && rule.scrapLengthThreshold !== null ? rule.scrapLengthThreshold : ''}
+                                onChange={(e) => handleRuleChange(idx, e.target.value)}
+                                className="rule-length-input"
+                                min="100"
+                                max="6000"
+                                placeholder="1000"
+                              />
+                              <span className="unit-label">mm</span>
+                            </div>
+                          </td>
+                          <td className="rule-behavior-cell">
+                            <span className="behavior-hint">
+                              ≥ {threshold}mm = Remnant, &lt; {threshold}mm = Scrap
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="rules-save-row">
+                <button type="submit" disabled={savingRules} className="save-rules-btn">
+                  <Save size={16} /> {savingRules ? 'Saving Rules...' : 'Save Scrap Rules'}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+
         {/* Visual Customization Card */}
         <div className="card settings-card">
           <h3 className="settings-card-title">

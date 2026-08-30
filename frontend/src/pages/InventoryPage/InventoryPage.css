@@ -339,6 +339,13 @@
   padding-bottom: 14px;
 }
 
+.voucher-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .add-voucher-row-btn {
   background: rgba(5, 150, 105, 0.08);
   border: 1px solid rgba(5, 150, 105, 0.2);
@@ -351,12 +358,24 @@
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .add-voucher-row-btn:hover {
   background: var(--accent);
   color: #ffffff;
+}
+
+.add-voucher-row-btn.secondary-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.add-voucher-row-btn.secondary-btn:hover {
+  background: var(--input-bg);
+  border-color: var(--accent);
+  color: var(--text-primary);
 }
 
 .voucher-entry-table {

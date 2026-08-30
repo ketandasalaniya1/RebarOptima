@@ -120,7 +120,9 @@ input:-webkit-autofill:active {
 
 body {
   min-height: 100vh;
-  background: var(--main-bg);
+  background-color: var(--main-bg);
+  background-image: radial-gradient(var(--card-border) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 #root {
@@ -136,6 +138,21 @@ input,
 select {
   font-family: inherit;
   font-size: 14px;
+}
+
+/* ═══════════════════════════════════════════
+   GLOBAL NUMBER INPUT ARROW REMOVAL
+   Removes native up/down spin buttons across Chrome, Safari, Edge, Opera, and Firefox
+   ═══════════════════════════════════════════ */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
 }
 
 /* ═══════════════════════════════════════════

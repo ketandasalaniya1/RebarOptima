@@ -67,6 +67,8 @@ export const inventoryApi = {
 };
 
 export const batchesApi = {
+  optimize: (payload) =>
+    apiRequest('/batches/optimize', { method: 'POST', body: payload }),
   commitBatch: (batchData) => 
     apiRequest('/batches', { method: 'POST', body: batchData }),
   getHistory: () => 
@@ -152,4 +154,48 @@ export const permissionsApi = {
 // Company API
 export const companyApi = {
   getStorage: () => apiRequest('/companies/storage'),
+};
+
+// Activity Logs API
+export const activityLogsApi = {
+  getLogs: (params = {}) => {
+    const queryParts = [];
+    if (params.module) queryParts.push(`module=${encodeURIComponent(params.module)}`);
+    if (params.userId) queryParts.push(`userId=${encodeURIComponent(params.userId)}`);
+    if (params.action) queryParts.push(`action=${encodeURIComponent(params.action)}`);
+    if (params.startDate) queryParts.push(`startDate=${encodeURIComponent(params.startDate)}`);
+    if (params.endDate) queryParts.push(`endDate=${encodeURIComponent(params.endDate)}`);
+    if (params.search) queryParts.push(`search=${encodeURIComponent(params.search)}`);
+    if (params.page) queryParts.push(`page=${encodeURIComponent(params.page)}`);
+    if (params.limit) queryParts.push(`limit=${encodeURIComponent(params.limit)}`);
+    const query = queryParts.length ? `?${queryParts.join('&')}` : '';
+    return apiRequest(`/activity-logs${query}`);
+  },
+  exportLogs: async (params = {}) => {
+    const token = sessionStorage.getItem('accessToken');
+    const queryParts = [];
+    if (params.module) queryParts.push(`module=${encodeURIComponent(params.module)}`);
+    if (params.userId) queryParts.push(`userId=${encodeURIComponent(params.userId)}`);
+    if (params.action) queryParts.push(`action=${encodeURIComponent(params.action)}`);
+    if (params.startDate) queryParts.push(`startDate=${encodeURIComponent(params.startDate)}`);
+    if (params.endDate) queryParts.push(`endDate=${encodeURIComponent(params.endDate)}`);
+    if (params.search) queryParts.push(`search=${encodeURIComponent(params.search)}`);
+    const query = queryParts.length ? `?${queryParts.join('&')}` : '';
+
+    const res = await fetch(`${API_BASE_URL}/activity-logs/export${query}`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : ''
+      }
+    });
+    if (!res.ok) throw new Error('Failed to export activity logs');
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rebaroptima_activity_logs_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
 };

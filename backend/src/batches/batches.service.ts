@@ -5,6 +5,7 @@ import { Batch } from './batch.schema';
 import { StockItem } from '../inventory/stock-item.schema';
 import { InventoryService } from '../inventory/inventory.service';
 import { InventoryTransaction } from '../inventory/inventory-transaction.schema';
+import { solve1DCSP, OptimizationResult, StockInputRow, PartInputRow, OptimizerOptions } from './optimizer.engine';
 
 @Injectable()
 export class BatchesService {
@@ -520,6 +521,17 @@ export class BatchesService {
 
     // 4. Delete the batch document
     return this.batchModel.deleteOne({ _id: bid as any, companyId: cid as any }).exec();
+  }
+
+  async optimizeBatch(
+    companyId: string,
+    dto: {
+      stockRows: StockInputRow[];
+      partsRows: PartInputRow[];
+      options?: OptimizerOptions;
+    },
+  ): Promise<OptimizationResult> {
+    return solve1DCSP(dto.stockRows || [], dto.partsRows || [], dto.options || {});
   }
 }
 

@@ -9,6 +9,18 @@ import { User } from '../users/user.schema';
 export class BatchesController {
   constructor(private readonly batchesService: BatchesService) {}
 
+  @Post('optimize')
+  async optimizeBatch(
+    @CurrentUser() user: User,
+    @Body() dto: {
+      stockRows: any[];
+      partsRows: any[];
+      options?: { kerf?: number; trimMargin?: number };
+    },
+  ) {
+    return this.batchesService.optimizeBatch(user.companyId.toString(), dto);
+  }
+
   @Post()
   async commitBatch(
     @CurrentUser() user: User,

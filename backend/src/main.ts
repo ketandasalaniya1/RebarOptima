@@ -67,6 +67,10 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
     displayName: 'Scrap Sales',
     features: { view: 'View Scrap Sales', create: 'Create Scrap Sale', edit: 'Edit Scrap Sale', delete: 'Delete Scrap Sale' }
   },
+  activityLogs: {
+    displayName: 'Activity Logs & Audit',
+    features: { view: 'View Activity Logs', export: 'Export Logs' }
+  },
   settings: {
     displayName: 'Settings',
     features: { view: 'View Settings', edit: 'Edit Settings' }
@@ -110,6 +114,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: true, delete: true, export: true },
       ledger: { view: true, export: true },
       scrapSales: { view: true, create: true, edit: true, delete: true },
+      activityLogs: { view: true, export: true },
       settings: { view: true, edit: true },
       users: { view: true },
       roles: { view: true }
@@ -126,6 +131,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: true, delete: false, export: true },
       ledger: { view: true, export: true },
       scrapSales: { view: true, create: true, edit: true, delete: false },
+      activityLogs: { view: true, export: false },
       settings: { view: true, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -142,6 +148,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: false, delete: false, export: false },
       ledger: { view: true, export: false },
       scrapSales: { view: true, create: false, edit: false, delete: false },
+      activityLogs: { view: false, export: false },
       settings: { view: true, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -158,6 +165,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: false, delete: false, export: false },
       ledger: { view: true, export: false },
       scrapSales: { view: true, create: false, edit: false, delete: false },
+      activityLogs: { view: false, export: false },
       settings: { view: false, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -174,6 +182,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: false, delete: false, export: true },
       ledger: { view: true, export: true },
       scrapSales: { view: true, create: true, edit: true, delete: true },
+      activityLogs: { view: true, export: true },
       settings: { view: true, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -190,6 +199,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: false, delete: false, export: false },
       ledger: { view: true, export: true },
       scrapSales: { view: true, create: true, edit: true, delete: false },
+      activityLogs: { view: false, export: false },
       settings: { view: false, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -206,6 +216,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: false, delete: false, export: true },
       ledger: { view: true, export: true },
       scrapSales: { view: true, create: false, edit: false, delete: false },
+      activityLogs: { view: true, export: false },
       settings: { view: true, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -222,6 +233,7 @@ const DEFAULT_SYSTEM_ROLES = [
       history: { view: true, edit: false, delete: false, export: false },
       ledger: { view: true, export: false },
       scrapSales: { view: true, create: false, edit: false, delete: false },
+      activityLogs: { view: false, export: false },
       settings: { view: false, edit: false },
       users: { view: false },
       roles: { view: false }
@@ -235,7 +247,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'FREE',
     displayName: 'Free',
     description: 'Basic access for small teams getting started',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: false },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false },
     features: {},
     limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
     isActive: true
@@ -244,7 +256,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'BASIC',
     displayName: 'Basic',
     description: 'Essential features for growing construction firms',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: false },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false },
     features: {},
     limits: { maxUsers: 10, maxProjects: 5, maxStorageMB: 500 },
     isActive: true
@@ -253,7 +265,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'PRO',
     displayName: 'Professional',
     description: 'Full-featured plan for professional construction management',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true },
     features: {},
     limits: { maxUsers: 50, maxProjects: 25, maxStorageMB: 5000 },
     isActive: true
@@ -262,7 +274,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'ENTERPRISE',
     displayName: 'Enterprise',
     description: 'Unlimited access with priority support for large organizations',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true },
     features: {},
     limits: { maxUsers: null, maxProjects: null, maxStorageMB: null },
     isActive: true
@@ -364,6 +376,8 @@ async function canAccess(
     if (company.status === 'inactive') return { allowed: false, reason: 'Organization is inactive' };
     if (company.status === 'suspended') return { allowed: false, reason: 'Organization is suspended' };
 
+    const isAdminUser = user.role === 'Admin' || user.role === 'OWNER' || user.role === 'ADMIN';
+
     // 3. Check subscription
     const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial'] } });
     if (subscription) {
@@ -372,12 +386,12 @@ async function canAccess(
         // Check module override first
         const moduleOverride = subscription.moduleOverrides?.[moduleName];
         const moduleEnabled = moduleOverride !== undefined ? moduleOverride : (pkg.modules?.[moduleName] !== false);
-        if (!moduleEnabled) {
+        if (!moduleEnabled && !isAdminUser) {
           return { allowed: false, reason: `Module "${moduleName}" is not available in your subscription (${pkg.displayName})` };
         }
 
         // Check feature override
-        if (featureName) {
+        if (featureName && !isAdminUser) {
           const featureKey = `${moduleName}.${featureName}`;
           const featureOverride = subscription.featureOverrides?.[featureKey];
           const featureEnabled = featureOverride !== undefined ? featureOverride : (pkg.features?.[featureKey] !== false);
@@ -387,14 +401,25 @@ async function canAccess(
         }
       }
     }
-    // If no subscription exists, allow access (backward compatibility for existing users)
+
+    // Admins and owners have full access to management and activity log features
+    if (isAdminUser) {
+      return { allowed: true, reason: 'Access granted' };
+    }
 
     // 4. Check role permissions
     if (user.roleId) {
       const role = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
       if (role && role.isActive !== false) {
+        if (role.name === 'Admin') {
+          return { allowed: true, reason: 'Access granted' };
+        }
         const modulePerms = role.permissions?.[moduleName];
         if (!modulePerms) {
+          // If module is activityLogs and role is management, grant access
+          if (moduleName === 'activityLogs' && (role.name?.toLowerCase().includes('manager') || role.name?.toLowerCase().includes('admin'))) {
+            return { allowed: true, reason: 'Access granted' };
+          }
           return { allowed: false, reason: `You do not have access to the "${moduleName}" module` };
         }
         if (featureName && modulePerms[featureName] === false) {
@@ -498,16 +523,20 @@ async function getEffectivePermissions(db: Db, userId: string): Promise<any> {
     }
   }
 
-  // If user is Admin or Owner and subscription is not expired, ensure users and roles modules are enabled
+  // If user is Admin or Owner and subscription is not expired, ensure users, roles, and activityLogs modules are enabled
   const isAdminOrOwner = user.role === 'Admin' || user.role === 'OWNER' || user.role === 'ADMIN' || roleInfo?.name === 'Admin';
   if (isAdminOrOwner && !subscriptionInfo?.isExpired) {
     modules.users = true;
     modules.roles = true;
+    modules.activityLogs = true;
     for (const feat of Object.keys(PLATFORM_MODULES.users?.features || {})) {
       features[`users.${feat}`] = true;
     }
     for (const feat of Object.keys(PLATFORM_MODULES.roles?.features || {})) {
       features[`roles.${feat}`] = true;
+    }
+    for (const feat of Object.keys(PLATFORM_MODULES.activityLogs?.features || {})) {
+      features[`activityLogs.${feat}`] = true;
     }
   }
 
@@ -548,21 +577,68 @@ function requirePermission(moduleName: string, featureName?: string) {
 async function logAudit(db: Db, params: {
   actorId: string;
   actorType: 'developer' | 'user';
+  actorName?: string;
+  actorEmail?: string;
+  actorRole?: string;
   companyId?: string | ObjectId | null;
+  module?: string;
   action: string;
   resource: string;
   resourceId?: string;
+  description?: string;
   previousValue?: any;
   newValue?: any;
 }) {
   try {
+    let actorName = params.actorName;
+    let actorEmail = params.actorEmail;
+    let actorRole = params.actorRole;
+    let companyId = params.companyId ? (typeof params.companyId === 'string' ? new ObjectId(params.companyId) : params.companyId) : null;
+
+    if (params.actorType === 'developer') {
+      if (!actorName || !actorEmail) {
+        try {
+          const dev = await db.collection('platformusers').findOne({ _id: new ObjectId(params.actorId) });
+          if (dev) {
+            actorName = actorName || `${dev.firstName || ''} ${dev.lastName || ''}`.trim() || 'Platform Developer';
+            actorEmail = actorEmail || dev.email;
+            actorRole = actorRole || 'Platform Developer';
+          }
+        } catch {}
+      }
+    } else if (params.actorType === 'user') {
+      if (!actorName || !actorEmail || !actorRole || !companyId) {
+        try {
+          const user = await db.collection('users').findOne({ _id: new ObjectId(params.actorId) });
+          if (user) {
+            actorName = actorName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
+            actorEmail = actorEmail || user.email;
+            companyId = companyId || (user.companyId ? new ObjectId(user.companyId) : null);
+            if (!actorRole) {
+              if (user.roleId) {
+                const roleDoc = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
+                actorRole = roleDoc?.name || user.role || 'User';
+              } else {
+                actorRole = user.role || 'User';
+              }
+            }
+          }
+        } catch {}
+      }
+    }
+
     await db.collection('auditlogs').insertOne({
       actorId: params.actorId,
       actorType: params.actorType,
-      companyId: params.companyId ? (typeof params.companyId === 'string' ? new ObjectId(params.companyId) : params.companyId) : null,
+      actorName: actorName || 'System / User',
+      actorEmail: actorEmail || '',
+      actorRole: actorRole || 'User',
+      companyId: companyId || null,
+      module: params.module || 'general',
       action: params.action,
       resource: params.resource,
       resourceId: params.resourceId || null,
+      description: params.description || `${params.action} on ${params.resource}`,
       previousValue: params.previousValue || null,
       newValue: params.newValue || null,
       timestamp: new Date()
@@ -644,6 +720,11 @@ async function seedDefaults(db: Db) {
         updatedAt: new Date()
       });
       console.log(`  ✅ Created system role: ${roleDef.name}`);
+    } else {
+      await rolesColl.updateOne(
+        { _id: existing._id },
+        { $set: { permissions: roleDef.permissions, description: roleDef.description, updatedAt: new Date() } }
+      );
     }
   }
 
@@ -1027,6 +1108,160 @@ app.get('/api/modules', authMiddleware, async (req: any, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
+// ACTIVITY LOGS & AUDIT TRAIL (Company Scoped & Role Guarded)
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/activity-logs', authMiddleware, requirePermission('activityLogs', 'view'), async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    if (!companyId) return res.status(400).json({ message: 'Company not found' });
+
+    const { module, userId, action, startDate, endDate, search, page = 1, limit = 50 } = req.query as any;
+
+    const filter: any = { companyId };
+
+    if (module && module !== 'all') {
+      filter.module = module;
+    }
+    if (userId && userId !== 'all') {
+      filter.actorId = userId;
+    }
+    if (action && action !== 'all') {
+      filter.action = action;
+    }
+    if (startDate || endDate) {
+      filter.timestamp = {};
+      if (startDate) filter.timestamp.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filter.timestamp.$lte = end;
+      }
+    }
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), 'i');
+      filter.$or = [
+        { actorName: regex },
+        { actorEmail: regex },
+        { actorRole: regex },
+        { description: regex },
+        { action: regex },
+        { resource: regex }
+      ];
+    }
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit, 10) || 50));
+    const skip = (pageNum - 1) * limitNum;
+
+    const totalLogs = await db.collection('auditlogs').countDocuments(filter);
+    const logs = await db.collection('auditlogs')
+      .find(filter)
+      .sort({ timestamp: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .toArray();
+
+    // Compute metrics
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayCount = await db.collection('auditlogs').countDocuments({
+      companyId,
+      timestamp: { $gte: today }
+    });
+
+    const activeUsersList = await db.collection('auditlogs').distinct('actorName', { companyId });
+    const criticalCount = await db.collection('auditlogs').countDocuments({
+      companyId,
+      action: { $in: ['INVENTORY_DELETE', 'BATCH_DELETED', 'SCRAP_SALE_DELETED', 'USER_STATUS_CHANGED', 'ROLE_DELETED'] }
+    });
+
+    res.json({
+      logs: logs.map((l: any) => ({ ...l, id: l._id.toString() })),
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total: totalLogs,
+        totalPages: Math.ceil(totalLogs / limitNum) || 1
+      },
+      stats: {
+        totalLogs,
+        todayCount,
+        activeUsersCount: activeUsersList.length,
+        criticalCount
+      }
+    });
+  } catch (e: any) {
+    console.error('Activity logs query error:', e);
+    res.status(500).json({ message: e.message });
+  }
+});
+
+app.get('/api/activity-logs/export', authMiddleware, requirePermission('activityLogs', 'export'), async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    if (!companyId) return res.status(400).json({ message: 'Company not found' });
+
+    const { module, userId, action, startDate, endDate, search } = req.query as any;
+    const filter: any = { companyId };
+    if (module && module !== 'all') filter.module = module;
+    if (userId && userId !== 'all') filter.actorId = userId;
+    if (action && action !== 'all') filter.action = action;
+    if (startDate || endDate) {
+      filter.timestamp = {};
+      if (startDate) filter.timestamp.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filter.timestamp.$lte = end;
+      }
+    }
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), 'i');
+      filter.$or = [
+        { actorName: regex },
+        { actorEmail: regex },
+        { actorRole: regex },
+        { description: regex }
+      ];
+    }
+
+    const logs = await db.collection('auditlogs').find(filter).sort({ timestamp: -1 }).limit(2000).toArray();
+
+    const headers = ['Timestamp', 'User Name', 'Email', 'Role', 'Module', 'Action', 'Description', 'Resource ID'];
+    const escapeCsv = (str: any) => {
+      if (str === null || str === undefined) return '""';
+      const s = String(str).replace(/"/g, '""');
+      return `"${s}"`;
+    };
+
+    const rows = logs.map((l: any) => [
+      escapeCsv(l.timestamp ? new Date(l.timestamp).toISOString() : ''),
+      escapeCsv(l.actorName || 'Unknown'),
+      escapeCsv(l.actorEmail || ''),
+      escapeCsv(l.actorRole || 'User'),
+      escapeCsv(l.module || ''),
+      escapeCsv(l.action || ''),
+      escapeCsv(l.description || ''),
+      escapeCsv(l.resourceId || '')
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="company_activity_logs_${Date.now()}.csv"`);
+    res.status(200).send(csvContent);
+  } catch (e: any) {
+    console.error('Export error:', e);
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
 // BUILDER FIRM AUTH ROUTES
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/auth/signup', async (req, res) => {
@@ -1139,6 +1374,20 @@ app.post('/api/auth/signin', async (req, res) => {
 
     // Get effective permissions
     const permissions = await getEffectivePermissions(db, user._id.toString());
+
+    await logAudit(db, {
+      actorId: user._id.toString(),
+      actorType: 'user',
+      actorName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+      actorEmail: user.email,
+      actorRole: roleName,
+      companyId: user.companyId,
+      module: 'auth',
+      action: 'USER_SIGNIN',
+      resource: 'users',
+      resourceId: user._id.toString(),
+      description: `${user.firstName || ''} ${user.lastName || ''} (${roleName}) logged in to RebarOptima`
+    });
 
     res.json({
       ...tokens,
@@ -1530,6 +1779,19 @@ app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory',
     const filter = { companyId, diameter: Number(diameter), length: Number(length), costPerKg: Number(costPerKg), typeOfBar, brandName, vendorName, isRemnant: false };
     const result = await db.collection('stockitems').findOneAndUpdate(filter, { $inc: { quantity, weightInKgs }, $setOnInsert: { createdAt: new Date() } }, { upsert: true, returnDocument: 'after' });
     await db.collection('inventorytransactions').insertOne({ companyId, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'inventory',
+      action: 'INVENTORY_INWARD',
+      resource: 'stockitems',
+      resourceId: result?._id?.toString() || '',
+      description: `Added inward stock of ${diameter}mm rebar (${quantity} pcs, ${weightInKgs.toFixed(1)} kg) - ${brandName || 'Standard'}${typeOfBar ? ` (${typeOfBar})` : ''}`,
+      newValue: { diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar }
+    });
+
     res.json(result);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1563,6 +1825,18 @@ app.post('/api/inventory/scrap-rules', authMiddleware, requirePermission('settin
     const updatedRules = await db.collection('scraprules').find({
       $or: [{ companyId }, { companyId: companyId.toString() }]
     }).sort({ diameter: 1 }).toArray();
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'settings',
+      action: 'SCRAP_RULES_UPDATED',
+      resource: 'scraprules',
+      description: `Updated scrap length threshold configurations`,
+      newValue: { rules }
+    });
+
     res.json(updatedRules);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1583,6 +1857,21 @@ app.delete('/api/inventory/:id', authMiddleware, requirePermission('inventory', 
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const result = await db.collection('stockitems').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+
+    if (result) {
+      await logAudit(db, {
+        actorId: req.user.sub,
+        actorType: 'user',
+        companyId,
+        module: 'inventory',
+        action: 'INVENTORY_DELETE',
+        resource: 'stockitems',
+        resourceId: req.params.id,
+        description: `Deleted ${result.isRemnant ? 'remnant' : 'standard'} stock item of ${result.diameter}mm (${result.quantity} pcs, ${(result.weightInKgs || 0).toFixed(1)} kg)`,
+        previousValue: { diameter: result.diameter, length: result.length, quantity: result.quantity, weightInKgs: result.weightInKgs, isRemnant: result.isRemnant }
+      });
+    }
+
     res.json({ deleted: !!result });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1604,6 +1893,17 @@ app.put('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'ed
     const newQty = Number(quantity);
     if (newQty === 0) {
       await db.collection('stockitems').deleteOne({ _id: item._id });
+      await logAudit(db, {
+        actorId: req.user.sub,
+        actorType: 'user',
+        companyId,
+        module: 'inventory',
+        action: 'INVENTORY_DELETE',
+        resource: 'stockitems',
+        resourceId: item._id.toString(),
+        description: `Removed stock item ${item.diameter}mm (Quantity reduced to 0)`,
+        previousValue: { quantity: item.quantity, weightInKgs: item.weightInKgs }
+      });
       return res.json({ deleted: true });
     }
 
@@ -1615,6 +1915,20 @@ app.put('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'ed
       { $set: { quantity: newQty, weightInKgs: newWeight } },
       { returnDocument: 'after' }
     );
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'inventory',
+      action: 'INVENTORY_UPDATE',
+      resource: 'stockitems',
+      resourceId: item._id.toString(),
+      description: `Updated stock of ${item.diameter}mm rebar from ${item.quantity} pcs (${(item.weightInKgs || 0).toFixed(1)} kg) to ${newQty} pcs (${newWeight.toFixed(1)} kg)`,
+      previousValue: { quantity: item.quantity, weightInKgs: item.weightInKgs },
+      newValue: { quantity: newQty, weightInKgs: newWeight }
+    });
+
     res.json(result);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1652,6 +1966,19 @@ app.post('/api/inventory/scrapsales', authMiddleware, requirePermission('scrapSa
       createdAt: new Date()
     };
     const result = await db.collection('scrapsales').insertOne(newSale);
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'scrapSales',
+      action: 'SCRAP_SALE_CREATED',
+      resource: 'scrapsales',
+      resourceId: result.insertedId.toString(),
+      description: `Recorded scrap sale of ${weight} kg at ₹${pricePerKg}/kg to buyer "${buyer}" (Total: ₹${(Number(weight) * Number(pricePerKg)).toLocaleString()})`,
+      newValue: newSale
+    });
+
     res.status(201).json({ _id: result.insertedId, ...newSale });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1682,6 +2009,19 @@ app.put('/api/inventory/scrapsales/:id', authMiddleware, requirePermission('scra
       { $set: updateDoc },
       { returnDocument: 'after' }
     );
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'scrapSales',
+      action: 'SCRAP_SALE_UPDATED',
+      resource: 'scrapsales',
+      resourceId: req.params.id,
+      description: `Updated scrap sale record (Buyer: ${buyer || 'Unchanged'}, Weight: ${weight !== undefined ? weight + ' kg' : 'Unchanged'})`,
+      newValue: updateDoc
+    });
+
     res.json(result);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1692,6 +2032,21 @@ app.delete('/api/inventory/scrapsales/:id', authMiddleware, requirePermission('s
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const result = await db.collection('scrapsales').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+
+    if (result) {
+      await logAudit(db, {
+        actorId: req.user.sub,
+        actorType: 'user',
+        companyId,
+        module: 'scrapSales',
+        action: 'SCRAP_SALE_DELETED',
+        resource: 'scrapsales',
+        resourceId: req.params.id,
+        description: `Deleted scrap sale to buyer "${result.buyer}" (${result.weight} kg, ₹${result.revenue})`,
+        previousValue: result
+      });
+    }
+
     res.json({ deleted: !!result });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1756,6 +2111,19 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
     }
 
     const batch = await db.collection('batches').insertOne({ companyId, batchName, inputStock, requiredParts, layouts, summary: { ...summary, totalScrapKg, totalRemnantKg }, createdAt: new Date() });
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'optimizer',
+      action: 'BATCH_CREATED',
+      resource: 'batches',
+      resourceId: batch.insertedId.toString(),
+      description: `Executed and saved cutting batch "${batchName || 'Cutting Batch'}" (${(layouts || []).length} cutting layouts, Scrap: ${totalScrapKg.toFixed(1)} kg, Remnants: ${totalRemnantKg.toFixed(1)} kg)`,
+      newValue: { batchName, summary: { ...summary, totalScrapKg, totalRemnantKg } }
+    });
+
     res.status(201).json({ _id: batch.insertedId, batchName, summary: { ...summary, totalScrapKg, totalRemnantKg } });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1784,6 +2152,19 @@ app.put('/api/batches/:id', authMiddleware, requirePermission('history', 'edit')
       { $set: { batchName: batchName.trim() } },
       { returnDocument: 'after' }
     );
+
+    await logAudit(db, {
+      actorId: req.user.sub,
+      actorType: 'user',
+      companyId,
+      module: 'history',
+      action: 'BATCH_UPDATED',
+      resource: 'batches',
+      resourceId: req.params.id,
+      description: `Renamed cutting batch to "${batchName.trim()}"`,
+      newValue: { batchName: batchName.trim() }
+    });
+
     res.json(result);
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
@@ -1794,6 +2175,21 @@ app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'del
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const result = await db.collection('batches').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+
+    if (result) {
+      await logAudit(db, {
+        actorId: req.user.sub,
+        actorType: 'user',
+        companyId,
+        module: 'history',
+        action: 'BATCH_DELETED',
+        resource: 'batches',
+        resourceId: req.params.id,
+        description: `Deleted cutting batch "${result.batchName || 'Cutting Batch'}"`,
+        previousValue: { batchName: result.batchName, summary: result.summary }
+      });
+    }
+
     res.json({ deleted: !!result });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });

@@ -6,7 +6,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  background: var(--main-bg, #0b0f17);
+  background: transparent;
   min-height: calc(100vh - 56px);
 }
 

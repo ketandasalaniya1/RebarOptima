@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -78,6 +78,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       label: 'Roles & Permissions',
       icon: <Shield size={18} />,
       moduleKey: 'roles'
+    },
+    {
+      id: 'activity-logs',
+      label: 'Activity Logs',
+      icon: <History size={18} />,
+      moduleKey: 'activityLogs'
     }
   ];
 

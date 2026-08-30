@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import './NewBatchPage.css'
-import { solve1DCSP } from '../../utils/optimizer'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import {
   X,
@@ -80,6 +79,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
 
   const [batchName, setBatchName] = useState(() => `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`)
   const [error, setError] = useState(null)
+  const [optimizing, setOptimizing] = useState(false)
   const [isStockExpanded, setIsStockExpanded] = useState(false)
   const [recentBatches, setRecentBatches] = useState([])
   
@@ -447,20 +447,29 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
           <div className="optimize-section">
             <button
               className="btn-optimize"
-              onClick={() => {
+              disabled={optimizing}
+              onClick={async () => {
+                setError(null);
+                setOptimizing(true);
                 try {
-                  const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin });
+                  const data = await batchesApi.optimize({
+                    stockRows: stock.rows,
+                    partsRows: parts.rows,
+                    options: { kerf, trimMargin }
+                  });
                   data.batchName = batchName;
                   data.inputStock = stock.rows;
                   data.requiredParts = parts.rows;
                   data.settings = { kerf, trimMargin };
                   onOptimize(data);
                 } catch (err) {
-                  setError(err.message);
+                  setError(err.message || 'Failed to run optimization on server.');
+                } finally {
+                  setOptimizing(false);
                 }
               }}
             >
-              RUN OPTIMIZATION
+              {optimizing ? 'OPTIMIZING ON SERVER...' : 'RUN OPTIMIZATION'}
             </button>
           </div>
         </div>

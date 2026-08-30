@@ -13,6 +13,7 @@ import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
 import RolesPage from './pages/RolesPage/RolesPage';
+import ActivityLogsPage from './pages/ActivityLogsPage/ActivityLogsPage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
@@ -202,6 +203,9 @@ function App() {
             )}
             {view === 'ledger' && (
               <LedgerPage />
+            )}
+            {view === 'activity-logs' && (
+              <ActivityLogsPage />
             )}
             {view === 'settings' && (
               <SettingsPage />

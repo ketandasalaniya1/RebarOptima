@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2469 nodes, 2975 edges, 215 communities. Commit: bba72c6</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2469 nodes, 2974 edges, 214 communities. Commit: ce3fdd7</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -90,17 +90,17 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>26 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>594 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>584 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>25 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
     OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>134 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>321 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>314 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>51 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>188 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>199 nodes</small>")
     class SERVE_API_35EC8E86 module;
     TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>161 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
@@ -116,20 +116,20 @@ flowchart LR
     class BATCHESSERVICE_698645C1 module;
     LOGO_USAGE_RULES_91E51D96("Logo Usage Rules<br/><small>29 nodes</small>")
     class LOGO_USAGE_RULES_91E51D96 module;
-    OTHER_D0941E68("Other<br/><small>765 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>771 nodes</small>")
     class OTHER_D0941E68 module;
-    OTHER_D0941E68 -->|imports x14| SERVE_API_35EC8E86
-    OTHER_D0941E68 -->|references x14| BUILD_GRAPH_321CBB04
-    BUILD_GRAPH_321CBB04 -->|references x11| OTHER_D0941E68
+    OTHER_D0941E68 -->|imports x25| SERVE_API_35EC8E86
     TESTS_FIXTURES_B84B1DCC -->|method x11| CLI_SKILLS_9964CBB8
     ANALYSIS_CLUSTERING_C79796DA -->|contains x11| SERVE_API_35EC8E86
-    CLI_SKILLS_9964CBB8 -->|imports x9| SERVE_API_35EC8E86
-    SERVE_API_35EC8E86 -->|imports x9| BUILD_GRAPH_321CBB04
-    CLI_SKILLS_9964CBB8 -->|imports x8| BUILD_GRAPH_321CBB04
-    CLI_SKILLS_9964CBB8 -->|imports x8| OTHER_D0941E68
-    SERVE_API_35EC8E86 -->|imports x6| OTHER_D0941E68
+    SERVE_API_35EC8E86 -->|imports x10| OTHER_D0941E68
+    BUILD_GRAPH_321CBB04 -->|references x9| OTHER_D0941E68
+    OTHER_D0941E68 -->|references x9| BUILD_GRAPH_321CBB04
+    OTHER_D0941E68 -->|imports x7| CLI_SKILLS_9964CBB8
     BATCHESSERVICE_698645C1 -->|imports x4| BUILD_GRAPH_321CBB04
-    SERVE_API_35EC8E86 -->|contains x4| CLI_SKILLS_9964CBB8
+    SERVE_API_35EC8E86 -->|imports x4| CLI_SKILLS_9964CBB8
+    TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
+    TESTS_FIXTURES_B84B1DCC -->|method x4| EXTRACT_PIPELINE_5F350230
+    BUILD_GRAPH_321CBB04 -->|contains x3| BATCHESSERVICE_698645C1
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>26</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>594</td><td><code>1, 62, 39, 7, 12, 21, 54, 124, 16, 19, 4, 2, 23, 177, 31, 165, 178, 5, 36, 193, 48, 49, 53, 162, 55, 56, 173, 59, 60, 194, 196, 61, 117, 175, 176, 66, 199, 200, 201, 202, 203, 204, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 197, 206, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>25</td><td><code>51, 43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>321</td><td><code>44, 58, 69, 89, 120, 52, 122, 0, 17, 136, 86, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>188</td><td><code>3, 6, 10, 18, 156, 166, 38, 15, 64, 210</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>161</td><td><code>9, 14, 24, 29, 30, 33, 37, 46, 67, 119, 183, 184, 185, 186, 187, 188, 189, 190, 191, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>BatchesService</td><td>29</td><td><code>25</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Other</td><td>765</td><td><code>74, 79, 11, 80, 82, 83, 84, 88, 121, 123, 125, 126, 127, 128, 129, 130, 131, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 116, 151, 159, 174, 164, 172, 205, 65, 179, 73, 170, 180, 181, 182, 192, 195, 85, 111, 113, 114, 198, 207, 208, 209, 211, 212, 213, 214, 63</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>26</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>584</td><td><code>1, 62, 39, 7, 12, 21, 54, 124, 16, 19, 4, 2, 23, 177, 31, 178, 5, 36, 193, 48, 173, 49, 53, 162, 55, 56, 59, 60, 194, 196, 61, 117, 175, 176, 66, 199, 200, 201, 202, 203, 204, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 197, 206, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>25</td><td><code>51, 43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>314</td><td><code>44, 58, 69, 89, 120, 52, 122, 17, 136, 86, 0, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>199</td><td><code>3, 6, 10, 156, 18, 166, 38, 15, 151, 64, 210</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>161</td><td><code>9, 14, 24, 29, 30, 33, 37, 46, 67, 119, 183, 184, 185, 186, 187, 188, 189, 190, 191, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>BatchesService</td><td>29</td><td><code>25</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Other</td><td>771</td><td><code>74, 79, 11, 80, 82, 83, 84, 88, 121, 123, 125, 126, 127, 128, 129, 130, 131, 116, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 205, 41, 42, 155, 45, 47, 159, 174, 164, 172, 65, 179, 73, 170, 180, 181, 182, 192, 195, 85, 111, 113, 114, 198, 207, 208, 209, 211, 212, 213, 214, 63</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,7 +158,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>2469 nodes · 2975 edges · 215 communities (156 shown, 59 thin omitted)</li>
+      <li>2469 nodes · 2974 edges · 214 communities (155 shown, 59 thin omitted)</li>
       <li>Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 21 edges (avg confidence: 0.5)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `TailwindConfigGenerator` - 58 edges</li>
@@ -482,12 +482,12 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 594 nodes and 752 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 584 nodes and 739 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (594 nodes, 752 edges)
+    %% Section: Graph Build (584 nodes, 739 edges)
     subgraph build_graph_src_auth_auth_controller_ts_2e6b55d1["src/auth/auth.controller.ts"]
         backend_src_auth_auth_controller_authcontroller_abc12de8("AuthController<br/><small>src/auth/auth.controller.ts</small>")
         backend_src_auth_auth_controller_authcontroller_eee7c059("constructor()<br/><small>src/auth/auth.controller.ts</small>")
@@ -533,7 +533,7 @@ flowchart LR
     backend_src_app_controller_spec_8af750bc -->|imports| backend_src_app_service_appservice_47100258
     backend_src_app_controller_appcontroller_e9dae26a -->|imports| backend_src_app_module_97b3bc74
     backend_src_app_module_97b3bc74 -->|imports| backend_src_app_service_appservice_47100258
-    %% Omitted for readability: 576 nodes, 0 edges
+    %% Omitted for readability: 566 nodes, 0 edges
     class backend_src_auth_auth_controller_authcontroller_abc12de8 klass;
     class backend_src_auth_auth_controller_authcontroller_eee7c059 function;
     class backend_src_auth_auth_controller_authcontroller_abf4cf72 function;
@@ -826,13 +826,13 @@ flowchart LR
 <tr><td><code>backend/tsconfig.json</code></td><td>23 nodes</td></tr>
 <tr><td><code>package.json</code></td><td>20 nodes</td></tr>
 <tr><td><code>brand/references/asset-organization.md</code></td><td>19 nodes</td></tr>
-<tr><td><code>frontend/.oxlintrc.json</code></td><td>9 nodes</td></tr>
 <tr><td><code>src/batches/optimizer.engine.ts</code></td><td>8 nodes</td></tr>
+<tr><td><code>backend/tsconfig.build.json</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x492, imports x107, imports x58, references x50. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x488, imports x105, imports x52, references x50. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1489,18 +1489,18 @@ flowchart LR
 
 <!-- ====== 6. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">6. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around skills, agents, skillmd, design, mostly in skills/design/SKILL.md, skills/ui-ux-pro-max/SKILL.md, ui-styling/references/shadcn-components.md. This section covers 321 nodes and 314 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around skills, agents, skillmd, design, mostly in skills/design/SKILL.md, skills/ui-ux-pro-max/SKILL.md, ui-styling/references/shadcn-components.md. This section covers 314 nodes and 300 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (321 nodes, 314 edges)
+    %% Section: CLI &amp; Skill Installers (314 nodes, 300 edges)
     subgraph cli_skills_ui_styling_scripts_tailwind_config_ge_9d2c28ec["ui-styling/scripts/tailwind_config_gen.py"]
         agents_skills_ui_styling_scripts_tailwind_config_e1d5999b("generate_config_string()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_657fde92("add_breakpoints()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_75066976("add_colors()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
-        agents_skills_ui_styling_scripts_tailwind_config_38156463("main()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_3223dc1a("add_fonts()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
+        agents_skills_ui_styling_scripts_tailwind_config_38156463("main()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_488f3080("add_spacing()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_edb77aa6("add_plugins()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
         agents_skills_ui_styling_scripts_tailwind_config_88c6c620("recommend_plugins()<br/><small>ui-styling/scripts/tailwind_config_gen.py</small>")
@@ -1514,8 +1514,8 @@ flowchart LR
         backend_src_main_canaccess_35c9340c("canAccess()<br/><small>backend/src/main.ts</small>")
         backend_src_main_seeddefaults_81b569a2("seedDefaults()<br/><small>backend/src/main.ts</small>")
     end
-    frontend_src_components_sidenavbar_sidenavbar_c0c6d5da("SideNavbar.jsx")
-    frontend_src_app_7da8908b("App.jsx")
+    frontend_src_app_app_9781f459("App()<br/><small>frontend/src/App.jsx</small>")
+    frontend_src_main_c1980e55("main.jsx")
     frontend_src_pages_superadminloginpage_superadmi_186b02d2("SuperadminLoginPage.jsx")
     backend_src_main_connectdb_b60f44d1 -->|calls| backend_src_main_requirepermission_2f203678
     backend_src_main_connectdb_b60f44d1 -->|calls| backend_src_main_startserver_ba5d5674
@@ -1531,14 +1531,13 @@ flowchart LR
     agents_skills_ui_styling_scripts_tailwind_config_e1d5999b -->|calls| agents_skills_ui_styling_scripts_tailwind_config_be35801a
     agents_skills_ui_styling_scripts_tailwind_config_be35801a -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
     agents_skills_ui_styling_scripts_tailwind_config_ff7caa88 -->|calls| agents_skills_ui_styling_scripts_tailwind_config_38156463
-    frontend_src_app_7da8908b -->|imports| frontend_src_components_sidenavbar_sidenavbar_c0c6d5da
-    frontend_src_app_7da8908b -->|imports| frontend_src_pages_superadminloginpage_superadmi_186b02d2
-    %% Omitted for readability: 303 nodes, 0 edges
+    frontend_src_app_app_9781f459 -->|imports| frontend_src_main_c1980e55
+    %% Omitted for readability: 296 nodes, 0 edges
     class agents_skills_ui_styling_scripts_tailwind_config_e1d5999b function;
     class agents_skills_ui_styling_scripts_tailwind_config_657fde92 function;
     class agents_skills_ui_styling_scripts_tailwind_config_75066976 function;
-    class agents_skills_ui_styling_scripts_tailwind_config_38156463 function;
     class agents_skills_ui_styling_scripts_tailwind_config_3223dc1a function;
+    class agents_skills_ui_styling_scripts_tailwind_config_38156463 function;
     class agents_skills_ui_styling_scripts_tailwind_config_488f3080 function;
     class agents_skills_ui_styling_scripts_tailwind_config_edb77aa6 function;
     class agents_skills_ui_styling_scripts_tailwind_config_88c6c620 function;
@@ -1549,8 +1548,8 @@ flowchart LR
     class backend_src_main_startserver_ba5d5674 function;
     class backend_src_main_canaccess_35c9340c function;
     class backend_src_main_seeddefaults_81b569a2 function;
-    class frontend_src_components_sidenavbar_sidenavbar_c0c6d5da ui;
-    class frontend_src_app_7da8908b ui;
+    class frontend_src_app_app_9781f459 ui;
+    class frontend_src_main_c1980e55 ui;
     class frontend_src_pages_superadminloginpage_superadmi_186b02d2 ui;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -1832,7 +1831,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x269, calls x14, imports x13, explains x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x266, calls x14, explains x10, imports x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2185,29 +2184,31 @@ flowchart LR
 
 <!-- ====== 8. Serving API ====== -->
 <h2 id="serve-api">8. Serving API</h2>
-<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 188 nodes and 288 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 199 nodes and 320 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (188 nodes, 288 edges)
-    subgraph serve_api_design_system_scripts_slide_search_cor_25be5dc3["design-system/scripts/slide_search_core.py"]
-        agents_skills_design_system_scripts_slide_search_03dc6de6("search()<br/><small>design-system/scripts/slide_search_core.py</small>")
-        agents_skills_design_system_scripts_slide_search_74348786("search_all()<br/><small>design-system/scripts/slide_search_core.py</small>")
-        agents_skills_design_system_scripts_slide_search_33fcfc39("search_with_context()<br/><small>design-system/scripts/slide_search_core.py</small>")
-        agents_skills_design_system_scripts_slide_search_db1ab8be("BM25<br/><small>design-system/scripts/slide_search_core.py</small>")
-        agents_skills_design_system_scripts_slide_search_f26ba6a9("fit()<br/><small>design-system/scripts/slide_search_core.py</small>")
-    end
+    %% Section: Serving API (199 nodes, 320 edges)
     subgraph serve_api_design_system_scripts_search_slides_py_9ad4a400["design-system/scripts/search-slides.py"]
         agents_skills_design_system_scripts_search_slide_4a570372("search-slides.py")
         agents_skills_design_system_scripts_search_slide_e1a34bb7("format_result()<br/><small>design-system/scripts/search-slides.py</small>")
         agents_skills_design_system_scripts_search_slide_42980047("main()<br/><small>design-system/scripts/search-slides.py</small>")
         agents_skills_design_system_scripts_search_slide_aa6aca9d("format_context()<br/><small>design-system/scripts/search-slides.py</small>")
     end
+    subgraph serve_api_design_system_scripts_slide_search_cor_25be5dc3["design-system/scripts/slide_search_core.py"]
+        agents_skills_design_system_scripts_slide_search_03dc6de6("search()<br/><small>design-system/scripts/slide_search_core.py</small>")
+        agents_skills_design_system_scripts_slide_search_74348786("search_all()<br/><small>design-system/scripts/slide_search_core.py</small>")
+        agents_skills_design_system_scripts_slide_search_33fcfc39("search_with_context()<br/><small>design-system/scripts/slide_search_core.py</small>")
+    end
     subgraph serve_api_scripts_cip_core_py_1b34946b["scripts/cip/core.py"]
         agents_skills_design_scripts_cip_core_search_c7cb5ec5("search()<br/><small>scripts/cip/core.py</small>")
         agents_skills_design_scripts_cip_core_get_cip_br_af34b1a2("get_cip_brief()<br/><small>scripts/cip/core.py</small>")
         agents_skills_design_scripts_cip_core_bm25_1f281262("BM25<br/><small>scripts/cip/core.py</small>")
+    end
+    subgraph serve_api_pages_BatchHistoryPage_BatchHistoryPag_8c71485d["pages/BatchHistoryPage/BatchHistoryPage.jsx"]
+        frontend_src_pages_batchhistorypage_batchhistory_492d0e3b("getTextStyle()<br/><small>pages/BatchHistoryPage/BatchHistoryPage.jsx</small>")
+        frontend_src_pages_batchhistorypage_batchhistory_9e4d4864("BatchHistoryPage()<br/><small>pages/BatchHistoryPage/BatchHistoryPage.jsx</small>")
     end
     subgraph serve_api_pages_NewBatchPage_NewBatchPage_jsx_b7af5aa0["pages/NewBatchPage/NewBatchPage.jsx"]
         frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20("useTableRows()<br/><small>pages/NewBatchPage/NewBatchPage.jsx</small>")
@@ -2219,33 +2220,33 @@ flowchart LR
     end
     agents_skills_design_scripts_logo_core_bm25_590ec865("BM25<br/><small>scripts/logo/core.py</small>")
     agents_skills_ui_ux_pro_max_scripts_design_syste_a74c6356("DesignSystemGenerator<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
-    frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20 -->|calls| frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d
     frontend_src_pages_resultspage_resultspage_gette_9cc00126 -->|calls| frontend_src_pages_resultspage_resultspage_resul_59979d77
+    frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20 -->|calls| frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d
+    frontend_src_pages_batchhistorypage_batchhistory_492d0e3b -->|calls| frontend_src_pages_batchhistorypage_batchhistory_9e4d4864
     agents_skills_design_system_scripts_search_slide_e1a34bb7 -->|calls| agents_skills_design_system_scripts_search_slide_42980047
     agents_skills_design_system_scripts_search_slide_aa6aca9d -->|calls| agents_skills_design_system_scripts_search_slide_42980047
     agents_skills_design_system_scripts_search_slide_42980047 -->|calls| agents_skills_design_system_scripts_slide_search_03dc6de6
     agents_skills_design_system_scripts_search_slide_42980047 -->|calls| agents_skills_design_system_scripts_slide_search_74348786
     agents_skills_design_system_scripts_search_slide_42980047 -->|calls| agents_skills_design_system_scripts_slide_search_33fcfc39
-    agents_skills_design_system_scripts_slide_search_db1ab8be -->|method| agents_skills_design_system_scripts_slide_search_f26ba6a9
     agents_skills_design_system_scripts_slide_search_03dc6de6 -->|calls| agents_skills_design_system_scripts_slide_search_74348786
     agents_skills_design_system_scripts_slide_search_74348786 -->|calls| agents_skills_design_system_scripts_slide_search_33fcfc39
     agents_skills_design_scripts_cip_core_search_c7cb5ec5 -->|calls| agents_skills_design_scripts_cip_core_get_cip_br_af34b1a2
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_03dc6de6
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_74348786
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_33fcfc39
-    %% Omitted for readability: 170 nodes, 0 edges
-    class agents_skills_design_system_scripts_slide_search_03dc6de6 function;
-    class agents_skills_design_system_scripts_slide_search_74348786 function;
-    class agents_skills_design_system_scripts_slide_search_33fcfc39 function;
-    class agents_skills_design_system_scripts_slide_search_db1ab8be klass;
-    class agents_skills_design_system_scripts_slide_search_f26ba6a9 function;
+    %% Omitted for readability: 181 nodes, 0 edges
     class agents_skills_design_system_scripts_search_slide_4a570372 module;
     class agents_skills_design_system_scripts_search_slide_e1a34bb7 function;
     class agents_skills_design_system_scripts_search_slide_42980047 function;
     class agents_skills_design_system_scripts_search_slide_aa6aca9d function;
+    class agents_skills_design_system_scripts_slide_search_03dc6de6 function;
+    class agents_skills_design_system_scripts_slide_search_74348786 function;
+    class agents_skills_design_system_scripts_slide_search_33fcfc39 function;
     class agents_skills_design_scripts_cip_core_search_c7cb5ec5 function;
     class agents_skills_design_scripts_cip_core_get_cip_br_af34b1a2 function;
     class agents_skills_design_scripts_cip_core_bm25_1f281262 klass;
+    class frontend_src_pages_batchhistorypage_batchhistory_492d0e3b ui;
+    class frontend_src_pages_batchhistorypage_batchhistory_9e4d4864 ui;
     class frontend_src_pages_newbatchpage_newbatchpage_use_4c7a4c20 ui;
     class frontend_src_pages_newbatchpage_newbatchpage_new_7c17291d ui;
     class frontend_src_pages_resultspage_resultspage_gette_9cc00126 ui;
@@ -2526,13 +2527,13 @@ flowchart LR
 <tr><td><code>scripts/logo/core.py</code></td><td>20 nodes</td></tr>
 <tr><td><code>scripts/cip/generate.py</code></td><td>14 nodes</td></tr>
 <tr><td><code>ui-ux-pro-max/scripts/core.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>src/utils/api.js</code></td><td>9 nodes</td></tr>
 <tr><td><code>scripts/cip/render-html.py</code></td><td>8 nodes</td></tr>
-<tr><td><code>src/utils/api.js</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: calls x86, contains x72, explains x71, imports x32. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x87, contains x78, explains x71, imports x39. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4930,12 +4931,12 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around agents, skills, references, design, mostly in design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md. This section covers 765 nodes and 751 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around agents, skills, references, design, mostly in design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md. This section covers 771 nodes and 764 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (765 nodes, 751 edges)
+    %% Section: Other (771 nodes, 764 edges)
     subgraph other_src_inventory_inventory_service_ts_80796eac["src/inventory/inventory.service.ts"]
         backend_src_inventory_inventory_service_inventor_9c4e3c1a("InventoryService<br/><small>src/inventory/inventory.service.ts</small>")
         backend_src_inventory_inventory_service_inventor_64a2cc8c("constructor()<br/><small>src/inventory/inventory.service.ts</small>")
@@ -4951,16 +4952,13 @@ flowchart LR
         backend_src_inventory_inventory_controller_inven_1a33e367("InventoryController<br/><small>src/inventory/inventory.controller.ts</small>")
         backend_src_inventory_inventory_controller_inven_b9e9de2a("getInventory()<br/><small>src/inventory/inventory.controller.ts</small>")
         backend_src_inventory_inventory_controller_inven_67405f62("inwardEntry()<br/><small>src/inventory/inventory.controller.ts</small>")
-    end
-    subgraph other_pages_BatchHistoryPage_BatchHistoryPage_js_5c33db7d["pages/BatchHistoryPage/BatchHistoryPage.jsx"]
-        frontend_src_pages_batchhistorypage_batchhistory_492d0e3b("getTextStyle()<br/><small>pages/BatchHistoryPage/BatchHistoryPage.jsx</small>")
-        frontend_src_pages_batchhistorypage_batchhistory_9e4d4864("BatchHistoryPage()<br/><small>pages/BatchHistoryPage/BatchHistoryPage.jsx</small>")
+        backend_src_inventory_inventory_controller_inven_4ee6fb47("getScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_9f307d0d("updateScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
     end
     agents_skills_brand_scripts_sync_brand_to_tokens_18717bd4("generateColorScale()<br/><small>brand/scripts/sync-brand-to-tokens.cjs</small>")
     agents_skills_brand_scripts_validate_asset_valid_39762c27("validateFileSize()<br/><small>brand/scripts/validate-asset.cjs</small>")
-    frontend_src_components_loadingspinner_loadingsp_78d3b261("LoadingSpinner()<br/><small>components/LoadingSpinner/LoadingSpinner.jsx</small>")
+    frontend_src_app_7da8908b("App.jsx")
     agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933("BM25<br/><small>ui-ux-pro-max/scripts/core.py</small>")
-    frontend_src_pages_batchhistorypage_batchhistory_492d0e3b -->|calls| frontend_src_pages_batchhistorypage_batchhistory_9e4d4864
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_64a2cc8c
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_45e75a8f
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_6d6b0870
@@ -4972,10 +4970,14 @@ flowchart LR
     backend_src_inventory_inventory_service_inventor_1819b19c -->|calls| backend_src_inventory_inventory_service_inventor_440c1b98
     backend_src_inventory_inventory_service_inventor_6d6b0870 -->|calls| backend_src_inventory_inventory_controller_inven_b9e9de2a
     backend_src_inventory_inventory_service_inventor_440c1b98 -->|calls| backend_src_inventory_inventory_controller_inven_67405f62
+    backend_src_inventory_inventory_service_inventor_43ceebdf -->|calls| backend_src_inventory_inventory_controller_inven_4ee6fb47
     backend_src_inventory_inventory_service_inventor_43ceebdf -->|calls| backend_src_inventory_inventory_service_inventor_b1e6121d
+    backend_src_inventory_inventory_service_inventor_b1e6121d -->|calls| backend_src_inventory_inventory_controller_inven_9f307d0d
     backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_b9e9de2a
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_4ee6fb47
     backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_67405f62
-    %% Omitted for readability: 747 nodes, 0 edges
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_9f307d0d
+    %% Omitted for readability: 753 nodes, 0 edges
     class backend_src_inventory_inventory_service_inventor_9c4e3c1a klass;
     class backend_src_inventory_inventory_service_inventor_64a2cc8c function;
     class backend_src_inventory_inventory_service_inventor_45e75a8f function;
@@ -4988,11 +4990,11 @@ flowchart LR
     class backend_src_inventory_inventory_controller_inven_1a33e367 klass;
     class backend_src_inventory_inventory_controller_inven_b9e9de2a function;
     class backend_src_inventory_inventory_controller_inven_67405f62 function;
-    class frontend_src_pages_batchhistorypage_batchhistory_492d0e3b ui;
-    class frontend_src_pages_batchhistorypage_batchhistory_9e4d4864 ui;
+    class backend_src_inventory_inventory_controller_inven_4ee6fb47 function;
+    class backend_src_inventory_inventory_controller_inven_9f307d0d function;
     class agents_skills_brand_scripts_sync_brand_to_tokens_18717bd4 function;
     class agents_skills_brand_scripts_validate_asset_valid_39762c27 function;
-    class frontend_src_components_loadingspinner_loadingsp_78d3b261 ui;
+    class frontend_src_app_7da8908b ui;
     class agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 klass;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -5274,7 +5276,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x649, calls x49, method x19, references x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x650, calls x48, method x19, references x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5286,16 +5288,16 @@ flowchart LR
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><td>Nodes</td><td>2469</td></tr>
-      <tr><td>Edges</td><td>2975</td></tr>
+      <tr><td>Edges</td><td>2974</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>215</td></tr>
+      <tr><td>Communities</td><td>214</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>2954</td></tr>
+      <tr><td>EXTRACTED</td><td>2953</td></tr>
       <tr><td>INFERRED</td><td>21</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -5304,7 +5306,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-08-30 11:21 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-08-30 12:07 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

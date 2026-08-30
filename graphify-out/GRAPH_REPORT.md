@@ -1,21 +1,21 @@
 # Graph Report - RebarOptima  (2026-08-30)
 
 ## Corpus Check
-- 175 files · ~243,614 words
+- 175 files · ~244,893 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2469 nodes · 2975 edges · 215 communities (156 shown, 59 thin omitted)
+- 2469 nodes · 2974 edges · 214 communities (155 shown, 59 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 21 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bba72c63`
+- Built from commit: `ce3fdd7d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- App.jsx
+- SuperadminLoginPage.jsx
 - gray
 - batches.service.ts
 - search
@@ -160,12 +160,12 @@
 - Brand
 - Slide Strategies
 - Component Tokens
-- LoadingSpinner.jsx
+- api.js
 - Slide Strategies
 - backend/README.md
 - Ponytail
 - RebarOptima Project Overview
-- api.js
+- react
 - Ponytail Help
 - Web Application Testing
 - Slides Reference
@@ -174,7 +174,6 @@
 - RebarOptima Codebase Knowledge Graph (Graphify Report)
 - Slides
 - Brand Guidelines Template
-- react
 - NewBatchPage.jsx
 - ponytail-audit/SKILL.md
 - Ponytail Gain
@@ -214,7 +213,7 @@
 - primary-foreground
 - ring
 - secondary-foreground
-- InventoryPage.jsx
+- App.jsx
 - dotenv
 - Body
 - Controller
@@ -251,11 +250,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (215 total, 59 thin omitted)
+## Communities (214 total, 59 thin omitted)
 
-### Community 0 - "App.jsx"
-Cohesion: 0.16
-Nodes (7): App(), SideNavbar(), ActivityLogsPage(), authSlice, routingSlice, store, developerApi
+### Community 0 - "SuperadminLoginPage.jsx"
+Cohesion: 0.20
+Nodes (4): App(), authSlice, routingSlice, store
 
 ### Community 1 - "gray"
 Cohesion: 0.05
@@ -701,9 +700,9 @@ Nodes (9): Common Structures, Duarte Sparkline Pattern, Matching Strategy to Con
 Cohesion: 0.20
 Nodes (9): Alert Tokens, Badge Tokens, Button Tokens, Card Tokens, Component Tokens, Dialog/Modal Tokens, Input Tokens, Table Tokens (+1 more)
 
-### Community 151 - "LoadingSpinner.jsx"
-Cohesion: 0.43
-Nodes (3): LoadingSpinner(), BatchHistoryPage(), getTextStyle()
+### Community 151 - "api.js"
+Cohesion: 0.36
+Nodes (3): activityLogsApi, developerApi, usersApi
 
 ### Community 152 - "Slide Strategies"
 Cohesion: 0.20
@@ -721,9 +720,9 @@ Nodes (8): Boundaries, Intensity, Output, Persistence, Ponytail, Rules, The ladd
 Cohesion: 0.22
 Nodes (8): 1. Project Purpose & Core Domain, 2. Codebase Architecture, 3. Database Entity Schema Summary, 4. Key Files to Know, 5. Current Implementation Status, A. Frontend (React + Vite), B. Backend (NestJS + Mongoose + MongoDB), RebarOptima Project Overview
 
-### Community 156 - "api.js"
-Cohesion: 0.21
-Nodes (7): DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, activityLogsApi, permissionsApi, rolesApi, usersApi
+### Community 156 - "react"
+Cohesion: 0.19
+Nodes (9): LoadingSpinner(), BatchHistoryPage(), getTextStyle(), DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, permissionsApi, rolesApi (+1 more)
 
 ### Community 157 - "Ponytail Help"
 Cohesion: 0.25
@@ -757,10 +756,6 @@ Nodes (5): References (Knowledge Base), Routing, Slides, Subcommands, When to Us
 Cohesion: 0.40
 Nodes (4): Brand Guidelines Template, Document Structure, Extractable Fields, Usage
 
-### Community 165 - "react"
-Cohesion: 0.21
-Nodes (4): plugins, authApi, oxc, react
-
 ### Community 166 - "NewBatchPage.jsx"
 Cohesion: 0.21
 Nodes (9): initialParts, initialStock, NewBatchPage(), useTableRows(), getTextStyle(), mockLayouts, ResultsPage(), batchesApi (+1 more)
@@ -786,8 +781,8 @@ Cohesion: 0.50
 Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 
 ### Community 173 - ".oxlintrc.json"
-Cohesion: 0.33
-Nodes (5): rules, react/only-export-components, react/rules-of-hooks, $schema, warn
+Cohesion: 0.25
+Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, warn
 
 ### Community 174 - "SettingsPage.jsx"
 Cohesion: 0.33
@@ -845,12 +840,12 @@ Nodes (3): ring, $type, $value
 Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
-### Community 205 - "InventoryPage.jsx"
-Cohesion: 0.67
-Nodes (3): createDefaultVoucherRows(), InventoryPage(), STANDARD_DIAMETERS
+### Community 205 - "App.jsx"
+Cohesion: 0.27
+Nodes (5): SideNavbar(), ActivityLogsPage(), createDefaultVoucherRows(), InventoryPage(), STANDARD_DIAMETERS
 
 ## Knowledge Gaps
-- **1130 isolated node(s):** `PartLayoutItem`, `BarLayout`, `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES` (+1125 more)
+- **1130 isolated node(s):** `STANDARD_DIAMETERS`, `mockLayouts`, `PartLayoutItem`, `BarLayout`, `app` (+1125 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -865,7 +860,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `PartLayoutItem`, `BarLayout`, `app` to the rest of the system?**
+- **What connects `STANDARD_DIAMETERS`, `mockLayouts`, `PartLayoutItem` to the rest of the system?**
   _1130 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
   _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._

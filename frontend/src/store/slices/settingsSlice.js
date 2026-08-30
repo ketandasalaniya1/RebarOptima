@@ -31,6 +31,7 @@ const settingsSlice = createSlice({
     setThemeMode: (state, action) => {
       state.themeMode = action.payload;
       localStorage.setItem('themeMode', action.payload);
+      localStorage.setItem('theme', action.payload);
       document.documentElement.setAttribute('data-theme', action.payload);
     },
     setThemeColor: (state, action) => {

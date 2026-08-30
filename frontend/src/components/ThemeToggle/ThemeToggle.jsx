@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Sun, Moon } from 'lucide-react';
+import { setThemeMode } from '../../store/slices/settingsSlice';
 import './ThemeToggle.css';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'dark';
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+  const dispatch = useDispatch();
+  const themeMode = useSelector((state) => state.settings?.themeMode) || 'dark';
 
   const handleToggle = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    const nextTheme = themeMode === 'light' ? 'dark' : 'light';
+    dispatch(setThemeMode(nextTheme));
   };
 
   return (
-    <label className="theme-switch" title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+    <label className="theme-switch" title={themeMode === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
       <input 
         type="checkbox" 
-        checked={theme === 'dark'} 
+        checked={themeMode === 'dark'} 
         onChange={handleToggle}
         aria-label="Toggle theme"
       />

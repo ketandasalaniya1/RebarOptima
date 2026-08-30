@@ -235,7 +235,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'FREE',
     displayName: 'Free',
     description: 'Basic access for small teams getting started',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: false, roles: false },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, settings: true, users: true, roles: false },
     features: {},
     limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
     isActive: true
@@ -498,6 +498,19 @@ async function getEffectivePermissions(db: Db, userId: string): Promise<any> {
     }
   }
 
+  // If user is Admin or Owner and subscription is not expired, ensure users and roles modules are enabled
+  const isAdminOrOwner = user.role === 'Admin' || user.role === 'OWNER' || user.role === 'ADMIN' || roleInfo?.name === 'Admin';
+  if (isAdminOrOwner && !subscriptionInfo?.isExpired) {
+    modules.users = true;
+    modules.roles = true;
+    for (const feat of Object.keys(PLATFORM_MODULES.users?.features || {})) {
+      features[`users.${feat}`] = true;
+    }
+    for (const feat of Object.keys(PLATFORM_MODULES.roles?.features || {})) {
+      features[`roles.${feat}`] = true;
+    }
+  }
+
   return {
     modules,
     features,
@@ -608,6 +621,8 @@ async function seedDefaults(db: Db) {
     if (!existing) {
       await pkgsColl.insertOne({ ...pkg, createdAt: new Date(), updatedAt: new Date() });
       console.log(`  ✅ Created subscription package: ${pkg.name}`);
+    } else {
+      await pkgsColl.updateOne({ name: pkg.name }, { $set: { modules: pkg.modules, updatedAt: new Date() } });
     }
   }
 

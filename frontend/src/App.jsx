@@ -18,6 +18,8 @@ import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
+import { permissionsApi } from './utils/api';
+import { setPermissions } from './store/slices/permissionsSlice';
 
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -28,6 +30,23 @@ function App() {
 
   const [optimizationData, setOptimizationData] = useState(null);
   const [editBatchParams, setEditBatchParams] = useState(null);
+
+  // Synchronize effective permissions when authenticated
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const token = sessionStorage.getItem('accessToken');
+    if (token) {
+      permissionsApi.getEffective()
+        .then((perms) => {
+          if (perms) {
+            dispatch(setPermissions(perms));
+          }
+        })
+        .catch((err) => {
+          console.warn('Could not refresh effective permissions:', err);
+        });
+    }
+  }, [isAuthenticated, dispatch]);
 
   // Synchronize route session on mount and handle PopState events
   useEffect(() => {

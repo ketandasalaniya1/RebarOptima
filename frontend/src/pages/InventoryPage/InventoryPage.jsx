@@ -76,6 +76,7 @@ export default function InventoryPage() {
   const [editingStockId, setEditingStockId] = useState(null)
   const [editStockQty, setEditStockQty] = useState('')
   const [focusedDropdown, setFocusedDropdown] = useState(null)
+  const [highlightedIndex, setHighlightedIndex] = useState(-1)
 
   // Load inventory and rules on mount
   useEffect(() => {
@@ -730,19 +731,68 @@ export default function InventoryPage() {
 
   const getFilteredBrands = (val) => {
     const term = (val || '').toLowerCase().trim();
-    if (!term) return uniqueBrands.slice(0, 10);
-    return uniqueBrands.filter(b => b.toLowerCase().includes(term)).slice(0, 10);
+    if (!term) return uniqueBrands;
+    return uniqueBrands.filter(b => b.toLowerCase().includes(term));
   };
 
   const getFilteredVendors = (val) => {
     const term = (val || '').toLowerCase().trim();
-    if (!term) return uniqueVendors.slice(0, 10);
-    return uniqueVendors.filter(v => v.toLowerCase().includes(term)).slice(0, 10);
+    if (!term) return uniqueVendors;
+    return uniqueVendors.filter(v => v.toLowerCase().includes(term));
+  };
+
+  const scrollDropdownItemIntoView = () => {
+    setTimeout(() => {
+      const activeItem = document.querySelector('.custom-dropdown-item.is-highlighted');
+      if (activeItem) {
+        activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }, 0);
+  };
+
+  const handleDropdownKeyDown = (e, rowId, field, suggestions) => {
+    if (!focusedDropdown || focusedDropdown.id !== rowId || focusedDropdown.field !== field) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        setFocusedDropdown({ id: rowId, field });
+        setHighlightedIndex(0);
+        scrollDropdownItemIntoView();
+        e.preventDefault();
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (suggestions.length === 0) return;
+      setHighlightedIndex((prev) => {
+        const next = prev < suggestions.length - 1 ? prev + 1 : 0;
+        scrollDropdownItemIntoView();
+        return next;
+      });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (suggestions.length === 0) return;
+      setHighlightedIndex((prev) => {
+        const next = prev > 0 ? prev - 1 : suggestions.length - 1;
+        scrollDropdownItemIntoView();
+        return next;
+      });
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+        e.preventDefault();
+        handleSelectSuggestion(rowId, field, suggestions[highlightedIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setFocusedDropdown(null);
+      setHighlightedIndex(-1);
+    }
   };
 
   const handleSelectSuggestion = (rowId, field, value) => {
     handleVoucherRowChange(rowId, field, value);
     setFocusedDropdown(null);
+    setHighlightedIndex(-1);
   };
 
   return (
@@ -847,16 +897,6 @@ export default function InventoryPage() {
                     ) : (
                       <div className="dia-ton-label muted">{item.hasStock ? 'In Stock' : 'Out of Stock'}</div>
                     )}
-                    <div className="dia-card-bar-track">
-                      <div
-                        className="dia-card-bar-fill standard-fill"
-                        style={{
-                          width: standardDiaSummary.grandTotalWeight > 0
-                            ? `${Math.max(4, Math.min(100, (item.totalWeight / standardDiaSummary.grandTotalWeight) * 100))}%`
-                            : '0%'
-                        }}
-                      />
-                    </div>
                   </div>
                 ))}
               </div>
@@ -1173,16 +1213,6 @@ export default function InventoryPage() {
                     ) : (
                       <div className="dia-ton-label muted">{item.hasStock ? 'Ready for reuse' : 'None in stock'}</div>
                     )}
-                    <div className="dia-card-bar-track">
-                      <div
-                        className="dia-card-bar-fill remnant-fill"
-                        style={{
-                          width: remnantsDiaSummary.grandTotalWeight > 0
-                            ? `${Math.max(4, Math.min(100, (item.totalWeight / remnantsDiaSummary.grandTotalWeight) * 100))}%`
-                            : '0%'
-                        }}
-                      />
-                    </div>
                   </div>
                 ))}
               </div>
@@ -1374,20 +1404,30 @@ export default function InventoryPage() {
                           type="text"
                           placeholder="Brand name"
                           value={row.brandName}
-                          list="rebar-brands-list"
-                          onChange={(e) => handleVoucherRowChange(row.id, 'brandName', e.target.value)}
-                          onFocus={() => setFocusedDropdown({ id: row.id, field: 'brandName' })}
-                          onBlur={() => setTimeout(() => setFocusedDropdown(null), 200)}
+                          onChange={(e) => {
+                            handleVoucherRowChange(row.id, 'brandName', e.target.value);
+                            setHighlightedIndex(0);
+                          }}
+                          onFocus={() => {
+                            setFocusedDropdown({ id: row.id, field: 'brandName' });
+                            setHighlightedIndex(-1);
+                          }}
+                          onBlur={() => setTimeout(() => {
+                            setFocusedDropdown(null);
+                            setHighlightedIndex(-1);
+                          }, 200)}
+                          onKeyDown={(e) => handleDropdownKeyDown(e, row.id, 'brandName', getFilteredBrands(row.brandName))}
                           className="voucher-input"
                           autoComplete="off"
                         />
                         {focusedDropdown?.id === row.id && focusedDropdown?.field === 'brandName' && (
-                          <div className={`custom-dropdown-menu ${idx > 0 ? 'open-upward' : ''}`}>
+                          <div className={`custom-dropdown-menu ${voucherRows.length >= 4 && idx >= voucherRows.length - 2 ? 'open-upward' : ''}`}>
                             {getFilteredBrands(row.brandName).length > 0 ? (
-                              getFilteredBrands(row.brandName).map(brand => (
+                              getFilteredBrands(row.brandName).map((brand, bIdx) => (
                                 <div
                                   key={brand}
-                                  className="custom-dropdown-item"
+                                  className={`custom-dropdown-item ${highlightedIndex === bIdx ? 'is-highlighted' : ''}`}
+                                  onMouseEnter={() => setHighlightedIndex(bIdx)}
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleSelectSuggestion(row.id, 'brandName', brand);
@@ -1407,20 +1447,30 @@ export default function InventoryPage() {
                           type="text"
                           placeholder="Vendor name"
                           value={row.vendorName}
-                          list="rebar-vendors-list"
-                          onChange={(e) => handleVoucherRowChange(row.id, 'vendorName', e.target.value)}
-                          onFocus={() => setFocusedDropdown({ id: row.id, field: 'vendorName' })}
-                          onBlur={() => setTimeout(() => setFocusedDropdown(null), 200)}
+                          onChange={(e) => {
+                            handleVoucherRowChange(row.id, 'vendorName', e.target.value);
+                            setHighlightedIndex(0);
+                          }}
+                          onFocus={() => {
+                            setFocusedDropdown({ id: row.id, field: 'vendorName' });
+                            setHighlightedIndex(-1);
+                          }}
+                          onBlur={() => setTimeout(() => {
+                            setFocusedDropdown(null);
+                            setHighlightedIndex(-1);
+                          }, 200)}
+                          onKeyDown={(e) => handleDropdownKeyDown(e, row.id, 'vendorName', getFilteredVendors(row.vendorName))}
                           className="voucher-input"
                           autoComplete="off"
                         />
                         {focusedDropdown?.id === row.id && focusedDropdown?.field === 'vendorName' && (
-                          <div className={`custom-dropdown-menu ${idx > 0 ? 'open-upward' : ''}`}>
+                          <div className={`custom-dropdown-menu ${voucherRows.length >= 4 && idx >= voucherRows.length - 2 ? 'open-upward' : ''}`}>
                             {getFilteredVendors(row.vendorName).length > 0 ? (
-                              getFilteredVendors(row.vendorName).map(vendor => (
+                              getFilteredVendors(row.vendorName).map((vendor, vIdx) => (
                                 <div
                                   key={vendor}
-                                  className="custom-dropdown-item"
+                                  className={`custom-dropdown-item ${highlightedIndex === vIdx ? 'is-highlighted' : ''}`}
+                                  onMouseEnter={() => setHighlightedIndex(vIdx)}
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleSelectSuggestion(row.id, 'vendorName', vendor);
@@ -1450,19 +1500,6 @@ export default function InventoryPage() {
                 </tbody>
               </table>
             </div>
-
-            {/* Native Browser Auto-Complete Datalists */}
-            <datalist id="rebar-brands-list">
-              {uniqueBrands.map(b => (
-                <option key={b} value={b} />
-              ))}
-            </datalist>
-
-            <datalist id="rebar-vendors-list">
-              {uniqueVendors.map(v => (
-                <option key={v} value={v} />
-              ))}
-            </datalist>
 
             <button type="submit" disabled={actionLoading} className="submit-inward-btn">
               {actionLoading ? 'Recording Voucher Entry...' : 'Submit Inward Voucher'}

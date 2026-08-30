@@ -13,8 +13,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
 
   const checkPermission = (moduleKey) => {
     if (!moduleKey) return true;
-    if (Object.keys(permissions || {}).length === 0) {
-      return moduleKey !== 'users' && moduleKey !== 'roles';
+    const roleUpper = (user?.role || '').toUpperCase();
+    if (roleUpper === 'ADMIN' || roleUpper === 'OWNER' || user?.accountType === 'developer') {
+      return true;
+    }
+    if (!permissions || Object.keys(permissions).length === 0) {
+      return true;
     }
     return permissions[moduleKey] !== false;
   };

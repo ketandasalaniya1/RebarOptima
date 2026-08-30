@@ -1,26 +1,26 @@
 # Graph Report - RebarOptima  (2026-08-30)
 
 ## Corpus Check
-- 175 files · ~244,893 words
+- 176 files · ~249,036 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2469 nodes · 2974 edges · 214 communities (155 shown, 59 thin omitted)
+- 2473 nodes · 2983 edges · 202 communities (143 shown, 59 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 21 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ce3fdd7d`
+- Built from commit: `bf778f1c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- SuperadminLoginPage.jsx
+- App.jsx
 - gray
 - batches.service.ts
 - search
 - color
-- card
+- button
 - slide_search_core.py
 - spacing
 - html-token-validator.py
@@ -174,7 +174,8 @@
 - RebarOptima Codebase Knowledge Graph (Graphify Report)
 - Slides
 - Brand Guidelines Template
-- NewBatchPage.jsx
+- bcryptjs
+- InventoryPage.jsx
 - ponytail-audit/SKILL.md
 - Ponytail Gain
 - ponytail-review/SKILL.md
@@ -182,11 +183,9 @@
 - ponytail-debt/SKILL.md
 - React + Vite
 - .oxlintrc.json
-- SettingsPage.jsx
+- store.js
 - default
 - md
-- design-tokens-starter.json
-- input
 - .__init__
 - rules/graphify.md
 - slides-create.md
@@ -201,20 +200,9 @@
 - .test_base_config_structure
 - .test_default_content_paths_react
 - workflows/graphify.md
-- button
-- $type
 - PROJECT_AI_PROMPT.md
-- radius
 - eslint-config-prettier
 - Injectable
-- destructive-foreground
-- muted
-- primary
-- primary-foreground
-- ring
-- secondary-foreground
-- App.jsx
-- dotenv
 - Body
 - Controller
 - Delete
@@ -229,7 +217,7 @@
 3. `ShadcnInstaller` - 34 edges
 4. `TestShadcnInstaller` - 26 edges
 5. `compilerOptions` - 22 edges
-6. `react` - 21 edges
+6. `react` - 22 edges
 7. `User` - 17 edges
 8. `UI Styling Skill` - 17 edges
 9. `color` - 15 edges
@@ -250,11 +238,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (214 total, 59 thin omitted)
+## Communities (202 total, 59 thin omitted)
 
-### Community 0 - "SuperadminLoginPage.jsx"
-Cohesion: 0.20
-Nodes (4): App(), authSlice, routingSlice, store
+### Community 0 - "App.jsx"
+Cohesion: 0.17
+Nodes (5): SideNavbar(), ProfilePage(), authSlice, routingSlice, profileApi
 
 ### Community 1 - "gray"
 Cohesion: 0.05
@@ -269,12 +257,12 @@ Cohesion: 0.07
 Nodes (42): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection (+34 more)
 
 ### Community 4 - "color"
-Cohesion: 0.11
-Nodes (19): $type, $value, background, destructive, foreground, muted-foreground, primary-hover, secondary (+11 more)
+Cohesion: 0.04
+Nodes (48): $type, $value, background, destructive, destructive-foreground, foreground, muted, muted-foreground (+40 more)
 
-### Community 5 - "card"
-Cohesion: 0.20
-Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
+### Community 5 - "button"
+Cohesion: 0.06
+Nodes (45): $type, $value, $type, $value, bg, fg, font-size, hover-bg (+37 more)
 
 ### Community 6 - "slide_search_core.py"
 Cohesion: 0.09
@@ -330,7 +318,7 @@ Nodes (9): DesignSystemGenerator, Find matching reasoning rule for a category., 
 
 ### Community 19 - "dependencies"
 Cohesion: 0.11
-Nodes (19): dependencies, bcryptjs, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
+Nodes (19): dependencies, dotenv, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
 
 ### Community 20 - "fetch-background.py"
 Cohesion: 0.17
@@ -462,7 +450,7 @@ Nodes (14): ansi_ljust(), format_ascii_box(), format_markdown(), generate_design
 
 ### Community 52 - "main.ts"
 Cohesion: 0.11
-Nodes (11): AccessResult, app, canAccess(), connectDB(), DEFAULT_SUBSCRIPTION_PACKAGES, DEFAULT_SYSTEM_ROLES, PLATFORM_MODULES, requirePermission() (+3 more)
+Nodes (13): AccessResult, app, canAccess(), connectDB(), DEFAULT_SUBSCRIPTION_PACKAGES, DEFAULT_SYSTEM_ROLES, logAudit(), PLATFORM_MODULES (+5 more)
 
 ### Community 53 - "exclude"
 Cohesion: 0.25
@@ -701,8 +689,8 @@ Cohesion: 0.20
 Nodes (9): Alert Tokens, Badge Tokens, Button Tokens, Card Tokens, Component Tokens, Dialog/Modal Tokens, Input Tokens, Table Tokens (+1 more)
 
 ### Community 151 - "api.js"
-Cohesion: 0.36
-Nodes (3): activityLogsApi, developerApi, usersApi
+Cohesion: 0.23
+Nodes (4): activityLogsApi, companyApi, developerApi, usersApi
 
 ### Community 152 - "Slide Strategies"
 Cohesion: 0.20
@@ -756,9 +744,9 @@ Nodes (5): References (Knowledge Base), Routing, Slides, Subcommands, When to Us
 Cohesion: 0.40
 Nodes (4): Brand Guidelines Template, Document Structure, Extractable Fields, Usage
 
-### Community 166 - "NewBatchPage.jsx"
-Cohesion: 0.21
-Nodes (9): initialParts, initialStock, NewBatchPage(), useTableRows(), getTextStyle(), mockLayouts, ResultsPage(), batchesApi (+1 more)
+### Community 166 - "InventoryPage.jsx"
+Cohesion: 0.16
+Nodes (12): createDefaultVoucherRows(), InventoryPage(), STANDARD_DIAMETERS, initialParts, initialStock, NewBatchPage(), useTableRows(), getTextStyle() (+4 more)
 
 ### Community 167 - "ponytail-audit/SKILL.md"
 Cohesion: 0.40
@@ -784,9 +772,9 @@ Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 Cohesion: 0.25
 Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, warn
 
-### Community 174 - "SettingsPage.jsx"
+### Community 174 - "store.js"
 Cohesion: 0.33
-Nodes (3): SettingsPage(), settingsSlice, companyApi
+Nodes (3): App(), settingsSlice, store
 
 ### Community 175 - "default"
 Cohesion: 0.67
@@ -796,71 +784,23 @@ Nodes (4): $type, $value, default, default
 Cohesion: 0.67
 Nodes (4): $type, $value, md, md
 
-### Community 177 - "design-tokens-starter.json"
-Cohesion: 0.15
-Nodes (12): component, $type, $value, dark, semantic, $schema, $type, $value (+4 more)
-
-### Community 178 - "input"
-Cohesion: 0.20
-Nodes (12): padding-x, padding-y, input, $type, $value, focus-ring, padding-x, padding-y (+4 more)
-
-### Community 193 - "button"
-Cohesion: 0.20
-Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 more)
-
-### Community 194 - "$type"
-Cohesion: 0.60
-Nodes (5): $type, $value, border, border, border
-
-### Community 196 - "radius"
-Cohesion: 0.60
-Nodes (5): radius, radius, radius, $type, $value
-
-### Community 199 - "destructive-foreground"
-Cohesion: 0.67
-Nodes (3): destructive-foreground, $type, $value
-
-### Community 200 - "muted"
-Cohesion: 0.67
-Nodes (3): muted, $type, $value
-
-### Community 201 - "primary"
-Cohesion: 0.67
-Nodes (3): primary, $type, $value
-
-### Community 202 - "primary-foreground"
-Cohesion: 0.67
-Nodes (3): primary-foreground, $type, $value
-
-### Community 203 - "ring"
-Cohesion: 0.67
-Nodes (3): ring, $type, $value
-
-### Community 204 - "secondary-foreground"
-Cohesion: 0.67
-Nodes (3): secondary-foreground, $type, $value
-
-### Community 205 - "App.jsx"
-Cohesion: 0.27
-Nodes (5): SideNavbar(), ActivityLogsPage(), createDefaultVoucherRows(), InventoryPage(), STANDARD_DIAMETERS
-
 ## Knowledge Gaps
-- **1130 isolated node(s):** `STANDARD_DIAMETERS`, `mockLayouts`, `PartLayoutItem`, `BarLayout`, `app` (+1125 more)
+- **1130 isolated node(s):** `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES`, `AccessResult` (+1125 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `design-tokens-starter.json`, `radius`, `fontSize`, `shadow`?**
-  _High betweenness centrality (0.006) - this node is a cross-community bridge._
+- **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`, `shadow`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `TailwindConfigGenerator` connect `TailwindConfigGenerator` to `test_tailwind_config_gen.py`, `TestTailwindConfigGenerator`, `._base_config`, `.test_recommend_plugins`, `.test_generate_config_with_colors`, `.test_recommend_plugins_nextjs`, `.test_validate_config_valid`, `main`, `._generate_javascript`, `.test_write_config_invalid_path`, `.test_init_default_typescript`, `.test_generate_javascript_config`, `.test_full_configuration_typescript`, `.test_base_config_structure`, `.test_default_content_paths_react`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `STANDARD_DIAMETERS`, `mockLayouts`, `PartLayoutItem` to the rest of the system?**
+- **What connects `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES` to the rest of the system?**
   _1130 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
   _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._

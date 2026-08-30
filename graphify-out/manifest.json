@@ -310,8 +310,8 @@
     "semantic_hash": "6e4521d67f0f2faf70a50cb6f42f9fd1"
   },
   "backend/src/main.ts": {
-    "mtime": 1788077577.0008523,
-    "ast_hash": "7cc798e46d8640fa2f0b54386e1d8dce",
+    "mtime": 1788101159.6629195,
+    "ast_hash": "195c178373df71bafad890b69efd66e8",
     "semantic_hash": ""
   },
   "backend/src/users/user.schema.ts": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "frontend/src/App.jsx": {
-    "mtime": 1788077385.5443542,
-    "ast_hash": "b3096dc2e6281c55e4ab2b7d9b244670",
+    "mtime": 1788093339.8461144,
+    "ast_hash": "a9ecaa973f9b6de4c2f2883a86eae3a8",
     "semantic_hash": ""
   },
   "frontend/src/components/ScrollToTop/ScrollToTop.jsx": {
@@ -370,8 +370,8 @@
     "semantic_hash": "0a922efe1fde69d14a9c8b0a8a5b3d79"
   },
   "frontend/src/components/SideNavbar/SideNavbar.jsx": {
-    "mtime": 1788078722.6708167,
-    "ast_hash": "4fa87d75a8716c7705cc71b1888d48e1",
+    "mtime": 1788093257.600826,
+    "ast_hash": "70eb5e83d0cd8c16150dcad62fcce4da",
     "semantic_hash": ""
   },
   "frontend/src/components/ThemeToggle/ThemeToggle.jsx": {
@@ -400,8 +400,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/NewBatchPage/NewBatchPage.jsx": {
-    "mtime": 1788088504.3820112,
-    "ast_hash": "2e81b2530bb9a640a344b81cbed6d148",
+    "mtime": 1788101511.413854,
+    "ast_hash": "14061bf1ce035958077b57ac725dfa54",
     "semantic_hash": ""
   },
   "frontend/src/pages/OverviewPage/OverviewPage.jsx": {
@@ -440,13 +440,13 @@
     "semantic_hash": ""
   },
   "frontend/src/store/slices/authSlice.js": {
-    "mtime": 1787583124.4536376,
-    "ast_hash": "50c6545ad5e73616d91afa4665df36bb",
+    "mtime": 1788093234.286208,
+    "ast_hash": "ef27a0f420a9e7ccc9b128b3dbad3cc2",
     "semantic_hash": ""
   },
   "frontend/src/store/slices/routingSlice.js": {
-    "mtime": 1787583153.8148472,
-    "ast_hash": "cb7946b6fd95ec6f5c439dad1a4286cb",
+    "mtime": 1788093242.3008318,
+    "ast_hash": "6c4580c90e9aea8f815a49ac0fb5b1ed",
     "semantic_hash": ""
   },
   "frontend/src/store/slices/settingsSlice.js": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "frontend/src/utils/api.js": {
-    "mtime": 1788088472.6722791,
-    "ast_hash": "518ca17d0873197938146f581dab6da2",
+    "mtime": 1788093227.0098515,
+    "ast_hash": "8662631c4e0bbe8dcfe7807d84bef2ab",
     "semantic_hash": ""
   },
   "frontend/src/utils/optimizer.js": {
@@ -937,6 +937,11 @@
   "frontend/src/pages/ActivityLogsPage/ActivityLogsPage.jsx": {
     "mtime": 1788078268.353321,
     "ast_hash": "adeb5ea2030e52d725dd23c4185870c3",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/ProfilePage/ProfilePage.jsx": {
+    "mtime": 1788100658.357098,
+    "ast_hash": "2bdcdf32d7519795f270fc119c23d01d",
     "semantic_hash": ""
   }
 }

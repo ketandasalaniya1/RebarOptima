@@ -390,13 +390,13 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/InventoryPage/InventoryPage.jsx": {
-    "mtime": 1788080304.4942734,
-    "ast_hash": "7cb7dea9274562756ad4926a08d20068",
+    "mtime": 1788091513.0347004,
+    "ast_hash": "1ac91810e4ccc25369070dcdd1c4e4f2",
     "semantic_hash": ""
   },
   "frontend/src/pages/LedgerPage/LedgerPage.jsx": {
-    "mtime": 1787941769.0491395,
-    "ast_hash": "d70ff5829a96ad3791c4103de66302e0",
+    "mtime": 1788089970.6767702,
+    "ast_hash": "7ffa64058feb12a1d176ad394b497233",
     "semantic_hash": ""
   },
   "frontend/src/pages/NewBatchPage/NewBatchPage.jsx": {
@@ -410,8 +410,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/ResultsPage/ResultsPage.jsx": {
-    "mtime": 1787939599.469093,
-    "ast_hash": "fec443d73a924839748f7f2cb65731f9",
+    "mtime": 1788089211.0383062,
+    "ast_hash": "5b3a933bd2db39204bd9aab4d35d9c16",
     "semantic_hash": ""
   },
   "frontend/src/pages/SettingsPage/SettingsPage.jsx": {

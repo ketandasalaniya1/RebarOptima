@@ -81,7 +81,104 @@
   color: #2da44e;
 }
 
-/* Stock Lists styling */
+/* ── Hero KPI Cards Grid ── */
+.inventory-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.hero-stat-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.hero-stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+
+.hero-stat-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.hero-stat-main {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.hero-stat-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.hero-stat-unit {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.hero-stat-sub {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.hero-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-stat-icon.bg-emerald {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.hero-stat-icon.bg-blue {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.hero-stat-icon.bg-cyan {
+  background: rgba(6, 182, 212, 0.12);
+  color: #06b6d4;
+}
+
+.hero-stat-icon.bg-purple {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+}
+
+/* ── Stock Lists styling ── */
 .stock-list-container {
   display: flex;
   flex-direction: column;
@@ -89,11 +186,18 @@
 }
 
 .stock-section {
-  padding: 24px;
+  padding: 22px 24px;
   border-radius: 12px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.section-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .section-title {
@@ -102,20 +206,28 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 16px;
+  margin-bottom: 0;
+  letter-spacing: -0.2px;
+}
+
+.section-badge-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.section-badge-pill.remnant {
+  background: rgba(6, 182, 212, 0.1);
+  color: #06b6d4;
+  border: 1px solid rgba(6, 182, 212, 0.2);
 }
 
 .remnant-card {
-  border-left: 4px solid #3ac0e8;
-}
-
-.remnant-disclaimer {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
-  background: var(--main-bg);
-  padding: 10px 14px;
-  border-radius: 6px;
+  /* Clean card border without side line */
 }
 
 .empty-stock-state {
@@ -125,7 +237,213 @@
   font-size: 13.5px;
 }
 
-/* Tables styling */
+/* ── Search & Action Controls ── */
+.standard-search-box {
+  position: relative;
+  min-width: 220px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 36px;
+  padding: 6px 12px 6px 34px;
+  background: var(--input-bg, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--input-border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 12.5px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.btn-quick-inward {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+  white-space: nowrap;
+}
+
+.btn-quick-inward:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+/* ── Interactive Remnant Toolbar ── */
+.remnant-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.remnant-filter-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toolbar-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.4px;
+  margin-right: 2px;
+}
+
+.filter-badge {
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filter-badge:hover {
+  border-color: #06b6d4;
+  color: var(--text-primary);
+}
+
+.filter-badge.active {
+  background: #06b6d4;
+  border-color: #06b6d4;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(6, 182, 212, 0.3);
+}
+
+.remnant-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.length-preset-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-chip-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-chip-btn.active {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.remnant-sort-select {
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--input-bg, rgba(15, 23, 42, 0.6));
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Scrollable High-Density Table Container ── */
+.remnants-scrollable-container {
+  max-height: 440px;
+  overflow-y: auto;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+}
+
+.remnants-scrollable-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.remnants-scrollable-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.remnants-scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.remnants-scrollable-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--card-bg);
+  box-shadow: 0 1px 0 var(--card-border);
+}
+
+/* ── Tables styling ── */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -135,28 +453,31 @@
 .inventory-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
-}
-
-.inventory-table th,
-.inventory-table td {
-  padding: 13px 16px;
-  border-bottom: 1px solid var(--card-border);
-  vertical-align: middle;
+  text-align: center;
+  table-layout: fixed;
 }
 
 .inventory-table th {
-  color: var(--text-label);
-  font-weight: 600;
+  padding: 13px 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  vertical-align: middle;
+  color: #f8fafc;
+  font-weight: 700;
   font-size: 11.5px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
 }
 
 .inventory-table td {
-  font-size: 13.5px;
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--card-border);
+  vertical-align: middle;
+  font-size: 13px;
   color: var(--text-primary);
+  text-align: center;
 }
 
 .inventory-table tbody tr {
@@ -164,7 +485,147 @@
 }
 
 .inventory-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.025);
+}
+
+/* ── Diameter & Pill Tags ── */
+.dia-pill-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.dia-pill-standard {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.dia-pill-badge.dia-8 {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.dia-pill-badge.dia-10 {
+  background: rgba(6, 182, 212, 0.12);
+  color: #06b6d4;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+}
+
+.dia-pill-badge.dia-12 {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.dia-pill-badge.dia-default {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.length-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.length-cell-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.length-primary {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.length-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+.remnant-qty-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: rgba(6, 182, 212, 0.1);
+  color: #06b6d4;
+  font-weight: 700;
+  font-size: 11.5px;
+}
+
+.qty-highlight {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.brand-tag, .vendor-tag {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.date-tag {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+.inline-qty-input {
+  width: 65px;
+  padding: 4px 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--text-primary);
+  outline: none;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.remnant-table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid var(--card-border);
+  border-radius: 0 0 8px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-reset-remnant-filters {
+  background: transparent;
+  border: none;
+  color: #06b6d4;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.dia-stat-card.active-filter {
+  border-color: #06b6d4 !important;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3) !important;
+  background: rgba(6, 182, 212, 0.05) !important;
 }
 
 .font-bold {
@@ -172,7 +633,15 @@
 }
 
 .text-cyan {
-  color: #17a2b8 !important;
+  color: #06b6d4 !important;
+}
+
+.text-blue {
+  color: #3b82f6 !important;
+}
+
+.text-emerald {
+  color: #10b981 !important;
 }
 
 /* Form Styling */
@@ -995,15 +1464,15 @@
 }
 
 .scrap-stat-card.card-red {
-  border-left: 4px solid #ef4444;
+  /* Clean border without side line */
 }
 
 .scrap-stat-card.card-blue {
-  border-left: 4px solid #3b82f6;
+  /* Clean border without side line */
 }
 
 .scrap-stat-card.card-orange {
-  border-left: 4px solid #f97316;
+  /* Clean border without side line */
 }
 
 .scrap-stat-card .stat-label {
@@ -1380,7 +1849,6 @@
     flex-direction: column;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-left: 4px solid var(--accent, #6366f1);
     border-radius: 10px;
     padding: 14px 16px;
     gap: 0;
@@ -1421,9 +1889,6 @@
   }
 
   /* ── Standard Stock table (10 cols) ── */
-  .stock-section:not(.remnant-card) .inventory-table tr {
-    border-left-color: var(--accent, #6366f1);
-  }
   .stock-section:not(.remnant-card) .inventory-table td:nth-child(1)::before { content: "Diameter"; }
   .stock-section:not(.remnant-card) .inventory-table td:nth-child(2)::before { content: "Length"; }
   .stock-section:not(.remnant-card) .inventory-table td:nth-child(3)::before { content: "Qty (Bars)"; }
@@ -1436,9 +1901,6 @@
   .stock-section:not(.remnant-card) .inventory-table td:nth-child(10)::before { content: "Actions"; }
 
   /* ── Remnants Stock table (9 cols) ── */
-  .remnant-card .inventory-table tr {
-    border-left-color: #059669;
-  }
   .remnant-card .inventory-table td:nth-child(1)::before { content: "Diameter"; }
   .remnant-card .inventory-table td:nth-child(2)::before { content: "Length"; }
   .remnant-card .inventory-table td:nth-child(3)::before { content: "Qty"; }
@@ -1450,9 +1912,6 @@
   .remnant-card .inventory-table td:nth-child(9)::before { content: "Actions"; }
 
   /* ── Scrap Sales History table (6 cols — inside .scrap-history-card) ── */
-  .scrap-history-card .inventory-table tr {
-    border-left-color: #f59e0b;
-  }
   .scrap-history-card .inventory-table td:nth-child(1)::before { content: "Date"; }
   .scrap-history-card .inventory-table td:nth-child(2)::before { content: "Buyer"; }
   .scrap-history-card .inventory-table td:nth-child(3)::before { content: "Weight"; }
@@ -1461,9 +1920,6 @@
   .scrap-history-card .inventory-table td:nth-child(6)::before { content: "Actions"; }
 
   /* ── Voucher Inward table (8 cols) ── */
-  .voucher-entry-table tr {
-    border-left-color: #3b82f6;
-  }
   .voucher-entry-table td:nth-child(1)::before { content: "Diameter"; }
   .voucher-entry-table td:nth-child(2)::before { content: "Weight (Tons)"; }
   .voucher-entry-table td:nth-child(3)::before { content: "Price/Ton"; }
@@ -1481,9 +1937,6 @@
   }
 
   /* ── Batch Scrap Records table (7 cols) ── */
-  .stock-table.scrap-records-table tr {
-    border-left-color: #ef4444;
-  }
   .stock-table.scrap-records-table td:nth-child(1)::before { content: "Date & Time"; }
   .stock-table.scrap-records-table td:nth-child(2)::before { content: "Batch"; }
   .stock-table.scrap-records-table td:nth-child(3)::before { content: "Total Scrap"; }
@@ -1833,10 +2286,10 @@
   gap: 3px;
 }
 
-.matcher-kpi-card.highlight-green { border-left: 4px solid #10b981; }
-.matcher-kpi-card.highlight-blue  { border-left: 4px solid #06b6d4; }
-.matcher-kpi-card.highlight-purple{ border-left: 4px solid #8b5cf6; }
-.matcher-kpi-card.highlight-orange{ border-left: 4px solid #f97316; }
+.matcher-kpi-card.highlight-green { border-color: rgba(16, 185, 129, 0.25); }
+.matcher-kpi-card.highlight-blue  { border-color: rgba(6, 182, 212, 0.25); }
+.matcher-kpi-card.highlight-purple{ border-color: rgba(139, 92, 246, 0.25); }
+.matcher-kpi-card.highlight-orange{ border-color: rgba(249, 115, 22, 0.25); }
 
 .kpi-lbl {
   font-size: 10.5px;

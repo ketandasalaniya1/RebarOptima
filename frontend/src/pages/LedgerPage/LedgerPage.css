@@ -562,6 +562,7 @@
 }
 
 /* ── Table Layout ── */
+/* ── Table Layout ── */
 .table-responsive {
   overflow-x: auto;
   border-radius: 8px;
@@ -570,167 +571,315 @@
 .ledger-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
   table-layout: fixed;
 }
 
 .ledger-table th {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-label);
-  padding: 12px 14px;
-  border-bottom: 2px solid var(--card-border);
+  color: #f8fafc;
+  padding: 14px 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
 }
 
-/* Explicit, rigid column widths for pixel-perfect vertical alignment */
-.ledger-table th:nth-child(1), .ledger-table td:nth-child(1) { width: 195px; } /* Date & Time */
-.ledger-table th:nth-child(2), .ledger-table td:nth-child(2) { width: 165px; } /* Type */
-.ledger-table th:nth-child(3), .ledger-table td:nth-child(3) { width: 110px; } /* Diameter */
+/* Explicit, balanced column widths for clean vertical alignment */
+.ledger-table th:nth-child(1), .ledger-table td:nth-child(1) { width: 145px; } /* Date & Time */
+.ledger-table th:nth-child(2), .ledger-table td:nth-child(2) { width: 160px; } /* Type */
+.ledger-table th:nth-child(3), .ledger-table td:nth-child(3) { width: 125px; } /* Diameter */
 .ledger-table th:nth-child(4), .ledger-table td:nth-child(4) { width: 95px; }  /* Length */
-.ledger-table th:nth-child(5), .ledger-table td:nth-child(5) { width: 115px; } /* Qty (Bars) */
+.ledger-table th:nth-child(5), .ledger-table td:nth-child(5) { width: 110px; } /* Qty (Bars) */
 .ledger-table th:nth-child(6), .ledger-table td:nth-child(6) { width: 130px; } /* Weight */
-.ledger-table th:nth-child(7), .ledger-table td:nth-child(7) { width: 115px; } /* Cost (per kg) */
-.ledger-table th:nth-child(8), .ledger-table td:nth-child(8) { width: auto; }  /* Reference / Vendor */
+.ledger-table th:nth-child(7), .ledger-table td:nth-child(7) { width: 95px; }  /* Cost (per kg) */
+.ledger-table th:nth-child(8), .ledger-table td:nth-child(8) { width: auto; min-width: 170px; }  /* Reference / Vendor */
 
 .ledger-table td {
-  padding: 13px 14px;
+  padding: 12px 10px;
   border-bottom: 1px solid var(--card-border);
   vertical-align: middle;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .ledger-table tr:hover td {
-  background: var(--main-bg);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .ledger-date-col {
   white-space: nowrap;
-  color: var(--text-secondary);
-  font-size: 12.5px;
-}
-
-.batch-chevron-placeholder {
-  display: inline-block;
-  width: 19px;
-  height: 15px;
-  flex-shrink: 0;
-}
-
-/* ── Badges ── */
-.ledger-type-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-
-.ledger-type-badge.inward {
-  background: rgba(5, 150, 105, 0.12);
-  color: #059669;
-}
-
-.ledger-type-badge.outward {
-  background: rgba(245, 158, 11, 0.12);
-  color: #d97706;
-}
-
-.ledger-type-badge.remnant {
-  background: rgba(59, 130, 246, 0.12);
-  color: #3b82f6;
-}
-
-.ledger-type-badge.scrap {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
-}
-
-.vendor-ref-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-/* ── Collapsible Batch Rows ── */
-.ledger-batch-row {
-  cursor: pointer;
-  background: rgba(112, 22, 210, 0.02) !important;
-  transition: background 0.15s ease;
-}
-
-.ledger-batch-row:hover td {
-  background: rgba(112, 22, 210, 0.06) !important;
-}
-
-.ledger-batch-row.expanded td {
-  background: rgba(112, 22, 210, 0.08) !important;
-  border-bottom: 1px solid transparent;
 }
 
 .date-with-toggle {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+}
+
+.date-time-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.date-primary {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.time-secondary {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace, sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.batch-chevron-placeholder {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .batch-chevron-btn {
-  background: transparent;
-  border: none;
-  color: var(--accent);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--accent, #6366f1);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
+  width: 22px;
+  height: 22px;
   border-radius: 4px;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
+}
+
+.batch-chevron-btn:hover {
+  background: var(--accent, #6366f1);
+  color: #ffffff;
 }
 
 .batch-chevron-btn.open {
   transform: rotate(90deg);
+  background: var(--accent, #6366f1);
+  color: #ffffff;
 }
 
-.batch-badge-pill {
-  display: inline-flex;
+/* ── Badges & Types ── */
+.type-cell-stack {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  justify-content: center;
+  gap: 3px;
+  margin: 0 auto;
 }
 
-.batch-sub-count {
-  background: #f59e0b;
-  color: #111827;
-  padding: 1px 6px;
-  border-radius: 10px;
-  font-size: 10px;
-  font-weight: 800;
+.batch-logs-meta {
+  font-size: 11px;
+  font-weight: 600;
+  color: #f59e0b;
+  opacity: 0.9;
+  white-space: nowrap;
 }
 
 .batch-summary-tag {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--text-secondary);
-  background: var(--card-border);
-  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2px 7px;
   border-radius: 4px;
   display: inline-block;
+  white-space: nowrap;
+}
+
+.ledger-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.type-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ledger-type-badge.inward {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+.ledger-type-badge.inward .type-dot {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.ledger-type-badge.outward {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+.ledger-type-badge.outward .type-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+
+.ledger-type-badge.remnant {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+}
+.ledger-type-badge.remnant .type-dot {
+  background: #3b82f6;
+}
+
+.ledger-type-badge.scrap {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+.ledger-type-badge.scrap .type-dot {
+  background: #ef4444;
+}
+
+/* ── Diameter & Measurements ── */
+.dia-tags-wrapper {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 4px;
+  align-items: center;
+}
+
+.dia-pill-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.qty-cell-stack,
+.weight-cell-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.qty-main {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.qty-rem-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  white-space: nowrap;
+}
+
+.weight-outward {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f59e0b;
+  white-space: nowrap;
+}
+
+.weight-rem-yield {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  white-space: nowrap;
+}
+
+.cost-val {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.cost-muted {
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* ── Reference / Vendor Cell ── */
+.vendor-ref-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2px;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.batch-name-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: #60a5fa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.vendor-meta-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Collapsible Batch Rows ── */
+.ledger-batch-row {
+  cursor: pointer;
+  background: rgba(99, 102, 241, 0.02) !important;
+  transition: background 0.15s ease;
+}
+
+.ledger-batch-row:hover td {
+  background: rgba(99, 102, 241, 0.06) !important;
+}
+
+.ledger-batch-row.expanded td {
+  background: rgba(99, 102, 241, 0.08) !important;
+  border-bottom: 1px solid transparent;
 }
 
 .text-accent {
@@ -793,34 +942,33 @@
 }
 
 .batch-nested-table th {
-  background: var(--card-border);
-  color: var(--text-label);
-  font-size: 10.5px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f1f5f9;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  padding: 8px 12px;
-  text-align: left;
+  letter-spacing: 0.5px;
+  padding: 10px 8px;
+  text-align: center;
   border-radius: 4px;
 }
 
 /* Compact, tight column widths for nested subitems */
-.batch-nested-table th:nth-child(1), .batch-nested-table td:nth-child(1) { width: 32px; padding: 8px 4px; text-align: center; } /* Sr.No. */
-.batch-nested-table th:nth-child(2), .batch-nested-table td:nth-child(2) { width: 140px; } /* Type */
-.batch-nested-table th:nth-child(3), .batch-nested-table td:nth-child(3) { width: 110px; } /* Diameter */
-.batch-nested-table th:nth-child(4), .batch-nested-table td:nth-child(4) { width: 100px; } /* Length */
-.batch-nested-table th:nth-child(5), .batch-nested-table td:nth-child(5) { width: 105px; } /* Quantity */
-.batch-nested-table th:nth-child(6), .batch-nested-table td:nth-child(6) { width: 120px; } /* Weight */
-.batch-nested-table th:nth-child(7), .batch-nested-table td:nth-child(7) { width: 110px; } /* Cost/kg */
-.batch-nested-table th:nth-child(8), .batch-nested-table td:nth-child(8) { width: auto; }  /* Brand / Vendor */
+.batch-nested-table th:nth-child(1), .batch-nested-table td:nth-child(1) { width: 36px; padding: 8px 4px; text-align: center; } /* Sr.No. */
+.batch-nested-table th:nth-child(2), .batch-nested-table td:nth-child(2) { width: 140px; text-align: center; } /* Type */
+.batch-nested-table th:nth-child(3), .batch-nested-table td:nth-child(3) { width: 100px; text-align: center; } /* Diameter */
+.batch-nested-table th:nth-child(4), .batch-nested-table td:nth-child(4) { width: 90px; text-align: center; } /* Length */
+.batch-nested-table th:nth-child(5), .batch-nested-table td:nth-child(5) { width: 95px; text-align: center; } /* Quantity */
+.batch-nested-table th:nth-child(6), .batch-nested-table td:nth-child(6) { width: 120px; text-align: center; } /* Weight */
+.batch-nested-table th:nth-child(7), .batch-nested-table td:nth-child(7) { width: 100px; text-align: center; } /* Cost/kg */
+.batch-nested-table th:nth-child(8), .batch-nested-table td:nth-child(8) { width: auto; text-align: center; }  /* Brand / Vendor */
 
 .batch-nested-table td {
-  padding: 8px 12px;
+  padding: 8px 8px;
   border-bottom: 1px solid rgba(150, 150, 150, 0.08);
   color: var(--text-primary);
   font-size: 12.5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .batch-nested-table tr:last-child td {
@@ -1026,38 +1174,39 @@
 .orders-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
   table-layout: fixed;
 }
 
 .orders-table th {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-label);
-  padding: 12px 14px;
-  border-bottom: 2px solid var(--card-border);
+  color: #f8fafc;
+  padding: 13px 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
 }
 
-.orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 130px; } /* Commit Date */
-.orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 180px; } /* Batch Identifier */
-.orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 140px; } /* Required Length */
-.orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 140px; } /* Yield Stock */
-.orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 110px; } /* Scrap Waste */
-.orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 130px; } /* Remnants Saved */
-.orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 140px; } /* Avg. Utilization */
-.orders-table th:nth-child(8), .orders-table td:nth-child(8) { width: 100px; } /* Status */
+.orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 130px; text-align: center; } /* Commit Date */
+.orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 180px; text-align: center; } /* Batch Identifier */
+.orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 140px; text-align: center; } /* Required Length */
+.orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 140px; text-align: center; } /* Yield Stock */
+.orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 110px; text-align: center; } /* Scrap Waste */
+.orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 130px; text-align: center; } /* Remnants Saved */
+.orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 140px; text-align: center; } /* Avg. Utilization */
+.orders-table th:nth-child(8), .orders-table td:nth-child(8) { width: 100px; text-align: center; } /* Status */
 
 .orders-table td {
-  padding: 13px 14px;
+  padding: 12px 10px;
   border-bottom: 1px solid var(--card-border);
   vertical-align: middle;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .orders-table tr:hover td {
@@ -1085,19 +1234,21 @@
 .requests-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
   table-layout: fixed;
 }
 
 .requests-table th {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-label);
-  padding: 12px 14px;
-  border-bottom: 2px solid var(--card-border);
+  color: #f8fafc;
+  padding: 13px 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
 }
 
 .requests-table th:nth-child(1), .requests-table td:nth-child(1) { width: 140px; } /* Date */

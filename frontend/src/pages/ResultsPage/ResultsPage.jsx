@@ -20,7 +20,11 @@ import {
   X,
   Sparkles,
   ChevronDown,
-  FileText
+  FileText,
+  Loader2,
+  Database,
+  Check,
+  PackageCheck
 } from 'lucide-react'
 
 
@@ -161,6 +165,8 @@ const getTextStyle = (hex) => {
 
 export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const [saveLoading, setSaveLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveStep, setSaveStep] = useState(1);
   const [saveError, setSaveError] = useState('');
   const [scrapRulesMap, setScrapRulesMap] = useState({});
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -205,13 +211,22 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
 
   const handleOpenSaveModal = () => {
     setSaveError('');
+    setSaveSuccess(false);
+    setSaveStep(1);
     setShowSaveModal(true);
   };
 
   const handleConfirmSaveBatch = async () => {
     const nameToSave = batchNameInput.trim() || `Batch #${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`;
     setSaveLoading(true);
+    setSaveSuccess(false);
+    setSaveStep(1);
     setSaveError('');
+
+    // Progressive step animations for responsive, visual micro-feedback
+    const step2Timer = setTimeout(() => setSaveStep(2), 350);
+    const step3Timer = setTimeout(() => setSaveStep(3), 800);
+
     try {
       await batchesApi.commitBatch({
         batchName: nameToSave,
@@ -235,14 +250,27 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           avgUtilization: summary.avgUtilization
         }
       });
-      setShowSaveModal(false);
-      if (onSaveSuccess) {
-        onSaveSuccess();
-      }
+
+      clearTimeout(step2Timer);
+      clearTimeout(step3Timer);
+      setSaveStep(3);
+      setSaveSuccess(true);
+
+      // Brief transition delay so user feels the visual confirmation before screen change
+      setTimeout(() => {
+        setShowSaveModal(false);
+        setSaveLoading(false);
+        setSaveSuccess(false);
+        if (onSaveSuccess) {
+          onSaveSuccess();
+        }
+      }, 950);
     } catch (err) {
-      setSaveError(err.message || 'Failed to save batch.');
-    } finally {
+      clearTimeout(step2Timer);
+      clearTimeout(step3Timer);
       setSaveLoading(false);
+      setSaveSuccess(false);
+      setSaveError(err.message || 'Failed to save batch.');
     }
   };
 
@@ -482,22 +510,20 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
           {!data?._id && (
             <button
               className="btn-commit-batch"
-              style={{
-                background: '#2da44e',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '6px 14px',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: saveLoading ? 'not-allowed' : 'pointer'
-              }}
               onClick={handleOpenSaveModal}
               disabled={saveLoading}
             >
-              <CheckCircle2 size={16} /> {saveLoading ? 'Saving Batch...' : 'Save & Commit Batch'}
+              {saveLoading ? (
+                <>
+                  <Loader2 size={16} className="btn-spinner animate-spin" />
+                  <span>{saveSuccess ? 'Committed!' : 'Committing Batch...'}</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 size={16} />
+                  <span>Save & Commit Batch</span>
+                </>
+              )}
             </button>
           )}
 
@@ -1232,46 +1258,125 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       </div>
 
 
-      {/* Save & Commit Batch Modal */}
+      {/* Save & Commit Batch Modal with Premium Loading Animation */}
       {showSaveModal && (
-        <div className="modal-backdrop no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="modal-content card" style={{ maxWidth: '480px', width: '90%', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '12px', padding: '24px' }}>
-            <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-              <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: '700', margin: 0, color: 'var(--text-primary)' }}>
-                <Tag size={18} color="var(--accent)" /> Save & Commit Cutting Batch
-              </h3>
-              <button className="modal-close-btn" onClick={() => setShowSaveModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <p className="modal-desc" style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
-                Specify a reference batch name to identify this optimization in inventory deduction and history logs.
-              </p>
-              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={batchNameInput}
-                  onChange={(e) => setBatchNameInput(e.target.value)}
-                  placeholder="e.g. Batch #13/08/26 - Ground Floor"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleConfirmSaveBatch();
-                  }}
-                  style={{ width: '100%', fontSize: '14px', padding: '10px 14px', borderRadius: '6px' }}
-                />
+        <div className="modal-backdrop no-print save-commit-modal-backdrop">
+          <div className={`modal-content card save-commit-modal-card ${saveLoading ? 'is-loading' : ''} ${saveSuccess ? 'is-success' : ''}`}>
+            {!saveLoading && !saveSuccess ? (
+              <>
+                <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '12px', marginBottom: '16px' }}>
+                  <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: '700', margin: 0, color: 'var(--text-primary)' }}>
+                    <Tag size={18} color="var(--accent)" /> Save & Commit Cutting Batch
+                  </h3>
+                  <button className="modal-close-btn" onClick={() => setShowSaveModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <p className="modal-desc" style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
+                    Specify a reference batch name to commit this optimization into inventory, deduct used stock, and log remnants in batch history.
+                  </p>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={batchNameInput}
+                      onChange={(e) => setBatchNameInput(e.target.value)}
+                      placeholder="e.g. Batch #13/08/26 - Ground Floor"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleConfirmSaveBatch();
+                      }}
+                      style={{ width: '100%', fontSize: '14px', padding: '10px 14px', borderRadius: '6px' }}
+                    />
+                  </div>
+                  {saveError && (
+                    <div className="modal-error-badge">
+                      <span>⚠️ {saveError}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                  <button className="btn-secondary" onClick={() => setShowSaveModal(false)} style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>
+                    Cancel
+                  </button>
+                  <button
+                    className="btn-primary btn-save-commit-submit"
+                    onClick={handleConfirmSaveBatch}
+                    disabled={!batchNameInput.trim()}
+                  >
+                    <CheckCircle2 size={16} /> Save & Commit
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="save-commit-progress-view">
+                <div className="save-commit-loader-anim-wrap">
+                  <div className="save-loader-halo"></div>
+                  <div className="save-loader-ring-outer"></div>
+                  <div className="save-loader-ring-inner"></div>
+                  <div className="save-loader-center-icon">
+                    {saveSuccess ? (
+                      <Check size={28} className="save-icon-success" />
+                    ) : (
+                      <Database size={24} className="save-icon-pulsing" />
+                    )}
+                  </div>
+                </div>
+
+                <h3 className="save-progress-title">
+                  {saveSuccess ? 'Batch Committed Successfully!' : 'Saving & Committing Batch...'}
+                </h3>
+
+                <p className="save-progress-subtitle">
+                  {saveSuccess
+                    ? 'Inventory updated and history record created. Redirecting...'
+                    : saveStep === 1
+                    ? 'Verifying cut layouts and material allocation...'
+                    : saveStep === 2
+                    ? 'Deducting stock bars & creating remnant inventory...'
+                    : 'Committing transaction to audit ledger and batch history...'}
+                </p>
+
+                <div className="save-progress-bar-track">
+                  <div
+                    className={`save-progress-bar-fill step-${saveStep} ${saveSuccess ? 'complete' : ''}`}
+                    style={{
+                      width: saveSuccess
+                        ? '100%'
+                        : saveStep === 1
+                        ? '30%'
+                        : saveStep === 2
+                        ? '65%'
+                        : '90%'
+                    }}
+                  >
+                    <div className="save-progress-bar-shimmer"></div>
+                  </div>
+                </div>
+
+                <div className="save-step-badges">
+                  <div className={`save-step-item ${saveStep >= 1 ? 'active' : ''} ${saveStep > 1 || saveSuccess ? 'done' : ''}`}>
+                    <div className="step-dot">{saveStep > 1 || saveSuccess ? <Check size={11} /> : '1'}</div>
+                    <span>Verify</span>
+                  </div>
+                  <div className={`save-step-item ${saveStep >= 2 ? 'active' : ''} ${saveStep > 2 || saveSuccess ? 'done' : ''}`}>
+                    <div className="step-dot">{saveStep > 2 || saveSuccess ? <Check size={11} /> : '2'}</div>
+                    <span>Stock Deduction</span>
+                  </div>
+                  <div className={`save-step-item ${saveStep >= 3 ? 'active' : ''} ${saveSuccess ? 'done' : ''}`}>
+                    <div className="step-dot">{saveSuccess ? <Check size={11} /> : '3'}</div>
+                    <span>Ledger Commit</span>
+                  </div>
+                </div>
+
+                <div className="save-loader-note">
+                  <Sparkles size={13} color="#10b981" />
+                  <span>RebarOptima inventory & wastage engine is synchronizing data</span>
+                </div>
               </div>
-            </div>
-            <div className="modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button className="btn-secondary" onClick={() => setShowSaveModal(false)} disabled={saveLoading} style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>
-                Cancel
-              </button>
-              <button className="btn-primary" onClick={handleConfirmSaveBatch} disabled={saveLoading || !batchNameInput.trim()} style={{ background: '#2da44e', borderColor: '#2da44e', color: '#fff', padding: '8px 18px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>
-                {saveLoading ? 'Saving...' : 'Save & Commit'}
-              </button>
-            </div>
+            )}
           </div>
         </div>
       )}

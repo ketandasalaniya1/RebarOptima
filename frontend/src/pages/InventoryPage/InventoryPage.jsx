@@ -92,6 +92,14 @@ export default function InventoryPage() {
   const [focusedDropdown, setFocusedDropdown] = useState(null)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
 
+  // Interactive filtering & sorting for Remnants & Standard Stock
+  const [remnantFilterDia, setRemnantFilterDia] = useState('ALL')
+  const [remnantSearch, setRemnantSearch] = useState('')
+  const [remnantLengthCategory, setRemnantLengthCategory] = useState('ALL') // 'ALL' | 'SHORT' (<1m) | 'MEDIUM' (1-3m) | 'LONG' (>3m)
+  const [remnantSortBy, setRemnantSortBy] = useState('length-asc') // 'length-asc' | 'length-desc' | 'qty-desc' | 'weight-desc'
+  const [standardSearch, setStandardSearch] = useState('')
+  const [standardFilterDia, setStandardFilterDia] = useState('ALL')
+
   // Load inventory and rules on mount
   useEffect(() => {
     fetchData()
@@ -190,6 +198,62 @@ export default function InventoryPage() {
 
     return { items, grandTotalWeight, grandTotalQty, inStockCount }
   }, [inventory.remnantsStock])
+
+  // Overall Inventory KPI Metrics
+  const totalYardWeight = useMemo(() => {
+    return standardDiaSummary.grandTotalWeight + remnantsDiaSummary.grandTotalWeight
+  }, [standardDiaSummary, remnantsDiaSummary])
+
+  const totalYardValuation = useMemo(() => {
+    const stdCost = (inventory.standardStock || []).reduce((sum, item) => sum + ((item.weightInKgs || 0) * (item.costPerKg || 60)), 0)
+    const remCost = remnantsDiaSummary.grandTotalWeight * 55
+    return stdCost + remCost
+  }, [inventory.standardStock, remnantsDiaSummary])
+
+  const remnantWeightPct = totalYardWeight > 0 ? ((remnantsDiaSummary.grandTotalWeight / totalYardWeight) * 100).toFixed(1) : 0
+
+  // Filtered Standard Stock
+  const filteredStandardStock = useMemo(() => {
+    let list = inventory.standardStock || []
+    if (standardFilterDia !== 'ALL') {
+      list = list.filter(s => Number(s.diameter) === Number(standardFilterDia))
+    }
+    if (standardSearch.trim()) {
+      const q = standardSearch.toLowerCase().trim()
+      list = list.filter(s =>
+        `${s.diameter}mm ${s.brandName || ''} ${s.vendorName || ''}`.toLowerCase().includes(q)
+      )
+    }
+    return list
+  }, [inventory.standardStock, standardFilterDia, standardSearch])
+
+  // Filtered & Sorted Remnants Stock
+  const filteredRemnants = useMemo(() => {
+    let list = inventory.remnantsStock || []
+    if (remnantFilterDia !== 'ALL') {
+      list = list.filter(r => Number(r.diameter) === Number(remnantFilterDia))
+    }
+    if (remnantLengthCategory === 'SHORT') {
+      list = list.filter(r => Number(r.length) < 1000)
+    } else if (remnantLengthCategory === 'MEDIUM') {
+      list = list.filter(r => Number(r.length) >= 1000 && Number(r.length) <= 3000)
+    } else if (remnantLengthCategory === 'LONG') {
+      list = list.filter(r => Number(r.length) > 3000)
+    }
+    if (remnantSearch.trim()) {
+      const q = remnantSearch.toLowerCase().trim()
+      list = list.filter(r => 
+        `${r.diameter}mm ${r.length} ${r.brandName || ''} ${r.vendorName || ''}`.toLowerCase().includes(q)
+      )
+    }
+    return [...list].sort((a, b) => {
+      if (remnantSortBy === 'length-asc') return Number(a.length) - Number(b.length)
+      if (remnantSortBy === 'length-desc') return Number(b.length) - Number(a.length)
+      if (remnantSortBy === 'qty-desc') return (Number(b.quantity) || 0) - (Number(a.quantity) || 0)
+      if (remnantSortBy === 'weight-desc') return (Number(b.weightInKgs) || 0) - (Number(a.weightInKgs) || 0)
+      return 0
+    })
+  }, [inventory.remnantsStock, remnantFilterDia, remnantLengthCategory, remnantSearch, remnantSortBy])
 
   // Smart Remnant Clearance & Cut Matcher State
   const [showRemnantMatcher, setShowRemnantMatcher] = useState(false)
@@ -888,22 +952,107 @@ export default function InventoryPage() {
       {/* Tab: Stock List */}
       {activeTab === 'list' && (
         <div className="stock-list-container">
+          {/* Executive Hero KPI Cards */}
+          <div className="inventory-hero-grid">
+            <div className="card hero-stat-card primary">
+              <div className="hero-stat-content">
+                <span className="hero-stat-label">Total Available Yard Stock</span>
+                <div className="hero-stat-main">
+                  <span className="hero-stat-number">{(totalYardWeight / 1000).toFixed(2)}</span>
+                  <span className="hero-stat-unit">MT</span>
+                </div>
+                <span className="hero-stat-sub">
+                  {Math.round(totalYardWeight).toLocaleString('en-IN')} kg • {remnantWeightPct}% Remnants
+                </span>
+              </div>
+              <div className="hero-stat-icon bg-emerald">
+                <Package size={22} />
+              </div>
+            </div>
+
+            <div className="card hero-stat-card">
+              <div className="hero-stat-content">
+                <span className="hero-stat-label">Prime Standard Bars (12m)</span>
+                <div className="hero-stat-main">
+                  <span className="hero-stat-number">{(standardDiaSummary.grandTotalWeight / 1000).toFixed(2)}</span>
+                  <span className="hero-stat-unit">MT</span>
+                </div>
+                <span className="hero-stat-sub">
+                  {standardDiaSummary.grandTotalQty.toLocaleString('en-IN')} full length bars in stock
+                </span>
+              </div>
+              <div className="hero-stat-icon bg-blue">
+                <Layers size={22} />
+              </div>
+            </div>
+
+            <div className="card hero-stat-card">
+              <div className="hero-stat-content">
+                <span className="hero-stat-label">Reusable Remnants Yield</span>
+                <div className="hero-stat-main">
+                  <span className="hero-stat-number">{(remnantsDiaSummary.grandTotalWeight / 1000).toFixed(2)}</span>
+                  <span className="hero-stat-unit">MT</span>
+                </div>
+                <span className="hero-stat-sub text-emerald">
+                  {remnantsDiaSummary.grandTotalQty.toLocaleString('en-IN')} offcut pieces saved
+                </span>
+              </div>
+              <div className="hero-stat-icon bg-cyan">
+                <Sparkles size={22} />
+              </div>
+            </div>
+
+            <div className="card hero-stat-card">
+              <div className="hero-stat-content">
+                <span className="hero-stat-label">Estimated Inventory Asset Value</span>
+                <div className="hero-stat-main">
+                  <span className="hero-stat-number">₹{Math.round(totalYardValuation).toLocaleString('en-IN')}</span>
+                </div>
+                <span className="hero-stat-sub">
+                  Live procurement valuation
+                </span>
+              </div>
+              <div className="hero-stat-icon bg-purple">
+                <DollarSign size={22} />
+              </div>
+            </div>
+          </div>
+
           {/* Standard Stock Section */}
           <section className="card stock-section">
             <div className="section-header-row">
-              <h3 className="section-title">
-                <Package size={18} style={{ marginRight: '6px' }} /> Standard Bar Stock
-              </h3>
+              <div className="section-title-group">
+                <h3 className="section-title">
+                  <Package size={18} className="text-blue" style={{ marginRight: '8px' }} /> Standard Bar Stock (12.0m Prime)
+                </h3>
+                <span className="section-badge-pill">
+                  {standardDiaSummary.inStockCount} Diameters Available
+                </span>
+              </div>
+
               <div className="section-header-stats">
-                <span className="header-stat-pill">
-                  <strong>{Math.round(standardDiaSummary.grandTotalWeight).toLocaleString()} kg</strong>
-                  {standardDiaSummary.grandTotalWeight >= 1000 && (
-                    <span className="header-stat-sub">({(standardDiaSummary.grandTotalWeight / 1000).toFixed(2)} MT)</span>
+                <div className="search-box standard-search-box">
+                  <Search size={14} className="search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search brand, vendor, dia..."
+                    value={standardSearch}
+                    onChange={(e) => setStandardSearch(e.target.value)}
+                    className="search-input"
+                  />
+                  {standardSearch && (
+                    <button className="search-clear-btn" onClick={() => setStandardSearch('')}>
+                      <X size={12} />
+                    </button>
                   )}
-                </span>
-                <span className="header-stat-pill secondary">
-                  <strong>{standardDiaSummary.grandTotalQty}</strong> Bars
-                </span>
+                </div>
+                <button
+                  className="btn-quick-inward"
+                  onClick={() => setActiveTab('inward')}
+                  title="Record new inward delivery"
+                >
+                  <Plus size={14} /> Add Inward
+                </button>
               </div>
             </div>
 
@@ -913,7 +1062,9 @@ export default function InventoryPage() {
                 {standardDiaSummary.items.map((item) => (
                   <div
                     key={item.diameter}
-                    className={`dia-stat-card ${item.hasStock ? 'has-stock' : 'no-stock'}`}
+                    className={`dia-stat-card ${item.hasStock ? 'has-stock' : 'no-stock'} ${standardFilterDia === String(item.diameter) ? 'active-filter' : ''}`}
+                    onClick={() => setStandardFilterDia(prev => prev === String(item.diameter) ? 'ALL' : String(item.diameter))}
+                    title={`Click to filter Ø ${item.diameter} mm`}
                   >
                     <div className="dia-card-top">
                       <span className="dia-badge standard-dia-badge">Ø {item.diameter} mm</span>
@@ -937,31 +1088,35 @@ export default function InventoryPage() {
               </div>
             </div>
 
-            {inventory.standardStock.length === 0 ? (
+            {filteredStandardStock.length === 0 ? (
               <div className="empty-stock-state">
-                <p>No standard stock items found in inventory. Add stock using the Inward Entry tab.</p>
+                <p>No standard stock items found matching your filters. Add stock using Voucher Inward.</p>
               </div>
             ) : (
               <div className="table-responsive">
                 <table className="inventory-table">
                   <thead>
                     <tr>
-                      <th>Diameter</th>
-                      <th>Length</th>
-                      <th>Qty (Bars)</th>
-                      <th>Total Weight (kg)</th>
-                      <th>Cost (per kg with GST)</th>
+                      <th style={{ width: '110px' }}>Diameter</th>
+                      <th style={{ width: '100px' }}>Length</th>
+                      <th style={{ width: '110px' }}>Qty (Bars)</th>
+                      <th style={{ width: '130px' }}>Total Weight</th>
+                      <th style={{ width: '130px' }}>Cost / kg (w/ GST)</th>
                       <th>Brand</th>
                       <th>Vendor</th>
-                      <th>Inward Date</th>
-                      <th>Actions</th>
+                      <th style={{ width: '120px' }}>Inward Date</th>
+                      <th style={{ width: '90px' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {inventory.standardStock.map((item) => (
+                    {filteredStandardStock.map((item) => (
                       <tr key={item._id}>
-                        <td className="font-bold">{item.diameter} mm</td>
-                        <td>{(item.length / 1000).toFixed(1)} m</td>
+                        <td>
+                          <span className="dia-pill-badge dia-pill-standard">Ø {item.diameter} mm</span>
+                        </td>
+                        <td>
+                          <span className="length-badge">{(item.length / 1000).toFixed(1)} m</span>
+                        </td>
                         <td className="font-bold">
                           {editingStockId === item._id ? (
                             <input
@@ -969,26 +1124,27 @@ export default function InventoryPage() {
                               min="0"
                               value={editStockQty}
                               onChange={(e) => setEditStockQty(e.target.value)}
-                              style={{
-                                width: '70px',
-                                padding: '4px 8px',
-                                background: 'var(--input-bg)',
-                                border: '1px solid var(--input-border)',
-                                borderRadius: '6px',
-                                color: 'var(--text-primary)',
-                                outline: 'none',
-                                textAlign: 'center'
-                              }}
+                              className="inline-qty-input"
                             />
                           ) : (
-                            item.quantity
+                            <span className="qty-highlight">{item.quantity.toLocaleString()}</span>
                           )}
                         </td>
-                        <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
-                        <td>₹{item.costPerKg?.toFixed(2)}</td>
-                        <td>{item.brandName || '-'}</td>
-                        <td>{item.vendorName || '-'}</td>
-                        <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</td>
+                        <td className="font-bold text-emerald">
+                          {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
+                        </td>
+                        <td>₹{item.costPerKg?.toFixed(2) || '0.00'}</td>
+                        <td>
+                          <span className="brand-tag">{item.brandName || '—'}</span>
+                        </td>
+                        <td>
+                          <span className="vendor-tag">{item.vendorName || '—'}</span>
+                        </td>
+                        <td>
+                          <span className="date-tag">
+                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                          </span>
+                        </td>
                         <td>
                           {editingStockId === item._id ? (
                             <div className="sale-action-btns">
@@ -1054,33 +1210,27 @@ export default function InventoryPage() {
           {/* Remnants Stock Section */}
           <section className="card stock-section remnant-card">
             <div className="section-header-row">
-              <h3 className="section-title">
-                <Sparkles size={18} color="#059669" style={{ marginRight: '6px' }} /> Reusable Remnants Stock
-              </h3>
+              <div className="section-title-group">
+                <h3 className="section-title">
+                  <Sparkles size={18} className="text-cyan" style={{ marginRight: '8px' }} /> Reusable Remnants Stock
+                </h3>
+                <span className="section-badge-pill remnant">
+                  {remnantsDiaSummary.grandTotalQty.toLocaleString('en-IN')} Offcuts ({Math.round(remnantsDiaSummary.grandTotalWeight).toLocaleString('en-IN')} kg)
+                </span>
+              </div>
+
               <div className="section-header-stats">
                 <button
                   className={`btn-matcher-toggle ${showRemnantMatcher ? 'active' : ''}`}
                   onClick={() => setShowRemnantMatcher(!showRemnantMatcher)}
-                  title="Match remnant stock with small cut lengths (links, ties, stirrups)"
+                  title="Match remnant stock with target cut lengths"
                 >
                   <Recycle size={15} /> Remnant Clearance Matcher
                 </button>
-                <span className="header-stat-pill remnant-pill">
-                  <strong>{Math.round(remnantsDiaSummary.grandTotalWeight).toLocaleString()} kg</strong>
-                  {remnantsDiaSummary.grandTotalWeight >= 1000 && (
-                    <span className="header-stat-sub">({(remnantsDiaSummary.grandTotalWeight / 1000).toFixed(2)} MT)</span>
-                  )}
-                </span>
-                <span className="header-stat-pill remnant-pill-secondary">
-                  <strong>{remnantsDiaSummary.grandTotalQty}</strong> Remnants
-                </span>
               </div>
             </div>
-            <p className="remnant-disclaimer">
-              These are reusable remnants generated automatically from previous cutting optimizations. They are prioritised first in next optimizations.
-            </p>
 
-            {/* Smart Remnant Clearance & Links Matcher Panel */}
+            {/* Smart Remnant Clearance Matcher Panel */}
             {showRemnantMatcher && (
               <div className="remnant-matcher-panel">
                 <div className="matcher-header">
@@ -1088,7 +1238,7 @@ export default function InventoryPage() {
                     <Recycle size={20} className="text-emerald" />
                     <div>
                       <h4>Smart Remnant Clearance & Takeout Matcher</h4>
-                      <p>Enter required link/stirrup cut length to discover total possible pieces extractable from current remnant offcuts.</p>
+                      <p>Enter required cut length to discover total possible pieces extractable from current remnant offcuts.</p>
                     </div>
                   </div>
                   <button className="matcher-close-btn" onClick={() => setShowRemnantMatcher(false)}>
@@ -1124,10 +1274,11 @@ export default function InventoryPage() {
                         className="matcher-input"
                       />
                       <div className="quick-presets-chips">
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 300 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(300)}>300 mm (Links)</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 450 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(450)}>450 mm (Stirrups)</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 600 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(600)}>600 mm (Chairs)</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 800 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(800)}>800 mm (Ties)</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 300 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(300)}>300 mm</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 450 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(450)}>450 mm</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 600 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(600)}>600 mm</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 800 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(800)}>800 mm</button>
+                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 1000 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(1000)}>1,000 mm</button>
                       </div>
                     </div>
                   </div>
@@ -1149,7 +1300,7 @@ export default function InventoryPage() {
                 <div className="matcher-results-grid">
                   <div className="matcher-kpi-card highlight-green">
                     <span className="kpi-lbl">Total Extractable Pieces</span>
-                    <span className="kpi-val">{remnantMatchAnalysis.totalPieces.toLocaleString()} <span className="kpi-unit">links/pcs</span></span>
+                    <span className="kpi-val">{remnantMatchAnalysis.totalPieces.toLocaleString()} <span className="kpi-unit">pieces</span></span>
                     <span className="kpi-sub">@ {matcherTargetLength} mm cut length</span>
                   </div>
 
@@ -1197,7 +1348,7 @@ export default function InventoryPage() {
                           {remnantMatchAnalysis.items.map((item, idx) => (
                             <tr key={idx}>
                               <td className="font-bold">Ø {item.diameter} mm</td>
-                              <td className="font-bold">{(item.remnantLength / 1000).toFixed(2)} m ({item.remnantLength} mm)</td>
+                              <td className="font-bold">{item.remnantLength.toLocaleString()} mm</td>
                               <td>{item.availableQty} bars</td>
                               <td className="font-bold text-emerald">{item.barsUsed} bars</td>
                               <td className="font-bold">{item.pcsPerBar} pcs</td>
@@ -1229,7 +1380,9 @@ export default function InventoryPage() {
                 {remnantsDiaSummary.items.map((item) => (
                   <div
                     key={item.diameter}
-                    className={`dia-stat-card remnant-card-style ${item.hasStock ? 'has-stock' : 'no-stock'}`}
+                    className={`dia-stat-card remnant-card-style ${item.hasStock ? 'has-stock' : 'no-stock'} ${remnantFilterDia === String(item.diameter) ? 'active-filter' : ''}`}
+                    onClick={() => setRemnantFilterDia(prev => prev === String(item.diameter) ? 'ALL' : String(item.diameter))}
+                    title={`Click to filter Ø ${item.diameter} mm`}
                   >
                     <div className="dia-card-top">
                       <span className="dia-badge remnant-dia-badge">Ø {item.diameter} mm</span>
@@ -1252,28 +1405,117 @@ export default function InventoryPage() {
                 ))}
               </div>
             </div>
-            {inventory.remnantsStock.length === 0 ? (
+
+            {/* Interactive Remnant Control Bar: Filter Tabs, Range Chips & Search */}
+            <div className="remnant-toolbar">
+              <div className="remnant-filter-pills-row">
+                <span className="toolbar-label">Diameter:</span>
+                <button
+                  className={`filter-badge ${remnantFilterDia === 'ALL' ? 'active' : ''}`}
+                  onClick={() => setRemnantFilterDia('ALL')}
+                >
+                  All ({inventory.remnantsStock.length})
+                </button>
+                {remnantsDiaSummary.items.filter(i => i.hasStock).map(i => (
+                  <button
+                    key={i.diameter}
+                    className={`filter-badge ${remnantFilterDia === String(i.diameter) ? 'active' : ''}`}
+                    onClick={() => setRemnantFilterDia(String(i.diameter))}
+                  >
+                    Ø {i.diameter} mm ({i.totalQty})
+                  </button>
+                ))}
+              </div>
+
+              <div className="remnant-toolbar-right">
+                <div className="length-preset-group">
+                  <span className="toolbar-label">Length:</span>
+                  <button
+                    className={`filter-chip-btn ${remnantLengthCategory === 'ALL' ? 'active' : ''}`}
+                    onClick={() => setRemnantLengthCategory('ALL')}
+                  >
+                    All
+                  </button>
+                  <button
+                    className={`filter-chip-btn ${remnantLengthCategory === 'SHORT' ? 'active' : ''}`}
+                    onClick={() => setRemnantLengthCategory('SHORT')}
+                    title="Length < 1000 mm"
+                  >
+                    &lt;1m
+                  </button>
+                  <button
+                    className={`filter-chip-btn ${remnantLengthCategory === 'MEDIUM' ? 'active' : ''}`}
+                    onClick={() => setRemnantLengthCategory('MEDIUM')}
+                    title="Length 1000mm - 3000mm"
+                  >
+                    1m–3m
+                  </button>
+                  <button
+                    className={`filter-chip-btn ${remnantLengthCategory === 'LONG' ? 'active' : ''}`}
+                    onClick={() => setRemnantLengthCategory('LONG')}
+                    title="Length > 3000mm"
+                  >
+                    &gt;3m
+                  </button>
+                </div>
+
+                <div className="search-box">
+                  <Search size={14} className="search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search length, brand..."
+                    value={remnantSearch}
+                    onChange={(e) => setRemnantSearch(e.target.value)}
+                    className="search-input"
+                  />
+                  {remnantSearch && (
+                    <button className="search-clear-btn" onClick={() => setRemnantSearch('')}>
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
+
+                <select
+                  value={remnantSortBy}
+                  onChange={(e) => setRemnantSortBy(e.target.value)}
+                  className="remnant-sort-select"
+                >
+                  <option value="length-asc">Length: Short to Long</option>
+                  <option value="length-desc">Length: Long to Short</option>
+                  <option value="qty-desc">Quantity: High to Low</option>
+                  <option value="weight-desc">Weight: High to Low</option>
+                </select>
+              </div>
+            </div>
+
+            {filteredRemnants.length === 0 ? (
               <div className="empty-stock-state">
-                <p>No remnants currently available in stock. Run optimization to generate remnants.</p>
+                <p>No remnants found matching the selected filters. Change filter or run optimization.</p>
               </div>
             ) : (
-              <div className="table-responsive">
-                <table className="inventory-table">
+              <div className="remnants-scrollable-container">
+                <table className="inventory-table remnants-table">
                   <thead>
                     <tr>
-                      <th>Diameter</th>
-                      <th>Length</th>
-                      <th>Qty (Remnants)</th>
-                      <th>Total Weight (kg)</th>
-                      <th>Generated Date</th>
-                      <th>Actions</th>
+                      <th style={{ width: '120px' }}>Diameter</th>
+                      <th style={{ width: '140px' }}>Length</th>
+                      <th style={{ width: '140px' }}>Qty (Offcuts)</th>
+                      <th style={{ width: '140px' }}>Total Weight</th>
+                      <th style={{ width: '130px' }}>Generated Date</th>
+                      <th style={{ width: '100px' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {inventory.remnantsStock.map((item) => (
+                    {filteredRemnants.map((item) => (
                       <tr key={item._id}>
-                        <td className="font-bold text-cyan">{item.diameter} mm</td>
-                        <td className="font-bold">{item.length.toLocaleString()} mm</td>
+                        <td>
+                          <span className={`dia-pill-badge ${item.diameter === 8 ? 'dia-8' : item.diameter === 10 ? 'dia-10' : item.diameter === 12 ? 'dia-12' : 'dia-default'}`}>
+                            Ø {item.diameter} mm
+                          </span>
+                        </td>
+                        <td>
+                          <span className="font-bold">{item.length.toLocaleString()} mm</span>
+                        </td>
                         <td className="font-bold">
                           {editingRemnantId === item._id ? (
                             <input
@@ -1281,23 +1523,22 @@ export default function InventoryPage() {
                               min="0"
                               value={editRemnantQty}
                               onChange={(e) => setEditRemnantQty(e.target.value)}
-                              style={{
-                                width: '70px',
-                                padding: '4px 8px',
-                                background: 'var(--input-bg)',
-                                border: '1px solid var(--input-border)',
-                                borderRadius: '6px',
-                                color: 'var(--text-primary)',
-                                outline: 'none',
-                                textAlign: 'center'
-                              }}
+                              className="inline-qty-input"
                             />
                           ) : (
-                            item.quantity
+                            <span className="remnant-qty-tag">{item.quantity} offcuts</span>
                           )}
                         </td>
-                        <td>{Math.round(item.weightInKgs).toLocaleString()} kg</td>
-                        <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</td>
+                        <td>
+                          <span className="font-bold text-cyan">
+                            {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
+                          </span>
+                        </td>
+                        <td>
+                          <span className="date-tag">
+                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                          </span>
+                        </td>
                         <td>
                           {editingRemnantId === item._id ? (
                             <div className="sale-action-btns">
@@ -1356,6 +1597,22 @@ export default function InventoryPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+
+            {filteredRemnants.length > 0 && (
+              <div className="remnant-table-footer">
+                <span>
+                  Showing <strong>{filteredRemnants.length}</strong> cut lengths (<strong>{filteredRemnants.reduce((s, i) => s + (i.quantity || 0), 0).toLocaleString()}</strong> pieces • <strong>{Math.round(filteredRemnants.reduce((s, i) => s + (i.weightInKgs || 0), 0)).toLocaleString()} kg</strong>)
+                </span>
+                {(remnantFilterDia !== 'ALL' || remnantLengthCategory !== 'ALL' || remnantSearch) && (
+                  <button
+                    className="btn-reset-remnant-filters"
+                    onClick={() => { setRemnantFilterDia('ALL'); setRemnantLengthCategory('ALL'); setRemnantSearch(''); }}
+                  >
+                    Reset Filters
+                  </button>
+                )}
               </div>
             )}
           </section>

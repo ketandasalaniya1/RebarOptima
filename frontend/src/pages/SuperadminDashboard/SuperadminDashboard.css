@@ -704,7 +704,6 @@
     flex-direction: column;
     background: var(--card-bg, #131b2a);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-left: 4px solid #8b5cf6;
     border-radius: 10px;
     padding: 14px 16px;
     gap: 0;

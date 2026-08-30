@@ -68,7 +68,6 @@
   width: 150px;
   background: var(--card-bg);
   transform: skewX(-12deg);
-  border-left: 6px solid var(--accent);
   z-index: 1;
 }
 

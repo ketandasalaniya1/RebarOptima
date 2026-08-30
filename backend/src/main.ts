@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { MongoClient, Db, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
+import { solve1DCSP } from './batches/optimizer.engine';
 
 dotenv.config();
 
@@ -37,6 +38,21 @@ async function connectDB(): Promise<Db> {
     }
   }
   return db as Db;
+}
+
+function toObjectId(id: any): ObjectId | null {
+  if (!id) return null;
+  if (id instanceof ObjectId) return id;
+  if (typeof id === 'object' && (id._bsontype === 'ObjectId' || id._bsontype === 'ObjectID')) return id;
+  const str = String(id).trim();
+  if (ObjectId.isValid(str) && str.length === 24) {
+    try {
+      return new ObjectId(str);
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -593,12 +609,13 @@ async function logAudit(db: Db, params: {
     let actorName = params.actorName;
     let actorEmail = params.actorEmail;
     let actorRole = params.actorRole;
-    let companyId = params.companyId ? (typeof params.companyId === 'string' ? new ObjectId(params.companyId) : params.companyId) : null;
+    let companyId = toObjectId(params.companyId);
 
     if (params.actorType === 'developer') {
       if (!actorName || !actorEmail) {
         try {
-          const dev = await db.collection('platformusers').findOne({ _id: new ObjectId(params.actorId) });
+          const devObjId = toObjectId(params.actorId);
+          const dev = devObjId ? await db.collection('platformusers').findOne({ _id: devObjId }) : null;
           if (dev) {
             actorName = actorName || `${dev.firstName || ''} ${dev.lastName || ''}`.trim() || 'Platform Developer';
             actorEmail = actorEmail || dev.email;
@@ -609,14 +626,16 @@ async function logAudit(db: Db, params: {
     } else if (params.actorType === 'user') {
       if (!actorName || !actorEmail || !actorRole || !companyId) {
         try {
-          const user = await db.collection('users').findOne({ _id: new ObjectId(params.actorId) });
+          const userObjId = toObjectId(params.actorId);
+          const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : null;
           if (user) {
             actorName = actorName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
             actorEmail = actorEmail || user.email;
-            companyId = companyId || (user.companyId ? new ObjectId(user.companyId) : null);
+            companyId = companyId || toObjectId(user.companyId);
             if (!actorRole) {
               if (user.roleId) {
-                const roleDoc = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
+                const roleObjId = toObjectId(user.roleId);
+                const roleDoc = roleObjId ? await db.collection('roles').findOne({ _id: roleObjId }) : null;
                 actorRole = roleDoc?.name || user.role || 'User';
               } else {
                 actorRole = user.role || 'User';
@@ -1605,6 +1624,276 @@ app.delete('/api/roles/:id', adminMiddleware, async (req: any, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
+// CURRENT LOGGED-IN USER PROFILE & SETTINGS (Must be before /api/users/:id)
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/users/me', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    if (req.user.accountType === 'developer') {
+      const devObjId = toObjectId(req.user.sub);
+      const dev = devObjId ? await db.collection('developers').findOne({ _id: devObjId }) : await db.collection('developers').findOne({ email: req.user.email?.toLowerCase().trim() });
+      if (!dev) return res.status(404).json({ message: 'Developer not found' });
+      return res.json({
+        id: dev._id.toString(),
+        email: dev.email,
+        firstName: dev.name || 'Developer',
+        lastName: 'Admin',
+        role: 'Superadmin',
+        roleName: 'Developer Superadmin',
+        companyName: 'Platform Core',
+        projectName: 'Global',
+        location: 'HQ',
+        mobileNumber: dev.mobileNumber || '',
+        avatar: dev.avatar || null,
+        preferences: dev.preferences || { defaultKerf: 3, defaultTrimMargin: 25, defaultBarLength: 12000, defaultAlgorithm: 'genetic' },
+        accountType: 'developer',
+        createdAt: dev.createdAt || new Date()
+      });
+    }
+
+    const userObjId = toObjectId(req.user.sub);
+    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : await db.collection('users').findOne({ email: req.user.email?.toLowerCase().trim() });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    let company: any = null;
+    const companyObjId = toObjectId(user.companyId);
+    if (companyObjId) {
+      company = await db.collection('companies').findOne({ _id: companyObjId });
+    }
+
+    let roleName = user.role || 'User';
+    let permissions = null;
+    const roleObjId = toObjectId(user.roleId);
+    if (roleObjId) {
+      const role = await db.collection('roles').findOne({ _id: roleObjId });
+      if (role) {
+        roleName = role.name;
+        permissions = role.permissions;
+      }
+    }
+
+    const effectivePerms = await getEffectivePermissions(db, user._id.toString());
+
+    res.json({
+      id: user._id.toString(),
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      mobileNumber: user.mobileNumber || '',
+      avatar: user.avatar || null,
+      role: roleName,
+      roleName: roleName,
+      roleId: user.roleId ? user.roleId.toString() : null,
+      companyId: user.companyId ? user.companyId.toString() : null,
+      companyName: company?.name || 'Standard Firm',
+      projectName: company?.projectName || '',
+      location: company?.location || '',
+      assignedProjects: user.assignedProjects || [],
+      preferences: user.preferences || { defaultKerf: 3, defaultTrimMargin: 25, defaultBarLength: 12000, defaultAlgorithm: 'genetic' },
+      accountType: 'user',
+      createdAt: user.createdAt || new Date(),
+      effectivePermissions: effectivePerms
+    });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/users/me', authMiddleware, async (req: any, res) => {
+  try {
+    const { firstName, lastName, mobileNumber, avatar, preferences } = req.body;
+    const db = await connectDB();
+
+    if (req.user.accountType === 'developer') {
+      const devObjId = toObjectId(req.user.sub);
+      const updateDoc: any = {};
+      if (firstName !== undefined) updateDoc.name = `${firstName} ${lastName || ''}`.trim();
+      if (mobileNumber !== undefined) updateDoc.mobileNumber = mobileNumber;
+      if (avatar !== undefined) updateDoc.avatar = avatar;
+      if (preferences !== undefined) updateDoc.preferences = preferences;
+      updateDoc.updatedAt = new Date();
+
+      if (devObjId) {
+        await db.collection('developers').updateOne({ _id: devObjId }, { $set: updateDoc });
+      }
+      return res.json({ message: 'Developer profile updated successfully' });
+    }
+
+    const userObjId = toObjectId(req.user.sub);
+    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : await db.collection('users').findOne({ email: req.user.email?.toLowerCase().trim() });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const updateDoc: any = {};
+    if (firstName !== undefined && firstName.trim()) updateDoc.firstName = firstName.trim();
+    if (lastName !== undefined && lastName.trim()) updateDoc.lastName = lastName.trim();
+    if (mobileNumber !== undefined) updateDoc.mobileNumber = mobileNumber.trim();
+    if (avatar !== undefined) updateDoc.avatar = avatar;
+    if (preferences !== undefined) updateDoc.preferences = preferences;
+    updateDoc.updatedAt = new Date();
+
+    await db.collection('users').updateOne({ _id: user._id }, { $set: updateDoc });
+
+    await logAudit(db, {
+      actorId: user._id.toString(),
+      actorType: 'user',
+      actorName: `${updateDoc.firstName || user.firstName} ${updateDoc.lastName || user.lastName}`,
+      actorEmail: user.email,
+      actorRole: user.role,
+      companyId: user.companyId,
+      module: 'users',
+      action: 'PROFILE_UPDATED',
+      resource: 'users',
+      resourceId: user._id.toString(),
+      description: `User profile updated for ${updateDoc.firstName || user.firstName} ${updateDoc.lastName || user.lastName}`
+    });
+
+    const updated = await db.collection('users').findOne({ _id: user._id });
+    const companyObjId = toObjectId(user.companyId);
+    const company = companyObjId ? await db.collection('companies').findOne({ _id: companyObjId }) : null;
+
+    res.json({
+      id: updated!._id.toString(),
+      email: updated!.email,
+      firstName: updated!.firstName,
+      lastName: updated!.lastName,
+      mobileNumber: updated!.mobileNumber || '',
+      avatar: updated!.avatar || null,
+      role: updated!.role,
+      companyId: updated!.companyId ? updated!.companyId.toString() : null,
+      companyName: company?.name || 'Standard Firm',
+      projectName: company?.projectName || '',
+      location: company?.location || '',
+      preferences: updated!.preferences || { defaultKerf: 3, defaultTrimMargin: 25, defaultBarLength: 12000, defaultAlgorithm: 'genetic' },
+      message: 'Profile updated successfully'
+    });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/users/me/password', authMiddleware, async (req: any, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'New password must be at least 8 characters long' });
+    }
+    if (!/[A-Z]/.test(newPassword)) {
+      return res.status(400).json({ message: 'New password must contain at least one uppercase letter' });
+    }
+    if (!/[0-9]/.test(newPassword)) {
+      return res.status(400).json({ message: 'New password must contain at least one number' });
+    }
+    if (!/[^A-Za-z0-9]/.test(newPassword)) {
+      return res.status(400).json({ message: 'New password must contain at least one special character' });
+    }
+
+    const db = await connectDB();
+
+    if (req.user.accountType === 'developer') {
+      const devObjId = toObjectId(req.user.sub);
+      const dev = devObjId ? await db.collection('developers').findOne({ _id: devObjId }) : null;
+      if (!dev) return res.status(404).json({ message: 'Developer not found' });
+      const matches = await bcrypt.compare(currentPassword, dev.passwordHash);
+      if (!matches) return res.status(400).json({ message: 'Current password is incorrect' });
+
+      const newHash = await bcrypt.hash(newPassword, 10);
+      await db.collection('developers').updateOne({ _id: dev._id }, { $set: { passwordHash: newHash, updatedAt: new Date() } });
+      return res.json({ message: 'Password changed successfully' });
+    }
+
+    const userObjId = toObjectId(req.user.sub);
+    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : await db.collection('users').findOne({ email: req.user.email?.toLowerCase().trim() });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const matches = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!matches) return res.status(400).json({ message: 'Current password is incorrect' });
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    await db.collection('users').updateOne({ _id: user._id }, { $set: { passwordHash: newHash, updatedAt: new Date() } });
+
+    await logAudit(db, {
+      actorId: user._id.toString(),
+      actorType: 'user',
+      actorName: `${user.firstName} ${user.lastName}`,
+      actorEmail: user.email,
+      actorRole: user.role,
+      companyId: user.companyId,
+      module: 'auth',
+      action: 'PASSWORD_CHANGED',
+      resource: 'users',
+      resourceId: user._id.toString(),
+      description: `Password changed successfully for ${user.firstName} ${user.lastName}`
+    });
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.get('/api/users/me/stats', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userObjId = toObjectId(req.user.sub);
+    const userDoc = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : null;
+    const companyId = toObjectId(userDoc?.companyId);
+
+    // Batches count and stats
+    const batches = await db.collection('batches').find({
+      $or: [
+        { companyId },
+        { createdBy: userObjId },
+        { createdBy: req.user.sub }
+      ]
+    }).toArray();
+
+    let totalBatches = batches.length;
+    let totalScrapKg = 0;
+    let totalRemnantKg = 0;
+    let totalSteelWeightKg = 0;
+    let yieldSum = 0;
+    let batchCountWithEfficiency = 0;
+
+    for (const b of batches) {
+      if (b.summary) {
+        if (b.summary.totalScrapKg) totalScrapKg += Number(b.summary.totalScrapKg) || 0;
+        if (b.summary.totalRemnantKg) totalRemnantKg += Number(b.summary.totalRemnantKg) || 0;
+        if (b.summary.totalWeight || b.summary.inputWeight || b.summary.totalWeightKg) {
+          totalSteelWeightKg += Number(b.summary.totalWeight || b.summary.inputWeight || b.summary.totalWeightKg) || 0;
+        }
+        if (b.summary.efficiency || b.summary.yieldPercentage) {
+          yieldSum += Number(b.summary.efficiency || b.summary.yieldPercentage) || 0;
+          batchCountWithEfficiency++;
+        }
+      }
+    }
+
+    const avgYield = batchCountWithEfficiency > 0 ? (yieldSum / batchCountWithEfficiency) : 96.5;
+
+    // Recent activity audit logs for this specific user
+    const recentLogs = await db.collection('auditlogs')
+      .find({ actorId: req.user.sub })
+      .sort({ timestamp: -1 })
+      .limit(10)
+      .toArray();
+
+    res.json({
+      totalBatches,
+      totalSteelWeightKg: Math.round(totalSteelWeightKg),
+      totalSteelWeightMT: Number((totalSteelWeightKg / 1000).toFixed(3)),
+      totalScrapKg: Math.round(totalScrapKg),
+      totalRemnantKg: Math.round(totalRemnantKg),
+      avgYield: Number(avgYield.toFixed(1)),
+      recentLogs: recentLogs.map((l: any) => ({
+        id: l._id.toString(),
+        timestamp: l.timestamp,
+        module: l.module,
+        action: l.action,
+        description: l.description || `${l.action} on ${l.resource || 'item'}`
+      }))
+    });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
 // BUILDER FIRM ADMIN — USER MANAGEMENT
 // ══════════════════════════════════════════════════════════════════════════════
 app.get('/api/users', adminMiddleware, async (req: any, res) => {
@@ -1612,20 +1901,21 @@ app.get('/api/users', adminMiddleware, async (req: any, res) => {
     const db = await connectDB();
 
     if (req.user.accountType === 'developer') {
-      // Developer sees all users
       const users = await db.collection('users').find({}).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
       return res.json(users.map((u: any) => ({ ...u, id: u._id.toString() })));
     }
 
-    const user = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const userObjId = toObjectId(req.user.sub);
+    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : null;
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const users = await db.collection('users').find({ companyId: user.companyId, isActive: { $ne: false } }).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
 
     const enriched = await Promise.all(users.map(async (u: any) => {
       let roleName = u.role || 'Unknown';
-      if (u.roleId) {
-        const role = await db.collection('roles').findOne({ _id: new ObjectId(u.roleId) });
+      const roleObjId = toObjectId(u.roleId);
+      if (roleObjId) {
+        const role = await db.collection('roles').findOne({ _id: roleObjId });
         if (role) roleName = role.name;
       }
       return { ...u, id: u._id.toString(), roleName };
@@ -1644,7 +1934,8 @@ app.post('/api/users', adminMiddleware, async (req: any, res) => {
     const db = await connectDB();
 
     // Get admin's company
-    const admin = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    const adminObjId = toObjectId(req.user.sub);
+    const admin = adminObjId ? await db.collection('users').findOne({ _id: adminObjId }) : null;
     if (!admin && req.user.accountType !== 'developer') return res.status(404).json({ message: 'Admin user not found' });
     const companyId = admin?.companyId;
 
@@ -1668,8 +1959,9 @@ app.post('/api/users', adminMiddleware, async (req: any, res) => {
 
     // Validate roleId
     let roleName = 'Admin';
-    if (roleId) {
-      const role = await db.collection('roles').findOne({ _id: new ObjectId(roleId) });
+    const roleObjId = toObjectId(roleId);
+    if (roleObjId) {
+      const role = await db.collection('roles').findOne({ _id: roleObjId });
       if (!role) return res.status(400).json({ message: 'Invalid role ID' });
       roleName = role.name;
     }
@@ -1678,7 +1970,7 @@ app.post('/api/users', adminMiddleware, async (req: any, res) => {
     const userDoc: any = {
       email: email.toLowerCase().trim(), passwordHash, firstName, lastName,
       role: roleName, companyId,
-      roleId: roleId ? new ObjectId(roleId) : null,
+      roleId: roleObjId || null,
       mobileNumber: mobileNumber || '', isActive: true, assignedProjects: [],
       createdAt: new Date()
     };
@@ -1694,12 +1986,15 @@ app.put('/api/users/:id', adminMiddleware, async (req: any, res) => {
   try {
     const { firstName, lastName, roleId, mobileNumber, assignedProjects } = req.body;
     const db = await connectDB();
-    const targetUser = await db.collection('users').findOne({ _id: new ObjectId(req.params.id) });
+    const targetObjId = toObjectId(req.params.id);
+    if (!targetObjId) return res.status(400).json({ message: 'Invalid user ID' });
+    const targetUser = await db.collection('users').findOne({ _id: targetObjId });
     if (!targetUser) return res.status(404).json({ message: 'User not found' });
 
     // Ensure same company (unless developer)
     if (req.user.accountType !== 'developer') {
-      const admin = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+      const adminObjId = toObjectId(req.user.sub);
+      const admin = adminObjId ? await db.collection('users').findOne({ _id: adminObjId }) : null;
       if (!admin || admin.companyId.toString() !== targetUser.companyId.toString()) {
         return res.status(403).json({ message: 'Cannot modify users from another organization' });
       }
@@ -1710,10 +2005,11 @@ app.put('/api/users/:id', adminMiddleware, async (req: any, res) => {
     if (lastName !== undefined) updateFields.lastName = lastName;
     if (mobileNumber !== undefined) updateFields.mobileNumber = mobileNumber;
     if (assignedProjects !== undefined) updateFields.assignedProjects = assignedProjects;
-    if (roleId !== undefined) {
-      const role = await db.collection('roles').findOne({ _id: new ObjectId(roleId) });
+    const roleObjId = toObjectId(roleId);
+    if (roleObjId) {
+      const role = await db.collection('roles').findOne({ _id: roleObjId });
       if (!role) return res.status(400).json({ message: 'Invalid role ID' });
-      updateFields.roleId = new ObjectId(roleId);
+      updateFields.roleId = roleObjId;
       updateFields.role = role.name;
     }
 
@@ -1729,7 +2025,9 @@ app.put('/api/users/:id/status', adminMiddleware, async (req: any, res) => {
     const { isActive } = req.body;
     if (typeof isActive !== 'boolean') return res.status(400).json({ message: 'isActive must be a boolean' });
     const db = await connectDB();
-    const targetUser = await db.collection('users').findOne({ _id: new ObjectId(req.params.id) });
+    const targetObjId = toObjectId(req.params.id);
+    if (!targetObjId) return res.status(400).json({ message: 'Invalid user ID' });
+    const targetUser = await db.collection('users').findOne({ _id: targetObjId });
     if (!targetUser) return res.status(404).json({ message: 'User not found' });
 
     // Cannot deactivate yourself
@@ -2052,6 +2350,17 @@ app.delete('/api/inventory/scrapsales/:id', authMiddleware, requirePermission('s
 });
 
 // ── BATCHES ROUTES (protected) ────────────────────────────────────────────────
+app.post('/api/batches/optimize', authMiddleware, requirePermission('optimizer', 'create'), async (req: any, res) => {
+  try {
+    const { stockRows, partsRows, options } = req.body;
+    const result = solve1DCSP(stockRows || [], partsRows || [], options || {});
+    res.json(result);
+  } catch (e: any) {
+    console.error('Optimization calculation error:', e);
+    res.status(400).json({ message: e.message || 'Failed to solve cutting stock problem' });
+  }
+});
+
 app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'), async (req: any, res) => {
   try {
     const db = await connectDB();

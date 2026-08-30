@@ -24,6 +24,7 @@ const getInitialView = () => {
     if (path === '/history') return 'history';
     if (path === '/ledger') return 'ledger';
     if (path === '/settings') return 'settings';
+    if (path === '/profile') return 'profile';
     if (path === '/developer' || path === '/superadmin') return 'superadmin';
     if (path === '/roles') return 'roles';
     if (path === '/users') return 'users';

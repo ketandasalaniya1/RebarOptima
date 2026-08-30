@@ -189,8 +189,19 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           </div>
           
           {user && (
-            <div className="user-profile-badge">
-              <div className="profile-initials">{initials}</div>
+            <button 
+              className={`user-profile-badge ${currentView === 'profile' ? 'active' : ''}`}
+              onClick={() => {
+                onViewChange('profile');
+                setIsOpen(false);
+              }}
+              title="View & Edit Profile"
+            >
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.firstName} className="profile-avatar-img" />
+              ) : (
+                <div className="profile-initials">{initials}</div>
+              )}
               <div className="profile-details">
                 <div className="profile-name">{user.firstName} {user.lastName}</div>
                 <div className="profile-role-company">
@@ -201,7 +212,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
                   </span>
                 </div>
               </div>
-            </div>
+            </button>
           )}
 
           {onLogout && (

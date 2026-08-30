@@ -14,6 +14,7 @@ import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
 import RolesPage from './pages/RolesPage/RolesPage';
 import ActivityLogsPage from './pages/ActivityLogsPage/ActivityLogsPage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
@@ -215,6 +216,9 @@ function App() {
             )}
             {view === 'roles' && (
               <RolesPage />
+            )}
+            {view === 'profile' && (
+              <ProfilePage onNavigate={handleNavigate} />
             )}
           </div>
         </div>

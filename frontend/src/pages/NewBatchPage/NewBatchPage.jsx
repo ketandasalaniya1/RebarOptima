@@ -217,6 +217,27 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     setShowImportModal(false)
   }
 
+  const handleRunOptimization = async () => {
+    setError(null)
+    setOptimizing(true)
+    try {
+      const data = await batchesApi.optimize({
+        stockRows: stock.rows,
+        partsRows: parts.rows,
+        options: { kerf, trimMargin }
+      })
+      data.batchName = batchName
+      data.inputStock = stock.rows
+      data.requiredParts = parts.rows
+      data.settings = { kerf, trimMargin }
+      onOptimize(data)
+    } catch (err) {
+      setError(err.message || 'Failed to run optimization on server.')
+    } finally {
+      setOptimizing(false)
+    }
+  }
+
   return (
     <div className="optimizer-container-grid">
       {/* Left Column: Optimization input form */}
@@ -349,20 +370,10 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                 </button>
                 <button
                   className="btn-optimize btn-optimize-inline"
-                  onClick={() => {
-                    try {
-                      const data = solve1DCSP(stock.rows, parts.rows, { kerf, trimMargin });
-                      data.batchName = batchName;
-                      data.inputStock = stock.rows;
-                      data.requiredParts = parts.rows;
-                      data.settings = { kerf, trimMargin };
-                      onOptimize(data);
-                    } catch (err) {
-                      setError(err.message);
-                    }
-                  }}
+                  disabled={optimizing}
+                  onClick={handleRunOptimization}
                 >
-                  RUN OPTIMIZATION
+                  {optimizing ? 'OPTIMIZING...' : 'RUN OPTIMIZATION'}
                 </button>
               </div>
             </div>
@@ -448,26 +459,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
             <button
               className="btn-optimize"
               disabled={optimizing}
-              onClick={async () => {
-                setError(null);
-                setOptimizing(true);
-                try {
-                  const data = await batchesApi.optimize({
-                    stockRows: stock.rows,
-                    partsRows: parts.rows,
-                    options: { kerf, trimMargin }
-                  });
-                  data.batchName = batchName;
-                  data.inputStock = stock.rows;
-                  data.requiredParts = parts.rows;
-                  data.settings = { kerf, trimMargin };
-                  onOptimize(data);
-                } catch (err) {
-                  setError(err.message || 'Failed to run optimization on server.');
-                } finally {
-                  setOptimizing(false);
-                }
-              }}
+              onClick={handleRunOptimization}
             >
               {optimizing ? 'OPTIMIZING ON SERVER...' : 'RUN OPTIMIZATION'}
             </button>

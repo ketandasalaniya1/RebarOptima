@@ -145,6 +145,14 @@ export const usersApi = {
   updateUserStatus: (id, isActive) => apiRequest(`/users/${id}/status`, { method: 'PUT', body: { isActive } }),
 };
 
+// Profile & Personal Account API
+export const profileApi = {
+  getProfile: () => apiRequest('/users/me'),
+  updateProfile: (dto) => apiRequest('/users/me', { method: 'PUT', body: dto }),
+  changePassword: (dto) => apiRequest('/users/me/password', { method: 'PUT', body: dto }),
+  getStats: () => apiRequest('/users/me/stats'),
+};
+
 // Permissions API
 export const permissionsApi = {
   getEffective: () => apiRequest('/permissions/effective'),

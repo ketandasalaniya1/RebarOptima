@@ -245,8 +245,8 @@
     "semantic_hash": "16aa03e99ea73d0fa47209f4ce30b84b"
   },
   "backend/src/batches/batches.controller.ts": {
-    "mtime": 1787942892.0373268,
-    "ast_hash": "6e4cfa0948b0acba17ff7df1ae6044df",
+    "mtime": 1788088462.1439705,
+    "ast_hash": "2fbaa0d02af2019ce6d5570d4434251d",
     "semantic_hash": ""
   },
   "backend/src/batches/batches.module.ts": {
@@ -255,8 +255,8 @@
     "semantic_hash": "07667010a28a606ec6c5c5a4c1b9dc1d"
   },
   "backend/src/batches/batches.service.ts": {
-    "mtime": 1787942881.6543078,
-    "ast_hash": "569cd97086090a5fcd32c96796d1962c",
+    "mtime": 1788088451.2268538,
+    "ast_hash": "dd47830d2ee957e6bdcd2088d7d58385",
     "semantic_hash": ""
   },
   "backend/src/companies/companies.module.ts": {
@@ -310,8 +310,8 @@
     "semantic_hash": "6e4521d67f0f2faf70a50cb6f42f9fd1"
   },
   "backend/src/main.ts": {
-    "mtime": 1788076024.2676747,
-    "ast_hash": "8238b7ae2945c0b4d3b2f418668adcf9",
+    "mtime": 1788077577.0008523,
+    "ast_hash": "7cc798e46d8640fa2f0b54386e1d8dce",
     "semantic_hash": ""
   },
   "backend/src/users/user.schema.ts": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "frontend/src/App.jsx": {
-    "mtime": 1788075998.9112108,
-    "ast_hash": "ee5a331c56df87cfef6aa6dc2b9480e9",
+    "mtime": 1788077385.5443542,
+    "ast_hash": "b3096dc2e6281c55e4ab2b7d9b244670",
     "semantic_hash": ""
   },
   "frontend/src/components/ScrollToTop/ScrollToTop.jsx": {
@@ -370,8 +370,8 @@
     "semantic_hash": "0a922efe1fde69d14a9c8b0a8a5b3d79"
   },
   "frontend/src/components/SideNavbar/SideNavbar.jsx": {
-    "mtime": 1788075991.9457095,
-    "ast_hash": "4cdb413df854e5c3c9c612e08fcc6f3d",
+    "mtime": 1788078722.6708167,
+    "ast_hash": "4fa87d75a8716c7705cc71b1888d48e1",
     "semantic_hash": ""
   },
   "frontend/src/components/ThemeToggle/ThemeToggle.jsx": {
@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/InventoryPage/InventoryPage.jsx": {
-    "mtime": 1787954318.4020908,
-    "ast_hash": "931957e2a8b41864cd83899ee7591ec3",
+    "mtime": 1788080304.4942734,
+    "ast_hash": "7cb7dea9274562756ad4926a08d20068",
     "semantic_hash": ""
   },
   "frontend/src/pages/LedgerPage/LedgerPage.jsx": {
@@ -400,8 +400,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/NewBatchPage/NewBatchPage.jsx": {
-    "mtime": 1787931822.5400875,
-    "ast_hash": "f878283e4a514fb143bd212a4ba70647",
+    "mtime": 1788088504.3820112,
+    "ast_hash": "2e81b2530bb9a640a344b81cbed6d148",
     "semantic_hash": ""
   },
   "frontend/src/pages/OverviewPage/OverviewPage.jsx": {
@@ -415,8 +415,8 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/SettingsPage/SettingsPage.jsx": {
-    "mtime": 1787844644.170862,
-    "ast_hash": "3b4d75bde0e629be4ba68fa5025bfd4c",
+    "mtime": 1788078845.1410663,
+    "ast_hash": "c8c94ac1a125b99a43a881ce603079ef",
     "semantic_hash": ""
   },
   "frontend/src/pages/SignInPage/SignInPage.jsx": {
@@ -460,13 +460,13 @@
     "semantic_hash": ""
   },
   "frontend/src/utils/api.js": {
-    "mtime": 1787942899.66353,
-    "ast_hash": "4e8dadb376616c19fa84db7ba50b2da0",
+    "mtime": 1788088472.6722791,
+    "ast_hash": "518ca17d0873197938146f581dab6da2",
     "semantic_hash": ""
   },
   "frontend/src/utils/optimizer.js": {
-    "mtime": 1787242935.7350454,
-    "ast_hash": "2f75be626c378b69c8823e59c86d85d2",
+    "mtime": 1788088514.287985,
+    "ast_hash": "8c972c653fa34e1255c2d3db881ff613",
     "semantic_hash": ""
   },
   "frontend/vite.config.js": {
@@ -927,6 +927,16 @@
   "frontend/src/components/LoadingSpinner/LoadingSpinner.jsx": {
     "mtime": 1787933888.61331,
     "ast_hash": "1dcc456a5746d3774b479ef63b514bff",
+    "semantic_hash": ""
+  },
+  "backend/src/batches/optimizer.engine.ts": {
+    "mtime": 1788088427.9488523,
+    "ast_hash": "5c0731738463d0e8dbd18d1113268e4c",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/ActivityLogsPage/ActivityLogsPage.jsx": {
+    "mtime": 1788078268.353321,
+    "ast_hash": "adeb5ea2030e52d725dd23c4185870c3",
     "semantic_hash": ""
   }
 }

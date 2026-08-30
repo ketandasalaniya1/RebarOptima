@@ -1,16 +1,16 @@
-# Graph Report - RebarOptima  (2026-08-29)
+# Graph Report - RebarOptima  (2026-08-30)
 
 ## Corpus Check
-- 173 files · ~238,635 words
+- 173 files · ~238,952 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2455 nodes · 2936 edges · 215 communities (154 shown, 61 thin omitted)
+- 2455 nodes · 2940 edges · 213 communities (152 shown, 61 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f7a21ced`
+- Built from commit: `5c70fb16`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -74,7 +74,7 @@
 - devDependencies
 - Canvas Design System
 - Prerequisites
-- shadow
+- sm
 - nest-cli.json
 - lg
 - auth.module.ts
@@ -184,8 +184,7 @@
 - React + Vite
 - .oxlintrc.json
 - SettingsPage.jsx
-- default
-- md
+- none
 - design-tokens-starter.json
 - input
 - .__init__
@@ -214,7 +213,6 @@
 - primary-foreground
 - ring
 - secondary-foreground
-- batches.module.ts
 - ResultsPage.jsx
 - bcryptjs
 - Body
@@ -252,19 +250,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (215 total, 61 thin omitted)
+## Communities (213 total, 61 thin omitted)
 
 ### Community 0 - "App.jsx"
-Cohesion: 0.17
-Nodes (5): App(), authSlice, routingSlice, store, developerApi
+Cohesion: 0.16
+Nodes (6): App(), SideNavbar(), authSlice, routingSlice, store, developerApi
 
 ### Community 1 - "gray"
 Cohesion: 0.05
 Nodes (53): $type, $value, $type, $value, $type, $value, $type, $value (+45 more)
 
 ### Community 2 - "app.module.ts"
-Cohesion: 0.19
-Nodes (9): AppController, Controller, Get, AppModule, Module, AppService, Injectable, AuthModule (+1 more)
+Cohesion: 0.16
+Nodes (11): AppController, Controller, Get, AppModule, Module, AppService, Injectable, AuthModule (+3 more)
 
 ### Community 3 - "search"
 Cohesion: 0.07
@@ -299,8 +297,8 @@ Cohesion: 0.12
 Nodes (19): BM25, detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+11 more)
 
 ### Community 11 - "InventoryService"
-Cohesion: 0.12
-Nodes (12): CurrentUser, InventoryController, Body, Controller, Delete, Get, Param, Post (+4 more)
+Cohesion: 0.14
+Nodes (10): InventoryController, Body, Controller, Delete, Param, Post, UseGuards, InventoryService (+2 more)
 
 ### Community 12 - "compilerOptions"
 Cohesion: 0.09
@@ -319,8 +317,8 @@ Cohesion: 0.25
 Nodes (8): format_master_md(), persist_design_system(), Slugify a name into a single safe path segment. Only [a-z0-9_-] survives; every…, Persist design system to design-system/<project>/ folder using Master +…, Format design system as MASTER.md with hierarchical override logic., safe_slug(), format_output(), Format results for Claude consumption (token-optimized)
 
 ### Community 16 - "inventory.module.ts"
-Cohesion: 0.22
-Nodes (12): InventoryTransaction, InventoryTransactionSchema, Prop, Schema, ScrapRule, ScrapRuleSchema, Prop, Schema (+4 more)
+Cohesion: 0.13
+Nodes (20): Batch, BatchSchema, Prop, Schema, InventoryModule, Module, InventoryTransaction, InventoryTransactionSchema (+12 more)
 
 ### Community 17 - "main"
 Cohesion: 0.11
@@ -339,8 +337,8 @@ Cohesion: 0.17
 Nodes (17): generate_css_for_background(), get_background_image(), get_curated_images(), get_overlay_css(), get_pexels_search_url(), load_backgrounds_config(), load_brand_colors(), main() (+9 more)
 
 ### Community 21 - "User"
-Cohesion: 0.18
-Nodes (9): JwtAuthGuard, Injectable, Prop, Schema, User, UserSchema, Injectable, InjectModel (+1 more)
+Cohesion: 0.14
+Nodes (11): JwtAuthGuard, Injectable, CurrentUser, Get, Prop, Schema, User, UserSchema (+3 more)
 
 ### Community 22 - "icon/generate.py"
 Cohesion: 0.20
@@ -451,8 +449,8 @@ Cohesion: 0.22
 Nodes (9): jest, collectCoverageFrom, coverageDirectory, rootDir, testEnvironment, testRegex, transform, ^.+\\.(t|j)s$ (+1 more)
 
 ### Community 49 - "radius"
-Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, none, none
+Cohesion: 0.19
+Nodes (13): $type, $value, $type, $value, $type, $value, radius, shadow (+5 more)
 
 ### Community 50 - "._generate_javascript"
 Cohesion: 0.29
@@ -490,9 +488,9 @@ Nodes (35): 1. Visual Communication First, 2. Minimal Text Integration, 3. Exper
 Cohesion: 0.06
 Nodes (33): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+25 more)
 
-### Community 59 - "shadow"
-Cohesion: 0.47
-Nodes (6): sm, shadow, sm, sm, $type, $value
+### Community 59 - "sm"
+Cohesion: 0.60
+Nodes (5): sm, sm, sm, $type, $value
 
 ### Community 60 - "nest-cli.json"
 Cohesion: 0.33
@@ -703,8 +701,8 @@ Cohesion: 0.20
 Nodes (9): Alert Tokens, Badge Tokens, Button Tokens, Card Tokens, Component Tokens, Dialog/Modal Tokens, Input Tokens, Table Tokens (+1 more)
 
 ### Community 151 - "react"
-Cohesion: 0.25
-Nodes (6): LoadingSpinner(), BatchHistoryPage(), getTextStyle(), batchesApi, inventoryApi, react
+Cohesion: 0.24
+Nodes (7): LoadingSpinner(), BatchHistoryPage(), getTextStyle(), InventoryPage(), batchesApi, inventoryApi, react
 
 ### Community 152 - "Slide Strategies"
 Cohesion: 0.20
@@ -786,13 +784,9 @@ Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 Cohesion: 0.25
 Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, warn
 
-### Community 175 - "default"
+### Community 175 - "none"
 Cohesion: 0.67
-Nodes (4): $type, $value, default, default
-
-### Community 176 - "md"
-Cohesion: 0.67
-Nodes (4): $type, $value, md, md
+Nodes (4): $type, $value, none, none
 
 ### Community 177 - "design-tokens-starter.json"
 Cohesion: 0.15
@@ -838,10 +832,6 @@ Nodes (3): ring, $type, $value
 Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
-### Community 205 - "batches.module.ts"
-Cohesion: 0.20
-Nodes (10): Batch, BatchSchema, Prop, Schema, BatchesModule, Module, InventoryModule, Module (+2 more)
-
 ### Community 206 - "ResultsPage.jsx"
 Cohesion: 0.67
 Nodes (3): getTextStyle(), mockLayouts, ResultsPage()
@@ -854,7 +844,7 @@ Nodes (3): getTextStyle(), mockLayouts, ResultsPage()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `design-tokens-starter.json`, `radius`, `fontSize`, `shadow`?**
+- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `design-tokens-starter.json`, `radius`, `fontSize`?**
   _High betweenness centrality (0.007) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._

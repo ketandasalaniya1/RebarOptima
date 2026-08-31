@@ -776,7 +776,7 @@ export default function LedgerPage() {
             )}
 
             <div className="table-responsive">
-              <table className="ledger-table">
+              <table className="ledger-table audit-ledger-table">
                 <thead>
                   <tr>
                     <th>Date & Time</th>
@@ -1028,7 +1028,7 @@ export default function LedgerPage() {
                 <span className="mini-lbl">Total Steel Inward Weight</span>
                 <span className="mini-val text-green">{inwardTotalWeight.toLocaleString()} <span className="u">kg</span></span>
                 <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
-                  {(inwardTotalWeight / 1000).toFixed(2)} Metric Tons
+                  {(inwardTotalWeight / 1000).toFixed(3)} MT
                 </span>
               </div>
               <div className="mini-icon inward"><TrendingUp size={22} /></div>
@@ -1289,7 +1289,7 @@ export default function LedgerPage() {
                     <tr>
                       <th>Supplier / Brand</th>
                       <th>Deliveries</th>
-                      <th>Weight (Tons)</th>
+                      <th>Weight (MT)</th>
                       <th>Total Spend (₹)</th>
                       <th>Avg Rate</th>
                     </tr>
@@ -1304,7 +1304,7 @@ export default function LedgerPage() {
                           <tr key={v.vendor}>
                             <td className="font-bold">{v.vendor}</td>
                             <td>{v.entries} receipts</td>
-                            <td className="font-bold">{(v.weight / 1000).toFixed(2)} T <span className="text-secondary" style={{ fontSize: '11px' }}>({Math.round(v.weight).toLocaleString()} kg)</span></td>
+                            <td className="font-bold">{(v.weight / 1000).toFixed(3)} MT <span className="text-secondary" style={{ fontSize: '11px' }}>({Math.round(v.weight).toLocaleString()} kg)</span></td>
                             <td className="font-bold text-accent">₹{Math.round(v.cost).toLocaleString('en-IN')}</td>
                             <td>₹{avgRate}/kg</td>
                           </tr>
@@ -1327,7 +1327,7 @@ export default function LedgerPage() {
             </div>
 
             <div className="table-responsive">
-              <table className="ledger-table">
+              <table className="ledger-table inward-receipts-table">
                 <thead>
                   <tr>
                     <th>Date & Time</th>

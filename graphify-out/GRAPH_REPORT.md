@@ -1,16 +1,16 @@
-# Graph Report - RebarOptima  (2026-08-30)
+# Graph Report - RebarOptima  (2026-09-01)
 
 ## Corpus Check
-- 176 files · ~249,036 words
+- 175 files · ~248,423 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2473 nodes · 2983 edges · 202 communities (143 shown, 59 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 21 edges (avg confidence: 0.5)
+- 2467 nodes · 3008 edges · 215 communities (149 shown, 59 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 50 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bf778f1c`
+- Built from commit: `a62d931f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,7 +20,7 @@
 - batches.service.ts
 - search
 - color
-- button
+- card
 - slide_search_core.py
 - spacing
 - html-token-validator.py
@@ -29,10 +29,10 @@
 - InventoryService
 - compilerOptions
 - generate-slide.py
-- TailwindConfigGenerator
-- persist_design_system
+- .test_add_fonts
+- design_system.py
 - inventory.module.ts
-- main
+- TailwindConfigGenerator
 - DesignSystemGenerator
 - dependencies
 - fetch-background.py
@@ -44,7 +44,7 @@
 - Tailwind CSS Utility Reference
 - extract-colors.cjs
 - validate-asset.cjs
-- .add_components
+- .check_shadcn_config
 - ShadcnInstaller
 - scripts
 - validate-tokens.cjs
@@ -64,9 +64,9 @@
 - _run
 - BM25
 - jest
-- radius
-- ._generate_javascript
-- design_system.py
+- color
+- .generate_config_string
+- format_ascii_box
 - main.ts
 - exclude
 - scripts
@@ -74,12 +74,12 @@
 - devDependencies
 - Canvas Design System
 - Prerequisites
-- shadow
+- design-tokens-starter.json
 - nest-cli.json
-- lg
+- button
 - app.module.ts
-- InjectModel
-- _generate_intelligent_overrides
+- batches.module.ts
+- NewBatchPage.jsx
 - is_server_ready
 - moduleFileExtensions
 - test_sync_brand_to_tokens.py
@@ -126,7 +126,7 @@
 - typescript-eslint
 - tsconfig-paths
 - permissionsSlice.js
-- xl
+- input
 - Workflow
 - .test_add_components_no_components
 - Design System
@@ -160,12 +160,12 @@
 - Brand
 - Slide Strategies
 - Component Tokens
-- api.js
+- SettingsPage.jsx
 - Slide Strategies
 - backend/README.md
 - Ponytail
 - RebarOptima Project Overview
-- react
+- api.js
 - Ponytail Help
 - Web Application Testing
 - Slides Reference
@@ -174,7 +174,7 @@
 - RebarOptima Codebase Knowledge Graph (Graphify Report)
 - Slides
 - Brand Guidelines Template
-- bcryptjs
+- ResultsPage.jsx
 - InventoryPage.jsx
 - ponytail-audit/SKILL.md
 - Ponytail Gain
@@ -183,16 +183,18 @@
 - ponytail-debt/SKILL.md
 - React + Vite
 - .oxlintrc.json
-- store.js
-- default
-- md
+- SuperadminDashboard.jsx
+- $type
+- $type
+- .temp_project
+- .test_init_default_project_root
 - .__init__
 - rules/graphify.md
 - slides-create.md
 - create.md
 - .test_add_components_no_config
-- .test_add_components_dry_run
-- .test_list_installed_no_config
+- .test_check_shadcn_config_exists
+- .test_get_installed_components_empty
 - .test_init_dry_run
 - .test_init_default_typescript
 - .test_generate_javascript_config
@@ -200,28 +202,39 @@
 - .test_base_config_structure
 - .test_default_content_paths_react
 - workflows/graphify.md
-- PROJECT_AI_PROMPT.md
-- eslint-config-prettier
-- Injectable
-- Body
-- Controller
-- Delete
-- Get
-- Param
-- Post
-- UseGuards
+- .test_get_installed_components_with_files
+- .test_generate_config_with_plugins
+- $type
+- .test_validate_config_no_content
+- .test_write_config_creates_content
+- .test_default_output_path_typescript
+- .test_default_content_paths_vue
+- format_output
+- dotenv
+- @eslint/eslintrc
+- radius
+- 50
+- 800
+- padding-y
+- 950
+- destructive
+- destructive-foreground
+- muted
+- primary-foreground
+- ring
+- secondary-foreground
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 58 edges
 2. `TestTailwindConfigGenerator` - 35 edges
 3. `ShadcnInstaller` - 34 edges
 4. `TestShadcnInstaller` - 26 edges
-5. `compilerOptions` - 22 edges
-6. `react` - 22 edges
-7. `User` - 17 edges
+5. `User` - 24 edges
+6. `compilerOptions` - 22 edges
+7. `react` - 22 edges
 8. `UI Styling Skill` - 17 edges
-9. `color` - 15 edges
-10. `Design` - 15 edges
+9. `CurrentUser` - 16 edges
+10. `color` - 15 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `TestShadcnInstaller` --uses--> `ShadcnInstaller`  [INFERRED]
@@ -238,34 +251,34 @@
 ## Import Cycles
 - None detected.
 
-## Communities (202 total, 59 thin omitted)
+## Communities (215 total, 59 thin omitted)
 
 ### Community 0 - "App.jsx"
-Cohesion: 0.17
-Nodes (5): SideNavbar(), ProfilePage(), authSlice, routingSlice, profileApi
+Cohesion: 0.30
+Nodes (8): ScrollToTop(), SideNavbar(), ThemeToggle(), SignInPage(), SignUpPage(), SuperadminLoginPage(), authApi, react
 
 ### Community 1 - "gray"
-Cohesion: 0.05
-Nodes (53): $type, $value, $type, $value, $type, $value, $type, $value (+45 more)
+Cohesion: 0.12
+Nodes (16): $type, $value, $type, $value, $type, $value, $type, $value (+8 more)
 
 ### Community 2 - "batches.service.ts"
-Cohesion: 0.20
-Nodes (13): Batch, BatchSchema, Prop, Schema, BarLayout, OptimizationResult, OptimizerOptions, PartInputRow (+5 more)
+Cohesion: 0.40
+Nodes (7): BarLayout, OptimizationResult, OptimizerOptions, PartInputRow, PartLayoutItem, solve1DCSP(), StockInputRow
 
 ### Community 3 - "search"
 Cohesion: 0.07
 Nodes (42): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection (+34 more)
 
 ### Community 4 - "color"
-Cohesion: 0.04
-Nodes (48): $type, $value, background, destructive, destructive-foreground, foreground, muted, muted-foreground (+40 more)
+Cohesion: 0.11
+Nodes (19): $type, $value, background, foreground, muted-foreground, primary, primary-hover, secondary (+11 more)
 
-### Community 5 - "button"
-Cohesion: 0.06
-Nodes (45): $type, $value, $type, $value, bg, fg, font-size, hover-bg (+37 more)
+### Community 5 - "card"
+Cohesion: 0.20
+Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
 
 ### Community 6 - "slide_search_core.py"
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (36): format_context(), format_result(), main(), Format a single search result for display, Format contextual recommendations for display., BM25, calculate_pattern_break(), detect_domain() (+28 more)
 
 ### Community 7 - "spacing"
@@ -273,20 +286,20 @@ Cohesion: 0.06
 Nodes (34): $type, $value, $type, $value, $type, $value, $type, $value (+26 more)
 
 ### Community 8 - "html-token-validator.py"
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (24): get_context(), is_allowed_exception(), is_allowed_rgba(), is_inside_block(), load_css_variables(), main(), print_result(), print_summary() (+16 more)
 
 ### Community 9 - "TestTailwindConfigGenerator"
-Cohesion: 0.07
-Nodes (15): Test adding colors multiple times., Test adding full color palette., Test adding custom breakpoints., Test TailwindConfigGenerator class., Test generating TypeScript configuration., Test generating config with plugins., Test validating config with no content paths., Test validating config with empty theme extensions. (+7 more)
+Cohesion: 0.06
+Nodes (16): Test adding colors multiple times., Test adding full color palette., Test adding custom spacing., Test adding custom breakpoints., Test TailwindConfigGenerator class., Test generating TypeScript configuration., Test validating config with empty theme extensions., Test writing configuration to file. (+8 more)
 
 ### Community 10 - "BM25"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (19): BM25, detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+11 more)
 
 ### Community 11 - "InventoryService"
-Cohesion: 0.11
-Nodes (11): InventoryController, Body, Controller, Delete, Get, Param, Post, UseGuards (+3 more)
+Cohesion: 0.13
+Nodes (10): InventoryController, Body, Controller, Delete, Get, Param, Post, UseGuards (+2 more)
 
 ### Community 12 - "compilerOptions"
 Cohesion: 0.09
@@ -296,29 +309,25 @@ Nodes (22): compilerOptions, allowSyntheticDefaultImports, baseUrl, declaration,
 Cohesion: 0.15
 Nodes (19): _e(), generate_chart_slide(), generate_cta_slide(), generate_deck(), generate_metrics_slide(), generate_problem_slide(), generate_solution_slide(), generate_testimonial_slide() (+11 more)
 
-### Community 14 - "TailwindConfigGenerator"
-Cohesion: 0.10
-Nodes (11): Generate Tailwind CSS configuration files., Add full color palette (50-950 shades) for a base color. Args: name: Color name…, TailwindConfigGenerator, Test adding custom fonts., Test adding custom spacing., Test that adding same plugin twice doesn't duplicate., Test initialization for JavaScript config., Test initialization with different frameworks. (+3 more)
-
-### Community 15 - "persist_design_system"
-Cohesion: 0.25
-Nodes (8): format_master_md(), persist_design_system(), Slugify a name into a single safe path segment. Only [a-z0-9_-] survives; every…, Persist design system to design-system/<project>/ folder using Master +…, Format design system as MASTER.md with hierarchical override logic., safe_slug(), format_output(), Format results for Claude consumption (token-optimized)
+### Community 15 - "design_system.py"
+Cohesion: 0.18
+Nodes (16): _detect_page_type(), format_markdown(), format_master_md(), format_page_override_md(), generate_design_system(), _generate_intelligent_overrides(), persist_design_system(), Format a page-specific override file with intelligent AI-generated content. (+8 more)
 
 ### Community 16 - "inventory.module.ts"
-Cohesion: 0.18
-Nodes (14): InventoryModule, Module, InventoryTransaction, InventoryTransactionSchema, Prop, Schema, ScrapRule, ScrapRuleSchema (+6 more)
+Cohesion: 0.17
+Nodes (14): InjectModel, InjectModel, InventoryTransaction, InventoryTransactionSchema, Prop, Schema, ScrapRule, ScrapRuleSchema (+6 more)
 
-### Community 17 - "main"
-Cohesion: 0.11
-Nodes (10): main(), Add custom font families. Args: fonts: Dict of font_type: [font_names] e.g.,…, Add custom spacing values. Args: spacing: Dict of name: value e.g., {'18':…, Add custom breakpoints. Args: breakpoints: Dict of name: width e.g., {'3xl':…, Add plugin requirements. Args: plugins: List of plugin names e.g.,…, Get plugin recommendations based on configuration. Returns: List of recommended…, Generate configuration file content. Returns: Configuration file as string, Write configuration to file. Returns: Tuple of (success, message) (+2 more)
+### Community 17 - "TailwindConfigGenerator"
+Cohesion: 0.10
+Nodes (12): main(), Add custom font families. Args: fonts: Dict of font_type: [font_names] e.g.,…, Add custom spacing values. Args: spacing: Dict of name: value e.g., {'18':…, Add custom breakpoints. Args: breakpoints: Dict of name: width e.g., {'3xl':…, Add plugin requirements. Args: plugins: List of plugin names e.g.,…, Get plugin recommendations based on configuration. Returns: List of recommended…, Generate Tailwind CSS configuration files., Validate configuration. Returns: Tuple of (valid, message) (+4 more)
 
 ### Community 18 - "DesignSystemGenerator"
-Cohesion: 0.16
-Nodes (9): DesignSystemGenerator, Find matching reasoning rule for a category., Apply reasoning rules to search results., Select best matching result based on priority keywords., Extract results list from search result dict., Generate complete design system recommendation. variance/motion/density are…, Generates design system recommendations from aggregated searches., Load reasoning rules from CSV. (+1 more)
+Cohesion: 0.14
+Nodes (11): DesignSystemGenerator, Find matching reasoning rule for a category., Apply reasoning rules to search results., Select best matching result based on priority keywords., Extract results list from search result dict., Generate complete design system recommendation. variance/motion/density are…, Bucket a 1-10 dial value into its tier config. Returns None if value is None., Generates design system recommendations from aggregated searches. (+3 more)
 
 ### Community 19 - "dependencies"
 Cohesion: 0.11
-Nodes (19): dependencies, dotenv, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
+Nodes (19): dependencies, bcryptjs, jsonwebtoken, mongoose, @nestjs/common, @nestjs/core, @nestjs/mongoose, @nestjs/platform-express (+11 more)
 
 ### Community 20 - "fetch-background.py"
 Cohesion: 0.17
@@ -333,16 +342,16 @@ Cohesion: 0.20
 Nodes (15): apply_color(), apply_viewbox_size(), extract_svgs(), generate_batch(), generate_icon(), generate_sizes(), load_env(), main() (+7 more)
 
 ### Community 23 - "fontSize"
-Cohesion: 0.12
-Nodes (16): $type, $value, $type, $value, $type, $value, $type, $value (+8 more)
+Cohesion: 0.06
+Nodes (47): $type, $value, $type, $value, $type, $value, $type, $value (+39 more)
 
 ### Community 24 - "TestShadcnInstaller"
 Cohesion: 0.12
-Nodes (10): Test ShadcnInstaller class., Test adding all components without config., Test adding all components in dry run mode., Create temporary project structure., Test listing installed components when none exist., Test listing installed components when they exist., Test checking for existing shadcn config., Test getting installed components without config. (+2 more)
+Nodes (9): Test adding components in dry run mode., Test ShadcnInstaller class., Test adding all components without config., Test adding all components in dry run mode., Test listing installed components without config., Test listing installed components when none exist., Test initialization with custom project root., Test checking for non-existent shadcn config. (+1 more)
 
 ### Community 25 - "BatchesService"
-Cohesion: 0.11
-Nodes (14): BatchesController, BatchesService, Body, Controller, CurrentUser, Delete, Get, Injectable (+6 more)
+Cohesion: 0.10
+Nodes (15): Batch, Prop, Schema, BatchesController, Body, Controller, Delete, Get (+7 more)
 
 ### Community 26 - "Tailwind CSS Utility Reference"
 Cohesion: 0.05
@@ -356,13 +365,13 @@ Nodes (11): calculateCompliance(), colorDistance(), displayPalette(), extractHex
 Cohesion: 0.25
 Nodes (13): checkManifest(), formatBytes(), formatOutput(), fs, main(), parseFilename(), path, RULES (+5 more)
 
-### Community 29 - ".add_components"
-Cohesion: 0.17
-Nodes (8): main(), Add all available shadcn/ui components. Args: overwrite: If True, overwrite…, List installed components. Returns: Tuple of (success, message with component…, Check if shadcn is initialized in project. Returns: True if components.json…, Get list of already installed components. Returns: List of installed component…, Read shadcn version from project package.json; fall back to a pinned default., Add shadcn/ui components. Args: components: List of component names to add…, Tests for shadcn_add.py
+### Community 29 - ".check_shadcn_config"
+Cohesion: 0.21
+Nodes (6): Add all available shadcn/ui components. Args: overwrite: If True, overwrite…, List installed components. Returns: Tuple of (success, message with component…, Check if shadcn is initialized in project. Returns: True if components.json…, Get list of already installed components. Returns: List of installed component…, Read shadcn version from project package.json; fall back to a pinned default., Add shadcn/ui components. Args: components: List of component names to add…
 
 ### Community 30 - "ShadcnInstaller"
-Cohesion: 0.14
-Nodes (8): Handle shadcn/ui component installation., ShadcnInstaller, Test adding components that are already installed., Test initialization with default project root., Test initialization with custom project root., Test checking for non-existent shadcn config., Test getting installed components when none exist., Test getting installed components when files exist.
+Cohesion: 0.20
+Nodes (7): main(), Handle shadcn/ui component installation., ShadcnInstaller, Tests for shadcn_add.py, Test adding components that are already installed., Test listing installed components when they exist., Test getting installed components without config.
 
 ### Community 31 - "scripts"
 Cohesion: 0.15
@@ -373,7 +382,7 @@ Cohesion: 0.24
 Nodes (11): extensions, formatReport(), fs, getFiles(), main(), parseArgs(), path, patterns (+3 more)
 
 ### Community 33 - "test_tailwind_config_gen.py"
-Cohesion: 0.20
+Cohesion: 0.22
 Nodes (8): Tests for tailwind_config_gen.py, Reduce a generated TS/JS config to a bare assignable object so it can be handed…, Regression guard for the missing-comma bug between the ``theme`` block and…, The property preceding ``plugins`` must end with a comma (pure-Python check, so…, The emitted config parses as valid JS via ``node --check``., _strip_to_object(), TestGeneratedConfigIsValidJs, parametrize
 
 ### Community 34 - "inject-brand-context.cjs"
@@ -381,8 +390,8 @@ Cohesion: 0.31
 Nodes (10): extractColorsFromTable(), extractCoreAttributes(), extractHexColors(), extractImageStyle(), extractTypography(), extractVoice(), fs, generatePromptAddition() (+2 more)
 
 ### Community 35 - "embed-tokens.cjs"
-Cohesion: 0.20
-Nodes (9): args, extractTokens(), fs, minimal, MINIMAL_TOKENS, path, projectRoot, tokensPath (+1 more)
+Cohesion: 0.18
+Nodes (8): args, fs, minimal, MINIMAL_TOKENS, path, projectRoot, tokensPath, wrapStyle
 
 ### Community 36 - "primitive"
 Cohesion: 0.18
@@ -436,17 +445,17 @@ Nodes (5): BM25, BM25 ranking algorithm for text search, Lowercase, split, remov
 Cohesion: 0.22
 Nodes (9): jest, collectCoverageFrom, coverageDirectory, rootDir, testEnvironment, testRegex, transform, ^.+\\.(t|j)s$ (+1 more)
 
-### Community 49 - "radius"
-Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, none, none
+### Community 49 - "color"
+Cohesion: 0.20
+Nodes (15): $type, $value, 500, blue, green, red, white, yellow (+7 more)
 
-### Community 50 - "._generate_javascript"
-Cohesion: 0.29
-Nodes (4): Generate TypeScript configuration., Generate JavaScript configuration., Format plugins array for config. Validates each plugin name against a strict…, Add indentation to JSON string.
+### Community 50 - ".generate_config_string"
+Cohesion: 0.20
+Nodes (6): Generate configuration file content. Returns: Configuration file as string, Generate TypeScript configuration., Generate JavaScript configuration., Format plugins array for config. Validates each plugin name against a strict…, Add indentation to JSON string., Write configuration to file. Returns: Tuple of (success, message)
 
-### Community 51 - "design_system.py"
-Cohesion: 0.18
-Nodes (14): ansi_ljust(), format_ascii_box(), format_markdown(), generate_design_system(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤ (+6 more)
+### Community 51 - "format_ascii_box"
+Cohesion: 0.25
+Nodes (8): ansi_ljust(), format_ascii_box(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤, Format design system as Unicode box with ANSI color swatches., section_header()
 
 ### Community 52 - "main.ts"
 Cohesion: 0.11
@@ -466,7 +475,7 @@ Nodes (6): author, description, license, name, private, version
 
 ### Community 56 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): devDependencies, eslint, @eslint/eslintrc, @types/jsonwebtoken, eslint, @eslint/eslintrc, @types/jsonwebtoken
+Nodes (7): devDependencies, eslint, eslint-config-prettier, @types/jsonwebtoken, eslint, eslint-config-prettier, @types/jsonwebtoken
 
 ### Community 57 - "Canvas Design System"
 Cohesion: 0.06
@@ -476,25 +485,29 @@ Nodes (35): 1. Visual Communication First, 2. Minimal Text Integration, 3. Exper
 Cohesion: 0.06
 Nodes (33): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+25 more)
 
-### Community 59 - "shadow"
-Cohesion: 0.47
-Nodes (6): sm, shadow, sm, sm, $type, $value
+### Community 59 - "design-tokens-starter.json"
+Cohesion: 0.15
+Nodes (12): component, $type, $value, dark, semantic, $schema, $type, $value (+4 more)
 
 ### Community 60 - "nest-cli.json"
 Cohesion: 0.33
 Nodes (5): collection, compilerOptions, deleteOutDir, $schema, sourceRoot
 
-### Community 61 - "lg"
-Cohesion: 0.60
-Nodes (5): lg, $type, $value, lg, lg
+### Community 61 - "button"
+Cohesion: 0.20
+Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 more)
 
 ### Community 62 - "app.module.ts"
 Cohesion: 0.07
 Nodes (27): AppController, Controller, Get, AppModule, Module, AppService, Injectable, AuthController (+19 more)
 
-### Community 64 - "_generate_intelligent_overrides"
+### Community 63 - "batches.module.ts"
 Cohesion: 0.33
-Nodes (6): _detect_page_type(), format_page_override_md(), _generate_intelligent_overrides(), Format a page-specific override file with intelligent AI-generated content., Generate intelligent overrides based on page type using layered search. Uses…, Detect page type from context and search results.
+Nodes (5): BatchSchema, InventoryModule, Module, Module, UsersModule
+
+### Community 64 - "NewBatchPage.jsx"
+Cohesion: 0.40
+Nodes (4): initialParts, initialStock, NewBatchPage(), useTableRows()
 
 ### Community 65 - "is_server_ready"
 Cohesion: 0.67
@@ -556,9 +569,9 @@ Nodes (24): Accessibility, Accessibility Requirements, ARIA States, Color Contra
 Cohesion: 0.08
 Nodes (24): Accessibility Patterns, Alternative: Tailwind-Only Setup, Best Practices, Common Patterns, Component Layer: shadcn/ui, Component Library Guide, Component + Styling Setup, Core Stack (+16 more)
 
-### Community 117 - "xl"
-Cohesion: 0.67
-Nodes (4): xl, xl, $type, $value
+### Community 117 - "input"
+Cohesion: 0.29
+Nodes (8): padding-x, input, $type, $value, focus-ring, padding-x, $type, $value
 
 ### Community 118 - "Workflow"
 Cohesion: 0.08
@@ -688,9 +701,9 @@ Nodes (9): Common Structures, Duarte Sparkline Pattern, Matching Strategy to Con
 Cohesion: 0.20
 Nodes (9): Alert Tokens, Badge Tokens, Button Tokens, Card Tokens, Component Tokens, Dialog/Modal Tokens, Input Tokens, Table Tokens (+1 more)
 
-### Community 151 - "api.js"
-Cohesion: 0.23
-Nodes (4): activityLogsApi, companyApi, developerApi, usersApi
+### Community 151 - "SettingsPage.jsx"
+Cohesion: 0.33
+Nodes (3): SettingsPage(), settingsSlice, companyApi
 
 ### Community 152 - "Slide Strategies"
 Cohesion: 0.20
@@ -708,9 +721,9 @@ Nodes (8): Boundaries, Intensity, Output, Persistence, Ponytail, Rules, The ladd
 Cohesion: 0.22
 Nodes (8): 1. Project Purpose & Core Domain, 2. Codebase Architecture, 3. Database Entity Schema Summary, 4. Key Files to Know, 5. Current Implementation Status, A. Frontend (React + Vite), B. Backend (NestJS + Mongoose + MongoDB), RebarOptima Project Overview
 
-### Community 156 - "react"
-Cohesion: 0.19
-Nodes (9): LoadingSpinner(), BatchHistoryPage(), getTextStyle(), DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, permissionsApi, rolesApi (+1 more)
+### Community 156 - "api.js"
+Cohesion: 0.16
+Nodes (12): ActivityLogsPage(), ProfilePage(), DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, RolesPermissionsPage(), UserManagementPage(), activityLogsApi (+4 more)
 
 ### Community 157 - "Ponytail Help"
 Cohesion: 0.25
@@ -744,9 +757,13 @@ Nodes (5): References (Knowledge Base), Routing, Slides, Subcommands, When to Us
 Cohesion: 0.40
 Nodes (4): Brand Guidelines Template, Document Structure, Extractable Fields, Usage
 
+### Community 165 - "ResultsPage.jsx"
+Cohesion: 0.50
+Nodes (3): getTextStyle(), mockLayouts, ResultsPage()
+
 ### Community 166 - "InventoryPage.jsx"
 Cohesion: 0.16
-Nodes (12): createDefaultVoucherRows(), InventoryPage(), STANDARD_DIAMETERS, initialParts, initialStock, NewBatchPage(), useTableRows(), getTextStyle() (+4 more)
+Nodes (10): LoadingSpinner(), BatchHistoryPage(), getTextStyle(), createDefaultVoucherRows(), InventoryPage(), STANDARD_DIAMETERS, LedgerPage(), OverviewPage() (+2 more)
 
 ### Community 167 - "ponytail-audit/SKILL.md"
 Cohesion: 0.40
@@ -772,37 +789,85 @@ Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 Cohesion: 0.25
 Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, warn
 
-### Community 174 - "store.js"
-Cohesion: 0.33
-Nodes (3): App(), settingsSlice, store
+### Community 174 - "SuperadminDashboard.jsx"
+Cohesion: 0.18
+Nodes (6): App(), SuperadminDashboard(), authSlice, routingSlice, store, developerApi
 
-### Community 175 - "default"
-Cohesion: 0.67
-Nodes (4): $type, $value, default, default
+### Community 175 - "$type"
+Cohesion: 0.53
+Nodes (6): $type, $value, 600, 600, 600, 600
 
-### Community 176 - "md"
+### Community 176 - "$type"
+Cohesion: 0.60
+Nodes (5): $type, $value, 700, 700, 700
+
+### Community 195 - "$type"
+Cohesion: 0.60
+Nodes (5): $type, $value, border, border, border
+
+### Community 203 - "radius"
+Cohesion: 0.60
+Nodes (5): radius, radius, radius, $type, $value
+
+### Community 204 - "50"
 Cohesion: 0.67
-Nodes (4): $type, $value, md, md
+Nodes (4): $type, $value, 50, 50
+
+### Community 205 - "800"
+Cohesion: 0.67
+Nodes (4): $type, $value, 800, 800
+
+### Community 206 - "padding-y"
+Cohesion: 0.67
+Nodes (4): padding-y, padding-y, $type, $value
+
+### Community 208 - "950"
+Cohesion: 0.67
+Nodes (3): $type, $value, 950
+
+### Community 209 - "destructive"
+Cohesion: 0.67
+Nodes (3): destructive, $type, $value
+
+### Community 210 - "destructive-foreground"
+Cohesion: 0.67
+Nodes (3): destructive-foreground, $type, $value
+
+### Community 211 - "muted"
+Cohesion: 0.67
+Nodes (3): muted, $type, $value
+
+### Community 212 - "primary-foreground"
+Cohesion: 0.67
+Nodes (3): primary-foreground, $type, $value
+
+### Community 213 - "ring"
+Cohesion: 0.67
+Nodes (3): ring, $type, $value
+
+### Community 214 - "secondary-foreground"
+Cohesion: 0.67
+Nodes (3): secondary-foreground, $type, $value
 
 ## Knowledge Gaps
-- **1130 isolated node(s):** `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES`, `AccessResult` (+1125 more)
-  These have ≤1 connection - possible missing edges or undocumented components.
+- **1130 isolated node(s):** `fs`, `path`, `fs`, `path`, `fs` (+1125 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1503 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`, `shadow`?**
+- **Why does `primitive` connect `primitive` to `color`, `design-tokens-starter.json`, `spacing`, `fontSize`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `semantic` connect `design-tokens-starter.json` to `color`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `color` connect `gray` to `primitive`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `TailwindConfigGenerator` connect `TailwindConfigGenerator` to `test_tailwind_config_gen.py`, `TestTailwindConfigGenerator`, `._base_config`, `.test_recommend_plugins`, `.test_generate_config_with_colors`, `.test_recommend_plugins_nextjs`, `.test_validate_config_valid`, `main`, `._generate_javascript`, `.test_write_config_invalid_path`, `.test_init_default_typescript`, `.test_generate_javascript_config`, `.test_full_configuration_typescript`, `.test_base_config_structure`, `.test_default_content_paths_react`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `color` connect `color` to `$type`, `destructive`, `destructive-foreground`, `muted`, `primary-foreground`, `ring`, `secondary-foreground`, `design-tokens-starter.json`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `app`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES` to the rest of the system?**
+- **What connects `fs`, `path`, `fs` to the rest of the system?**
   _1130 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
-  _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `search` be split into smaller, more focused modules?**
-  _Cohesion score 0.06693877551020408 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0653061224489796 - nodes in this community are weakly interconnected._

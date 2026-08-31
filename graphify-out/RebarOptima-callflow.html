@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2467 nodes, 3008 edges, 215 communities. Commit: a62d931</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2467 nodes, 3007 edges, 203 communities. Commit: 2697a48</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -74,10 +74,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
     <a href="#tailwind-css-utility-reference">Tailwind CSS Utility Reference</a>
     <a href="#brand-guidelines-v1-0">Brand Guidelines v1.0</a>
+    <a href="#currentuser">CurrentUser</a>
     <a href="#tailwind-css-responsive-design">Tailwind CSS Responsive Design</a>
     <a href="#typography-specifications">Typography Specifications</a>
     <a href="#logo-usage-rules">Logo Usage Rules</a>
-    <a href="#component-specifications">Component Specifications</a>
     <a href="#other">Other</a>
 </div>
 
@@ -90,7 +90,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>30 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>618 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>580 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>10 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
@@ -108,28 +108,28 @@ flowchart LR
     class TAILWIND_CSS_UTILITY_REFERENCE_1E86E088 module;
     BRAND_GUIDELINES_V1_0_A3847392("Brand Guidelines v1.0<br/><small>38 nodes</small>")
     class BRAND_GUIDELINES_V1_0_A3847392 module;
+    CURRENTUSER_C3EE84B6("CurrentUser<br/><small>33 nodes</small>")
+    class CURRENTUSER_C3EE84B6 module;
     TAILWIND_CSS_RESPONSIVE_DESIGN_A1E4AA18("Tailwind CSS Responsive Design<br/><small>33 nodes</small>")
     class TAILWIND_CSS_RESPONSIVE_DESIGN_A1E4AA18 module;
     TYPOGRAPHY_SPECIFICATIONS_19424601("Typography Specifications<br/><small>31 nodes</small>")
     class TYPOGRAPHY_SPECIFICATIONS_19424601 module;
     LOGO_USAGE_RULES_91E51D96("Logo Usage Rules<br/><small>29 nodes</small>")
     class LOGO_USAGE_RULES_91E51D96 module;
-    COMPONENT_SPECIFICATIONS_B4AF2A34("Component Specifications<br/><small>29 nodes</small>")
-    class COMPONENT_SPECIFICATIONS_B4AF2A34 module;
-    OTHER_D0941E68("Other<br/><small>755 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>789 nodes</small>")
     class OTHER_D0941E68 module;
     OTHER_D0941E68 -->|imports x29| SERVE_API_35EC8E86
-    OTHER_D0941E68 -->|references x25| BUILD_GRAPH_321CBB04
     SERVE_API_35EC8E86 -->|imports x18| OTHER_D0941E68
-    BUILD_GRAPH_321CBB04 -->|imports x10| OTHER_D0941E68
+    CURRENTUSER_C3EE84B6 -->|references x14| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|imports x14| CURRENTUSER_C3EE84B6
+    OTHER_D0941E68 -->|references x13| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|imports x12| OTHER_D0941E68
+    OTHER_D0941E68 -->|references x7| CURRENTUSER_C3EE84B6
     OTHER_D0941E68 -->|imports x7| CLI_SKILLS_9964CBB8
-    CLI_SKILLS_9964CBB8 -->|imports x7| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|method x6| EXTRACT_PIPELINE_5F350230
     TESTS_FIXTURES_B84B1DCC -->|method x6| BUILD_GRAPH_321CBB04
+    CLI_SKILLS_9964CBB8 -->|imports x5| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
-    SERVE_API_35EC8E86 -->|imports x2| CLI_SKILLS_9964CBB8
-    BUILD_GRAPH_321CBB04 -->|contains x2| EXTRACT_PIPELINE_5F350230
-    TESTS_FIXTURES_B84B1DCC -->|method| OTHER_D0941E68
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,19 +146,19 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>30</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>618</td><td><code>62, 23, 39, 7, 25, 12, 16, 21, 54, 124, 19, 4, 1, 49, 31, 59, 29, 5, 36, 61, 48, 117, 173, 53, 162, 55, 56, 63, 175, 60, 176, 195, 203, 204, 205, 206, 66, 208, 209, 210, 211, 212, 213, 214, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 201, 202, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>297</td><td><code>44, 58, 69, 89, 120, 52, 122, 136, 86, 174, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>204</td><td><code>3, 6, 10, 166, 18, 15, 156, 38, 200</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>164</td><td><code>9, 17, 24, 30, 33, 37, 46, 177, 67, 119, 14, 178, 183, 184, 185, 186, 187, 188, 189, 190, 191, 193, 194, 196, 197, 198, 199, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Component Specifications</td><td>29</td><td><code>74</code></td></tr><tr><td>Other</td><td>755</td><td><code>79, 80, 82, 83, 84, 88, 121, 11, 123, 125, 126, 127, 128, 129, 130, 131, 0, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 2, 41, 42, 155, 45, 47, 116, 51, 159, 151, 64, 164, 165, 172, 65, 179, 73, 170, 180, 181, 182, 192, 85, 111, 113, 114, 207</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>30</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>580</td><td><code>1, 4, 5, 39, 7, 62, 12, 21, 16, 54, 124, 19, 2, 23, 31, 29, 36, 48, 173, 49, 53, 162, 55, 56, 59, 60, 61, 117, 175, 176, 66, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 201, 202, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>297</td><td><code>44, 58, 69, 89, 120, 52, 122, 136, 86, 174, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>204</td><td><code>3, 6, 10, 166, 18, 15, 156, 38, 200</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>164</td><td><code>9, 17, 24, 30, 33, 37, 46, 177, 67, 119, 14, 178, 183, 184, 185, 186, 187, 188, 189, 190, 191, 193, 194, 196, 197, 198, 199, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>CurrentUser</td><td>33</td><td><code>11</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Other</td><td>789</td><td><code>74, 79, 80, 82, 83, 84, 88, 121, 63, 123, 125, 126, 127, 128, 129, 130, 131, 25, 0, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 116, 51, 159, 151, 64, 164, 165, 172, 65, 179, 73, 170, 180, 181, 182, 192, 85, 111, 113, 114, 207</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Outputs &amp; Docs -&gt; Extraction Pipeline -&gt; Graph Build -&gt; Other -&gt; Serving API -&gt; CLI &amp; Skill Installers -&gt; Analysis &amp; Clustering</div>
+    <div class="arrow-chain">Outputs &amp; Docs -&gt; Extraction Pipeline -&gt; Graph Build -&gt; CurrentUser -&gt; Analysis &amp; Clustering -&gt; CLI &amp; Skill Installers -&gt; Other</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>2467 nodes · 3008 edges · 215 communities (149 shown, 59 thin omitted)</li>
+      <li>2467 nodes · 3007 edges · 203 communities (137 shown, 59 thin omitted)</li>
       <li>Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 50 edges (avg confidence: 0.83)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `TailwindConfigGenerator` - 58 edges</li>
@@ -516,20 +516,12 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 618 nodes and 798 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around design, agents, skills, system, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 580 nodes and 720 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (618 nodes, 798 edges)
-    subgraph build_graph_src_batches_batches_controller_ts_15d02307["src/batches/batches.controller.ts"]
-        backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_8f94094a("batches.controller.ts")
-        backend_src_batches_batches_controller_batchesco_309045c6("constructor()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_ac0f1eb0("optimizeBatch()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_c52c26f7("commitBatch()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_26e1e091("getBatchHistory()<br/><small>src/batches/batches.controller.ts</small>")
-    end
+    %% Section: Graph Build (580 nodes, 720 edges)
     subgraph build_graph_src_users_users_service_ts_27864f12["src/users/users.service.ts"]
         backend_src_users_users_service_usersservice_bccccc70("UsersService<br/><small>src/users/users.service.ts</small>")
         backend_src_users_users_service_usersservice_fin_4a6dace3("findByEmail()<br/><small>src/users/users.service.ts</small>")
@@ -537,50 +529,59 @@ flowchart LR
         backend_src_users_users_service_usersservice_cre_8351475e("create()<br/><small>src/users/users.service.ts</small>")
         backend_src_users_users_service_usersservice_con_f8611569("constructor()<br/><small>src/users/users.service.ts</small>")
     end
+    subgraph build_graph_src_batches_batches_service_ts_eda289fe["src/batches/batches.service.ts"]
+        backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
+        backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_7b0e3880("constructor()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_4bb7e713("optimizeBatch()<br/><small>src/batches/batches.service.ts</small>")
+    end
     subgraph build_graph_src_auth_jwt_auth_guard_ts_2743e0c7["src/auth/jwt-auth.guard.ts"]
         backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d("JwtAuthGuard<br/><small>src/auth/jwt-auth.guard.ts</small>")
         backend_src_auth_jwt_auth_guard_jwtauthguard_con_a56f60d3("constructor()<br/><small>src/auth/jwt-auth.guard.ts</small>")
         backend_src_auth_jwt_auth_guard_jwtauthguard_can_5879abfa("canActivate()<br/><small>src/auth/jwt-auth.guard.ts</small>")
     end
-    backend_src_app_module_97b3bc74("app.module.ts")
+    backend_src_auth_auth_controller_authcontroller_abc12de8("AuthController<br/><small>src/auth/auth.controller.ts</small>")
     backend_src_auth_auth_module_0356b543("auth.module.ts")
+    backend_src_batches_batches_controller_8f94094a("batches.controller.ts")
     backend_src_batches_batches_module_cc7c447b("batches.module.ts")
+    backend_src_inventory_inventory_controller_b442a5e3("inventory.controller.ts")
     backend_src_inventory_inventory_module_66f489cd("inventory.module.ts")
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_7b0e3880
+    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_4bb7e713
     backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d -->|method| backend_src_auth_jwt_auth_guard_jwtauthguard_con_a56f60d3
     backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d -->|method| backend_src_auth_jwt_auth_guard_jwtauthguard_can_5879abfa
     backend_src_users_users_service_usersservice_bccccc70 -->|method| backend_src_users_users_service_usersservice_fin_4a6dace3
     backend_src_users_users_service_usersservice_bccccc70 -->|method| backend_src_users_users_service_usersservice_fin_ba38a588
     backend_src_users_users_service_usersservice_bccccc70 -->|method| backend_src_users_users_service_usersservice_cre_8351475e
     backend_src_users_users_service_usersservice_bccccc70 -->|method| backend_src_users_users_service_usersservice_con_f8611569
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_309045c6
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_ac0f1eb0
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_26e1e091
-    backend_src_batches_batches_controller_8f94094a -->|imports| backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d
-    backend_src_app_module_97b3bc74 -->|imports| backend_src_auth_auth_module_0356b543
-    backend_src_app_module_97b3bc74 -->|imports| backend_src_inventory_inventory_module_66f489cd
-    backend_src_app_module_97b3bc74 -->|imports| backend_src_batches_batches_module_cc7c447b
-    backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_batches_batches_controller_batchesco_4f4aa609
+    backend_src_inventory_inventory_module_66f489cd -->|imports| backend_src_inventory_inventory_controller_b442a5e3
+    backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_batches_batches_service_batchesservi_961f7b14
+    backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_batches_batches_service_4ee6c1f9
     backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_batches_batches_controller_8f94094a
     backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_inventory_inventory_module_66f489cd
-    %% Omitted for readability: 600 nodes, 0 edges
-    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
-    class backend_src_batches_batches_controller_8f94094a module;
-    class backend_src_batches_batches_controller_batchesco_309045c6 function;
-    class backend_src_batches_batches_controller_batchesco_ac0f1eb0 function;
-    class backend_src_batches_batches_controller_batchesco_c52c26f7 function;
-    class backend_src_batches_batches_controller_batchesco_26e1e091 function;
+    backend_src_batches_batches_controller_8f94094a -->|imports| backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d
+    backend_src_batches_batches_controller_8f94094a -->|imports| backend_src_batches_batches_service_batchesservi_961f7b14
+    backend_src_batches_batches_controller_8f94094a -->|imports| backend_src_batches_batches_service_4ee6c1f9
+    backend_src_inventory_inventory_controller_b442a5e3 -->|imports| backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d
+    backend_src_auth_auth_module_0356b543 -->|imports| backend_src_auth_auth_controller_authcontroller_abc12de8
+    %% Omitted for readability: 562 nodes, 0 edges
     class backend_src_users_users_service_usersservice_bccccc70 async;
     class backend_src_users_users_service_usersservice_fin_4a6dace3 function;
     class backend_src_users_users_service_usersservice_fin_ba38a588 function;
     class backend_src_users_users_service_usersservice_cre_8351475e function;
     class backend_src_users_users_service_usersservice_con_f8611569 function;
+    class backend_src_batches_batches_service_4ee6c1f9 module;
+    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
+    class backend_src_batches_batches_service_batchesservi_7b0e3880 function;
+    class backend_src_batches_batches_service_batchesservi_4bb7e713 function;
     class backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d klass;
     class backend_src_auth_jwt_auth_guard_jwtauthguard_con_a56f60d3 function;
     class backend_src_auth_jwt_auth_guard_jwtauthguard_can_5879abfa function;
-    class backend_src_app_module_97b3bc74 module;
+    class backend_src_auth_auth_controller_authcontroller_abc12de8 klass;
     class backend_src_auth_auth_module_0356b543 module;
+    class backend_src_batches_batches_controller_8f94094a module;
     class backend_src_batches_batches_module_cc7c447b module;
+    class backend_src_inventory_inventory_controller_b442a5e3 module;
     class backend_src_inventory_inventory_module_66f489cd module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -605,243 +606,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>AppController</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>app.controller.spec.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.spec.ts</small><br><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
-  <td><code>constructor()</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small><br><code>getHello()</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
-  <td>AppController node in backend/src/app.controller.ts.</td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>AppModule</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>app.e2e-spec.ts</code><br><small style="color:var(--muted)">backend/test/app.e2e-spec.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>AppModule node in backend/src/app.module.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>AppService</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>app.controller.spec.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.spec.ts</small><br><code>app.controller.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small><br><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
-  <td><code>getHello()</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small></td>
-  <td>AppService node in backend/src/app.service.ts.</td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>AuthController</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>auth.module.ts</code><br><small style="color:var(--muted)">src/auth/auth.module.ts</small></td>
-  <td><code>constructor()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small><br><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small><br><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
-  <td>AuthController node in src/auth/auth.controller.ts.</td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>AuthModule</code><br><small style="color:var(--muted)">src/auth/auth.module.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>AuthModule node in src/auth/auth.module.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>auth.controller.ts</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small><br><code>auth.module.ts</code><br><small style="color:var(--muted)">src/auth/auth.module.ts</small></td>
-  <td><code>constructor()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>generateTokens()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br>+1 more</td>
-  <td>AuthService node in src/auth/auth.service.ts.</td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>BatchesModule</code><br><small style="color:var(--muted)">src/batches/batches.module.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>BatchesModule node in src/batches/batches.module.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>CompaniesModule</code><br><small style="color:var(--muted)">src/companies/companies.module.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small><br><code>auth.module.ts</code><br><small style="color:var(--muted)">src/auth/auth.module.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>CompaniesModule node in src/companies/companies.module.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>CompaniesService</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
-  <td><span class="tag tag-async">Async</span></td>
-  <td><code>auth.service.ts</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>companies.module.ts</code><br><small style="color:var(--muted)">src/companies/companies.module.ts</small></td>
-  <td><code>constructor()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small><br><code>create()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small><br><code>findById()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
-  <td>CompaniesService node in src/companies/companies.service.ts.</td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>Company</code><br><small style="color:var(--muted)">src/companies/company.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>companies.module.ts</code><br><small style="color:var(--muted)">src/companies/companies.module.ts</small><br><code>companies.service.ts</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Company node in src/companies/company.schema.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>.constructor()</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AppController</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.constructor() node in backend/src/app.controller.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>.getHello()</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AppController</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
-  <td><code>getHello()</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small></td>
-  <td>.getHello() node in backend/src/app.controller.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>.getHello()</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AppService</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small><br><code>getHello()</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.getHello() node in backend/src/app.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthController</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.constructor() node in src/auth/auth.controller.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>.signin()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthController</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
-  <td><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
-  <td>.signin() node in src/auth/auth.controller.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>.signup()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthController</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
-  <td><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
-  <td>.signup() node in src/auth/auth.controller.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.constructor() node in src/auth/auth.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>.generateTokens()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.generateTokens() node in src/auth/auth.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>.signin()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
-  <td><code>findByEmail()</code><br><small style="color:var(--muted)">src/users/users.service.ts</small><br><code>findById()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small><br><code>generateTokens()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
-  <td>.signin() node in src/auth/auth.service.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>.signup()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.controller.ts</small></td>
-  <td><code>create()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small><br><code>create()</code><br><small style="color:var(--muted)">src/users/users.service.ts</small><br><code>findByEmail()</code><br><small style="color:var(--muted)">src/users/users.service.ts</small><br>+1 more</td>
-  <td>.signup() node in src/auth/auth.service.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>CompaniesService</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.constructor() node in src/companies/companies.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>.create()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>CompaniesService</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small><br><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.create() node in src/companies/companies.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>.findById()</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small></td>
+  <td><code>50</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>CompaniesService</code><br><small style="color:var(--muted)">src/companies/companies.service.ts</small><br><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.findById() node in src/companies/companies.service.ts.</td>
+  <td>50 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>.create()</code><br><small style="color:var(--muted)">src/users/users.service.ts</small></td>
+  <td><code>500</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>UsersService</code><br><small style="color:var(--muted)">src/users/users.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.create() node in src/users/users.service.ts.</td>
+  <td>500 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>.findByEmail()</code><br><small style="color:var(--muted)">src/users/users.service.ts</small></td>
+  <td><code>600</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>signin()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>signup()</code><br><small style="color:var(--muted)">src/auth/auth.service.ts</small><br><code>UsersService</code><br><small style="color:var(--muted)">src/users/users.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.findByEmail() node in src/users/users.service.ts.</td>
+  <td>600 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>app.controller.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>app.controller.spec.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.spec.ts</small><br><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
-  <td><code>app.service.ts</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small><br><code>AppService</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small></td>
-  <td>Module file in backend/src/app.controller.ts.</td>
+  <td><code>700</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>700 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>app.controller.spec.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.spec.ts</small></td>
-  <td><span class="tag tag-func">Test</span></td>
+  <td><code>800</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>app.controller.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small><br><code>app.service.ts</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small><br><code>AppController</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small><br>+1 more</td>
-  <td>Module file in backend/src/app.controller.spec.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>800 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>Controller</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>blue</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Controller node in project.</td>
+  <td>blue node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>Get</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>gray</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Get node in project.</td>
+  <td>gray node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>app.module.ts</code><br><small style="color:var(--muted)">backend/src/app.module.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>app.e2e-spec.ts</code><br><small style="color:var(--muted)">backend/test/app.e2e-spec.ts</small></td>
-  <td><code>app.controller.ts</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small><br><code>app.service.ts</code><br><small style="color:var(--muted)">backend/src/app.service.ts</small><br><code>AppController</code><br><small style="color:var(--muted)">backend/src/app.controller.ts</small><br>+11 more</td>
-  <td>Module file in backend/src/app.module.ts.</td>
+  <td><code>green</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>green node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 </table>
 
@@ -857,12 +858,12 @@ flowchart LR
 <tr><td><code>package.json</code></td><td>20 nodes</td></tr>
 <tr><td><code>brand/references/asset-organization.md</code></td><td>19 nodes</td></tr>
 <tr><td><code>ui-styling/scripts/shadcn_add.py</code></td><td>12 nodes</td></tr>
-<tr><td><code>src/batches/batches.controller.ts</code></td><td>10 nodes</td></tr>
+<tr><td><code>src/batches/optimizer.engine.ts</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x482, imports x100, references x88, imports x45. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x482, imports x90, references x51, imports x41. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2070,12 +2071,12 @@ flowchart LR
 
 <!-- ====== 8. Serving API ====== -->
 <h2 id="serve-api">8. Serving API</h2>
-<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 204 nodes and 324 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 204 nodes and 323 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (204 nodes, 324 edges)
+    %% Section: Serving API (204 nodes, 323 edges)
     subgraph serve_api_ui_ux_pro_max_scripts_design_system_py_ea0472c3["ui-ux-pro-max/scripts/design_system.py"]
         agents_skills_ui_ux_pro_max_scripts_design_syste_a74c6356("DesignSystemGenerator<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
         agents_skills_ui_ux_pro_max_scripts_design_syste_80317230("generate()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
@@ -2418,7 +2419,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x89, calls x83, explains x74, imports x41. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x89, calls x83, explains x74, imports x40. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -3452,8 +3453,357 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 12. Tailwind CSS Responsive Design ====== -->
-<h2 id="tailwind-css-responsive-design">12. Tailwind CSS Responsive Design</h2>
+<!-- ====== 12. CurrentUser ====== -->
+<h2 id="currentuser">12. CurrentUser</h2>
+<p>CurrentUser groups implementation around backend, inventory, inventorycontrollerts, inventoryservicets, mostly in src/inventory/inventory.controller.ts, src/inventory/inventory.service.ts, src/batches/batches.service.ts. This section covers 33 nodes and 55 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CurrentUser (33 nodes, 55 edges)
+    subgraph currentuser_src_inventory_inventory_controller_t_9656bcf5["src/inventory/inventory.controller.ts"]
+        backend_src_inventory_inventory_controller_inven_1a33e367("InventoryController<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_cefb14d8("constructor()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_b9e9de2a("getInventory()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_67405f62("inwardEntry()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_4ee6fb47("getScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_9f307d0d("updateScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_0c6f629a("getLedger()<br/><small>src/inventory/inventory.controller.ts</small>")
+        backend_src_inventory_inventory_controller_inven_39522dd1("deleteStockItem()<br/><small>src/inventory/inventory.controller.ts</small>")
+    end
+    subgraph currentuser_src_inventory_inventory_service_ts_735bc87e["src/inventory/inventory.service.ts"]
+        backend_src_inventory_inventory_service_inventor_9c4e3c1a("InventoryService<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_440c1b98("inwardEntry()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_b1e6121d("updateScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_43ceebdf("getScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_9068537b("getLedger()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_45e75a8f("deleteStockItem()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_1819b19c("getSingleBarWeight()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_6d6b0870("getInventory()<br/><small>src/inventory/inventory.service.ts</small>")
+    end
+    subgraph currentuser_External_generated_c5c04bc7["External / generated"]
+        backend_src_inventory_inventory_controller_ts_bo_4cc6653d("Body")
+        backend_src_inventory_inventory_controller_ts_co_be818cc4("Controller")
+    end
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_cefb14d8
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_b9e9de2a
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_67405f62
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_4ee6fb47
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_9f307d0d
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_0c6f629a
+    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_39522dd1
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_43ceebdf
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_b1e6121d
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_9068537b
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_45e75a8f
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_1819b19c
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_6d6b0870
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_440c1b98
+    backend_src_inventory_inventory_service_inventor_440c1b98 -->|calls| backend_src_inventory_inventory_service_inventor_1819b19c
+    backend_src_inventory_inventory_service_inventor_b1e6121d -->|calls| backend_src_inventory_inventory_service_inventor_43ceebdf
+    %% Omitted for readability: 15 nodes, 0 edges
+    class backend_src_inventory_inventory_controller_inven_1a33e367 klass;
+    class backend_src_inventory_inventory_controller_inven_cefb14d8 function;
+    class backend_src_inventory_inventory_controller_inven_b9e9de2a function;
+    class backend_src_inventory_inventory_controller_inven_67405f62 function;
+    class backend_src_inventory_inventory_controller_inven_4ee6fb47 function;
+    class backend_src_inventory_inventory_controller_inven_9f307d0d function;
+    class backend_src_inventory_inventory_controller_inven_0c6f629a function;
+    class backend_src_inventory_inventory_controller_inven_39522dd1 function;
+    class backend_src_inventory_inventory_service_inventor_9c4e3c1a klass;
+    class backend_src_inventory_inventory_service_inventor_440c1b98 function;
+    class backend_src_inventory_inventory_service_inventor_b1e6121d function;
+    class backend_src_inventory_inventory_service_inventor_43ceebdf function;
+    class backend_src_inventory_inventory_service_inventor_9068537b function;
+    class backend_src_inventory_inventory_service_inventor_45e75a8f function;
+    class backend_src_inventory_inventory_service_inventor_1819b19c function;
+    class backend_src_inventory_inventory_service_inventor_6d6b0870 function;
+    class backend_src_inventory_inventory_controller_ts_bo_4cc6653d klass;
+    class backend_src_inventory_inventory_controller_ts_co_be818cc4 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>inventory.module.ts</code><br><small style="color:var(--muted)">src/inventory/inventory.module.ts</small></td>
+  <td><code>constructor()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br><code>deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br><code>getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br>+4 more</td>
+  <td>InventoryController node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>batches.service.ts</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>inventory.controller.ts</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br><code>inventory.module.ts</code><br><small style="color:var(--muted)">src/inventory/inventory.module.ts</small></td>
+  <td><code>constructor()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br>+5 more</td>
+  <td>InventoryService node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>.getBatchHistory()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesController</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><code>getBatchHistory()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td>.getBatchHistory() node in src/batches/batches.controller.ts.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>.getBatchScrapRecords()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesController</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><code>getBatchScrapRecords()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td>.getBatchScrapRecords() node in src/batches/batches.controller.ts.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>.getDashboardStats()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesController</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><code>getDashboardStats()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td>.getDashboardStats() node in src/batches/batches.controller.ts.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>.commitBatch()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesService</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>commitBatch()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><code>getScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>getSingleBarWeight()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.commitBatch() node in src/batches/batches.service.ts.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>.getBatchHistory()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesService</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>getBatchHistory()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getBatchHistory() node in src/batches/batches.service.ts.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>.getBatchScrapRecords()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesService</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>getBatchScrapRecords()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><code>getScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>getSingleBarWeight()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.getBatchScrapRecords() node in src/batches/batches.service.ts.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>.getDashboardStats()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BatchesService</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>getDashboardStats()</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small></td>
+  <td><code>getSingleBarWeight()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.getDashboardStats() node in src/batches/batches.service.ts.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.constructor() node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.getInventory() node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.getLedger()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>getLedger()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.getLedger() node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>.getScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>getScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.getScrapRules() node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>.inwardEntry()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>inwardEntry()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.inwardEntry() node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>.updateScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryController</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>updateScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.updateScrapRules() node in src/inventory/inventory.controller.ts.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>deleteStockItem()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>getInventory()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getInventory() node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>.getLedger()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>getLedger()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small><br><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getLedger() node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>.getScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>commitBatch()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>deleteBatch()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>getBatchScrapRecords()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br>+3 more</td>
+  <td>No direct outbound edge</td>
+  <td>.getScrapRules() node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>.getSingleBarWeight()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>commitBatch()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>deleteBatch()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br><code>getBatchScrapRecords()</code><br><small style="color:var(--muted)">src/batches/batches.service.ts</small><br>+3 more</td>
+  <td>No direct outbound edge</td>
+  <td>.getSingleBarWeight() node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>.inwardEntry()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>inwardEntry()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>getSingleBarWeight()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.inwardEntry() node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>.updateScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InventoryService</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small><br><code>updateScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td><code>getScrapRules()</code><br><small style="color:var(--muted)">src/inventory/inventory.service.ts</small></td>
+  <td>.updateScrapRules() node in src/inventory/inventory.service.ts.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>CurrentUser</code><br><small style="color:var(--muted)">src/auth/user.decorator.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>batches.controller.ts</code><br><small style="color:var(--muted)">src/batches/batches.controller.ts</small><br><code>inventory.controller.ts</code><br><small style="color:var(--muted)">src/inventory/inventory.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>CurrentUser node in src/auth/user.decorator.ts.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Get</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Get node in project.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Body</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Body node in project.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Controller</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Controller node in project.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Delete</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Delete node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>Get</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Get node in project.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Param</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Param node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/inventory/inventory.controller.ts</code></td><td>8 nodes</td></tr>
+<tr><td><code>src/inventory/inventory.service.ts</code></td><td>8 nodes</td></tr>
+<tr><td><code>src/batches/batches.service.ts</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/batches/batches.controller.ts</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/auth/user.decorator.ts</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x25, method x14, calls x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 13. Tailwind CSS Responsive Design ====== -->
+<h2 id="tailwind-css-responsive-design">13. Tailwind CSS Responsive Design</h2>
 <p>Tailwind CSS Responsive Design groups implementation around tailwind, responsivemd, agents, skills, mostly in ui-styling/references/tailwind-responsive.md. This section covers 33 nodes and 32 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3792,8 +4142,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 13. Typography Specifications ====== -->
-<h2 id="typography-specifications">13. Typography Specifications</h2>
+<!-- ====== 14. Typography Specifications ====== -->
+<h2 id="typography-specifications">14. Typography Specifications</h2>
 <p>Typography Specifications groups implementation around typography, specificationsmd, agents, skills, mostly in brand/references/typography-specifications.md. This section covers 31 nodes and 30 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -4132,8 +4482,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 14. Logo Usage Rules ====== -->
-<h2 id="logo-usage-rules">14. Logo Usage Rules</h2>
+<!-- ====== 15. Logo Usage Rules ====== -->
+<h2 id="logo-usage-rules">15. Logo Usage Rules</h2>
 <p>Logo Usage Rules groups implementation around logo, usage, rulesmd, agents, mostly in brand/references/logo-usage-rules.md. This section covers 29 nodes and 28 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -4464,68 +4814,70 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 15. Component Specifications ====== -->
-<h2 id="component-specifications">15. Component Specifications</h2>
-<p>Component Specifications groups implementation around component, specsmd, agents, skills, mostly in design-system/references/component-specs.md. This section covers 29 nodes and 28 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around agents, skills, references, design, mostly in design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md. This section covers 789 nodes and 810 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Component Specifications (29 nodes, 28 edges)
-    agents_skills_design_system_references_component_46d42605("Component Specifications<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_90833009("Button<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_01119488("Input<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_50e315f0("Card<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_6ac1a47e("Table<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_71a5fdab("Alert<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_46f222cd("Badge<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_7bd6b5f9("Dialog<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_2cbaf346("Anatomy<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_5b2536c1("Anatomy<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_b16e02d2("Anatomy<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_99ce70b5("Anatomy<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_23e2375c("Anatomy<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_16a53963("Cell Alignment<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_4bdded8e("Row States<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_cf61e690("Sizes<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_cb1c5220("Sizes<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_9bf01172("Sizes<br/><small>design-system/references/component-specs.md</small>")
-    agents_skills_design_system_references_component_71a5fdab -->|contains| agents_skills_design_system_references_component_b16e02d2
-    agents_skills_design_system_references_component_46f222cd -->|contains| agents_skills_design_system_references_component_cb1c5220
-    agents_skills_design_system_references_component_90833009 -->|contains| agents_skills_design_system_references_component_cf61e690
-    agents_skills_design_system_references_component_90833009 -->|contains| agents_skills_design_system_references_component_2cbaf346
-    agents_skills_design_system_references_component_50e315f0 -->|contains| agents_skills_design_system_references_component_5b2536c1
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_46f222cd
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_71a5fdab
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_7bd6b5f9
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_6ac1a47e
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_90833009
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_01119488
-    agents_skills_design_system_references_component_46d42605 -->|contains| agents_skills_design_system_references_component_50e315f0
-    agents_skills_design_system_references_component_7bd6b5f9 -->|contains| agents_skills_design_system_references_component_9bf01172
-    agents_skills_design_system_references_component_7bd6b5f9 -->|contains| agents_skills_design_system_references_component_99ce70b5
-    agents_skills_design_system_references_component_01119488 -->|contains| agents_skills_design_system_references_component_23e2375c
-    agents_skills_design_system_references_component_6ac1a47e -->|contains| agents_skills_design_system_references_component_4bdded8e
-    agents_skills_design_system_references_component_6ac1a47e -->|contains| agents_skills_design_system_references_component_16a53963
-    %% Omitted for readability: 11 nodes, 0 edges
-    class agents_skills_design_system_references_component_46d42605 concept;
-    class agents_skills_design_system_references_component_90833009 concept;
-    class agents_skills_design_system_references_component_01119488 concept;
-    class agents_skills_design_system_references_component_50e315f0 concept;
-    class agents_skills_design_system_references_component_6ac1a47e concept;
-    class agents_skills_design_system_references_component_71a5fdab concept;
-    class agents_skills_design_system_references_component_46f222cd concept;
-    class agents_skills_design_system_references_component_7bd6b5f9 concept;
-    class agents_skills_design_system_references_component_2cbaf346 concept;
-    class agents_skills_design_system_references_component_5b2536c1 concept;
-    class agents_skills_design_system_references_component_b16e02d2 concept;
-    class agents_skills_design_system_references_component_99ce70b5 concept;
-    class agents_skills_design_system_references_component_23e2375c concept;
-    class agents_skills_design_system_references_component_16a53963 concept;
-    class agents_skills_design_system_references_component_4bdded8e concept;
-    class agents_skills_design_system_references_component_cf61e690 concept;
-    class agents_skills_design_system_references_component_cb1c5220 concept;
-    class agents_skills_design_system_references_component_9bf01172 concept;
+    %% Section: Other (789 nodes, 810 edges)
+    subgraph other_src_batches_batches_controller_ts_0ac29545["src/batches/batches.controller.ts"]
+        backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_309045c6("constructor()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_ac0f1eb0("optimizeBatch()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_c52c26f7("commitBatch()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_358428a0("updateBatch()<br/><small>src/batches/batches.controller.ts</small>")
+        backend_src_batches_batches_controller_batchesco_206b4897("deleteBatch()<br/><small>src/batches/batches.controller.ts</small>")
+    end
+    subgraph other_ui_ux_pro_max_scripts_core_py_52238a97["ui-ux-pro-max/scripts/core.py"]
+        agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933("BM25<br/><small>ui-ux-pro-max/scripts/core.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_core_bm25_in_1a9b4d6b("__init__()<br/><small>ui-ux-pro-max/scripts/core.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3("tokenize()<br/><small>ui-ux-pro-max/scripts/core.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_core_bm25_fi_3503a676("fit()<br/><small>ui-ux-pro-max/scripts/core.py</small>")
+        agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583("score()<br/><small>ui-ux-pro-max/scripts/core.py</small>")
+    end
+    subgraph other_backend_src_app_controller_ts_260c24ab["backend/src/app.controller.ts"]
+        backend_src_app_controller_appcontroller_e9dae26a("AppController<br/><small>backend/src/app.controller.ts</small>")
+        backend_src_app_controller_appcontroller_constru_aeaa0aad("constructor()<br/><small>backend/src/app.controller.ts</small>")
+    end
+    backend_src_app_module_97b3bc74("app.module.ts")
+    agents_skills_brand_scripts_inject_brand_context_67503864("main()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
+    agents_skills_brand_scripts_validate_asset_valid_ffb3720a("validateAsset()<br/><small>brand/scripts/validate-asset.cjs</small>")
+    agents_skills_design_system_scripts_validate_tok_fe6f67d9("main()<br/><small>design-system/scripts/validate-tokens.cjs</small>")
+    frontend_src_app_7da8908b("App.jsx")
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_309045c6
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_ac0f1eb0
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_358428a0
+    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_206b4897
+    agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 -->|method| agents_skills_ui_ux_pro_max_scripts_core_bm25_in_1a9b4d6b
+    agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 -->|method| agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3
+    agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 -->|method| agents_skills_ui_ux_pro_max_scripts_core_bm25_fi_3503a676
+    agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 -->|method| agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583
+    backend_src_app_controller_appcontroller_e9dae26a -->|method| backend_src_app_controller_appcontroller_constru_aeaa0aad
+    agents_skills_ui_ux_pro_max_scripts_core_bm25_fi_3503a676 -->|calls| agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3
+    agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583 -->|calls| agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3
+    backend_src_app_module_97b3bc74 -->|imports| backend_src_app_controller_appcontroller_e9dae26a
+    %% Omitted for readability: 771 nodes, 0 edges
+    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
+    class backend_src_batches_batches_controller_batchesco_309045c6 function;
+    class backend_src_batches_batches_controller_batchesco_ac0f1eb0 function;
+    class backend_src_batches_batches_controller_batchesco_c52c26f7 function;
+    class backend_src_batches_batches_controller_batchesco_358428a0 function;
+    class backend_src_batches_batches_controller_batchesco_206b4897 function;
+    class agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 klass;
+    class agents_skills_ui_ux_pro_max_scripts_core_bm25_in_1a9b4d6b function;
+    class agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3 function;
+    class agents_skills_ui_ux_pro_max_scripts_core_bm25_fi_3503a676 function;
+    class agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583 function;
+    class backend_src_app_controller_appcontroller_e9dae26a klass;
+    class backend_src_app_controller_appcontroller_constru_aeaa0aad function;
+    class backend_src_app_module_97b3bc74 module;
+    class agents_skills_brand_scripts_inject_brand_context_67503864 function;
+    class agents_skills_brand_scripts_validate_asset_valid_ffb3720a async;
+    class agents_skills_design_system_scripts_validate_tok_fe6f67d9 function;
+    class frontend_src_app_7da8908b ui;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -4779,6 +5131,14 @@ flowchart LR
   <td>No direct outbound edge</td>
   <td>Documentation node describing Variants.</td>
 </tr>
+<tr>
+  <td>30</td>
+  <td><code>shadcn-accessibility.md</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing shadcn-accessibility.md.</td>
+</tr>
 </table>
 
 <div class="grid">
@@ -4787,358 +5147,18 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>design-system/references/component-specs.md</code></td><td>29 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x28. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 16. Other ====== -->
-<h2 id="other">16. Other</h2>
-<p>Other groups implementation around agents, skills, references, design, mostly in ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md, design/references/logo-prompt-engineering.md. This section covers 755 nodes and 783 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Other (755 nodes, 783 edges)
-    subgraph other_src_inventory_inventory_controller_ts_3c6b9196["src/inventory/inventory.controller.ts"]
-        backend_src_inventory_inventory_controller_inven_1a33e367("InventoryController<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_cefb14d8("constructor()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_b9e9de2a("getInventory()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_67405f62("inwardEntry()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_4ee6fb47("getScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_9f307d0d("updateScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_0c6f629a("getLedger()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_39522dd1("deleteStockItem()<br/><small>src/inventory/inventory.controller.ts</small>")
-    end
-    subgraph other_src_inventory_inventory_service_ts_80796eac["src/inventory/inventory.service.ts"]
-        backend_src_inventory_inventory_service_inventor_9c4e3c1a("InventoryService<br/><small>src/inventory/inventory.service.ts</small>")
-        backend_src_inventory_inventory_service_inventor_43ceebdf("getScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
-        backend_src_inventory_inventory_service_inventor_b1e6121d("updateScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
-        backend_src_inventory_inventory_service_inventor_9068537b("getLedger()<br/><small>src/inventory/inventory.service.ts</small>")
-        backend_src_inventory_inventory_service_inventor_45e75a8f("deleteStockItem()<br/><small>src/inventory/inventory.service.ts</small>")
-    end
-    agents_skills_brand_scripts_inject_brand_context_67503864("main()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
-    agents_skills_brand_scripts_validate_asset_valid_ffb3720a("validateAsset()<br/><small>brand/scripts/validate-asset.cjs</small>")
-    agents_skills_design_system_scripts_validate_tok_fe6f67d9("main()<br/><small>design-system/scripts/validate-tokens.cjs</small>")
-    frontend_src_app_7da8908b("App.jsx")
-    backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_cefb14d8
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_b9e9de2a
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_67405f62
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_4ee6fb47
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_9f307d0d
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_0c6f629a
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_39522dd1
-    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_43ceebdf
-    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_b1e6121d
-    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_9068537b
-    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_45e75a8f
-    backend_src_inventory_inventory_service_inventor_b1e6121d -->|calls| backend_src_inventory_inventory_service_inventor_43ceebdf
-    backend_src_batches_batches_service_4ee6c1f9 -->|imports| backend_src_inventory_inventory_service_inventor_9c4e3c1a
-    %% Omitted for readability: 737 nodes, 0 edges
-    class backend_src_inventory_inventory_controller_inven_1a33e367 klass;
-    class backend_src_inventory_inventory_controller_inven_cefb14d8 function;
-    class backend_src_inventory_inventory_controller_inven_b9e9de2a function;
-    class backend_src_inventory_inventory_controller_inven_67405f62 function;
-    class backend_src_inventory_inventory_controller_inven_4ee6fb47 function;
-    class backend_src_inventory_inventory_controller_inven_9f307d0d function;
-    class backend_src_inventory_inventory_controller_inven_0c6f629a function;
-    class backend_src_inventory_inventory_controller_inven_39522dd1 function;
-    class backend_src_inventory_inventory_service_inventor_9c4e3c1a klass;
-    class backend_src_inventory_inventory_service_inventor_43ceebdf function;
-    class backend_src_inventory_inventory_service_inventor_b1e6121d function;
-    class backend_src_inventory_inventory_service_inventor_9068537b function;
-    class backend_src_inventory_inventory_service_inventor_45e75a8f function;
-    class agents_skills_brand_scripts_inject_brand_context_67503864 function;
-    class agents_skills_brand_scripts_validate_asset_valid_ffb3720a async;
-    class agents_skills_design_system_scripts_validate_tok_fe6f67d9 function;
-    class frontend_src_app_7da8908b ui;
-    class backend_src_batches_batches_service_4ee6c1f9 module;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>shadcn-accessibility.md</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing shadcn-accessibility.md.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>Accordion</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Accordion.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>Alert</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Alert.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>ARIA Labels</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing ARIA Labels.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>Checkbox and Radio</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Checkbox and Radio.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>Color Contrast</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Color Contrast.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>Command Palette Navigation</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Command Palette Navigation.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>Component-Specific Patterns</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Component-Specific Patterns.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>Dialog/Modal Navigation</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Dialog/Modal Navigation.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>Dropdown/Menu Navigation</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Dropdown/Menu Navigation.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>Error Handling</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Error Handling.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>Fieldset and Legend</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Fieldset and Legend.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>Focus Indicators</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Focus Indicators.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>Focus Management</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Focus Management.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>Form Accessibility</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Form Accessibility.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>Foundation: Radix UI Primitives</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Foundation: Radix UI Primitives.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>Keyboard Navigation</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Keyboard Navigation.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>Labels and Descriptions</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Labels and Descriptions.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>Live Regions</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Live Regions.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>Motion and Animation</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Motion and Animation.</td>
-</tr>
-<tr>
-  <td>21</td>
-  <td><code>Required Fields</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Required Fields.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>Screen Reader Only Text</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Screen Reader Only Text.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>Screen Reader Support</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Screen Reader Support.</td>
-</tr>
-<tr>
-  <td>24</td>
-  <td><code>Select</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Select.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>Semantic HTML</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Semantic HTML.</td>
-</tr>
-<tr>
-  <td>26</td>
-  <td><code>shadcn/ui Accessibility Patterns</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing shadcn/ui Accessibility Patterns.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>Tabs</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Tabs.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>Testing Checklist</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Testing Checklist.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>Tools</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Tools.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>approval-checklist.md</code><br><small style="color:var(--muted)">brand/references/approval-checklist.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing approval-checklist.md.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>ui-styling/references/shadcn-accessibility.md</code></td><td>29 nodes</td></tr>
+<tr><td><code>ui-styling/references/shadcn-accessibility.md</code></td><td>29 nodes</td></tr>
 <tr><td><code>brand/references/approval-checklist.md</code></td><td>26 nodes</td></tr>
 <tr><td><code>design/references/logo-prompt-engineering.md</code></td><td>26 nodes</td></tr>
 <tr><td><code>brand/references/color-palette-management.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>design-system/references/states-and-variants.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>design/references/cip-deliverable-guide.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>ui-styling/references/tailwind-customization.md</code></td><td>23 nodes</td></tr>
-<tr><td><code>ui-styling/references/shadcn-theming.md</code></td><td>20 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x635, calls x47, imports x27, imports x21. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x659, calls x45, imports x32, imports x24. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5150,16 +5170,16 @@ flowchart LR
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><td>Nodes</td><td>2467</td></tr>
-      <tr><td>Edges</td><td>3008</td></tr>
+      <tr><td>Edges</td><td>3007</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>215</td></tr>
+      <tr><td>Communities</td><td>203</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>2958</td></tr>
+      <tr><td>EXTRACTED</td><td>2957</td></tr>
       <tr><td>INFERRED</td><td>50</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -5168,7 +5188,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-08-31 19:53 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-08-31 20:02 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

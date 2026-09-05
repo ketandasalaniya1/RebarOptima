@@ -23,7 +23,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "inventorycontroller",
       "source_file": "backend/src/inventory/inventory.controller.ts",
@@ -36,7 +36,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "inventoryservice",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -106,32 +106,6 @@
       "norm_label": "designsystemgenerator",
       "source_file": ".agents/skills/ui-ux-pro-max/scripts/design_system.py",
       "source_location": "L79"
-    },
-    {
-      "id": "backend_src_batches_batch_schema_batch",
-      "label": "Batch",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "batch",
-      "source_file": "backend/src/batches/batch.schema.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "backend_src_batches_batches_service_batchesservice",
-      "label": "BatchesService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "batchesservice",
-      "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L11"
     },
     {
       "id": "backend_src_batches_optimizer_engine_barlayout",
@@ -270,11 +244,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "batchescontroller",
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L9"
+    },
+    {
+      "id": "backend_src_batches_batches_service_batchesservice",
+      "label": "BatchesService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesService",
+      "file_type": "code",
+      "norm_label": "batchesservice",
+      "source_file": "backend/src/batches/batches.service.ts",
+      "source_location": "L11"
     },
     {
       "id": "agents_skills_design_scripts_cip_core_bm25",
@@ -381,90 +368,12 @@
       "source_location": "L44"
     },
     {
-      "id": "backend_src_auth_auth_controller_authcontroller",
-      "label": "AuthController",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "authcontroller",
-      "source_file": "backend/src/auth/auth.controller.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "backend_src_auth_auth_module_authmodule",
-      "label": "AuthModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "authmodule",
-      "source_file": "backend/src/auth/auth.module.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "backend_src_auth_auth_service_authservice",
-      "label": "AuthService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "authservice",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "backend_src_companies_companies_module_companiesmodule",
-      "label": "CompaniesModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "companiesmodule",
-      "source_file": "backend/src/companies/companies.module.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "backend_src_companies_companies_service_companiesservice",
-      "label": "CompaniesService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "companiesservice",
-      "source_file": "backend/src/companies/companies.service.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "backend_src_companies_company_schema_company",
-      "label": "Company",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "company",
-      "source_file": "backend/src/companies/company.schema.ts",
-      "source_location": "L5"
-    },
-    {
       "id": "backend_src_app_controller_appcontroller",
       "label": "AppController",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "appcontroller",
@@ -477,7 +386,7 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "appmodule",
@@ -490,7 +399,7 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "appservice",
@@ -498,17 +407,108 @@
       "source_location": "L4"
     },
     {
+      "id": "backend_src_auth_auth_controller_authcontroller",
+      "label": "AuthController",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "authcontroller",
+      "source_file": "backend/src/auth/auth.controller.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "backend_src_auth_auth_module_authmodule",
+      "label": "AuthModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "authmodule",
+      "source_file": "backend/src/auth/auth.module.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "backend_src_auth_auth_service_authservice",
+      "label": "AuthService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "authservice",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L8"
+    },
+    {
       "id": "backend_src_batches_batches_module_batchesmodule",
       "label": "BatchesModule",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "batchesmodule",
       "source_file": "backend/src/batches/batches.module.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "backend_src_companies_companies_module_companiesmodule",
+      "label": "CompaniesModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "companiesmodule",
+      "source_file": "backend/src/companies/companies.module.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "backend_src_companies_companies_service_companiesservice",
+      "label": "CompaniesService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "companiesservice",
+      "source_file": "backend/src/companies/companies.service.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "backend_src_companies_company_schema_company",
+      "label": "Company",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "company",
+      "source_file": "backend/src/companies/company.schema.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "backend_src_batches_batch_schema_batch",
+      "label": "Batch",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "batches.module.ts",
+      "file_type": "code",
+      "norm_label": "batch",
+      "source_file": "backend/src/batches/batch.schema.ts",
+      "source_location": "L5"
     },
     {
       "id": "backend_src_inventory_inventory_module_inventorymodule",
@@ -517,7 +517,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 63,
-      "community_name": "app.module.ts",
+      "community_name": "batches.module.ts",
       "file_type": "code",
       "norm_label": "inventorymodule",
       "source_file": "backend/src/inventory/inventory.module.ts",
@@ -530,7 +530,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 63,
-      "community_name": "app.module.ts",
+      "community_name": "batches.module.ts",
       "file_type": "code",
       "norm_label": "usersmodule",
       "source_file": "backend/src/users/users.module.ts",
@@ -561,6 +561,18 @@
       "norm_label": "testtailwindconfiggenerator",
       "source_file": ".agents/skills/ui-styling/scripts/tests/test_tailwind_config_gen.py",
       "source_location": "L16"
+    },
+    {
+      "id": "frontend_src_components_scrolltotop_scrolltotop_scrolltotop",
+      "label": "ScrollToTop()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "scrolltotop()",
+      "source_file": "frontend/src/components/ScrollToTop/ScrollToTop.jsx",
+      "source_location": "L5"
     },
     {
       "id": "frontend_src_components_sidenavbar_sidenavbar_sidenavbar",
@@ -609,18 +621,6 @@
       "norm_label": "signuppage()",
       "source_file": "frontend/src/pages/SignUpPage/SignUpPage.jsx",
       "source_location": "L10"
-    },
-    {
-      "id": "frontend_src_pages_superadminloginpage_superadminloginpage_superadminloginpage",
-      "label": "SuperadminLoginPage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "superadminloginpage()",
-      "source_file": "frontend/src/pages/SuperadminLoginPage/SuperadminLoginPage.jsx",
-      "source_location": "L9"
     },
     {
       "id": "agents_skills_design_scripts_logo_core_bm25_fit",
@@ -755,40 +755,16 @@
       "source_location": "L37"
     },
     {
-      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory",
-      "label": ".getBatchHistory()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
+      "label": ".deleteBatch()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
-      "norm_label": ".getbatchhistory()",
+      "norm_label": ".deletebatch()",
       "source_file": "backend/src/batches/batches.controller.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords",
-      "label": ".getBatchScrapRecords()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": ".getbatchscraprecords()",
-      "source_file": "backend/src/batches/batches.controller.ts",
-      "source_location": "L49"
-    },
-    {
-      "id": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats",
-      "label": ".getDashboardStats()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": ".getdashboardstats()",
-      "source_file": "backend/src/batches/batches.controller.ts",
-      "source_location": "L44"
+      "source_location": "L63"
     },
     {
       "id": "backend_src_batches_batches_service_batchesservice_commitbatch",
@@ -796,47 +772,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".commitbatch()",
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L19"
     },
     {
-      "id": "backend_src_batches_batches_service_batchesservice_getbatchhistory",
-      "label": ".getBatchHistory()",
+      "id": "backend_src_batches_batches_service_batchesservice_deletebatch",
+      "label": ".deleteBatch()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
-      "norm_label": ".getbatchhistory()",
+      "norm_label": ".deletebatch()",
       "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L265"
-    },
-    {
-      "id": "backend_src_batches_batches_service_batchesservice_getbatchscraprecords",
-      "label": ".getBatchScrapRecords()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": ".getbatchscraprecords()",
-      "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L387"
-    },
-    {
-      "id": "backend_src_batches_batches_service_batchesservice_getdashboardstats",
-      "label": ".getDashboardStats()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": ".getdashboardstats()",
-      "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L271"
+      "source_location": "L454"
     },
     {
       "id": "backend_src_inventory_inventory_controller_inventorycontroller_constructor",
@@ -844,23 +796,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "backend/src/inventory/inventory.controller.ts",
       "source_location": "L10"
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_deletestockitem",
-      "label": ".deleteStockItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": ".deletestockitem()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L53"
     },
     {
       "id": "backend_src_inventory_inventory_controller_inventorycontroller_getinventory",
@@ -868,7 +808,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getinventory()",
       "source_file": "backend/src/inventory/inventory.controller.ts",
@@ -880,7 +820,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getledger()",
       "source_file": "backend/src/inventory/inventory.controller.ts",
@@ -892,7 +832,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getscraprules()",
       "source_file": "backend/src/inventory/inventory.controller.ts",
@@ -904,7 +844,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".inwardentry()",
       "source_file": "backend/src/inventory/inventory.controller.ts",
@@ -916,23 +856,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".updatescraprules()",
       "source_file": "backend/src/inventory/inventory.controller.ts",
       "source_location": "L40"
-    },
-    {
-      "id": "backend_src_inventory_inventory_service_inventoryservice_deletestockitem",
-      "label": ".deleteStockItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": ".deletestockitem()",
-      "source_file": "backend/src/inventory/inventory.service.ts",
-      "source_location": "L156"
     },
     {
       "id": "backend_src_inventory_inventory_service_inventoryservice_getinventory",
@@ -940,7 +868,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getinventory()",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -952,7 +880,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getledger()",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -964,7 +892,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getscraprules()",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -976,7 +904,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".getsinglebarweight()",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -988,7 +916,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".inwardentry()",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -1000,7 +928,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": ".updatescraprules()",
       "source_file": "backend/src/inventory/inventory.service.ts",
@@ -1367,6 +1295,18 @@
       "source_location": "L11"
     },
     {
+      "id": "frontend_src_pages_profilepage_profilepage_profilepage",
+      "label": "ProfilePage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 156,
+      "community_name": "api.js",
+      "file_type": "code",
+      "norm_label": "profilepage()",
+      "source_file": "frontend/src/pages/ProfilePage/ProfilePage.jsx",
+      "source_location": "L33"
+    },
+    {
       "id": "frontend_src_pages_rolespage_rolespage_rolespermissionspage",
       "label": "RolesPermissionsPage()",
       "_callable": true,
@@ -1400,7 +1340,19 @@
       "file_type": "code",
       "norm_label": "apirequest()",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L3"
+      "source_location": "L17"
+    },
+    {
+      "id": "frontend_src_utils_api_processqueue",
+      "label": "processQueue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 156,
+      "community_name": "api.js",
+      "file_type": "code",
+      "norm_label": "processqueue()",
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L6"
     },
     {
       "id": "backend_src_batches_batches_service_batchesservice_constructor",
@@ -1715,30 +1667,6 @@
       "source_location": "L172"
     },
     {
-      "id": "frontend_src_components_scrolltotop_scrolltotop_scrolltotop",
-      "label": "ScrollToTop()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 174,
-      "community_name": "App.jsx",
-      "file_type": "code",
-      "norm_label": "scrolltotop()",
-      "source_file": "frontend/src/components/ScrollToTop/ScrollToTop.jsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "frontend_src_pages_profilepage_profilepage_profilepage",
-      "label": "ProfilePage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 174,
-      "community_name": "App.jsx",
-      "file_type": "code",
-      "norm_label": "profilepage()",
-      "source_file": "frontend/src/pages/ProfilePage/ProfilePage.jsx",
-      "source_location": "L33"
-    },
-    {
       "id": "frontend_src_pages_settingspage_settingspage_settingspage",
       "label": "SettingsPage()",
       "_callable": true,
@@ -1775,6 +1703,18 @@
       "source_location": "L14"
     },
     {
+      "id": "frontend_src_pages_superadminloginpage_superadminloginpage_superadminloginpage",
+      "label": "SuperadminLoginPage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 174,
+      "community_name": "App.jsx",
+      "file_type": "code",
+      "norm_label": "superadminloginpage()",
+      "source_file": "frontend/src/pages/SuperadminLoginPage/SuperadminLoginPage.jsx",
+      "source_location": "L9"
+    },
+    {
       "id": "frontend_src_store_slices_authslice_getinitialstate",
       "label": "getInitialState()",
       "_callable": true,
@@ -1797,6 +1737,30 @@
       "norm_label": "getinitialview()",
       "source_file": "frontend/src/store/slices/routingSlice.js",
       "source_location": "L5"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_deletestockitem",
+      "label": ".deleteStockItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 175,
+      "community_name": ".deleteStockItem",
+      "file_type": "code",
+      "norm_label": ".deletestockitem()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "backend_src_inventory_inventory_service_inventoryservice_deletestockitem",
+      "label": ".deleteStockItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 175,
+      "community_name": ".deleteStockItem",
+      "file_type": "code",
+      "norm_label": ".deletestockitem()",
+      "source_file": "backend/src/inventory/inventory.service.ts",
+      "source_location": "L156"
     },
     {
       "id": "agents_skills_ui_styling_scripts_tests_test_shadcn_add_testshadcninstaller_temp_project",
@@ -2267,18 +2231,6 @@
       "source_location": "L36"
     },
     {
-      "id": "backend_src_auth_auth_service_authservice_signup",
-      "label": ".signup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".signup()",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L14"
-    },
-    {
       "id": "backend_src_auth_jwt_auth_guard_jwtauthguard_canactivate",
       "label": ".canActivate()",
       "_callable": true,
@@ -2325,18 +2277,6 @@
       "norm_label": ".create()",
       "source_file": "backend/src/users/users.service.ts",
       "source_location": "L18"
-    },
-    {
-      "id": "backend_src_users_users_service_usersservice_findbyemail",
-      "label": ".findByEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".findbyemail()",
-      "source_file": "backend/src/users/users.service.ts",
-      "source_location": "L10"
     },
     {
       "id": "backend_src_users_users_service_usersservice_findbyid",
@@ -2536,7 +2476,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": ".commitbatch()",
       "source_file": "backend/src/batches/batches.controller.ts",
@@ -2548,23 +2488,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L10"
     },
     {
-      "id": "backend_src_batches_batches_controller_batchescontroller_deletebatch",
-      "label": ".deleteBatch()",
+      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchhistory",
+      "label": ".getBatchHistory()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
-      "norm_label": ".deletebatch()",
+      "norm_label": ".getbatchhistory()",
       "source_file": "backend/src/batches/batches.controller.ts",
-      "source_location": "L63"
+      "source_location": "L39"
+    },
+    {
+      "id": "backend_src_batches_batches_controller_batchescontroller_getbatchscraprecords",
+      "label": ".getBatchScrapRecords()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesService",
+      "file_type": "code",
+      "norm_label": ".getbatchscraprecords()",
+      "source_file": "backend/src/batches/batches.controller.ts",
+      "source_location": "L49"
+    },
+    {
+      "id": "backend_src_batches_batches_controller_batchescontroller_getdashboardstats",
+      "label": ".getDashboardStats()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesService",
+      "file_type": "code",
+      "norm_label": ".getdashboardstats()",
+      "source_file": "backend/src/batches/batches.controller.ts",
+      "source_location": "L44"
     },
     {
       "id": "backend_src_batches_batches_controller_batchescontroller_optimizebatch",
@@ -2572,7 +2536,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": ".optimizebatch()",
       "source_file": "backend/src/batches/batches.controller.ts",
@@ -2584,23 +2548,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": ".updatebatch()",
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L54"
     },
     {
-      "id": "backend_src_batches_batches_service_batchesservice_deletebatch",
-      "label": ".deleteBatch()",
+      "id": "backend_src_batches_batches_service_batchesservice_getbatchhistory",
+      "label": ".getBatchHistory()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
-      "norm_label": ".deletebatch()",
+      "norm_label": ".getbatchhistory()",
       "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L454"
+      "source_location": "L265"
+    },
+    {
+      "id": "backend_src_batches_batches_service_batchesservice_getbatchscraprecords",
+      "label": ".getBatchScrapRecords()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesService",
+      "file_type": "code",
+      "norm_label": ".getbatchscraprecords()",
+      "source_file": "backend/src/batches/batches.service.ts",
+      "source_location": "L387"
+    },
+    {
+      "id": "backend_src_batches_batches_service_batchesservice_getdashboardstats",
+      "label": ".getDashboardStats()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesService",
+      "file_type": "code",
+      "norm_label": ".getdashboardstats()",
+      "source_file": "backend/src/batches/batches.service.ts",
+      "source_location": "L271"
     },
     {
       "id": "backend_src_batches_batches_service_batchesservice_updatebatch",
@@ -2608,7 +2596,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": ".updatebatch()",
       "source_file": "backend/src/batches/batches.service.ts",
@@ -4376,7 +4364,7 @@
       "file_type": "code",
       "norm_label": "startserver()",
       "source_file": "backend/src/main.ts",
-      "source_location": "L2953"
+      "source_location": "L3011"
     },
     {
       "id": "backend_src_main_syncsubscriptionstatus",
@@ -4643,119 +4631,11 @@
       "source_location": "L301"
     },
     {
-      "id": "backend_src_auth_auth_controller_authcontroller_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "backend/src/auth/auth.controller.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "backend_src_auth_auth_controller_authcontroller_signin",
-      "label": ".signin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".signin()",
-      "source_file": "backend/src/auth/auth.controller.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "backend_src_auth_auth_controller_authcontroller_signup",
-      "label": ".signup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".signup()",
-      "source_file": "backend/src/auth/auth.controller.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "backend_src_auth_auth_service_authservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "backend_src_auth_auth_service_authservice_generatetokens",
-      "label": ".generateTokens()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".generatetokens()",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L109"
-    },
-    {
-      "id": "backend_src_auth_auth_service_authservice_signin",
-      "label": ".signin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".signin()",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L73"
-    },
-    {
-      "id": "backend_src_companies_companies_service_companiesservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "backend/src/companies/companies.service.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "backend_src_companies_companies_service_companiesservice_create",
-      "label": ".create()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".create()",
-      "source_file": "backend/src/companies/companies.service.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "backend_src_companies_companies_service_companiesservice_findbyid",
-      "label": ".findById()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": ".findbyid()",
-      "source_file": "backend/src/companies/companies.service.ts",
-      "source_location": "L15"
-    },
-    {
       "id": "backend_src_app_controller_appcontroller_constructor",
       "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
@@ -4767,7 +4647,7 @@
       "label": ".getHello()",
       "_callable": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".gethello()",
@@ -4779,12 +4659,144 @@
       "label": ".getHello()",
       "_callable": true,
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".gethello()",
       "source_file": "backend/src/app.service.ts",
       "source_location": "L5"
+    },
+    {
+      "id": "backend_src_auth_auth_controller_authcontroller_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "backend/src/auth/auth.controller.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "backend_src_auth_auth_controller_authcontroller_signin",
+      "label": ".signin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".signin()",
+      "source_file": "backend/src/auth/auth.controller.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "backend_src_auth_auth_controller_authcontroller_signup",
+      "label": ".signup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".signup()",
+      "source_file": "backend/src/auth/auth.controller.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "backend_src_auth_auth_service_authservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "backend_src_auth_auth_service_authservice_generatetokens",
+      "label": ".generateTokens()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".generatetokens()",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L109"
+    },
+    {
+      "id": "backend_src_auth_auth_service_authservice_signin",
+      "label": ".signin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".signin()",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L73"
+    },
+    {
+      "id": "backend_src_auth_auth_service_authservice_signup",
+      "label": ".signup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".signup()",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "backend_src_companies_companies_service_companiesservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "backend/src/companies/companies.service.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "backend_src_companies_companies_service_companiesservice_create",
+      "label": ".create()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".create()",
+      "source_file": "backend/src/companies/companies.service.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "backend_src_companies_companies_service_companiesservice_findbyid",
+      "label": ".findById()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".findbyid()",
+      "source_file": "backend/src/companies/companies.service.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "backend_src_users_users_service_usersservice_findbyemail",
+      "label": ".findByEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".findbyemail()",
+      "source_file": "backend/src/users/users.service.ts",
+      "source_location": "L10"
     },
     {
       "id": "frontend_src_pages_newbatchpage_newbatchpage_newbatchpage",
@@ -5315,6 +5327,17 @@
       "source_location": "L258"
     },
     {
+      "id": "frontend_src_components_scrolltotop_scrolltotop",
+      "label": "ScrollToTop.jsx",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "scrolltotop.jsx",
+      "source_file": "frontend/src/components/ScrollToTop/ScrollToTop.jsx",
+      "source_location": "L1"
+    },
+    {
       "id": "frontend_src_components_sidenavbar_sidenavbar",
       "label": "SideNavbar.jsx",
       "_origin": "ast",
@@ -5359,17 +5382,6 @@
       "source_location": "L1"
     },
     {
-      "id": "frontend_src_pages_superadminloginpage_superadminloginpage",
-      "label": "SuperadminLoginPage.jsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "superadminloginpage.jsx",
-      "source_file": "frontend/src/pages/SuperadminLoginPage/SuperadminLoginPage.jsx",
-      "source_location": "L1"
-    },
-    {
       "id": "frontend_src_utils_api_authapi",
       "label": "authApi",
       "_origin": "ast",
@@ -5378,7 +5390,7 @@
       "file_type": "code",
       "norm_label": "authapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L35"
+      "source_location": "L97"
     },
     {
       "id": "ref_react",
@@ -6338,24 +6350,13 @@
       "source_location": "L60"
     },
     {
-      "id": "backend_src_auth_user_decorator_currentuser",
-      "label": "CurrentUser",
+      "id": "backend_src_batches_batches_controller_ts_delete",
+      "label": "Delete",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
-      "norm_label": "currentuser",
-      "source_file": "backend/src/auth/user.decorator.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "backend_src_batches_batches_controller_ts_get",
-      "label": "Get",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": "get",
+      "norm_label": "delete",
       "source_file": "",
       "source_location": ""
     },
@@ -6364,7 +6365,7 @@
       "label": "Body",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "body",
       "source_file": "",
@@ -6375,20 +6376,9 @@
       "label": "Controller",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "controller",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_delete",
-      "label": "Delete",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": "delete",
       "source_file": "",
       "source_location": ""
     },
@@ -6397,20 +6387,9 @@
       "label": "Get",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "get",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_param",
-      "label": "Param",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "CurrentUser",
-      "file_type": "code",
-      "norm_label": "param",
       "source_file": "",
       "source_location": ""
     },
@@ -6419,7 +6398,7 @@
       "label": "Post",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "post",
       "source_file": "",
@@ -6430,7 +6409,7 @@
       "label": "UseGuards",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "useguards",
       "source_file": "",
@@ -6441,9 +6420,20 @@
       "label": "Injectable",
       "_origin": "ast",
       "community": 11,
-      "community_name": "CurrentUser",
+      "community_name": "InventoryService",
       "file_type": "code",
       "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "query",
+      "label": "Query",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "InventoryService",
+      "file_type": "code",
+      "norm_label": "query",
       "source_file": "",
       "source_location": ""
     },
@@ -13774,6 +13764,17 @@
       "source_location": "L1"
     },
     {
+      "id": "frontend_src_pages_profilepage_profilepage",
+      "label": "ProfilePage.jsx",
+      "_origin": "ast",
+      "community": 156,
+      "community_name": "api.js",
+      "file_type": "code",
+      "norm_label": "profilepage.jsx",
+      "source_file": "frontend/src/pages/ProfilePage/ProfilePage.jsx",
+      "source_location": "L1"
+    },
+    {
       "id": "frontend_src_pages_rolespage_rolespage",
       "label": "RolesPage.jsx",
       "_origin": "ast",
@@ -13848,7 +13849,29 @@
       "file_type": "code",
       "norm_label": "activitylogsapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L173"
+      "source_location": "L235"
+    },
+    {
+      "id": "frontend_src_utils_api_companyapi",
+      "label": "companyApi",
+      "_origin": "ast",
+      "community": 156,
+      "community_name": "api.js",
+      "file_type": "code",
+      "norm_label": "companyapi",
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L230"
+    },
+    {
+      "id": "frontend_src_utils_api_failedqueue",
+      "label": "failedQueue",
+      "_origin": "ast",
+      "community": 156,
+      "community_name": "api.js",
+      "file_type": "code",
+      "norm_label": "failedqueue",
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L4"
     },
     {
       "id": "frontend_src_utils_api_permissionsapi",
@@ -13859,7 +13882,18 @@
       "file_type": "code",
       "norm_label": "permissionsapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L162"
+      "source_location": "L224"
+    },
+    {
+      "id": "frontend_src_utils_api_profileapi",
+      "label": "profileApi",
+      "_origin": "ast",
+      "community": 156,
+      "community_name": "api.js",
+      "file_type": "code",
+      "norm_label": "profileapi",
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L216"
     },
     {
       "id": "frontend_src_utils_api_rolesapi",
@@ -13870,7 +13904,7 @@
       "file_type": "code",
       "norm_label": "rolesapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L123"
+      "source_location": "L185"
     },
     {
       "id": "frontend_src_utils_api_usersapi",
@@ -13881,7 +13915,7 @@
       "file_type": "code",
       "norm_label": "usersapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L146"
+      "source_location": "L208"
     },
     {
       "id": "agents_skills_ponytail_help_skill",
@@ -14830,7 +14864,7 @@
       "file_type": "code",
       "norm_label": "batchesapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L69"
+      "source_location": "L131"
     },
     {
       "id": "frontend_src_utils_api_inventoryapi",
@@ -14841,7 +14875,7 @@
       "file_type": "code",
       "norm_label": "inventoryapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L44"
+      "source_location": "L106"
     },
     {
       "id": "agents_skills_ponytail_audit_skill",
@@ -15380,28 +15414,6 @@
       "source_location": "L1"
     },
     {
-      "id": "frontend_src_components_scrolltotop_scrolltotop",
-      "label": "ScrollToTop.jsx",
-      "_origin": "ast",
-      "community": 174,
-      "community_name": "App.jsx",
-      "file_type": "code",
-      "norm_label": "scrolltotop.jsx",
-      "source_file": "frontend/src/components/ScrollToTop/ScrollToTop.jsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_pages_profilepage_profilepage",
-      "label": "ProfilePage.jsx",
-      "_origin": "ast",
-      "community": 174,
-      "community_name": "App.jsx",
-      "file_type": "code",
-      "norm_label": "profilepage.jsx",
-      "source_file": "frontend/src/pages/ProfilePage/ProfilePage.jsx",
-      "source_location": "L1"
-    },
-    {
       "id": "frontend_src_pages_settingspage_settingspage",
       "label": "SettingsPage.jsx",
       "_origin": "ast",
@@ -15432,6 +15444,17 @@
       "file_type": "code",
       "norm_label": "superadmindashboard.jsx",
       "source_file": "frontend/src/pages/SuperadminDashboard/SuperadminDashboard.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_pages_superadminloginpage_superadminloginpage",
+      "label": "SuperadminLoginPage.jsx",
+      "_origin": "ast",
+      "community": 174,
+      "community_name": "App.jsx",
+      "file_type": "code",
+      "norm_label": "superadminloginpage.jsx",
+      "source_file": "frontend/src/pages/SuperadminLoginPage/SuperadminLoginPage.jsx",
       "source_location": "L1"
     },
     {
@@ -15479,17 +15502,6 @@
       "source_location": "L39"
     },
     {
-      "id": "frontend_src_utils_api_companyapi",
-      "label": "companyApi",
-      "_origin": "ast",
-      "community": 174,
-      "community_name": "App.jsx",
-      "file_type": "code",
-      "norm_label": "companyapi",
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L168"
-    },
-    {
       "id": "frontend_src_utils_api_developerapi",
       "label": "developerApi",
       "_origin": "ast",
@@ -15498,18 +15510,7 @@
       "file_type": "code",
       "norm_label": "developerapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L87"
-    },
-    {
-      "id": "frontend_src_utils_api_profileapi",
-      "label": "profileApi",
-      "_origin": "ast",
-      "community": 174,
-      "community_name": "App.jsx",
-      "file_type": "code",
-      "norm_label": "profileapi",
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L154"
+      "source_location": "L149"
     },
     {
       "id": "frontend_src_utils_api_publicapi",
@@ -15520,51 +15521,29 @@
       "file_type": "code",
       "norm_label": "publicapi",
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L118"
+      "source_location": "L180"
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_md_type",
-      "label": "$type",
+      "id": "backend_src_inventory_inventory_controller_ts_delete",
+      "label": "Delete",
       "_origin": "ast",
       "community": 175,
-      "community_name": "md",
+      "community_name": ".deleteStockItem",
       "file_type": "code",
-      "norm_label": "$type",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L66"
+      "norm_label": "delete",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_md_value",
-      "label": "$value",
+      "id": "backend_src_inventory_inventory_controller_ts_param",
+      "label": "Param",
       "_origin": "ast",
       "community": 175,
-      "community_name": "md",
+      "community_name": ".deleteStockItem",
       "file_type": "code",
-      "norm_label": "$value",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L66"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_radius_md",
-      "label": "md",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "md",
-      "file_type": "code",
-      "norm_label": "md",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L66"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_md",
-      "label": "md",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "md",
-      "file_type": "code",
-      "norm_label": "md",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L75"
+      "norm_label": "param",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "agents_skills_design_system_templates_design_tokens_starter_none_type",
@@ -16353,61 +16332,6 @@
       "source_location": "L81"
     },
     {
-      "id": "backend_src_batches_batch_schema",
-      "label": "batch.schema.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "batch.schema.ts",
-      "source_file": "backend/src/batches/batch.schema.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_batches_batch_schema_batchschema",
-      "label": "BatchSchema",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "batchschema",
-      "source_file": "backend/src/batches/batch.schema.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "backend_src_batches_batch_schema_ts_prop",
-      "label": "Prop",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "prop",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_batches_batch_schema_ts_schema",
-      "label": "Schema",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "schema",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_batches_batches_module",
-      "label": "batches.module.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "batches.module.ts",
-      "source_file": "backend/src/batches/batches.module.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "backend_src_batches_batches_service",
       "label": "batches.service.ts",
       "_origin": "ast",
@@ -16417,17 +16341,6 @@
       "norm_label": "batches.service.ts",
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "backend_src_batches_batches_service_ts_injectable",
-      "label": "Injectable",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": "injectable",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "backend_src_batches_optimizer_engine",
@@ -16947,6 +16860,17 @@
       "source_location": "L1"
     },
     {
+      "id": "backend_src_auth_user_decorator_currentuser",
+      "label": "CurrentUser",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "currentuser",
+      "source_file": "backend/src/auth/user.decorator.ts",
+      "source_location": "L3"
+    },
+    {
       "id": "backend_src_batches_batches_controller",
       "label": "batches.controller.ts",
       "_origin": "ast",
@@ -17187,6 +17111,138 @@
       "norm_label": "$value",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L92"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_16_type",
+      "label": "$type",
+      "_origin": "ast",
+      "community": 214,
+      "community_name": "16",
+      "file_type": "code",
+      "norm_label": "$type",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_16_value",
+      "label": "$value",
+      "_origin": "ast",
+      "community": 214,
+      "community_name": "16",
+      "file_type": "code",
+      "norm_label": "$value",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_16",
+      "label": "16",
+      "_origin": "ast",
+      "community": 214,
+      "community_name": "16",
+      "file_type": "code",
+      "norm_label": "16",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_1_type",
+      "label": "$type",
+      "_origin": "ast",
+      "community": 215,
+      "community_name": "1",
+      "file_type": "code",
+      "norm_label": "$type",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_1_value",
+      "label": "$value",
+      "_origin": "ast",
+      "community": 215,
+      "community_name": "1",
+      "file_type": "code",
+      "norm_label": "$value",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_1",
+      "label": "1",
+      "_origin": "ast",
+      "community": 215,
+      "community_name": "1",
+      "file_type": "code",
+      "norm_label": "1",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_3_type",
+      "label": "$type",
+      "_origin": "ast",
+      "community": 216,
+      "community_name": "3",
+      "file_type": "code",
+      "norm_label": "$type",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_3_value",
+      "label": "$value",
+      "_origin": "ast",
+      "community": 216,
+      "community_name": "3",
+      "file_type": "code",
+      "norm_label": "$value",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_3",
+      "label": "3",
+      "_origin": "ast",
+      "community": 216,
+      "community_name": "3",
+      "file_type": "code",
+      "norm_label": "3",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_8_type",
+      "label": "$type",
+      "_origin": "ast",
+      "community": 217,
+      "community_name": "8",
+      "file_type": "code",
+      "norm_label": "$type",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L47"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_8_value",
+      "label": "$value",
+      "_origin": "ast",
+      "community": 217,
+      "community_name": "8",
+      "file_type": "code",
+      "norm_label": "$value",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L47"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_8",
+      "label": "8",
+      "_origin": "ast",
+      "community": 217,
+      "community_name": "8",
+      "file_type": "code",
+      "norm_label": "8",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L47"
     },
     {
       "id": "agents_skills_design_scripts_icon_generate",
@@ -17545,7 +17601,7 @@
       "label": "Body",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "body",
       "source_file": "",
@@ -17556,20 +17612,20 @@
       "label": "Controller",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "controller",
       "source_file": "",
       "source_location": ""
     },
     {
-      "id": "backend_src_batches_batches_controller_ts_delete",
-      "label": "Delete",
+      "id": "backend_src_batches_batches_controller_ts_get",
+      "label": "Get",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
-      "norm_label": "delete",
+      "norm_label": "get",
       "source_file": "",
       "source_location": ""
     },
@@ -17578,7 +17634,7 @@
       "label": "Param",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "param",
       "source_file": "",
@@ -17589,7 +17645,7 @@
       "label": "Post",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "post",
       "source_file": "",
@@ -17600,9 +17656,20 @@
       "label": "UseGuards",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "useguards",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_batches_batches_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesService",
+      "file_type": "code",
+      "norm_label": "injectable",
       "source_file": "",
       "source_location": ""
     },
@@ -17611,20 +17678,9 @@
       "label": "Put",
       "_origin": "ast",
       "community": 25,
-      "community_name": "BatchesController",
+      "community_name": "BatchesService",
       "file_type": "code",
       "norm_label": "put",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "query",
-      "label": "Query",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "BatchesController",
-      "file_type": "code",
-      "norm_label": "query",
       "source_file": "",
       "source_location": ""
     },
@@ -19074,7 +19130,7 @@
       "label": "fast",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "fast",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19085,7 +19141,7 @@
       "label": "normal",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "normal",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19096,7 +19152,7 @@
       "label": "slow",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "slow",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19107,7 +19163,7 @@
       "label": "$type",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "$type",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19118,7 +19174,7 @@
       "label": "$value",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "$value",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19129,7 +19185,7 @@
       "label": "$type",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "$type",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19140,29 +19196,18 @@
       "label": "$value",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "$value",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L80"
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_primitive",
-      "label": "primitive",
-      "_origin": "ast",
-      "community": 36,
-      "community_name": "primitive",
-      "file_type": "code",
-      "norm_label": "primitive",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L3"
-    },
-    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_primitive_duration",
       "label": "duration",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "duration",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19173,7 +19218,7 @@
       "label": "$type",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "$type",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -19184,7 +19229,7 @@
       "label": "$value",
       "_origin": "ast",
       "community": 36,
-      "community_name": "primitive",
+      "community_name": "duration",
       "file_type": "code",
       "norm_label": "$value",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -21295,6 +21340,39 @@
       "source_location": "L69"
     },
     {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_md_type",
+      "label": "$type",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "radius",
+      "file_type": "code",
+      "norm_label": "$type",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L66"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_md_value",
+      "label": "$value",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "radius",
+      "file_type": "code",
+      "norm_label": "$value",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L66"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_primitive",
+      "label": "primitive",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "radius",
+      "file_type": "code",
+      "norm_label": "primitive",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L3"
+    },
+    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_primitive_radius",
       "label": "radius",
       "_origin": "ast",
@@ -21304,6 +21382,17 @@
       "norm_label": "radius",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L62"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_primitive_shadow",
+      "label": "shadow",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "radius",
+      "file_type": "code",
+      "norm_label": "shadow",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L71"
     },
     {
       "id": "agents_skills_design_system_templates_design_tokens_starter_radius_default",
@@ -21328,6 +21417,17 @@
       "source_location": "L69"
     },
     {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_radius_md",
+      "label": "md",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "radius",
+      "file_type": "code",
+      "norm_label": "md",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L66"
+    },
+    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_default",
       "label": "default",
       "_origin": "ast",
@@ -21337,6 +21437,17 @@
       "norm_label": "default",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L74"
+    },
+    {
+      "id": "agents_skills_design_system_templates_design_tokens_starter_shadow_md",
+      "label": "md",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "radius",
+      "file_type": "code",
+      "norm_label": "md",
+      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
+      "source_location": "L75"
     },
     {
       "id": "agents_skills_design_system_templates_design_tokens_starter_bg_type",
@@ -22968,29 +23079,18 @@
       "label": "sm",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "file_type": "code",
       "norm_label": "sm",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L54"
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_primitive_shadow",
-      "label": "shadow",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "shadow",
-      "file_type": "code",
-      "norm_label": "shadow",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L71"
-    },
-    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_radius_sm",
       "label": "sm",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "file_type": "code",
       "norm_label": "sm",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -23001,7 +23101,7 @@
       "label": "sm",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "file_type": "code",
       "norm_label": "sm",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -23012,7 +23112,7 @@
       "label": "$type",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "file_type": "code",
       "norm_label": "$type",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -23023,7 +23123,7 @@
       "label": "$value",
       "_origin": "ast",
       "community": 59,
-      "community_name": "shadow",
+      "community_name": "sm",
       "file_type": "code",
       "norm_label": "$value",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
@@ -23382,208 +23482,10 @@
       "source_location": "L76"
     },
     {
-      "id": "backend_src_auth_auth_controller",
-      "label": "auth.controller.ts",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "auth.controller.ts",
-      "source_file": "backend/src/auth/auth.controller.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_auth_auth_controller_ts_body",
-      "label": "Body",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "body",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_auth_auth_controller_ts_controller",
-      "label": "Controller",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "controller",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_auth_auth_controller_ts_post",
-      "label": "Post",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "post",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_auth_auth_module",
-      "label": "auth.module.ts",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "auth.module.ts",
-      "source_file": "backend/src/auth/auth.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_auth_auth_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_auth_auth_service",
-      "label": "auth.service.ts",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "auth.service.ts",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_auth_auth_service_ts_injectable",
-      "label": "Injectable",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "injectable",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_companies_companies_module",
-      "label": "companies.module.ts",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "companies.module.ts",
-      "source_file": "backend/src/companies/companies.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_companies_companies_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_companies_companies_service",
-      "label": "companies.service.ts",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "companies.service.ts",
-      "source_file": "backend/src/companies/companies.service.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_companies_companies_service_ts_injectable",
-      "label": "Injectable",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "injectable",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_companies_companies_service_ts_injectmodel",
-      "label": "InjectModel",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "injectmodel",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_companies_company_schema",
-      "label": "company.schema.ts",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "company.schema.ts",
-      "source_file": "backend/src/companies/company.schema.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_src_companies_company_schema_companyschema",
-      "label": "CompanySchema",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "companyschema",
-      "source_file": "backend/src/companies/company.schema.ts",
-      "source_location": "L19"
-    },
-    {
-      "id": "backend_src_companies_company_schema_ts_prop",
-      "label": "Prop",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "prop",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_companies_company_schema_ts_schema",
-      "label": "Schema",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "schema",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "httpcode",
-      "label": "HttpCode",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "auth.module.ts",
-      "file_type": "code",
-      "norm_label": "httpcode",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "backend_src_app_controller",
       "label": "app.controller.ts",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "app.controller.ts",
@@ -23594,7 +23496,7 @@
       "id": "backend_src_app_controller_spec",
       "label": "app.controller.spec.ts",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "app.controller.spec.ts",
@@ -23605,7 +23507,7 @@
       "id": "backend_src_app_controller_ts_controller",
       "label": "Controller",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "controller",
@@ -23616,7 +23518,7 @@
       "id": "backend_src_app_controller_ts_get",
       "label": "Get",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "get",
@@ -23627,7 +23529,7 @@
       "id": "backend_src_app_module",
       "label": "app.module.ts",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "app.module.ts",
@@ -23638,7 +23540,7 @@
       "id": "backend_src_app_module_ts_module",
       "label": "Module",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "module",
@@ -23649,7 +23551,7 @@
       "id": "backend_src_app_service",
       "label": "app.service.ts",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "app.service.ts",
@@ -23660,7 +23562,95 @@
       "id": "backend_src_app_service_ts_injectable",
       "label": "Injectable",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_auth_auth_controller",
+      "label": "auth.controller.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "auth.controller.ts",
+      "source_file": "backend/src/auth/auth.controller.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_auth_auth_controller_ts_body",
+      "label": "Body",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "body",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_auth_auth_controller_ts_controller",
+      "label": "Controller",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "controller",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_auth_auth_controller_ts_post",
+      "label": "Post",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "post",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_auth_auth_module",
+      "label": "auth.module.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "auth.module.ts",
+      "source_file": "backend/src/auth/auth.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_auth_auth_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_auth_auth_service",
+      "label": "auth.service.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "auth.service.ts",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_auth_auth_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "injectable",
@@ -23671,7 +23661,7 @@
       "id": "backend_src_batches_batches_module_ts_module",
       "label": "Module",
       "_origin": "ast",
-      "community": 63,
+      "community": 62,
       "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "module",
@@ -23679,11 +23669,187 @@
       "source_location": ""
     },
     {
+      "id": "backend_src_companies_companies_module",
+      "label": "companies.module.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "companies.module.ts",
+      "source_file": "backend/src/companies/companies.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_companies_companies_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_companies_companies_service",
+      "label": "companies.service.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "companies.service.ts",
+      "source_file": "backend/src/companies/companies.service.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_companies_companies_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_companies_companies_service_ts_injectmodel",
+      "label": "InjectModel",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "injectmodel",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_companies_company_schema",
+      "label": "company.schema.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "company.schema.ts",
+      "source_file": "backend/src/companies/company.schema.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_companies_company_schema_companyschema",
+      "label": "CompanySchema",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "companyschema",
+      "source_file": "backend/src/companies/company.schema.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "backend_src_companies_company_schema_ts_prop",
+      "label": "Prop",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "prop",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_companies_company_schema_ts_schema",
+      "label": "Schema",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "schema",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_test_app_e2e_spec",
+      "label": "app.e2e-spec.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "app.e2e-spec.ts",
+      "source_file": "backend/test/app.e2e-spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "httpcode",
+      "label": "HttpCode",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "httpcode",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_batches_batch_schema",
+      "label": "batch.schema.ts",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "batches.module.ts",
+      "file_type": "code",
+      "norm_label": "batch.schema.ts",
+      "source_file": "backend/src/batches/batch.schema.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_src_batches_batch_schema_batchschema",
+      "label": "BatchSchema",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "batches.module.ts",
+      "file_type": "code",
+      "norm_label": "batchschema",
+      "source_file": "backend/src/batches/batch.schema.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "backend_src_batches_batch_schema_ts_prop",
+      "label": "Prop",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "batches.module.ts",
+      "file_type": "code",
+      "norm_label": "prop",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_batches_batch_schema_ts_schema",
+      "label": "Schema",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "batches.module.ts",
+      "file_type": "code",
+      "norm_label": "schema",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_batches_batches_module",
+      "label": "batches.module.ts",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "batches.module.ts",
+      "file_type": "code",
+      "norm_label": "batches.module.ts",
+      "source_file": "backend/src/batches/batches.module.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "backend_src_inventory_inventory_module_ts_module",
       "label": "Module",
       "_origin": "ast",
       "community": 63,
-      "community_name": "app.module.ts",
+      "community_name": "batches.module.ts",
       "file_type": "code",
       "norm_label": "module",
       "source_file": "",
@@ -23694,22 +23860,11 @@
       "label": "Module",
       "_origin": "ast",
       "community": 63,
-      "community_name": "app.module.ts",
+      "community_name": "batches.module.ts",
       "file_type": "code",
       "norm_label": "module",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "backend_test_app_e2e_spec",
-      "label": "app.e2e-spec.ts",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "app.module.ts",
-      "file_type": "code",
-      "norm_label": "app.e2e-spec.ts",
-      "source_file": "backend/test/app.e2e-spec.ts",
-      "source_location": "L1"
     },
     {
       "id": "frontend_src_pages_newbatchpage_newbatchpage",
@@ -24317,50 +24472,6 @@
       "source_location": "L49"
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_16_type",
-      "label": "$type",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$type",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L50"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_16_value",
-      "label": "$value",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$value",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L50"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_1_type",
-      "label": "$type",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$type",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L41"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_1_value",
-      "label": "$value",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$value",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L41"
-    },
-    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_2_type",
       "label": "$type",
       "_origin": "ast",
@@ -24381,28 +24492,6 @@
       "norm_label": "$value",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L42"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_3_type",
-      "label": "$type",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$type",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L43"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_3_value",
-      "label": "$value",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$value",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L43"
     },
     {
       "id": "agents_skills_design_system_templates_design_tokens_starter_4_type",
@@ -24471,28 +24560,6 @@
       "source_location": "L46"
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_8_type",
-      "label": "$type",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$type",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L47"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_8_value",
-      "label": "$value",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "$value",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L47"
-    },
-    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_primitive_spacing",
       "label": "spacing",
       "_origin": "ast",
@@ -24513,17 +24580,6 @@
       "norm_label": "0",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L40"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_1",
-      "label": "1",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "1",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L41"
     },
     {
       "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_10",
@@ -24548,17 +24604,6 @@
       "source_location": "L49"
     },
     {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_16",
-      "label": "16",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "16",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L50"
-    },
-    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_2",
       "label": "2",
       "_origin": "ast",
@@ -24568,17 +24613,6 @@
       "norm_label": "2",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L42"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_3",
-      "label": "3",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "3",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L43"
     },
     {
       "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_4",
@@ -24612,17 +24646,6 @@
       "norm_label": "6",
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L46"
-    },
-    {
-      "id": "agents_skills_design_system_templates_design_tokens_starter_spacing_8",
-      "label": "8",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "spacing",
-      "file_type": "code",
-      "norm_label": "8",
-      "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
-      "source_location": "L47"
     },
     {
       "id": "agents_skills_ui_styling_references_tailwind_responsive",
@@ -32540,7 +32563,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/src/main.ts",
-      "source_location": "L970",
+      "source_location": "L990",
       "weight": 1.0
     },
     {
@@ -32552,7 +32575,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/src/main.ts",
-      "source_location": "L2955",
+      "source_location": "L3013",
       "weight": 1.0
     },
     {
@@ -32564,7 +32587,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/src/main.ts",
-      "source_location": "L2957",
+      "source_location": "L3015",
       "weight": 1.0
     },
     {
@@ -32625,6 +32648,18 @@
       "context": "call",
       "source_file": "frontend/src/pages/ResultsPage/ResultsPage.jsx",
       "source_location": "L934",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api_apirequest",
+      "target": "frontend_src_utils_api_processqueue",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -56632,7 +56667,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/main.ts",
-      "source_location": "L2953",
+      "source_location": "L3011",
       "weight": 1.0
     },
     {
@@ -57946,112 +57981,13 @@
     },
     {
       "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_publicapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L118",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_rolesapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L123",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_usersapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L146",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_profileapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L154",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_permissionsapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L162",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_companyapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L168",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_activitylogsapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L173",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_apirequest",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
-      "target": "frontend_src_utils_api_authapi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/utils/api.js",
-      "source_location": "L35",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_utils_api",
       "target": "frontend_src_utils_api_inventoryapi",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L44",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -58062,7 +57998,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L69",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -58073,7 +58009,128 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/utils/api.js",
-      "source_location": "L87",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_apirequest",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_publicapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_rolesapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L185",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_usersapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_profileapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_permissionsapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L224",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_companyapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L230",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_activitylogsapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_failedqueue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_processqueue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_utils_api",
+      "target": "frontend_src_utils_api_authapi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/utils/api.js",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -63119,7 +63176,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "backend/src/main.ts",
-      "source_location": "L1043",
+      "source_location": "L1063",
       "weight": 1.0
     },
     {
@@ -63131,7 +63188,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "backend/src/main.ts",
-      "source_location": "L1339",
+      "source_location": "L1359",
       "weight": 1.0
     },
     {
@@ -63143,7 +63200,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "backend/src/main.ts",
-      "source_location": "L1753",
+      "source_location": "L1811",
       "weight": 1.0
     },
     {
@@ -63361,5 +63418,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "38c8c28555d9c4b0e3e99da2481106af253289c3"
+  "built_at_commit": "b22201d52c5d217e9b5308727ceb8cf384301bc0"
 }

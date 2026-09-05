@@ -823,15 +823,18 @@ app.post('/api/auth/developer/signin', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
     const db = await connectDB();
-    const dev = await db.collection('platformusers').findOne({ email: email.toLowerCase().trim() });
+    let dev = await db.collection('platformusers').findOne({ email: email.toLowerCase().trim() });
+    if (!dev) {
+      dev = await db.collection('users').findOne({ email: email.toLowerCase().trim(), role: { $in: ['SUPER_ADMIN', 'DEVELOPER'] } });
+    }
     if (!dev) return res.status(401).json({ message: 'Invalid credentials' });
     if (dev.isActive === false) return res.status(403).json({ message: 'Account is inactive' });
     if (!await bcrypt.compare(password, dev.passwordHash)) return res.status(401).json({ message: 'Invalid credentials' });
-    const tokens = generateTokens(dev._id.toString(), dev.email, 'DEVELOPER', 'developer');
+    const tokens = generateTokens(dev._id.toString(), dev.email, dev.role || 'DEVELOPER', 'developer');
     await logAudit(db, { actorId: dev._id.toString(), actorType: 'developer', action: 'DEVELOPER_LOGIN', resource: 'platformusers', resourceId: dev._id.toString() });
     res.json({
       ...tokens,
-      user: { id: dev._id.toString(), email: dev.email, firstName: dev.firstName, lastName: dev.lastName, role: 'DEVELOPER', accountType: 'developer' }
+      user: { id: dev._id.toString(), email: dev.email, firstName: dev.firstName, lastName: dev.lastName, role: dev.role || 'DEVELOPER', accountType: 'developer' }
     });
   } catch (e: any) {
     console.error(e);
@@ -842,9 +845,12 @@ app.post('/api/auth/developer/signin', async (req, res) => {
 app.get('/api/developer/me', developerAuthMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
-    const dev = await db.collection('platformusers').findOne({ _id: new ObjectId(req.user.sub) });
+    let dev = await db.collection('platformusers').findOne({ _id: new ObjectId(req.user.sub) });
+    if (!dev) {
+      dev = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
+    }
     if (!dev) return res.status(404).json({ message: 'Developer not found' });
-    res.json({ id: dev._id.toString(), email: dev.email, firstName: dev.firstName, lastName: dev.lastName, role: 'DEVELOPER' });
+    res.json({ id: dev._id.toString(), email: dev.email, firstName: dev.firstName, lastName: dev.lastName, role: dev.role || 'DEVELOPER' });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 

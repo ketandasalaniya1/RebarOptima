@@ -916,6 +916,26 @@ async function seedDefaults(db: Db) {
     await devColl.updateOne({ _id: existingDev._id }, { $set: { passwordHash: hash, isActive: true } });
   }
 
+  // Seed superadmin account for Developer Console access
+  const superadminEmail = 'superadmin@rebaroptima.io';
+  const superadminHash = await bcrypt.hash('Super@123', 10);
+  const existingSuperadmin = await devColl.findOne({ email: superadminEmail });
+  if (!existingSuperadmin) {
+    await devColl.insertOne({
+      email: superadminEmail,
+      passwordHash: superadminHash,
+      firstName: 'Super',
+      lastName: 'Admin',
+      role: 'SUPER_ADMIN',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    console.log(`  ✅ Created superadmin account: ${superadminEmail}`);
+  } else {
+    await devColl.updateOne({ _id: existingSuperadmin._id }, { $set: { passwordHash: superadminHash, isActive: true } });
+  }
+
   // 3. Seed team members for K B Lights firm: Devji Patel (Active), Ketan Patel (Active), Darshan Patel (Inactive)
   const companyColl = db.collection('companies');
   let kbCompany = await companyColl.findOne({ name: 'K B Lights' });
@@ -1638,6 +1658,44 @@ app.post('/api/auth/signin', async (req, res) => {
   } catch (e: any) {
     console.error(e);
     res.status(500).json({ message: e.message || 'Internal server error', error: e.message });
+  }
+});
+
+app.post('/api/auth/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).json({ message: 'Refresh token required' });
+    
+    let decoded: any;
+    try {
+      decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid or expired refresh token' });
+    }
+    
+    const db = await connectDB();
+    
+    if (decoded.accountType === 'developer') {
+      const dev = await db.collection('platformusers').findOne({ _id: new ObjectId(decoded.sub) });
+      if (!dev) return res.status(401).json({ message: 'Developer not found' });
+      const tokens = generateTokens(dev._id.toString(), dev.email, 'Platform Developer', 'developer');
+      return res.json(tokens);
+    } else {
+      const user = await db.collection('users').findOne({ _id: new ObjectId(decoded.sub) });
+      if (!user || user.isActive === false) return res.status(401).json({ message: 'Invalid or inactive user' });
+      
+      let roleName = user.role || 'Admin';
+      if (user.roleId) {
+        const role = await db.collection('roles').findOne({ _id: new ObjectId(user.roleId) });
+        if (role) roleName = role.name;
+      }
+      
+      const tokens = generateTokens(user._id.toString(), user.email, roleName, 'user');
+      return res.json(tokens);
+    }
+  } catch (e: any) {
+    console.error('Refresh token error:', e);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

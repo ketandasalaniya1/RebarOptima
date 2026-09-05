@@ -349,7 +349,9 @@ export default function SuperadminDashboard() {
                                 </div>
                               </td>
                               <td>
-                                <span className={`dev-status-badge ${c.status}`}>{c.status}</span>
+                                <span className={`dev-status-badge ${c.status === 'active' && c.subscriptionStatus === 'expired' ? 'expired' : c.status}`}>
+                                  {c.status === 'active' && c.subscriptionStatus === 'expired' ? 'Expired' : c.status}
+                                </span>
                               </td>
                               <td className="dev-muted">{c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-GB') : '—'}</td>
                               <td>

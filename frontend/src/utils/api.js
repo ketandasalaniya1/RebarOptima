@@ -1,5 +1,19 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 export async function apiRequest(endpoint, options = {}) {
   const token = sessionStorage.getItem('accessToken');
   
@@ -21,8 +35,56 @@ export async function apiRequest(endpoint, options = {}) {
     config.body = JSON.stringify(options.body);
   }
   
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-  const data = await response.json().catch(() => null);
+  let response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  let data = await response.json().catch(() => null);
+  
+  if (response.status === 401 && !endpoint.includes('/auth/signin') && !endpoint.includes('/auth/refresh')) {
+    if (isRefreshing) {
+      try {
+        const newToken = await new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        });
+        config.headers['Authorization'] = `Bearer ${newToken}`;
+        response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        data = await response.json().catch(() => null);
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      isRefreshing = true;
+      try {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (!refreshToken) throw new Error('No refresh token available');
+        
+        const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken })
+        });
+        
+        const refreshData = await refreshRes.json();
+        if (!refreshRes.ok) throw new Error('Refresh failed');
+        
+        sessionStorage.setItem('accessToken', refreshData.accessToken);
+        if (refreshData.refreshToken) {
+          sessionStorage.setItem('refreshToken', refreshData.refreshToken);
+        }
+        
+        isRefreshing = false;
+        processQueue(null, refreshData.accessToken);
+        
+        config.headers['Authorization'] = `Bearer ${refreshData.accessToken}`;
+        response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        data = await response.json().catch(() => null);
+      } catch (refreshErr) {
+        processQueue(refreshErr, null);
+        isRefreshing = false;
+        sessionStorage.clear();
+        window.location.href = '/login';
+        throw refreshErr;
+      }
+    }
+  }
   
   if (!response.ok) {
     const errorMsg = (Array.isArray(data?.message) ? data.message[0] : data?.message) || `HTTP error! status: ${response.status}`;

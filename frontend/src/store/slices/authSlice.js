@@ -37,13 +37,14 @@ const authSlice = createSlice({
   initialState: getInitialState(),
   reducers: {
     loginSuccess: (state, action) => {
-      const { accessToken, user } = action.payload;
+      const { accessToken, refreshToken, user } = action.payload;
       const now = Date.now().toString();
       state.accessToken = accessToken;
       state.user = user;
       state.isAuthenticated = true;
       state.isDeveloper = user.accountType === 'developer';
       sessionStorage.setItem('accessToken', accessToken);
+      if (refreshToken) sessionStorage.setItem('refreshToken', refreshToken);
       sessionStorage.setItem('user', JSON.stringify(user));
       sessionStorage.setItem('lastActivity', now);
     },
@@ -53,6 +54,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.isDeveloper = false;
       sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
       sessionStorage.removeItem('user');
       sessionStorage.removeItem('lastActivity');
       sessionStorage.removeItem('permissions');

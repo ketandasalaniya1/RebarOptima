@@ -1376,11 +1376,14 @@ app.post('/api/auth/signin', async (req, res) => {
     if (user.isActive === false) return res.status(403).json({ message: 'Account is inactive. Contact your administrator.' });
     if (!await bcrypt.compare(password, user.passwordHash)) return res.status(401).json({ message: 'Invalid email or password' });
 
-    // Check company status
-    const company = await db.collection('companies').findOne({ _id: user.companyId });
-    if (!company) return res.status(403).json({ message: 'Organization not found' });
-    if (company.status === 'inactive') return res.status(403).json({ message: 'Your organization is inactive. Contact platform support.' });
-    if (company.status === 'suspended') return res.status(403).json({ message: 'Your organization is suspended. Contact platform support.' });
+    // Check company status (if companyId exists)
+    let company: any = null;
+    if (user.companyId) {
+      company = await db.collection('companies').findOne({ _id: user.companyId });
+      if (!company) return res.status(403).json({ message: 'Organization not found' });
+      if (company.status === 'inactive') return res.status(403).json({ message: 'Your organization is inactive. Contact platform support.' });
+      if (company.status === 'suspended') return res.status(403).json({ message: 'Your organization is suspended. Contact platform support.' });
+    }
 
     // Get role name
     let roleName = user.role || 'Admin';
@@ -1400,7 +1403,7 @@ app.post('/api/auth/signin', async (req, res) => {
       actorName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
       actorEmail: user.email,
       actorRole: roleName,
-      companyId: user.companyId,
+      companyId: user.companyId || null,
       module: 'auth',
       action: 'USER_SIGNIN',
       resource: 'users',
@@ -1412,8 +1415,8 @@ app.post('/api/auth/signin', async (req, res) => {
       ...tokens,
       user: {
         id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName,
-        role: roleName, companyId: user.companyId.toString(),
-        companyName: company?.name ?? 'Unknown', projectName: company?.projectName ?? '',
+        role: roleName, companyId: user.companyId ? user.companyId.toString() : null,
+        companyName: company?.name ?? 'System', projectName: company?.projectName ?? '',
         accountType: 'user'
       },
       permissions

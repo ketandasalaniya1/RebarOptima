@@ -86,8 +86,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const company = await this.companiesService.findById(user.companyId.toString());
-    const companyName = company ? company.name : 'Unknown Firm';
+    const company = user.companyId ? await this.companiesService.findById(user.companyId.toString()) : null;
+    const companyName = company ? company.name : (user.companyId ? 'Unknown Firm' : 'System');
 
     const userIdStr = user._id.toString();
     const tokens = this.generateTokens(userIdStr, user.email, user.role);
@@ -100,7 +100,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
-        companyId: user.companyId.toString(),
+        companyId: user.companyId ? user.companyId.toString() : null,
         companyName,
       },
     };

@@ -17,6 +17,7 @@ import ActivityLogsPage from './pages/ActivityLogsPage/ActivityLogsPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
+import SubscribePage from './pages/SubscribePage/SubscribePage';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
@@ -42,6 +43,9 @@ function App() {
         .then((perms) => {
           if (perms) {
             dispatch(setPermissions(perms));
+            if (perms.companyStatus === 'suspended' || perms.subscription?.isExpired) {
+              dispatch(setView('subscribe'));
+            }
           }
         })
         .catch((err) => {
@@ -128,7 +132,12 @@ function App() {
 
   const handleSignInSuccess = (authData) => {
     dispatch(loginSuccess(authData));
-    dispatch(setView('overview'));
+    const perms = authData?.permissions;
+    if (perms && (perms.companyStatus === 'suspended' || perms.subscription?.isExpired)) {
+      dispatch(setView('subscribe'));
+    } else {
+      dispatch(setView('overview'));
+    }
   };
 
   const handleLogout = () => {
@@ -159,6 +168,8 @@ function App() {
             dispatch(setView('signin'));
           }}
         />
+      ) : view === 'subscribe' ? (
+        <SubscribePage />
       ) : view === 'superadmin-login' ? (
         <SuperadminLoginPage />
       ) : view === 'superadmin' ? (

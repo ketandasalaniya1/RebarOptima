@@ -23,6 +23,11 @@ export default function UserManagementPage() {
   const [formRoleId, setFormRoleId] = useState('');
   const [formMobile, setFormMobile] = useState('');
   
+  const [statusFilter, setStatusFilter] = useState('all');
+  
+  // Confirmation modal state
+  const [confirmAction, setConfirmAction] = useState(null);
+  
   // Current user info to prevent self-deactivation
   const currentUser = useSelector(state => state.auth.user);
 
@@ -109,17 +114,25 @@ export default function UserManagementPage() {
     }
   };
 
-  const toggleUserStatus = async (user) => {
-    if (user.id === currentUser?.id || user._id === currentUser?.id) {
+  const requestToggleUserStatus = (user) => {
+    const userId = String(user.id || user._id);
+    const currentId = String(currentUser?.id || '');
+    if (userId === currentId) {
       setError('You cannot deactivate your own account');
       setTimeout(() => setError(''), 3000);
       return;
     }
     
     const newStatus = user.isActive === false ? true : false;
-    const action = newStatus ? 'activate' : 'deactivate';
+    const action = newStatus ? 'reactivate' : 'deactivate';
     
-    if (!confirm(`Are you sure you want to ${action} ${user.firstName} ${user.lastName}?`)) return;
+    setConfirmAction({ user, newStatus, action });
+  };
+
+  const executeToggleUserStatus = async () => {
+    if (!confirmAction) return;
+    const { user, newStatus, action } = confirmAction;
+    setConfirmAction(null);
     
     try {
       await usersApi.updateUserStatus(user.id || user._id, newStatus);
@@ -131,9 +144,14 @@ export default function UserManagementPage() {
     }
   };
 
-  const filteredUsers = users.filter(u => 
-    `${u.firstName} ${u.lastName} ${u.email} ${u.roleName}`.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users.filter(u => {
+    const matchesSearch = `${u.firstName} ${u.lastName} ${u.email} ${u.roleName}`.toLowerCase().includes(search.toLowerCase());
+    if (!matchesSearch) return false;
+    const isActive = u.isActive !== false;
+    if (statusFilter === 'active') return isActive;
+    if (statusFilter === 'inactive') return !isActive;
+    return true;
+  });
 
   if (loading) {
     return <LoadingSpinner message="Loading users & access controls..." minHeight="65vh" />;
@@ -236,8 +254,24 @@ export default function UserManagementPage() {
                 onChange={e => setSearch(e.target.value)} 
               />
             </div>
-            <div className="users-stats">
-              Total Active: <strong>{users.filter(u => u.isActive !== false).length}</strong>
+            <div className="users-stats" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <select 
+                value={statusFilter} 
+                onChange={e => setStatusFilter(e.target.value)}
+                style={{
+                  background: 'var(--card-bg, rgba(255,255,255,0.05))',
+                  color: 'var(--text-main, #fff)',
+                  border: '1px solid var(--border-color, rgba(255,255,255,0.15))',
+                  borderRadius: '6px',
+                  padding: '6px 12px',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="all">All Members ({users.length})</option>
+                <option value="active">Active ({users.filter(u => u.isActive !== false).length})</option>
+                <option value="inactive">Deactivated ({users.filter(u => u.isActive === false).length})</option>
+              </select>
             </div>
           </div>
 
@@ -297,7 +331,7 @@ export default function UserManagementPage() {
                           </button>
                           <button 
                             className={`users-icon-btn ${isActive ? 'danger' : 'success'}`} 
-                            onClick={() => toggleUserStatus(user)}
+                            onClick={() => requestToggleUserStatus(user)}
                             title={isActive ? 'Deactivate User' : 'Activate User'}
                             disabled={isSelf}
                           >
@@ -317,6 +351,34 @@ export default function UserManagementPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {confirmAction && (
+        <div className="users-confirm-overlay" onClick={() => setConfirmAction(null)}>
+          <div className="users-confirm-modal" onClick={e => e.stopPropagation()}>
+            <div className="users-confirm-icon">
+              {confirmAction.action === 'deactivate' ? <XCircle size={36} /> : <CheckCircle size={36} />}
+            </div>
+            <h3>{confirmAction.action === 'deactivate' ? 'Deactivate User' : 'Reactivate User'}</h3>
+            <p>
+              Are you sure you want to <strong>{confirmAction.action}</strong>{' '}
+              <strong>{confirmAction.user.firstName} {confirmAction.user.lastName}</strong>?
+              {confirmAction.action === 'deactivate' && (
+                <span className="users-confirm-warning">This user will no longer be able to log in.</span>
+              )}
+            </p>
+            <div className="users-confirm-actions">
+              <button className="users-cancel-btn" onClick={() => setConfirmAction(null)}>Cancel</button>
+              <button 
+                className={confirmAction.action === 'deactivate' ? 'users-confirm-danger-btn' : 'users-confirm-success-btn'}
+                onClick={executeToggleUserStatus}
+              >
+                {confirmAction.action === 'deactivate' ? 'Yes, Deactivate' : 'Yes, Reactivate'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -114,6 +114,11 @@ export const developerApi = {
   getModules: () => apiRequest('/developer/modules'),
 };
 
+// Public API
+export const publicApi = {
+  getPackages: () => apiRequest('/public/packages'),
+};
+
 // Roles API
 export const rolesApi = {
   getRoles: async () => {

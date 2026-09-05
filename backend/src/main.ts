@@ -3,8 +3,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { MongoClient, Db, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
+import path from 'path';
 import { solve1DCSP } from './batches/optimizer.engine';
 
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
 const app = express();
@@ -18,23 +21,150 @@ app.use((req, res, next) => {
 });
 
 // ── DB ──────────────────────────────────────────────────────────────────────
-const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rebaroptima';
+function matchesQuery(doc: any, query: any): boolean {
+  if (!query || Object.keys(query).length === 0) return true;
+  for (const [key, val] of Object.entries(query)) {
+    if (key === '$or' && Array.isArray(val)) {
+      if (!val.some(q => matchesQuery(doc, q))) return false;
+      continue;
+    }
+    const docVal = doc[key];
+    if (val && typeof val === 'object' && !Array.isArray(val) && !(val instanceof ObjectId)) {
+      if ('$in' in val && Array.isArray(val.$in)) {
+        if (!val.$in.some((v: any) => String(v) === String(docVal))) return false;
+      } else if ('$ne' in val) {
+        if (String(docVal) === String(val.$ne)) return false;
+      } else if ('$exists' in val) {
+        if ((docVal !== undefined) !== val.$exists) return false;
+      }
+    } else if (docVal !== undefined && val !== undefined) {
+      if (String(docVal) !== String(val)) return false;
+    }
+  }
+  return true;
+}
+
+class InMemoryCollection {
+  public data: any[] = [];
+  constructor(public collectionName: string) {}
+
+  async findOne(query: any = {}, options: any = {}) {
+    let result = this.data.filter(doc => matchesQuery(doc, query));
+    if (options && options.sort) {
+      const key = Object.keys(options.sort)[0];
+      const dir = options.sort[key];
+      result = [...result].sort((a, b) => (a[key] > b[key] ? dir : -dir));
+    }
+    return result[0] ? { ...result[0] } : null;
+  }
+
+  find(query: any = {}) {
+    let result = this.data.filter(doc => matchesQuery(doc, query));
+    const chain = {
+      sort: (sortObj: any) => {
+        const key = Object.keys(sortObj)[0];
+        const dir = sortObj[key];
+        result = [...result].sort((a, b) => (a[key] > b[key] ? dir : -dir));
+        return chain;
+      },
+      project: () => chain,
+      toArray: async () => result.map(d => ({ ...d })),
+    };
+    return chain;
+  }
+
+  async insertOne(doc: any) {
+    const _id = doc._id || new ObjectId();
+    const newDoc = { ...doc, _id };
+    this.data.push(newDoc);
+    return { insertedId: _id, acknowledged: true };
+  }
+
+  async insertMany(docs: any[]) {
+    const insertedIds: any[] = [];
+    for (const d of docs) {
+      const res = await this.insertOne(d);
+      insertedIds.push(res.insertedId);
+    }
+    return { insertedIds, acknowledged: true };
+  }
+
+  async updateOne(query: any, update: any) {
+    const doc = await this.findOne(query);
+    if (doc) {
+      const target = this.data.find(d => d._id.toString() === doc._id.toString());
+      if (target && update.$set) {
+        Object.assign(target, update.$set);
+      }
+    }
+    return { modifiedCount: doc ? 1 : 0 };
+  }
+
+  async updateMany(query: any, update: any) {
+    const docs = this.data.filter(d => matchesQuery(d, query));
+    for (const d of docs) {
+      if (update.$set) Object.assign(d, update.$set);
+    }
+    return { modifiedCount: docs.length };
+  }
+
+  async deleteMany(query: any) {
+    const initialLen = this.data.length;
+    this.data = this.data.filter(d => !matchesQuery(d, query));
+    return { deletedCount: initialLen - this.data.length };
+  }
+
+  async countDocuments(query: any = {}) {
+    return this.data.filter(d => matchesQuery(d, query)).length;
+  }
+}
+
+class InMemoryDb {
+  private collections: Map<string, InMemoryCollection> = new Map();
+  collection(name: string) {
+    if (!this.collections.has(name)) {
+      this.collections.set(name, new InMemoryCollection(name));
+    }
+    return this.collections.get(name) as any;
+  }
+}
+
+const memoryDbInstance = new InMemoryDb();
+let isInMemoryActive = false;
 let client: MongoClient | null = null;
 let db: Db | null = null;
 
 async function connectDB(): Promise<Db> {
-  if (!db) {
+  if (db) return db;
+  const uri = process.env.MONGODB_URI;
+  if (uri) {
     try {
-      client = new MongoClient(uri, { serverSelectionTimeoutMS: 8000, connectTimeoutMS: 8000 });
+      client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000, connectTimeoutMS: 5000 });
       await client.connect();
-      db = client.db();
-      console.log('✅ Connected to MongoDB');
-    } catch (err: any) {
-      client = null; db = null;
-      if (err?.message?.includes('querySrv') || err?.message?.includes('ECONNREFUSED') || err?.message?.includes('ENOTFOUND')) {
-        throw new Error('Cannot reach MongoDB Atlas. Check: (1) cluster not paused, (2) IP whitelisted.');
+      const connectedDb = client.db();
+      db = connectedDb;
+      console.log('✅ Connected to MongoDB Atlas');
+      try {
+        await seedDefaults(connectedDb);
+        console.log('✅ MongoDB Atlas seeded/synced successfully!');
+      } catch (err) {
+        console.error('MongoDB seed error:', err);
       }
-      throw err;
+      return connectedDb;
+    } catch (err: any) {
+      console.warn('⚠️ Could not connect to MONGODB_URI. Falling back to In-Memory DB:', err.message);
+    }
+  }
+
+  if (!isInMemoryActive) {
+    console.log('⚡ Using In-Memory Database Fallback. Seeding default data...');
+    isInMemoryActive = true;
+    db = memoryDbInstance as any;
+    try {
+      await seedDefaults(db!);
+      console.log('✅ In-Memory DB seeded successfully!');
+    } catch (err) {
+      console.error('In-Memory seeding error:', err);
     }
   }
   return db as Db;
@@ -373,6 +503,22 @@ interface AccessResult {
   reason: string;
 }
 
+async function syncSubscriptionStatus(db: Db, subscription: any): Promise<any> {
+  if (!subscription) return null;
+  if ((subscription.status === 'active' || subscription.status === 'trial') && subscription.endDate) {
+    const now = new Date();
+    const expiresAt = new Date(subscription.endDate);
+    if (now > expiresAt) {
+      await db.collection('subscriptions').updateOne(
+        { _id: subscription._id },
+        { $set: { status: 'expired', updatedAt: now } }
+      );
+      subscription.status = 'expired';
+    }
+  }
+  return subscription;
+}
+
 async function canAccess(
   db: Db,
   userId: string,
@@ -395,8 +541,12 @@ async function canAccess(
     const isAdminUser = user.role === 'Admin' || user.role === 'OWNER' || user.role === 'ADMIN';
 
     // 3. Check subscription
-    const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial'] } });
+    const rawSub = await db.collection('subscriptions').findOne({ companyId: user.companyId }, { sort: { createdAt: -1 } });
+    const subscription = await syncSubscriptionStatus(db, rawSub);
     if (subscription) {
+      if (subscription.status === 'expired') {
+        return { allowed: false, reason: 'Subscription has expired' };
+      }
       const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
       if (pkg) {
         // Check module override first
@@ -470,18 +620,13 @@ async function getEffectivePermissions(db: Db, userId: string): Promise<any> {
 
   // Apply subscription restrictions
   let subscriptionInfo: any = null;
-  const subscription = await db.collection('subscriptions').findOne({ companyId: user.companyId, status: { $in: ['active', 'trial', 'expired'] } });
+  const rawSub = await db.collection('subscriptions').findOne({ companyId: user.companyId }, { sort: { createdAt: -1 } });
+  const subscription = await syncSubscriptionStatus(db, rawSub);
   if (subscription) {
-    let isExpired = false;
-    if (subscription.status === 'trial' && subscription.endDate) {
-      const now = new Date();
-      const expiresAt = new Date(subscription.endDate);
-      if (now > expiresAt) {
+    let isExpired = subscription.status === 'expired';
+    if (!isExpired && subscription.endDate) {
+      if (new Date() > new Date(subscription.endDate)) {
         isExpired = true;
-        if (subscription.status !== 'expired') {
-          await db.collection('subscriptions').updateOne({ _id: subscription._id }, { $set: { status: 'expired', updatedAt: now } });
-          subscription.status = 'expired';
-        }
       }
     }
 
@@ -494,10 +639,11 @@ async function getEffectivePermissions(db: Db, userId: string): Promise<any> {
       subscriptionInfo = {
         name: pkg.name,
         displayName: subscription.status === 'trial' ? `${pkg.displayName} (7-Day Trial)` : pkg.displayName,
-        status: subscription.status,
+        status: isExpired ? 'expired' : subscription.status,
         limits: pkg.limits,
         trialDaysRemaining,
         trialExpiresAt: subscription.endDate,
+        endDate: subscription.endDate,
         isExpired
       };
 
@@ -747,15 +893,16 @@ async function seedDefaults(db: Db) {
     }
   }
 
-  // 3. Seed developer account from env
-  const devEmail = process.env.DEVELOPER_EMAIL || 'developer@rebaroptima.com';
-  const devPassword = process.env.DEVELOPER_PASSWORD || 'DevSecure2026!@#';
+  // 3. Seed developer & admin user account
+  const devEmail = (process.env.DEVELOPER_EMAIL || 'dev@gmail.com').toLowerCase().trim();
+  const devPassword = process.env.DEVELOPER_PASSWORD || 'Dev@123!';
+  const hash = await bcrypt.hash(devPassword, 10);
+
   const devColl = db.collection('platformusers');
-  const existingDev = await devColl.findOne({ email: devEmail.toLowerCase().trim() });
+  const existingDev = await devColl.findOne({ email: devEmail });
   if (!existingDev) {
-    const hash = await bcrypt.hash(devPassword, 10);
     await devColl.insertOne({
-      email: devEmail.toLowerCase().trim(),
+      email: devEmail,
       passwordHash: hash,
       firstName: 'Platform',
       lastName: 'Developer',
@@ -765,6 +912,57 @@ async function seedDefaults(db: Db) {
       updatedAt: new Date()
     });
     console.log(`  ✅ Created developer account: ${devEmail}`);
+  } else {
+    await devColl.updateOne({ _id: existingDev._id }, { $set: { passwordHash: hash, isActive: true } });
+  }
+
+  // 3. Seed team members for K B Lights firm: Devji Patel (Active), Ketan Patel (Active), Darshan Patel (Inactive)
+  const companyColl = db.collection('companies');
+  let kbCompany = await companyColl.findOne({ name: 'K B Lights' });
+  if (!kbCompany) {
+    kbCompany = await companyColl.findOne({});
+  }
+  let companyId: any = kbCompany ? kbCompany._id : null;
+  if (!companyId) {
+    const compRes = await companyColl.insertOne({
+      name: 'K B Lights',
+      projectName: 'Vastral Warehouse',
+      location: 'Ahmedabad',
+      status: 'active',
+      createdAt: new Date()
+    });
+    companyId = compRes.insertedId;
+  }
+
+  const sampleUsers = [
+    { email: 'dev@gmail.com', firstName: 'Devji', lastName: 'Patel', role: 'Admin', isActive: true },
+    { email: 'ketan@gmail.com', firstName: 'Ketan', lastName: 'Patel', role: 'Senior Site Engineer', isActive: true },
+    { email: 'darshan1@gmail.com', firstName: 'Darshan', lastName: 'Patel', role: 'Project Manager', isActive: false }
+  ];
+
+  const userColl = db.collection('users');
+  for (const su of sampleUsers) {
+    const existing = await userColl.findOne({ email: su.email.toLowerCase().trim() });
+    const userRole = await rolesColl.findOne({ name: su.role }) || await rolesColl.findOne({ name: 'Admin' });
+    if (!existing) {
+      await userColl.insertOne({
+        email: su.email.toLowerCase().trim(),
+        passwordHash: hash,
+        firstName: su.firstName,
+        lastName: su.lastName,
+        role: su.role,
+        roleId: userRole?._id || null,
+        companyId: companyId,
+        isActive: su.isActive,
+        createdAt: new Date()
+      });
+      console.log(`  ✅ Seeded team member: ${su.firstName} ${su.lastName} (${su.email})`);
+    } else {
+      await userColl.updateOne(
+        { _id: existing._id },
+        { $set: { companyId: companyId, isActive: su.isActive, role: su.role, roleId: userRole?._id || existing.roleId } }
+      );
+    }
   }
 
   // 4. Backfill existing companies with status and subscription
@@ -879,7 +1077,8 @@ app.get('/api/developer/companies', developerAuthMiddleware, async (req: any, re
     // Enrich with user count and subscription info
     const enriched = await Promise.all(companies.map(async (c: any) => {
       const userCount = await db.collection('users').countDocuments({ companyId: c._id, isActive: { $ne: false } });
-      const subscription = await db.collection('subscriptions').findOne({ companyId: c._id, status: { $in: ['active', 'trial'] } });
+      const rawSub = await db.collection('subscriptions').findOne({ companyId: c._id }, { sort: { createdAt: -1 } });
+      const subscription = await syncSubscriptionStatus(db, rawSub);
       let pkgName = 'None';
       let maxStorageMB = 100;
       if (subscription) {
@@ -990,6 +1189,14 @@ app.delete('/api/developer/companies/:id', developerAuthMiddleware, async (req: 
 });
 
 // -- Subscription Packages Management --
+app.get('/api/public/packages', async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const packages = await db.collection('subscriptionpackages').find({}).sort({ createdAt: 1 }).toArray();
+    res.json(packages.map((p: any) => ({ ...p, id: p._id.toString() })));
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
 app.get('/api/developer/packages', developerAuthMiddleware, async (req: any, res) => {
   try {
     const db = await connectDB();
@@ -1040,6 +1247,7 @@ app.get('/api/developer/subscriptions', developerAuthMiddleware, async (req: any
     const db = await connectDB();
     const subs = await db.collection('subscriptions').find({}).sort({ createdAt: -1 }).toArray();
     const enriched = await Promise.all(subs.map(async (s: any) => {
+      await syncSubscriptionStatus(db, s);
       const company = await db.collection('companies').findOne({ _id: s.companyId });
       const pkg = await db.collection('subscriptionpackages').findOne({ _id: s.packageId });
       return { ...s, id: s._id.toString(), companyName: company?.name || 'Unknown', packageName: pkg?.displayName || pkg?.name || 'Unknown' };
@@ -1388,7 +1596,7 @@ app.post('/api/auth/signin', async (req, res) => {
       company = await db.collection('companies').findOne({ _id: user.companyId });
       if (!company) return res.status(403).json({ message: 'Organization not found' });
       if (company.status === 'inactive') return res.status(403).json({ message: 'Your organization is inactive. Contact platform support.' });
-      if (company.status === 'suspended') return res.status(403).json({ message: 'Your organization is suspended. Contact platform support.' });
+      // If company is suspended, authentication proceeds so user is routed to the Subscribe Page.
     }
 
     // Get role name
@@ -1429,7 +1637,7 @@ app.post('/api/auth/signin', async (req, res) => {
     });
   } catch (e: any) {
     console.error(e);
-    res.status(500).json({ message: 'Internal server error', error: e.message });
+    res.status(500).json({ message: e.message || 'Internal server error', error: e.message });
   }
 });
 
@@ -1468,14 +1676,22 @@ app.get('/api/companies/storage', authMiddleware, async (req: any, res) => {
 
     const consumedMB = totalBytes / (1024 * 1024);
     
-    const subscription = await db.collection('subscriptions').findOne({ companyId: new ObjectId(companyId), status: { $in: ['active', 'trial'] } });
+    const rawSub = await db.collection('subscriptions').findOne({ companyId: new ObjectId(companyId) }, { sort: { createdAt: -1 } });
+    const subscription = await syncSubscriptionStatus(db, rawSub);
+    let planName = 'Free / Trial';
+    let status = subscription?.status || 'none';
+    let endDate = subscription?.endDate || null;
+    let isExpired = status === 'expired' || (endDate ? new Date() > new Date(endDate) : false);
     let maxMB = 100;
     if (subscription) {
       const pkg = await db.collection('subscriptionpackages').findOne({ _id: subscription.packageId });
-      if (pkg?.limits?.maxStorageMB) maxMB = pkg.limits.maxStorageMB;
+      if (pkg) {
+        planName = pkg.displayName || pkg.name;
+        if (pkg.limits?.maxStorageMB) maxMB = pkg.limits.maxStorageMB;
+      }
     }
 
-    res.json({ consumedMB, maxMB, totalBytes });
+    res.json({ consumedMB, maxMB, totalBytes, planName, status, endDate, isExpired });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
@@ -1915,10 +2131,34 @@ app.get('/api/users', adminMiddleware, async (req: any, res) => {
     }
 
     const userObjId = toObjectId(req.user.sub);
-    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : null;
+    const user = await db.collection('users').findOne({
+      $or: [
+        ...(userObjId ? [{ _id: userObjId }] : []),
+        { _id: req.user.sub }
+      ]
+    });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const users = await db.collection('users').find({ companyId: user.companyId, isActive: { $ne: false } }).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
+    const company = await db.collection('companies').findOne({
+      $or: [
+        ...(toObjectId(user.companyId) ? [{ _id: toObjectId(user.companyId) }] : []),
+        { _id: user.companyId }
+      ]
+    });
+
+    const targetCompanyId = company ? company._id : user.companyId;
+    const companyIdStr = targetCompanyId ? targetCompanyId.toString() : null;
+    const companyObjId = toObjectId(targetCompanyId);
+
+    const users = await db.collection('users').find({
+      $or: [
+        { companyId: targetCompanyId },
+        { companyId: companyIdStr },
+        { companyId: companyObjId },
+        { companyId: user.companyId },
+        { companyId: user.companyId?.toString() }
+      ]
+    }).project({ passwordHash: 0 }).sort({ createdAt: -1 }).toArray();
 
     const enriched = await Promise.all(users.map(async (u: any) => {
       let roleName = u.role || 'Unknown';
@@ -1996,8 +2236,12 @@ app.put('/api/users/:id', adminMiddleware, async (req: any, res) => {
     const { firstName, lastName, roleId, mobileNumber, assignedProjects } = req.body;
     const db = await connectDB();
     const targetObjId = toObjectId(req.params.id);
-    if (!targetObjId) return res.status(400).json({ message: 'Invalid user ID' });
-    const targetUser = await db.collection('users').findOne({ _id: targetObjId });
+    const targetUser = await db.collection('users').findOne({
+      $or: [
+        ...(targetObjId ? [{ _id: targetObjId }] : []),
+        { _id: req.params.id }
+      ]
+    });
     if (!targetUser) return res.status(404).json({ message: 'User not found' });
 
     // Ensure same company (unless developer)
@@ -2035,12 +2279,18 @@ app.put('/api/users/:id/status', adminMiddleware, async (req: any, res) => {
     if (typeof isActive !== 'boolean') return res.status(400).json({ message: 'isActive must be a boolean' });
     const db = await connectDB();
     const targetObjId = toObjectId(req.params.id);
-    if (!targetObjId) return res.status(400).json({ message: 'Invalid user ID' });
-    const targetUser = await db.collection('users').findOne({ _id: targetObjId });
+    const targetUser = await db.collection('users').findOne({
+      $or: [
+        ...(targetObjId ? [{ _id: targetObjId }] : []),
+        { _id: req.params.id }
+      ]
+    });
     if (!targetUser) return res.status(404).json({ message: 'User not found' });
 
     // Cannot deactivate yourself
-    if (req.user.sub === req.params.id) return res.status(400).json({ message: 'Cannot deactivate your own account' });
+    if (req.user.sub === req.params.id || req.user.sub === targetUser._id.toString()) {
+      return res.status(400).json({ message: 'Cannot deactivate your own account' });
+    }
 
     await db.collection('users').updateOne({ _id: targetUser._id }, { $set: { isActive } });
     await logAudit(db, { actorId: req.user.sub, actorType: req.user.accountType, companyId: targetUser.companyId, action: isActive ? 'USER_ACTIVATED' : 'USER_DEACTIVATED', resource: 'users', resourceId: targetUser._id.toString() });

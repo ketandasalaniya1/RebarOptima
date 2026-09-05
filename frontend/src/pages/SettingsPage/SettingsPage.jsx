@@ -292,18 +292,58 @@ export default function SettingsPage() {
           </form>
         </div>
 
-        {/* Storage Stats Card */}
+        {/* Storage & Subscription Stats Card */}
         <div className="card settings-card">
           <h3 className="settings-card-title">
             <Database size={18} style={{ marginRight: '8px' }} /> Subscription & Storage
           </h3>
-          <p className="settings-card-desc">Monitor your organization's database storage usage.</p>
+          <p className="settings-card-desc">Monitor your organization's subscription plan details and database storage usage.</p>
           
           <div className="setting-group" style={{ marginTop: '20px' }}>
             {loadingStorage ? (
-              <p>Loading storage statistics...</p>
+              <p>Loading subscription & storage statistics...</p>
             ) : storageData ? (
               <div>
+                {/* Subscription Plan Overview */}
+                <div style={{ 
+                  background: 'rgba(255, 255, 255, 0.03)', 
+                  border: '1px solid var(--border-color)', 
+                  borderRadius: '10px', 
+                  padding: '16px 20px', 
+                  marginBottom: '20px',
+                  display: 'flex',
+                  justify: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '12px'
+                }}>
+                  <div>
+                    <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)' }}>Current Plan</span>
+                    <h4 style={{ margin: '4px 0 0 0', fontSize: '18px', fontWeight: '700', color: 'var(--text-main)' }}>{storageData.planName || 'Free / Trial Plan'}</h4>
+                    {storageData.endDate && (
+                      <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                        Valid through: {new Date(storageData.endDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <span style={{
+                      background: storageData.isExpired ? 'rgba(239, 68, 68, 0.15)' : storageData.status === 'trial' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                      border: `1px solid ${storageData.isExpired ? 'rgba(239, 68, 68, 0.3)' : storageData.status === 'trial' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+                      color: storageData.isExpired ? '#f87171' : storageData.status === 'trial' ? '#fcd34d' : '#34d399',
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      textTransform: 'capitalize',
+                      display: 'inline-block'
+                    }}>
+                      {storageData.isExpired ? 'Expired' : storageData.status || 'Active'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Storage Bar */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
                   <span>Consumed Storage</span>
                   <span>{storageData.consumedMB < 0.01 ? '< 0.01' : storageData.consumedMB.toFixed(2)} MB / {storageData.maxMB} MB</span>

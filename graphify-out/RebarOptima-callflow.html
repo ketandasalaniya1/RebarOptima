@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2467 nodes, 3007 edges, 203 communities. Commit: 2697a48</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2485 nodes, 3043 edges, 214 communities. Commit: 38c8c28</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -96,11 +96,11 @@ flowchart LR
     class ANALYSIS_CLUSTERING_C79796DA module;
     OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>134 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>297 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>314 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>51 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>204 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>222 nodes</small>")
     class SERVE_API_35EC8E86 module;
     TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>164 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
@@ -116,20 +116,20 @@ flowchart LR
     class TYPOGRAPHY_SPECIFICATIONS_19424601 module;
     LOGO_USAGE_RULES_91E51D96("Logo Usage Rules<br/><small>29 nodes</small>")
     class LOGO_USAGE_RULES_91E51D96 module;
-    OTHER_D0941E68("Other<br/><small>789 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>772 nodes</small>")
     class OTHER_D0941E68 module;
-    OTHER_D0941E68 -->|imports x29| SERVE_API_35EC8E86
-    SERVE_API_35EC8E86 -->|imports x18| OTHER_D0941E68
+    SERVE_API_35EC8E86 -->|imports x28| OTHER_D0941E68
     CURRENTUSER_C3EE84B6 -->|references x14| BUILD_GRAPH_321CBB04
     BUILD_GRAPH_321CBB04 -->|imports x14| CURRENTUSER_C3EE84B6
     OTHER_D0941E68 -->|references x13| BUILD_GRAPH_321CBB04
     BUILD_GRAPH_321CBB04 -->|imports x12| OTHER_D0941E68
+    OTHER_D0941E68 -->|imports x11| SERVE_API_35EC8E86
     OTHER_D0941E68 -->|references x7| CURRENTUSER_C3EE84B6
-    OTHER_D0941E68 -->|imports x7| CLI_SKILLS_9964CBB8
     TESTS_FIXTURES_B84B1DCC -->|method x6| EXTRACT_PIPELINE_5F350230
     TESTS_FIXTURES_B84B1DCC -->|method x6| BUILD_GRAPH_321CBB04
-    CLI_SKILLS_9964CBB8 -->|imports x5| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
+    OTHER_D0941E68 -->|imports x3| CLI_SKILLS_9964CBB8
+    CLI_SKILLS_9964CBB8 -->|imports x3| SERVE_API_35EC8E86
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,19 +146,19 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>30</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>580</td><td><code>1, 4, 5, 39, 7, 62, 12, 21, 16, 54, 124, 19, 2, 23, 31, 29, 36, 48, 173, 49, 53, 162, 55, 56, 59, 60, 61, 117, 175, 176, 66, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 201, 202, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>297</td><td><code>44, 58, 69, 89, 120, 52, 122, 136, 86, 174, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>204</td><td><code>3, 6, 10, 166, 18, 15, 156, 38, 200</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>164</td><td><code>9, 17, 24, 30, 33, 37, 46, 177, 67, 119, 14, 178, 183, 184, 185, 186, 187, 188, 189, 190, 191, 193, 194, 196, 197, 198, 199, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>CurrentUser</td><td>33</td><td><code>11</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Other</td><td>789</td><td><code>74, 79, 80, 82, 83, 84, 88, 121, 63, 123, 125, 126, 127, 128, 129, 130, 131, 25, 0, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 116, 51, 159, 151, 64, 164, 165, 172, 65, 179, 73, 170, 180, 181, 182, 192, 85, 111, 113, 114, 207</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>30</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>580</td><td><code>1, 39, 7, 62, 12, 21, 16, 54, 124, 19, 4, 2, 23, 151, 31, 29, 5, 36, 195, 48, 173, 203, 49, 53, 162, 55, 56, 59, 60, 204, 205, 61, 117, 175, 176, 206, 66, 208, 209, 210, 211, 212, 213, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 201, 202, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>314</td><td><code>52, 44, 58, 69, 89, 120, 122, 116, 136, 86, 148, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>222</td><td><code>3, 6, 10, 174, 166, 18, 15, 156, 38, 200</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>164</td><td><code>9, 17, 24, 30, 33, 37, 46, 177, 67, 119, 14, 178, 183, 184, 185, 186, 187, 188, 189, 190, 191, 193, 194, 196, 197, 198, 199, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>CurrentUser</td><td>33</td><td><code>11</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Other</td><td>772</td><td><code>74, 79, 80, 82, 83, 84, 88, 121, 63, 123, 125, 126, 127, 128, 129, 130, 131, 25, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 0, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 51, 159, 64, 164, 165, 172, 65, 179, 73, 170, 180, 181, 182, 192, 85, 111, 113, 114, 207</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Outputs &amp; Docs -&gt; Extraction Pipeline -&gt; Graph Build -&gt; CurrentUser -&gt; Analysis &amp; Clustering -&gt; CLI &amp; Skill Installers -&gt; Other</div>
+    <div class="arrow-chain">Outputs &amp; Docs -&gt; Extraction Pipeline -&gt; Graph Build -&gt; CurrentUser -&gt; Analysis &amp; Clustering -&gt; CLI &amp; Skill Installers -&gt; Serving API</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>2467 nodes · 3007 edges · 203 communities (137 shown, 59 thin omitted)</li>
+      <li>2485 nodes · 3043 edges · 214 communities (149 shown, 58 thin omitted)</li>
       <li>Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 50 edges (avg confidence: 0.83)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `TailwindConfigGenerator` - 58 edges</li>
@@ -1379,66 +1379,75 @@ flowchart LR
 
 <!-- ====== 6. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">6. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around skills, agents, skillmd, design, mostly in skills/design/SKILL.md, skills/ui-ux-pro-max/SKILL.md, ui-styling/references/shadcn-components.md. This section covers 297 nodes and 284 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around skills, agents, skillmd, design, mostly in backend/src/main.ts, skills/design/SKILL.md, skills/ui-ux-pro-max/SKILL.md. This section covers 314 nodes and 328 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (297 nodes, 284 edges)
+    %% Section: CLI &amp; Skill Installers (314 nodes, 328 edges)
     subgraph cli_skills_backend_src_main_ts_c59242b1["backend/src/main.ts"]
-        backend_src_main_requirepermission_2f203678("requirePermission()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_startserver_ba5d5674("startServer()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_b2dfa2a5("InMemoryCollection<br/><small>backend/src/main.ts</small>")
         backend_src_main_logaudit_9adafb6b("logAudit()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_toobjectid_e1f01019("toObjectId()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_connectdb_b60f44d1("connectDB()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_canaccess_35c9340c("canAccess()<br/><small>backend/src/main.ts</small>")
         backend_src_main_seeddefaults_81b569a2("seedDefaults()<br/><small>backend/src/main.ts</small>")
-        backend_src_main_accessresult_5af0e5f0("AccessResult<br/><small>backend/src/main.ts</small>")
-        backend_src_main_default_subscription_packages_7f28e93f("DEFAULT SUBSCRIPTION PACKAGES<br/><small>backend/src/main.ts</small>")
-        backend_src_main_default_system_roles_82215314("DEFAULT_SYSTEM_ROLES<br/><small>backend/src/main.ts</small>")
+        backend_src_main_ensurescraprules_1c3d1075("ensureScrapRules()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_geteffectivepermissions_ce1cc71c("getEffectivePermissions()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_updatemany_49ee49e6("updateMany()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_deletemany_d3178dba("deleteMany()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_countdocumen_14deeb31("countDocuments()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_constructor_1d7ec519("constructor()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_findone_78efd3df("findOne()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_find_dca9c832("find()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_insertone_760b6626("insertOne()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_insertmany_bcde43e4("insertMany()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorycollection_updateone_a07793ab("updateOne()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorydb_0b01c8d0("InMemoryDb<br/><small>backend/src/main.ts</small>")
+        backend_src_main_inmemorydb_collection_e1145899("collection()<br/><small>backend/src/main.ts</small>")
+        backend_src_main_canaccess_35c9340c("canAccess()<br/><small>backend/src/main.ts</small>")
     end
-    subgraph cli_skills_src_store_store_js_fa9916be["src/store/store.js"]
-        frontend_src_store_store_503c3dbf("store.js")
-        frontend_src_store_store_store_f51cdf51("store<br/><small>src/store/store.js</small>")
-    end
-    frontend_src_app_app_9781f459("App()<br/><small>frontend/src/App.jsx</small>")
     frontend_src_main_c1980e55("main.jsx")
-    frontend_src_pages_superadmindashboard_superadmi_d43850e6("SuperadminDashboard.jsx")
-    frontend_src_utils_api_developerapi_bcbaccfc("developerApi<br/><small>src/utils/api.js</small>")
-    frontend_src_store_slices_authslice_09e1780d("authSlice.js")
-    frontend_src_store_slices_routingslice_cf812b55("routingSlice.js")
-    backend_src_main_logaudit_9adafb6b -->|calls| backend_src_main_toobjectid_e1f01019
-    backend_src_main_requirepermission_2f203678 -->|calls| backend_src_main_connectdb_b60f44d1
-    backend_src_main_requirepermission_2f203678 -->|calls| backend_src_main_canaccess_35c9340c
-    backend_src_main_startserver_ba5d5674 -->|calls| backend_src_main_connectdb_b60f44d1
-    backend_src_main_startserver_ba5d5674 -->|calls| backend_src_main_seeddefaults_81b569a2
-    frontend_src_main_c1980e55 -->|imports| frontend_src_store_store_store_f51cdf51
-    frontend_src_main_c1980e55 -->|imports| frontend_src_app_app_9781f459
-    frontend_src_main_c1980e55 -->|imports| frontend_src_store_store_503c3dbf
-    frontend_src_pages_superadmindashboard_superadmi_d43850e6 -->|imports| frontend_src_utils_api_developerapi_bcbaccfc
-    frontend_src_pages_superadmindashboard_superadmi_d43850e6 -->|imports| frontend_src_store_slices_routingslice_cf812b55
-    frontend_src_pages_superadmindashboard_superadmi_d43850e6 -->|imports| frontend_src_store_slices_authslice_09e1780d
-    frontend_src_store_store_503c3dbf -->|imports| frontend_src_store_slices_authslice_09e1780d
-    frontend_src_store_store_503c3dbf -->|imports| frontend_src_store_slices_routingslice_cf812b55
-    %% Omitted for readability: 279 nodes, 0 edges
-    class backend_src_main_requirepermission_2f203678 function;
-    class backend_src_main_startserver_ba5d5674 function;
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_updatemany_49ee49e6
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_deletemany_d3178dba
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_countdocumen_14deeb31
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_constructor_1d7ec519
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_findone_78efd3df
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_find_dca9c832
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_insertone_760b6626
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_insertmany_bcde43e4
+    backend_src_main_inmemorycollection_b2dfa2a5 -->|method| backend_src_main_inmemorycollection_updateone_a07793ab
+    backend_src_main_inmemorydb_0b01c8d0 -->|method| backend_src_main_inmemorydb_collection_e1145899
+    backend_src_main_canaccess_35c9340c -->|calls| backend_src_main_inmemorycollection_findone_78efd3df
+    backend_src_main_canaccess_35c9340c -->|calls| backend_src_main_inmemorydb_collection_e1145899
+    backend_src_main_ensurescraprules_1c3d1075 -->|calls| backend_src_main_inmemorydb_collection_e1145899
+    backend_src_main_ensurescraprules_1c3d1075 -->|calls| backend_src_main_inmemorycollection_find_dca9c832
+    backend_src_main_ensurescraprules_1c3d1075 -->|calls| backend_src_main_inmemorycollection_updateone_a07793ab
+    backend_src_main_geteffectivepermissions_ce1cc71c -->|calls| backend_src_main_inmemorycollection_findone_78efd3df
+    backend_src_main_geteffectivepermissions_ce1cc71c -->|calls| backend_src_main_inmemorydb_collection_e1145899
+    backend_src_main_inmemorycollection_insertmany_bcde43e4 -->|calls| backend_src_main_inmemorycollection_insertone_760b6626
+    backend_src_main_inmemorycollection_updateone_a07793ab -->|calls| backend_src_main_inmemorycollection_findone_78efd3df
+    backend_src_main_inmemorydb_collection_e1145899 -->|calls| backend_src_main_inmemorycollection_b2dfa2a5
+    backend_src_main_logaudit_9adafb6b -->|calls| backend_src_main_inmemorycollection_findone_78efd3df
+    backend_src_main_logaudit_9adafb6b -->|calls| backend_src_main_inmemorydb_collection_e1145899
+    backend_src_main_logaudit_9adafb6b -->|calls| backend_src_main_inmemorycollection_insertone_760b6626
+    backend_src_main_seeddefaults_81b569a2 -->|calls| backend_src_main_inmemorydb_collection_e1145899
+    %% Omitted for readability: 296 nodes, 4 edges
+    class backend_src_main_inmemorycollection_b2dfa2a5 klass;
     class backend_src_main_logaudit_9adafb6b function;
-    class backend_src_main_toobjectid_e1f01019 function;
-    class backend_src_main_connectdb_b60f44d1 function;
-    class backend_src_main_canaccess_35c9340c function;
     class backend_src_main_seeddefaults_81b569a2 function;
-    class backend_src_main_accessresult_5af0e5f0 klass;
-    class backend_src_main_default_subscription_packages_7f28e93f klass;
-    class backend_src_main_default_system_roles_82215314 klass;
-    class frontend_src_store_store_503c3dbf ui;
-    class frontend_src_store_store_store_f51cdf51 ui;
-    class frontend_src_app_app_9781f459 ui;
+    class backend_src_main_ensurescraprules_1c3d1075 function;
+    class backend_src_main_geteffectivepermissions_ce1cc71c function;
+    class backend_src_main_inmemorycollection_updatemany_49ee49e6 function;
+    class backend_src_main_inmemorycollection_deletemany_d3178dba function;
+    class backend_src_main_inmemorycollection_countdocumen_14deeb31 function;
+    class backend_src_main_inmemorycollection_constructor_1d7ec519 function;
+    class backend_src_main_inmemorycollection_findone_78efd3df function;
+    class backend_src_main_inmemorycollection_find_dca9c832 function;
+    class backend_src_main_inmemorycollection_insertone_760b6626 function;
+    class backend_src_main_inmemorycollection_insertmany_bcde43e4 function;
+    class backend_src_main_inmemorycollection_updateone_a07793ab function;
+    class backend_src_main_inmemorydb_0b01c8d0 klass;
+    class backend_src_main_inmemorydb_collection_e1145899 function;
+    class backend_src_main_canaccess_35c9340c function;
     class frontend_src_main_c1980e55 ui;
-    class frontend_src_pages_superadmindashboard_superadmi_d43850e6 ui;
-    class frontend_src_utils_api_developerapi_bcbaccfc api;
-    class frontend_src_store_slices_authslice_09e1780d module;
-    class frontend_src_store_slices_routingslice_cf812b55 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1462,243 +1471,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>design/SKILL.md</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>AccessResult</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing design/SKILL.md.</td>
+  <td>AccessResult node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>Banner Design (Built-in)</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Banner Design (Built-in).</td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>constructor()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>countDocuments()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>deleteMany()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+6 more</td>
+  <td>InMemoryCollection node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>Banner: Design Rules</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>InMemoryDb</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Banner: Design Rules.</td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>InMemoryDb node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>Banner: Quick Size Reference</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>adminMiddleware()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main.ts</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Banner: Quick Size Reference.</td>
+  <td>adminMiddleware() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>Banner: Top Art Styles</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>authMiddleware()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main.ts</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Banner: Top Art Styles.</td>
+  <td>authMiddleware() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>Banner: Workflow</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>buildFullPermissions()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Banner: Workflow.</td>
+  <td>buildFullPermissions() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>CIP Design (Built-in)</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CIP Design (Built-in).</td>
+  <td><code>canAccess()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>requirePermission()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>findOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>syncSubscriptionStatus()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>canAccess() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>CIP: Generate Brief</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CIP: Generate Brief.</td>
+  <td><code>connectDB()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>requirePermission()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>startServer()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>seedDefaults()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>connectDB() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>CIP: Generate Mockups</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>developerAuthMiddleware()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main.ts</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing CIP: Generate Mockups.</td>
+  <td>developerAuthMiddleware() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>CIP: Render HTML Presentation</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>ensureScrapRules()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CIP: Render HTML Presentation.</td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>find()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>updateOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>ensureScrapRules() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>CIP: Search Domains</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>generateTokens()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing CIP: Search Domains.</td>
+  <td>generateTokens() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>Complete Brand Package</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>getEffectivePermissions()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Complete Brand Package.</td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>findOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>syncSubscriptionStatus()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>getEffectivePermissions() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>Design</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>getSingleBarWeight()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Design.</td>
+  <td>getSingleBarWeight() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>Icon Design (Built-in)</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>.constructor()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Icon Design (Built-in).</td>
+  <td>.constructor() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>Icon: Generate Batch Variations</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Icon: Generate Batch Variations.</td>
+  <td><code>.countDocuments()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>matchesQuery()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.countDocuments() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>Icon: Generate Single Icon</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Icon: Generate Single Icon.</td>
+  <td><code>.deleteMany()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>matchesQuery()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.deleteMany() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>Icon: Multi-size Export</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Icon: Multi-size Export.</td>
+  <td><code>.find()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ensureScrapRules()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>seedDefaults()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>matchesQuery()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.find() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>Icon: Top Styles</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Icon: Top Styles.</td>
+  <td><code>.findOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>canAccess()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>getEffectivePermissions()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+3 more</td>
+  <td><code>matchesQuery()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.findOne() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>Integration</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Integration.</td>
+  <td><code>.insertMany()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>insertOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.insertMany() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>Logo Design (Built-in)</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>.insertOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>insertMany()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>logAudit()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+1 more</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Logo Design (Built-in).</td>
+  <td>.insertOne() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>Logo: Generate Design Brief</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Logo: Generate Design Brief.</td>
+  <td><code>.updateMany()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>matchesQuery()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.updateMany() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>Logo: Generate with AI</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Logo: Generate with AI.</td>
+  <td><code>.updateOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ensureScrapRules()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>seedDefaults()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+1 more</td>
+  <td><code>findOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.updateOne() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>Logo: Search Styles/Colors/Industries</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Logo: Search Styles/Colors/Industries.</td>
+  <td><code>.collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>canAccess()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>ensureScrapRules()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>getEffectivePermissions()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+4 more</td>
+  <td><code>InMemoryCollection</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>.collection() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>New Design System</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>logAudit()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing New Design System.</td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>findOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>insertOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+1 more</td>
+  <td>logAudit() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>Prerequisites</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>matchesQuery()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>countDocuments()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>deleteMany()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>find()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+2 more</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Prerequisites.</td>
+  <td>matchesQuery() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>References</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>requirePermission()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing References.</td>
+  <td><code>canAccess()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>connectDB()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>requirePermission() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>Scripts</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Scripts.</td>
+  <td><code>seedDefaults()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>connectDB()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>startServer()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>find()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>findOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br>+2 more</td>
+  <td>seedDefaults() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>Setup</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>startServer()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Setup.</td>
+  <td><code>connectDB()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>seedDefaults()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>startServer() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>Slides (Built-in)</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Slides (Built-in).</td>
+  <td><code>syncSubscriptionStatus()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>canAccess()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>getEffectivePermissions()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>collection()</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>updateOne()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td>syncSubscriptionStatus() node in backend/src/main.ts.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>Slides: Knowledge Base</code><br><small style="color:var(--muted)">skills/design/SKILL.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>toObjectId()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>logAudit()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Slides: Knowledge Base.</td>
+  <td>toObjectId() node in backend/src/main.ts.</td>
 </tr>
 </table>
 
@@ -1707,19 +1716,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>skills/design/SKILL.md</code></td><td>36 nodes</td></tr>
+      <tr><td><code>backend/src/main.ts</code></td><td>37 nodes</td></tr>
+<tr><td><code>skills/design/SKILL.md</code></td><td>36 nodes</td></tr>
 <tr><td><code>skills/ui-ux-pro-max/SKILL.md</code></td><td>34 nodes</td></tr>
 <tr><td><code>ui-styling/references/shadcn-components.md</code></td><td>33 nodes</td></tr>
 <tr><td><code>skills/ui-styling/SKILL.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>skills/design-system/SKILL.md</code></td><td>23 nodes</td></tr>
-<tr><td><code>backend/src/main.ts</code></td><td>22 nodes</td></tr>
 <tr><td><code>design/references/design-routing.md</code></td><td>20 nodes</td></tr>
 <tr><td><code>skills/banner-design/SKILL.md</code></td><td>14 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x267, calls x5, imports x5, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x276, calls x33, method x10, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2071,12 +2080,12 @@ flowchart LR
 
 <!-- ====== 8. Serving API ====== -->
 <h2 id="serve-api">8. Serving API</h2>
-<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 204 nodes and 323 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around scripts, agents, skills, design, mostly in design-system/scripts/slide_search_core.py, ui-ux-pro-max/scripts/design_system.py, scripts/cip/core.py. This section covers 222 nodes and 364 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (204 nodes, 323 edges)
+    %% Section: Serving API (222 nodes, 364 edges)
     subgraph serve_api_ui_ux_pro_max_scripts_design_system_py_ea0472c3["ui-ux-pro-max/scripts/design_system.py"]
         agents_skills_ui_ux_pro_max_scripts_design_syste_a74c6356("DesignSystemGenerator<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
         agents_skills_ui_ux_pro_max_scripts_design_syste_80317230("generate()<br/><small>ui-ux-pro-max/scripts/design_system.py</small>")
@@ -2097,7 +2106,7 @@ flowchart LR
     end
     agents_skills_design_system_scripts_search_slide_4a570372("search-slides.py")
     agents_skills_design_system_scripts_slide_search_33fcfc39("search_with_context()<br/><small>design-system/scripts/slide_search_core.py</small>")
-    agents_skills_design_scripts_cip_generate_main_914955c1("main()<br/><small>scripts/cip/generate.py</small>")
+    frontend_src_app_7da8908b("App.jsx")
     agents_skills_ui_ux_pro_max_scripts_search_47c6c817("search.py")
     agents_skills_design_scripts_logo_core_bm25_590ec865 -->|method| agents_skills_design_scripts_logo_core_bm25_init_d7a31e47
     agents_skills_design_scripts_logo_core_bm25_590ec865 -->|method| agents_skills_design_scripts_logo_core_bm25_toke_d9ef6060
@@ -2120,7 +2129,7 @@ flowchart LR
     agents_skills_ui_ux_pro_max_scripts_design_syste_80317230 -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_7d45cc1b
     agents_skills_ui_ux_pro_max_scripts_design_syste_10a08ba6 -->|calls| agents_skills_ui_ux_pro_max_scripts_design_syste_aa264773
     agents_skills_design_system_scripts_search_slide_4a570372 -->|imports| agents_skills_design_system_scripts_slide_search_33fcfc39
-    %% Omitted for readability: 186 nodes, 0 edges
+    %% Omitted for readability: 204 nodes, 0 edges
     class agents_skills_ui_ux_pro_max_scripts_design_syste_a74c6356 klass;
     class agents_skills_ui_ux_pro_max_scripts_design_syste_80317230 function;
     class agents_skills_ui_ux_pro_max_scripts_design_syste_c7857bc5 function;
@@ -2137,7 +2146,7 @@ flowchart LR
     class agents_skills_design_scripts_logo_core_bm25_scor_9b876584 function;
     class agents_skills_design_system_scripts_search_slide_4a570372 module;
     class agents_skills_design_system_scripts_slide_search_33fcfc39 function;
-    class agents_skills_design_scripts_cip_generate_main_914955c1 function;
+    class frontend_src_app_7da8908b ui;
     class agents_skills_ui_ux_pro_max_scripts_search_47c6c817 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -2412,14 +2421,14 @@ flowchart LR
 <tr><td><code>scripts/cip/core.py</code></td><td>22 nodes</td></tr>
 <tr><td><code>scripts/logo/core.py</code></td><td>20 nodes</td></tr>
 <tr><td><code>scripts/cip/generate.py</code></td><td>14 nodes</td></tr>
+<tr><td><code>src/utils/api.js</code></td><td>12 nodes</td></tr>
 <tr><td><code>ui-ux-pro-max/scripts/core.py</code></td><td>11 nodes</td></tr>
-<tr><td><code>src/utils/api.js</code></td><td>9 nodes</td></tr>
 <tr><td><code>scripts/cip/render-html.py</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x89, calls x83, explains x74, imports x40. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x100, calls x83, explains x74, imports x47. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4816,12 +4825,12 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around agents, skills, references, design, mostly in design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md. This section covers 789 nodes and 810 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around agents, skills, references, design, mostly in design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md. This section covers 772 nodes and 774 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (789 nodes, 810 edges)
+    %% Section: Other (772 nodes, 774 edges)
     subgraph other_src_batches_batches_controller_ts_0ac29545["src/batches/batches.controller.ts"]
         backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
         backend_src_batches_batches_controller_batchesco_309045c6("constructor()<br/><small>src/batches/batches.controller.ts</small>")
@@ -4840,12 +4849,12 @@ flowchart LR
     subgraph other_backend_src_app_controller_ts_260c24ab["backend/src/app.controller.ts"]
         backend_src_app_controller_appcontroller_e9dae26a("AppController<br/><small>backend/src/app.controller.ts</small>")
         backend_src_app_controller_appcontroller_constru_aeaa0aad("constructor()<br/><small>backend/src/app.controller.ts</small>")
+        backend_src_app_controller_appcontroller_gethell_45809fd0("getHello()<br/><small>backend/src/app.controller.ts</small>")
     end
     backend_src_app_module_97b3bc74("app.module.ts")
     agents_skills_brand_scripts_inject_brand_context_67503864("main()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
     agents_skills_brand_scripts_validate_asset_valid_ffb3720a("validateAsset()<br/><small>brand/scripts/validate-asset.cjs</small>")
     agents_skills_design_system_scripts_validate_tok_fe6f67d9("main()<br/><small>design-system/scripts/validate-tokens.cjs</small>")
-    frontend_src_app_7da8908b("App.jsx")
     backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_309045c6
     backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_ac0f1eb0
     backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
@@ -4856,10 +4865,11 @@ flowchart LR
     agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 -->|method| agents_skills_ui_ux_pro_max_scripts_core_bm25_fi_3503a676
     agents_skills_ui_ux_pro_max_scripts_core_bm25_eba61933 -->|method| agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583
     backend_src_app_controller_appcontroller_e9dae26a -->|method| backend_src_app_controller_appcontroller_constru_aeaa0aad
+    backend_src_app_controller_appcontroller_e9dae26a -->|method| backend_src_app_controller_appcontroller_gethell_45809fd0
     agents_skills_ui_ux_pro_max_scripts_core_bm25_fi_3503a676 -->|calls| agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3
     agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583 -->|calls| agents_skills_ui_ux_pro_max_scripts_core_bm25_to_fbff93b3
     backend_src_app_module_97b3bc74 -->|imports| backend_src_app_controller_appcontroller_e9dae26a
-    %% Omitted for readability: 771 nodes, 0 edges
+    %% Omitted for readability: 754 nodes, 0 edges
     class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
     class backend_src_batches_batches_controller_batchesco_309045c6 function;
     class backend_src_batches_batches_controller_batchesco_ac0f1eb0 function;
@@ -4873,11 +4883,11 @@ flowchart LR
     class agents_skills_ui_ux_pro_max_scripts_core_bm25_sc_8f44f583 function;
     class backend_src_app_controller_appcontroller_e9dae26a klass;
     class backend_src_app_controller_appcontroller_constru_aeaa0aad function;
+    class backend_src_app_controller_appcontroller_gethell_45809fd0 function;
     class backend_src_app_module_97b3bc74 module;
     class agents_skills_brand_scripts_inject_brand_context_67503864 function;
     class agents_skills_brand_scripts_validate_asset_valid_ffb3720a async;
     class agents_skills_design_system_scripts_validate_tok_fe6f67d9 function;
-    class frontend_src_app_7da8908b ui;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -5158,7 +5168,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x659, calls x45, imports x32, imports x24. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x648, calls x45, references x21, imports x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5169,17 +5179,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>2467</td></tr>
-      <tr><td>Edges</td><td>3007</td></tr>
+      <tr><td>Nodes</td><td>2485</td></tr>
+      <tr><td>Edges</td><td>3043</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>203</td></tr>
+      <tr><td>Communities</td><td>214</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>2957</td></tr>
+      <tr><td>EXTRACTED</td><td>2993</td></tr>
       <tr><td>INFERRED</td><td>50</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -5188,7 +5198,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-08-31 20:02 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-09-05 22:00 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

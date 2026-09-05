@@ -1,26 +1,26 @@
-# Graph Report - RebarOptima  (2026-09-06)
+# Graph Report - RebarOptima  (2026-09-01)
 
 ## Corpus Check
-- 176 files · ~250,667 words
+- 175 files · ~248,423 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2485 nodes · 3043 edges · 214 communities (149 shown, 58 thin omitted)
+- 2467 nodes · 3007 edges · 203 communities (137 shown, 59 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 50 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `38c8c285`
+- Built from commit: `2697a48b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- react
+- App.jsx
 - gray
 - batches.service.ts
 - search
 - color
-- card
+- button
 - slide_search_core.py
 - spacing
 - html-token-validator.py
@@ -160,7 +160,7 @@
 - Brand
 - Slide Strategies
 - Component Tokens
-- design-tokens-starter.json
+- SettingsPage.jsx
 - Slide Strategies
 - backend/README.md
 - Ponytail
@@ -183,7 +183,7 @@
 - ponytail-debt/SKILL.md
 - React + Vite
 - .oxlintrc.json
-- App.jsx
+- SuperadminDashboard.jsx
 - md
 - none
 - .temp_project
@@ -204,7 +204,6 @@
 - workflows/graphify.md
 - .test_get_installed_components_with_files
 - .test_generate_config_with_plugins
-- button
 - .test_validate_config_no_content
 - .test_write_config_creates_content
 - .test_default_output_path_typescript
@@ -212,16 +211,6 @@
 - format_output
 - dotenv
 - @eslint/eslintrc
-- input
-- $type
-- radius
-- padding-y
-- destructive
-- destructive-foreground
-- muted
-- primary-foreground
-- ring
-- secondary-foreground
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 58 edges
@@ -229,7 +218,7 @@
 3. `ShadcnInstaller` - 34 edges
 4. `TestShadcnInstaller` - 26 edges
 5. `User` - 24 edges
-6. `react` - 23 edges
+6. `react` - 22 edges
 7. `compilerOptions` - 22 edges
 8. `UI Styling Skill` - 17 edges
 9. `CurrentUser` - 16 edges
@@ -250,11 +239,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (214 total, 58 thin omitted)
+## Communities (203 total, 59 thin omitted)
 
-### Community 0 - "react"
-Cohesion: 0.29
-Nodes (3): ThemeToggle(), authApi, react
+### Community 0 - "App.jsx"
+Cohesion: 0.30
+Nodes (8): ScrollToTop(), SideNavbar(), ThemeToggle(), SignInPage(), SignUpPage(), SuperadminLoginPage(), authApi, react
 
 ### Community 1 - "gray"
 Cohesion: 0.05
@@ -269,12 +258,12 @@ Cohesion: 0.07
 Nodes (42): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection (+34 more)
 
 ### Community 4 - "color"
-Cohesion: 0.11
-Nodes (19): $type, $value, background, foreground, muted-foreground, primary, primary-hover, secondary (+11 more)
+Cohesion: 0.04
+Nodes (48): $type, $value, background, destructive, destructive-foreground, foreground, muted, muted-foreground (+40 more)
 
-### Community 5 - "card"
-Cohesion: 0.20
-Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
+### Community 5 - "button"
+Cohesion: 0.06
+Nodes (45): $type, $value, $type, $value, bg, fg, font-size, hover-bg (+37 more)
 
 ### Community 6 - "slide_search_core.py"
 Cohesion: 0.08
@@ -457,8 +446,8 @@ Cohesion: 0.25
 Nodes (8): ansi_ljust(), format_ascii_box(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤, Format design system as Unicode box with ANSI color swatches., section_header()
 
 ### Community 52 - "main.ts"
-Cohesion: 0.10
-Nodes (20): AccessResult, app, canAccess(), connectDB(), DEFAULT_SUBSCRIPTION_PACKAGES, DEFAULT_SYSTEM_ROLES, ensureScrapRules(), getEffectivePermissions() (+12 more)
+Cohesion: 0.11
+Nodes (13): AccessResult, app, canAccess(), connectDB(), DEFAULT_SUBSCRIPTION_PACKAGES, DEFAULT_SYSTEM_ROLES, logAudit(), PLATFORM_MODULES (+5 more)
 
 ### Community 53 - "exclude"
 Cohesion: 0.25
@@ -567,10 +556,6 @@ Nodes (24): Accessibility, Accessibility Requirements, ARIA States, Color Contra
 ### Community 89 - "UI Styling Skill"
 Cohesion: 0.08
 Nodes (24): Accessibility Patterns, Alternative: Tailwind-Only Setup, Best Practices, Common Patterns, Component Layer: shadcn/ui, Component Library Guide, Component + Styling Setup, Core Stack (+16 more)
-
-### Community 116 - "permissionsSlice.js"
-Cohesion: 0.14
-Nodes (4): App(), permissionsSlice, settingsSlice, store
 
 ### Community 117 - "xl"
 Cohesion: 0.67
@@ -704,9 +689,9 @@ Nodes (9): Common Structures, Duarte Sparkline Pattern, Matching Strategy to Con
 Cohesion: 0.20
 Nodes (9): Alert Tokens, Badge Tokens, Button Tokens, Card Tokens, Component Tokens, Dialog/Modal Tokens, Input Tokens, Table Tokens (+1 more)
 
-### Community 151 - "design-tokens-starter.json"
-Cohesion: 0.15
-Nodes (12): component, $type, $value, dark, semantic, $schema, $type, $value (+4 more)
+### Community 151 - "SettingsPage.jsx"
+Cohesion: 0.33
+Nodes (3): SettingsPage(), settingsSlice, companyApi
 
 ### Community 152 - "Slide Strategies"
 Cohesion: 0.20
@@ -725,8 +710,8 @@ Cohesion: 0.22
 Nodes (8): 1. Project Purpose & Core Domain, 2. Codebase Architecture, 3. Database Entity Schema Summary, 4. Key Files to Know, 5. Current Implementation Status, A. Frontend (React + Vite), B. Backend (NestJS + Mongoose + MongoDB), RebarOptima Project Overview
 
 ### Community 156 - "api.js"
-Cohesion: 0.19
-Nodes (8): DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, UserManagementPage(), activityLogsApi, permissionsApi, rolesApi, usersApi
+Cohesion: 0.16
+Nodes (12): ActivityLogsPage(), ProfilePage(), DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, RolesPermissionsPage(), UserManagementPage(), activityLogsApi (+4 more)
 
 ### Community 157 - "Ponytail Help"
 Cohesion: 0.25
@@ -792,9 +777,9 @@ Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 Cohesion: 0.25
 Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, warn
 
-### Community 174 - "App.jsx"
-Cohesion: 0.13
-Nodes (8): SettingsPage(), SubscribePage(), authSlice, routingSlice, companyApi, developerApi, profileApi, publicApi
+### Community 174 - "SuperadminDashboard.jsx"
+Cohesion: 0.18
+Nodes (6): App(), SuperadminDashboard(), authSlice, routingSlice, store, developerApi
 
 ### Community 175 - "md"
 Cohesion: 0.67
@@ -804,68 +789,24 @@ Nodes (4): $type, $value, md, md
 Cohesion: 0.67
 Nodes (4): $type, $value, none, none
 
-### Community 195 - "button"
-Cohesion: 0.20
-Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 more)
-
-### Community 203 - "input"
-Cohesion: 0.29
-Nodes (8): padding-x, input, $type, $value, focus-ring, padding-x, $type, $value
-
-### Community 204 - "$type"
-Cohesion: 0.60
-Nodes (5): $type, $value, border, border, border
-
-### Community 205 - "radius"
-Cohesion: 0.60
-Nodes (5): radius, radius, radius, $type, $value
-
-### Community 206 - "padding-y"
-Cohesion: 0.67
-Nodes (4): padding-y, padding-y, $type, $value
-
-### Community 208 - "destructive"
-Cohesion: 0.67
-Nodes (3): destructive, $type, $value
-
-### Community 209 - "destructive-foreground"
-Cohesion: 0.67
-Nodes (3): destructive-foreground, $type, $value
-
-### Community 210 - "muted"
-Cohesion: 0.67
-Nodes (3): muted, $type, $value
-
-### Community 211 - "primary-foreground"
-Cohesion: 0.67
-Nodes (3): primary-foreground, $type, $value
-
-### Community 212 - "ring"
-Cohesion: 0.67
-Nodes (3): ring, $type, $value
-
-### Community 213 - "secondary-foreground"
-Cohesion: 0.67
-Nodes (3): secondary-foreground, $type, $value
-
 ## Knowledge Gaps
-- **1131 isolated node(s):** `app`, `memoryDbInstance`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES` (+1126 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1512 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **58 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1130 isolated node(s):** `BarLayout`, `PartLayoutItem`, `AccessResult`, `$type`, `$value` (+1125 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1503 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `TailwindConfigGenerator` connect `TailwindConfigGenerator` to `TestTailwindConfigGenerator`, `.test_add_fonts`, `test_tailwind_config_gen.py`, `._base_config`, `.generate_config_string`, `.test_init_default_typescript`, `.test_generate_javascript_config`, `.test_full_configuration_typescript`, `.test_base_config_structure`, `.test_default_content_paths_react`, `.test_generate_config_with_plugins`, `.test_validate_config_no_content`, `.test_write_config_creates_content`, `.test_default_output_path_typescript`, `.test_default_content_paths_vue`, `.test_recommend_plugins`, `.test_recommend_plugins_nextjs`, `.test_generate_config_with_colors`, `.test_validate_config_valid`, `.test_write_config_invalid_path`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `radius`, `fontSize`, `design-tokens-starter.json`, `shadow`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `primitive` connect `primitive` to `gray`, `color`, `spacing`, `radius`, `fontSize`, `shadow`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `devDependencies` connect `devDependencies` to `backend/package.json`, `@eslint/eslintrc`, `@eslint/js`, `eslint-plugin-prettier`, `globals`, `jest`, `@nestjs/cli`, `@nestjs/schematics`, `@nestjs/testing`, `prettier`, `source-map-support`, `supertest`, `ts-jest`, `ts-loader`, `ts-node`, `@types/bcryptjs`, `@types/express`, `@types/jest`, `@types/node`, `@types/pdfkit`, `@types/supertest`, `typescript`, `typescript-eslint`, `tsconfig-paths`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `app`, `memoryDbInstance`, `PLATFORM_MODULES` to the rest of the system?**
-  _1131 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `BarLayout`, `PartLayoutItem`, `AccessResult` to the rest of the system?**
+  _1130 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
   _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._
 - **Should `search` be split into smaller, more focused modules?**

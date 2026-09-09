@@ -18,6 +18,11 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
 import SubscribePage from './pages/SubscribePage/SubscribePage';
+import BbsProjectsPage from './pages/BBSPage/BbsProjectsPage';
+import BbsDashboardPage from './pages/BBSPage/BbsDashboardPage';
+import BbsWizardPage from './pages/BBSPage/BbsWizardPage';
+import BbsReportsPage from './pages/BBSPage/BbsReportsPage';
+import BbsShapesPage from './pages/BBSPage/BbsShapesPage';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
@@ -230,6 +235,21 @@ function App() {
             )}
             {view === 'profile' && (
               <ProfilePage onNavigate={handleNavigate} />
+            )}
+            {view === 'bbs-projects' && (
+              <BbsProjectsPage />
+            )}
+            {view === 'bbs-dashboard' && (
+              <BbsDashboardPage />
+            )}
+            {view === 'bbs-wizard' && (
+              <BbsWizardPage />
+            )}
+            {view === 'bbs-shapes' && (
+              <BbsShapesPage />
+            )}
+            {view === 'bbs-reports' && (
+              <BbsReportsPage />
             )}
           </div>
         </div>

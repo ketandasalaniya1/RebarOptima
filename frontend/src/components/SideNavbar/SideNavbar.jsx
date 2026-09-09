@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -8,6 +8,7 @@ import './SideNavbar.css';
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSteelOpen, setIsSteelOpen] = useState(true);
+  const [isBbsOpen, setIsBbsOpen] = useState(true);
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
 
@@ -56,6 +57,39 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       ]
     },
     {
+      id: 'bbs',
+      label: 'BBS',
+      icon: <Grid3X3 size={18} />,
+      isGroup: true,
+      groupKey: 'bbs',
+      children: [
+        {
+          id: 'bbs-projects',
+          label: 'Projects',
+          icon: <Ruler size={17} />,
+          moduleKey: 'bbs'
+        },
+        {
+          id: 'bbs-dashboard',
+          label: 'BBS Matrix',
+          icon: <Grid3X3 size={17} />,
+          moduleKey: 'bbs'
+        },
+        {
+          id: 'bbs-shapes',
+          label: 'Shape Library',
+          icon: <Layers size={17} />,
+          moduleKey: 'bbs'
+        },
+        {
+          id: 'bbs-reports',
+          label: 'Reports & MTO',
+          icon: <ClipboardList size={17} />,
+          moduleKey: 'bbs'
+        }
+      ]
+    },
+    {
       id: 'ledger',
       label: 'Ledger & Procurement',
       icon: <BookOpen size={18} />,
@@ -99,6 +133,20 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   }).filter(Boolean);
 
   const isSteelActive = ['inventory', 'inputs', 'results', 'history'].includes(currentView);
+  const isBbsActive = currentView.startsWith('bbs-');
+
+  const getGroupOpen = (item) => {
+    if (item.groupKey === 'bbs') return isBbsOpen;
+    return isSteelOpen; // default for 'steel'
+  };
+  const toggleGroup = (item) => {
+    if (item.groupKey === 'bbs') setIsBbsOpen(prev => !prev);
+    else setIsSteelOpen(prev => !prev);
+  };
+  const isGroupActive = (item) => {
+    if (item.groupKey === 'bbs') return isBbsActive;
+    return isSteelActive;
+  };
 
   const initials = user 
     ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() 
@@ -133,18 +181,20 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
         <nav className="sidenav-menu">
           {menuItems.map(item => {
             if (item.isGroup) {
+              const groupOpen = getGroupOpen(item);
+              const groupActive = isGroupActive(item);
               return (
                 <div key={item.id} className="sidenav-group-container">
                   <button
-                    className={`sidenav-item sidenav-group-header ${isSteelActive && !isSteelOpen ? 'active-parent' : ''}`}
-                    onClick={() => setIsSteelOpen(prev => !prev)}
-                    aria-expanded={isSteelOpen}
+                    className={`sidenav-item sidenav-group-header ${groupActive && !groupOpen ? 'active-parent' : ''}`}
+                    onClick={() => toggleGroup(item)}
+                    aria-expanded={groupOpen}
                   >
                     <span className="sidenav-icon">{item.icon}</span>
                     <span className="sidenav-label">{item.label}</span>
-                    <ChevronDown size={16} className={`sidenav-chevron ${isSteelOpen ? 'open' : ''}`} />
+                    <ChevronDown size={16} className={`sidenav-chevron ${groupOpen ? 'open' : ''}`} />
                   </button>
-                  {isSteelOpen && (
+                  {groupOpen && (
                     <div className="sidenav-submenu">
                       {item.children.map(child => (
                         <button

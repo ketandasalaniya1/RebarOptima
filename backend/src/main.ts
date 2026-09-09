@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -5,6 +6,7 @@ import { MongoClient, Db, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import path from 'path';
 import { solve1DCSP } from './batches/optimizer.engine';
+import { createBbsRouter } from './bbs/bbs.express';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -3017,6 +3019,15 @@ async function startServer() {
   } catch (err) {
     console.error('⚠️  Seed failed (non-fatal):', err);
   }
+  
+  try {
+    const bbsRouter = await createBbsRouter();
+    app.use('/api/bbs', authMiddleware, bbsRouter);
+    console.log('✅ BBS Express Router mounted successfully.');
+  } catch (err) {
+    console.error('⚠️ BBS initialization failed:', err);
+  }
+
   app.listen(PORT, () => console.log(`🚀 Express server listening on port ${PORT}`));
 }
 

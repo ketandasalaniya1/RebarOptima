@@ -28,6 +28,11 @@ const getInitialView = () => {
     if (path === '/developer' || path === '/superadmin') return 'superadmin';
     if (path === '/roles') return 'roles';
     if (path === '/users') return 'users';
+    if (path === '/bbs') return 'bbs-projects';
+    if (path === '/bbs/dashboard') return 'bbs-dashboard';
+    if (path === '/bbs/wizard') return 'bbs-wizard';
+    if (path === '/bbs/shapes') return 'bbs-shapes';
+    if (path === '/bbs/reports') return 'bbs-reports';
     return 'overview';
   } else {
     if (path === '/register') return 'signup';
@@ -54,6 +59,11 @@ const routingSlice = createSlice({
       else if (newView === 'superadmin') targetPath = '/developer';
       else if (newView === 'roles') targetPath = '/roles';
       else if (newView === 'users') targetPath = '/users';
+      else if (newView === 'bbs-projects') targetPath = '/bbs';
+      else if (newView === 'bbs-dashboard') targetPath = '/bbs/dashboard';
+      else if (newView === 'bbs-wizard') targetPath = '/bbs/wizard';
+      else if (newView === 'bbs-shapes') targetPath = '/bbs/shapes';
+      else if (newView === 'bbs-reports') targetPath = '/bbs/reports';
       else if (newView !== 'overview') targetPath = `/${newView}`;
 
       if (window.location.pathname !== targetPath) {

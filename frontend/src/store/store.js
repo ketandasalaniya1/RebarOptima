@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import routingReducer from './slices/routingSlice';
 import settingsReducer from './slices/settingsSlice';
 import permissionsReducer from './slices/permissionsSlice';
+import bbsReducer from './slices/bbsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     routing: routingReducer,
     settings: settingsReducer,
     permissions: permissionsReducer,
+    bbs: bbsReducer,
   },
 });

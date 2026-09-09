@@ -1,0 +1,681 @@
+.bbs-projects-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Page Header ────────────────────────── */
+.bbs-page-header {
+  margin-bottom: 2rem;
+}
+
+.bbs-page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.35rem 0;
+}
+
+.bbs-page-header p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Project Cards Grid ─────────────────── */
+.bbs-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.bbs-project-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.bbs-project-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.bbs-project-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-alpha);
+}
+
+.bbs-project-card-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.bbs-project-card-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.bbs-project-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.bbs-project-card-actions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.bbs-project-card:hover .bbs-project-card-actions {
+  opacity: 1;
+}
+
+.bbs-card-action-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.35rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bbs-card-action-btn:hover {
+  background: var(--danger-bg, #fecaca);
+  color: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+}
+
+/* ── Create New Project Card ────────────── */
+.bbs-new-project-card {
+  background: transparent;
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 120px;
+  transition: all 0.25s ease;
+  color: var(--text-secondary);
+}
+
+.bbs-new-project-card:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-alpha, rgba(16, 185, 129, 0.05));
+}
+
+.bbs-new-project-card span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ── Configurator Panel ─────────────────── */
+.bbs-configurator {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 2rem;
+  animation: bbsFadeIn 0.3s ease;
+}
+
+@keyframes bbsFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bbs-configurator-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bbs-configurator-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.bbs-open-matrix-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bbs-open-matrix-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--accent-alpha, rgba(16, 185, 129, 0.3));
+}
+
+/* ── Hierarchy Lists ────────────────────── */
+.bbs-hierarchy-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.bbs-hierarchy-column {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.25rem;
+  transition: opacity 0.3s;
+}
+
+.bbs-hierarchy-column.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.bbs-hierarchy-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.bbs-hierarchy-column-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bbs-hierarchy-count {
+  background: var(--accent-alpha, rgba(16, 185, 129, 0.1));
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+.bbs-add-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bbs-add-item-btn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.bbs-hierarchy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bbs-hierarchy-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.bbs-hierarchy-item:hover {
+  border-color: var(--accent);
+}
+
+.bbs-hierarchy-item.active {
+  background: var(--accent-alpha, rgba(16, 185, 129, 0.1));
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent) inset;
+}
+
+.bbs-hierarchy-item.active .bbs-hierarchy-item-name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.bbs-hierarchy-item-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.bbs-hierarchy-item-actions {
+  display: flex;
+  gap: 0.35rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.bbs-hierarchy-item:hover .bbs-hierarchy-item-actions {
+  opacity: 1;
+}
+
+.bbs-item-action-btn {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  display: flex;
+  transition: all 0.15s;
+}
+
+.bbs-item-action-btn:hover {
+  color: var(--accent);
+  background: var(--accent-alpha, rgba(16, 185, 129, 0.1));
+}
+
+.bbs-item-action-btn.danger:hover {
+  color: var(--danger, #ef4444);
+  background: var(--danger-bg, rgba(239, 68, 68, 0.1));
+}
+
+.bbs-hierarchy-empty {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+/* ── Add Item Input Row ─────────────────── */
+.bbs-add-item-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.bbs-add-item-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background: var(--input-bg, var(--card-bg));
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.bbs-add-item-input:focus {
+  border-color: var(--accent);
+}
+
+.bbs-add-item-confirm {
+  padding: 0.5rem 0.75rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.15s;
+}
+
+.bbs-add-item-confirm:hover {
+  opacity: 0.85;
+}
+
+.bbs-add-item-cancel {
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  transition: all 0.15s;
+}
+
+.bbs-add-item-cancel:hover {
+  border-color: var(--danger, #ef4444);
+  color: var(--danger, #ef4444);
+}
+
+/* ── Global Defaults Form ───────────────── */
+.bbs-defaults-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.bbs-defaults-section h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+}
+
+.bbs-defaults-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.bbs-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.bbs-form-group label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bbs-form-group select,
+.bbs-form-group input {
+  padding: 0.55rem 0.75rem;
+  background: var(--input-bg, var(--card-bg));
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.bbs-form-group select:focus,
+.bbs-form-group input:focus {
+  border-color: var(--accent);
+}
+
+.bbs-defaults-covers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.bbs-cover-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bbs-cover-item label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.bbs-cover-item input {
+  padding: 0.45rem 0.6rem;
+  background: var(--input-bg, var(--card-bg));
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bbs-cover-item input:focus {
+  border-color: var(--accent);
+}
+
+.bbs-save-defaults-btn {
+  margin-top: 1.25rem;
+  padding: 0.6rem 1.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bbs-save-defaults-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 12px var(--accent-alpha, rgba(16, 185, 129, 0.3));
+}
+
+/* ── Create Project Modal Inline ────────── */
+.bbs-create-project-form {
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  animation: bbsFadeIn 0.2s ease;
+}
+
+.bbs-create-project-form .bbs-form-group {
+  flex: 1;
+}
+
+.bbs-create-project-form button {
+  padding: 0.55rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.bbs-create-btn {
+  background: var(--accent);
+  color: white;
+}
+
+.bbs-create-btn:hover {
+  opacity: 0.85;
+}
+
+.bbs-cancel-btn {
+  background: transparent;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary);
+}
+
+.bbs-cancel-btn:hover {
+  border-color: var(--danger, #ef4444) !important;
+  color: var(--danger, #ef4444);
+}
+
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 768px) {
+  .bbs-projects-page {
+    padding: 1rem;
+  }
+
+  .bbs-hierarchy-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bbs-defaults-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bbs-defaults-covers {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bbs-projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bbs-configurator-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .bbs-create-project-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── Password Modal ─────────────────────── */
+.bbs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bbs-modal {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bbs-modal-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bbs-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bbs-modal-header h3.danger-text {
+  color: var(--danger);
+}
+
+.bbs-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.bbs-modal-body {
+  padding: 1.5rem;
+}
+
+.bbs-modal-body p {
+  margin: 0 0 1rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.bbs-modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.bbs-modal-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.bbs-modal-btn.cancel {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.bbs-modal-btn.cancel:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.bbs-modal-btn.danger {
+  background: var(--danger);
+  color: white;
+}
+
+.bbs-modal-btn.danger:hover {
+  background: #ff5252;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

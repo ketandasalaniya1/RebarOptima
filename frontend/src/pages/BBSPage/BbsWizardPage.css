@@ -1,0 +1,321 @@
+.bbs-wizard-page {
+  padding: 1.5rem 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+}
+
+.bbs-wizard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.bbs-wizard-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bbs-wizard-back-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.bbs-wizard-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.bbs-wizard-title h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.bbs-wizard-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Main Layout ────────────────────────── */
+.bbs-wizard-content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.bbs-wizard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* ── Section Panels ─────────────────────── */
+.bbs-wizard-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.bbs-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bbs-section-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Form Inputs ────────────────────────── */
+.bbs-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+}
+
+.bbs-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bbs-form-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bbs-input {
+  padding: 0.6rem 0.75rem;
+  background: var(--input-bg, var(--bg-primary));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bbs-input:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-alpha, rgba(16, 185, 129, 0.15));
+}
+
+.bbs-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Rebar Table ────────────────────────── */
+.bbs-rebar-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.bbs-rebar-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bbs-rebar-table th,
+.bbs-rebar-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.85rem;
+}
+
+.bbs-rebar-table th {
+  background: var(--bg-primary);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+.bbs-rebar-table td {
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.bbs-rebar-table tbody tr:hover {
+  background: var(--bg-primary);
+}
+
+.bbs-table-input {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg, var(--card-bg));
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.bbs-table-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.bbs-add-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+}
+
+.bbs-add-row-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-alpha, rgba(16, 185, 129, 0.05));
+}
+
+.bbs-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.bbs-icon-btn:hover {
+  background: var(--bg-primary);
+  color: var(--danger, #ef4444);
+}
+
+/* ── Sidebar ────────────────────────────── */
+.bbs-wizard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.bbs-summary-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: sticky;
+  top: 0;
+}
+
+.bbs-summary-panel h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1.25rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bbs-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.bbs-summary-item:last-child {
+  border-bottom: none;
+}
+
+.bbs-summary-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.bbs-summary-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bbs-summary-value.highlight {
+  color: var(--accent);
+  font-size: 1.25rem;
+}
+
+.bbs-save-member-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.bbs-save-member-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 12px var(--accent-alpha, rgba(16, 185, 129, 0.3));
+}
+
+@media (max-width: 1024px) {
+  .bbs-wizard-content {
+    grid-template-columns: 1fr;
+  }
+  .bbs-wizard-main {
+    padding-right: 0;
+  }
+  .bbs-summary-panel {
+    position: static;
+  }
+}

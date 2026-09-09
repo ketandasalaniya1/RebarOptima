@@ -274,3 +274,50 @@ export const activityLogsApi = {
     document.body.removeChild(a);
   }
 };
+
+// BBS (Bar Bending Schedule) API
+export const bbsApi = {
+  // Projects
+  createProject: (dto) => apiRequest('/bbs/projects', { method: 'POST', body: dto }),
+  getProjects: () => apiRequest('/bbs/projects'),
+  getProject: (projectId) => apiRequest(`/bbs/projects/${projectId}`),
+  updateProject: (projectId, dto) => apiRequest(`/bbs/projects/${projectId}`, { method: 'PUT', body: dto }),
+  deleteProject: (projectId) => apiRequest(`/bbs/projects/${projectId}`, { method: 'DELETE' }),
+
+  // Blocks
+  createBlock: (projectId, name) => apiRequest(`/bbs/projects/${projectId}/blocks`, { method: 'POST', body: { name } }),
+  getBlocks: (projectId) => apiRequest(`/bbs/projects/${projectId}/blocks`),
+  updateBlock: (blockId, name) => apiRequest(`/bbs/blocks/${blockId}`, { method: 'PUT', body: { name } }),
+  deleteBlock: (blockId) => apiRequest(`/bbs/blocks/${blockId}`, { method: 'DELETE' }),
+
+  // Levels
+  createLevel: (projectId, blockId, name) => apiRequest(`/bbs/projects/${projectId}/blocks/${blockId}/levels`, { method: 'POST', body: { name } }),
+  getLevels: (projectId) => apiRequest(`/bbs/projects/${projectId}/levels`),
+  updateLevel: (levelId, name) => apiRequest(`/bbs/levels/${levelId}`, { method: 'PUT', body: { name } }),
+  deleteLevel: (levelId) => apiRequest(`/bbs/levels/${levelId}`, { method: 'DELETE' }),
+
+  // Members
+  createMember: (dto) => apiRequest('/bbs/members', { method: 'POST', body: dto }),
+  getMembers: (projectId) => apiRequest(`/bbs/projects/${projectId}/members`),
+  getMembersByCell: (projectId, blockId, levelId) => apiRequest(`/bbs/projects/${projectId}/members/cell?blockId=${blockId}&levelId=${levelId}`),
+  getMember: (memberId) => apiRequest(`/bbs/members/${memberId}`),
+  updateMember: (memberId, dto) => apiRequest(`/bbs/members/${memberId}`, { method: 'PUT', body: dto }),
+  deleteMember: (memberId) => apiRequest(`/bbs/members/${memberId}`, { method: 'DELETE' }),
+
+  // Rebars
+  addRebarItem: (dto) => apiRequest('/bbs/rebars', { method: 'POST', body: dto }),
+  getRebarItems: (memberId) => apiRequest(`/bbs/members/${memberId}/rebars`),
+  updateRebarItem: (rebarId, dto) => apiRequest(`/bbs/rebars/${rebarId}`, { method: 'PUT', body: dto }),
+  deleteRebarItem: (rebarId) => apiRequest(`/bbs/rebars/${rebarId}`, { method: 'DELETE' }),
+
+  // Dashboard & Reports
+  getDashboardMatrix: (projectId) => apiRequest(`/bbs/projects/${projectId}/matrix`),
+  getMTO: (projectId) => apiRequest(`/bbs/projects/${projectId}/mto`),
+  getProjectRebars: (projectId) => apiRequest(`/bbs/projects/${projectId}/rebars`),
+
+  // Shape Register & Templates
+  getShapes: () => apiRequest('/bbs/shapes'),
+  createShape: (dto) => apiRequest('/bbs/shapes', { method: 'POST', body: dto }),
+  getTemplates: () => apiRequest('/bbs/templates'),
+  createTemplate: (dto) => apiRequest('/bbs/templates', { method: 'POST', body: dto }),
+};

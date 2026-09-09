@@ -97,24 +97,35 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     setError(null)
   }, [stock.rows, parts.rows])
 
-  // Load parameters for editing batch
+  // Load parameters for editing batch or pushing from BBS
   useEffect(() => {
+    let payload = null;
     if (editParams) {
-      if (editParams.batchName) {
-        setBatchName(editParams.batchName)
+      payload = editParams;
+      clearEditParams();
+    } else {
+      const storedPayload = sessionStorage.getItem('bbs_optimizer_payload');
+      if (storedPayload) {
+        payload = JSON.parse(storedPayload);
+        sessionStorage.removeItem('bbs_optimizer_payload'); // consume it
       }
-      if (editParams.inputStock && editParams.inputStock.length > 0) {
-        stock.setRows(editParams.inputStock)
+    }
+
+    if (payload) {
+      if (payload.batchName) {
+        setBatchName(payload.batchName)
+      }
+      if (payload.inputStock && payload.inputStock.length > 0) {
+        stock.setRows(payload.inputStock)
         setIsStockExpanded(true)
       }
-      if (editParams.requiredParts && editParams.requiredParts.length > 0) {
-        parts.setRows(editParams.requiredParts)
+      if (payload.requiredParts && payload.requiredParts.length > 0) {
+        parts.setRows(payload.requiredParts)
       }
-      if (editParams.settings) {
-        if (editParams.settings.kerf !== undefined) setKerf(editParams.settings.kerf)
-        if (editParams.settings.trimMargin !== undefined) setTrimMargin(editParams.settings.trimMargin)
+      if (payload.settings) {
+        if (payload.settings.kerf !== undefined) setKerf(payload.settings.kerf)
+        if (payload.settings.trimMargin !== undefined) setTrimMargin(payload.settings.trimMargin)
       }
-      clearEditParams()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editParams])

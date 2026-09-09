@@ -163,6 +163,15 @@ export async function createBbsRouter() {
     }
   });
 
+  router.put('/projects/:projectId/blocks/:blockId/levels/reorder', async (req: any, res) => {
+    try {
+      const result = await bbsService.reorderLevels(req.params.blockId, req.body.orderedLevelIds);
+      res.json(result);
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
   router.put('/levels/:levelId', async (req: any, res) => {
     try {
       const result = await bbsService.updateLevel(req.params.levelId, req.body.name);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler } from 'lucide-react';
 import logo from '../../assets/logo.png';
@@ -7,8 +7,8 @@ import './SideNavbar.css';
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSteelOpen, setIsSteelOpen] = useState(true);
-  const [isBbsOpen, setIsBbsOpen] = useState(true);
+  const [isSteelOpen, setIsSteelOpen] = useState(false);
+  const [isBbsOpen, setIsBbsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
 
@@ -140,8 +140,13 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     return isSteelOpen; // default for 'steel'
   };
   const toggleGroup = (item) => {
-    if (item.groupKey === 'bbs') setIsBbsOpen(prev => !prev);
-    else setIsSteelOpen(prev => !prev);
+    if (item.groupKey === 'bbs') {
+      setIsBbsOpen(prev => !prev);
+      if (!isBbsOpen) setIsSteelOpen(false);
+    } else {
+      setIsSteelOpen(prev => !prev);
+      if (!isSteelOpen) setIsBbsOpen(false);
+    }
   };
   const isGroupActive = (item) => {
     if (item.groupKey === 'bbs') return isBbsActive;
@@ -159,8 +164,9 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
         <button className="menu-toggle-btn" onClick={() => setIsOpen(true)}>
           <Menu size={24} />
         </button>
-        <div className="mobile-logo-wrapper">
-          <img src={logo} alt="RebarOptima" className="mobile-header-logo" />
+        <div className="mobile-logo-wrapper brand-logo-text">
+          <span className="brand-rebar">Rebar</span>
+          <span className="brand-optima">Optima</span>
         </div>
         <ThemeToggle />
       </div>
@@ -174,7 +180,10 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
 
         {/* Logo Section */}
         <div className="sidenav-logo-container">
-          <img src={logo} alt="RebarOptima" className="sidenav-logo" />
+          <div className="brand-logo-text">
+            <span className="brand-rebar">Rebar</span>
+            <span className="brand-optima">Optima</span>
+          </div>
         </div>
 
         {/* Menu Links */}
@@ -194,23 +203,27 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
                     <span className="sidenav-label">{item.label}</span>
                     <ChevronDown size={16} className={`sidenav-chevron ${groupOpen ? 'open' : ''}`} />
                   </button>
-                  {groupOpen && (
+                  <div className={`sidenav-submenu-wrapper ${groupOpen ? 'open' : ''}`}>
                     <div className="sidenav-submenu">
-                      {item.children.map(child => (
-                        <button
-                          key={child.id}
-                          className={`sidenav-item sidenav-subitem ${currentView === child.id || (currentView === 'results' && child.id === 'inputs') ? 'active' : ''}`}
-                          onClick={() => {
-                            onViewChange(child.id);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <span className="sidenav-icon">{child.icon}</span>
-                          <span className="sidenav-label">{child.label}</span>
-                        </button>
-                      ))}
+                      <div className="sidenav-submenu-content">
+                        {item.children.map(child => (
+                          <button
+                            key={child.id}
+                            className={`sidenav-item sidenav-subitem ${currentView === child.id || (currentView === 'results' && child.id === 'inputs') ? 'active' : ''}`}
+                            onClick={() => {
+                              onViewChange(child.id);
+                              setIsOpen(false);
+                            }}
+                            tabIndex={groupOpen ? 0 : -1}
+                            aria-hidden={!groupOpen}
+                          >
+                            <span className="sidenav-icon">{child.icon}</span>
+                            <span className="sidenav-label">{child.label}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             }

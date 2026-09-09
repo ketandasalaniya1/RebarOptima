@@ -91,15 +91,19 @@ export class BbsService {
   }
 
   async createLevel(projectId: string, blockId: string, name: string) {
+    const existingLevels = await this.levelModel.find({ block_id: new Types.ObjectId(blockId) });
+    const nextOrder = existingLevels.length > 0 ? Math.max(...existingLevels.map(l => l.order || 0)) + 1 : 0;
+
     return this.levelModel.create({ 
       project_id: new Types.ObjectId(projectId), 
       block_id: new Types.ObjectId(blockId),
-      name 
+      name,
+      order: nextOrder
     });
   }
 
   async getLevels(projectId: string) {
-    return this.levelModel.find({ project_id: new Types.ObjectId(projectId) });
+    return this.levelModel.find({ project_id: new Types.ObjectId(projectId) }).sort({ order: 1 });
   }
 
   async updateLevel(levelId: string, name: string) {
@@ -112,6 +116,20 @@ export class BbsService {
     const level = await this.levelModel.findByIdAndDelete(levelId);
     if (!level) throw new NotFoundException('Level not found');
     return { deleted: true };
+  }
+
+  async reorderLevels(blockId: string, orderedLevelIds: string[]) {
+    const bulkOps = orderedLevelIds.map((id, index) => ({
+      updateOne: {
+        filter: { _id: new Types.ObjectId(id), block_id: new Types.ObjectId(blockId) },
+        update: { $set: { order: index } }
+      }
+    }));
+    
+    if (bulkOps.length > 0) {
+      await this.levelModel.bulkWrite(bulkOps);
+    }
+    return { success: true };
   }
 
   // ─────────────────────────────────────────────────────

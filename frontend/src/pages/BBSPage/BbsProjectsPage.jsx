@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Plus, Trash2, Edit3, Check, X, ArrowRight,
-  Building2, Layers, FolderOpen, Settings2, AlertTriangle
+  Building2, Layers, FolderOpen, Settings2, AlertTriangle,
+  ChevronUp, ChevronDown
 } from 'lucide-react';
 import { bbsApi, authApi } from '../../utils/api';
 import {
@@ -154,6 +155,41 @@ export default function BbsProjectsPage() {
       loadLevels(activeProject._id);
     } catch (err) {
       dispatch(setError(err.message));
+    }
+  };
+
+  const handleReorder = async (levelId, direction) => {
+    const blockLevels = [...levels.filter(l => l.block_id === activeBlockId)].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const idx = blockLevels.findIndex(l => l._id === levelId);
+    if (idx === -1) return;
+    
+    if (direction === 'up' && idx > 0) {
+      const temp = blockLevels[idx];
+      blockLevels[idx] = blockLevels[idx - 1];
+      blockLevels[idx - 1] = temp;
+    } else if (direction === 'down' && idx < blockLevels.length - 1) {
+      const temp = blockLevels[idx];
+      blockLevels[idx] = blockLevels[idx + 1];
+      blockLevels[idx + 1] = temp;
+    } else {
+      return; 
+    }
+
+    const newOrderIds = blockLevels.map(l => l._id);
+    
+    const updatedLevels = levels.map(l => {
+      if (l.block_id === activeBlockId) {
+        return { ...l, order: newOrderIds.indexOf(l._id) };
+      }
+      return l;
+    });
+    dispatch(setLevels(updatedLevels));
+
+    try {
+      await bbsApi.reorderLevels(activeProject._id, activeBlockId, newOrderIds);
+    } catch (err) {
+      dispatch(setError(err.message));
+      loadLevels(activeProject._id); 
     }
   };
 
@@ -343,7 +379,11 @@ export default function BbsProjectsPage() {
                   <div 
                     key={block._id} 
                     className={`bbs-hierarchy-item ${activeBlockId === block._id ? 'active' : ''}`}
-                    onClick={() => setActiveBlockId(block._id)}
+                    onClick={() => {
+                      setActiveBlockId(block._id);
+                      setAddingLevel(false);
+                      setNewLevelName('');
+                    }}
                     style={{ cursor: 'pointer' }}
                   >
                     {editingBlockId === block._id ? (
@@ -407,8 +447,10 @@ export default function BbsProjectsPage() {
                 ) : levels.filter(l => l.block_id === activeBlockId).length === 0 && !addingLevel ? (
                   <div className="bbs-hierarchy-empty">No levels defined for this block. Click "Add" to start.</div>
                 ) : (
-                  levels.filter(l => l.block_id === activeBlockId).map(level => (
-                  <div key={level._id} className="bbs-hierarchy-item">
+                  [...levels.filter(l => l.block_id === activeBlockId)]
+                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                    .map((level, idx, arr) => (
+                  <div key={level._id} className="bbs-hierarchy-item bbs-level-item">
                     {editingLevelId === level._id ? (
                       <div className="bbs-add-item-row" style={{ flex: 1 }}>
                         <input
@@ -423,7 +465,27 @@ export default function BbsProjectsPage() {
                       </div>
                     ) : (
                       <>
-                        <span className="bbs-hierarchy-item-name">{level.name}</span>
+                        <div className="bbs-hierarchy-item-left">
+                          <div className="bbs-level-reorder-controls">
+                            <button 
+                              className="bbs-reorder-btn" 
+                              disabled={idx === 0} 
+                              onClick={() => handleReorder(level._id, 'up')}
+                              title="Move Up"
+                            >
+                              <ChevronUp size={14} />
+                            </button>
+                            <button 
+                              className="bbs-reorder-btn" 
+                              disabled={idx === arr.length - 1} 
+                              onClick={() => handleReorder(level._id, 'down')}
+                              title="Move Down"
+                            >
+                              <ChevronDown size={14} />
+                            </button>
+                          </div>
+                          <span className="bbs-hierarchy-item-name">{level.name}</span>
+                        </div>
                         <div className="bbs-hierarchy-item-actions">
                           <button className="bbs-item-action-btn" onClick={() => { setEditingLevelId(level._id); setEditLevelName(level.name); }} title="Rename"><Edit3 size={13} /></button>
                           <button className="bbs-item-action-btn danger" onClick={() => handleDeleteLevel(level._id)} title="Delete"><Trash2 size={13} /></button>
@@ -450,67 +512,7 @@ export default function BbsProjectsPage() {
             </div>
           </div>
 
-          {/* Global Defaults Section */}
-          <div className="bbs-defaults-section">
-            <h3>
-              <Settings2 size={16} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />
-              Global Project Defaults
-            </h3>
-            <div className="bbs-defaults-grid">
-              <div className="bbs-form-group">
-                <label>Steel Grade (Global)</label>
-                <select value={defaults.steelGrade} onChange={(e) => setDefaults(d => ({ ...d, steelGrade: e.target.value }))}>
-                  {STEEL_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-                </select>
-              </div>
-            </div>
 
-            <div className="bbs-defaults-covers">
-              <h4>Concrete Grades</h4>
-              {[
-                { key: 'footing', label: 'Footing' },
-                { key: 'column', label: 'Column' },
-                { key: 'beam', label: 'Beam' },
-                { key: 'slab', label: 'Slab' },
-              ].map(item => (
-                <div className="bbs-cover-item" key={item.key}>
-                  <label>{item.label}</label>
-                  <select 
-                    value={defaults.concreteGrades?.[item.key] || 'M25'}
-                    onChange={(e) => setDefaults(d => ({ ...d, concreteGrades: { ...d.concreteGrades, [item.key]: e.target.value } }))}
-                  >
-                    {CONCRETE_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-                  </select>
-                </div>
-              ))}
-            </div>
-
-            <div className="bbs-defaults-covers">
-              <h4>Clear Covers</h4>
-              {[
-                { key: 'footing', label: 'Footing (mm)' },
-                { key: 'column', label: 'Column (mm)' },
-                { key: 'beam', label: 'Beam (mm)' },
-                { key: 'slab', label: 'Slab (mm)' },
-              ].map(item => (
-                <div className="bbs-cover-item" key={item.key}>
-                  <label>{item.label}</label>
-                  <input
-                    type="number"
-                    value={defaults.covers[item.key]}
-                    onChange={(e) => setDefaults(d => ({
-                      ...d,
-                      covers: { ...d.covers, [item.key]: parseInt(e.target.value) || 0 },
-                    }))}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <button className="bbs-save-defaults-btn" onClick={handleSaveDefaults}>
-              Save Defaults
-            </button>
-          </div>
         </div>
       )}
 

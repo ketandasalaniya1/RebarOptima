@@ -295,6 +295,7 @@ export const bbsApi = {
   getLevels: (projectId) => apiRequest(`/bbs/projects/${projectId}/levels`),
   updateLevel: (levelId, name) => apiRequest(`/bbs/levels/${levelId}`, { method: 'PUT', body: { name } }),
   deleteLevel: (levelId) => apiRequest(`/bbs/levels/${levelId}`, { method: 'DELETE' }),
+  reorderLevels: (projectId, blockId, orderedLevelIds) => apiRequest(`/bbs/projects/${projectId}/blocks/${blockId}/levels/reorder`, { method: 'PUT', body: { orderedLevelIds } }),
 
   // Members
   createMember: (dto) => apiRequest('/bbs/members', { method: 'POST', body: dto }),

@@ -96,6 +96,14 @@ export class BbsController {
     return this.bbsService.deleteLevel(levelId);
   }
 
+  @Put('projects/:projectId/blocks/:blockId/levels/reorder')
+  async reorderLevels(
+    @Param('blockId') blockId: string,
+    @Body() dto: { orderedLevelIds: string[] }
+  ) {
+    return this.bbsService.reorderLevels(blockId, dto.orderedLevelIds);
+  }
+
   // ─────────────────────────────────────────────────────
   //  STRUCTURAL MEMBERS
   // ─────────────────────────────────────────────────────

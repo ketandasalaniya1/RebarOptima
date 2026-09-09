@@ -11,6 +11,9 @@ export class LevelFloor extends Document {
 
   @Prop({ required: true })
   name: string;
+
+  @Prop({ type: Number, default: 0 })
+  order: number;
 }
 
 export const LevelFloorSchema = SchemaFactory.createForClass(LevelFloor);

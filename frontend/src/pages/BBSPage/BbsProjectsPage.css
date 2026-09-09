@@ -260,11 +260,52 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.65rem 0.85rem;
-  background: var(--card-bg);
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  transition: all 0.15s;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bbs-hierarchy-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.bbs-level-item {
+  border-left: 3px solid var(--accent);
+  box-shadow: -2px 0 10px rgba(16, 185, 129, 0.05);
+}
+
+.bbs-level-reorder-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: 0.75rem;
+}
+
+.bbs-reorder-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.bbs-reorder-btn:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+.bbs-reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .bbs-hierarchy-item:hover {
@@ -272,9 +313,10 @@
 }
 
 .bbs-hierarchy-item.active {
-  background: var(--accent-alpha, rgba(16, 185, 129, 0.1));
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.02) 100%);
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent) inset;
+  border-left: 3px solid var(--accent);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08);
 }
 
 .bbs-hierarchy-item.active .bbs-hierarchy-item-name {

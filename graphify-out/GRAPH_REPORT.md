@@ -1,16 +1,16 @@
 # Graph Report - RebarOptima  (2026-09-10)
 
 ## Corpus Check
-- 201 files · ~262,770 words
+- 201 files · ~262,957 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2666 nodes · 3458 edges · 224 communities (153 shown, 63 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 114 edges (avg confidence: 0.81)
+- 2671 nodes · 3458 edges · 229 communities (154 shown, 67 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 116 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `cb34da17`
+- Built from commit: `d1ba157f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,7 +26,7 @@
 - html-token-validator.py
 - TestTailwindConfigGenerator
 - BM25
-- InventoryController
+- BbsService
 - compilerOptions
 - generate-slide.py
 - .test_add_fonts
@@ -184,7 +184,7 @@
 - React + Vite
 - .oxlintrc.json
 - authSlice.js
-- BbsService
+- BbsController
 - none
 - .temp_project
 - .test_init_default_project_root
@@ -231,16 +231,21 @@
 - check_db.js
 - check_projects.js
 - check_user.js
+- BbsCalculationService
+- LevelFloor
+- Injectable
+- Prop
+- Schema
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 58 edges
-2. `BbsService` - 39 edges
-3. `createBbsRouter()` - 35 edges
-4. `TestTailwindConfigGenerator` - 35 edges
-5. `BbsController` - 34 edges
+2. `BbsService` - 40 edges
+3. `createBbsRouter()` - 36 edges
+4. `BbsController` - 35 edges
+5. `TestTailwindConfigGenerator` - 35 edges
 6. `ShadcnInstaller` - 34 edges
 7. `react` - 29 edges
-8. `BbsCalculationService` - 27 edges
+8. `BbsCalculationService` - 26 edges
 9. `TestShadcnInstaller` - 26 edges
 10. `User` - 25 edges
 
@@ -259,7 +264,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (224 total, 63 thin omitted)
+## Communities (229 total, 67 thin omitted)
 
 ### Community 0 - "react"
 Cohesion: 0.26
@@ -270,7 +275,7 @@ Cohesion: 0.05
 Nodes (53): $type, $value, $type, $value, $type, $value, $type, $value (+45 more)
 
 ### Community 2 - "batches.service.ts"
-Cohesion: 0.20
+Cohesion: 0.21
 Nodes (13): Batch, BatchSchema, Prop, Schema, BatchesService, Injectable, BarLayout, OptimizationResult (+5 more)
 
 ### Community 3 - "search"
@@ -305,9 +310,9 @@ Nodes (16): Test adding colors multiple times., Test adding full color palette.,
 Cohesion: 0.11
 Nodes (19): BM25, detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+11 more)
 
-### Community 11 - "InventoryController"
-Cohesion: 0.14
-Nodes (8): InventoryController, Body, Controller, Delete, Get, Param, Post, UseGuards
+### Community 11 - "BbsService"
+Cohesion: 0.10
+Nodes (3): createBbsRouter(), BbsService, Injectable
 
 ### Community 12 - "compilerOptions"
 Cohesion: 0.09
@@ -342,8 +347,8 @@ Cohesion: 0.17
 Nodes (17): generate_css_for_background(), get_background_image(), get_curated_images(), get_overlay_css(), get_pexels_search_url(), load_backgrounds_config(), load_brand_colors(), main() (+9 more)
 
 ### Community 21 - "User"
-Cohesion: 0.17
-Nodes (10): JwtAuthGuard, Injectable, CurrentUser, Prop, Schema, User, UserSchema, Injectable (+2 more)
+Cohesion: 0.10
+Nodes (18): JwtAuthGuard, Injectable, CurrentUser, InventoryController, Body, Controller, Delete, Get (+10 more)
 
 ### Community 22 - "icon/generate.py"
 Cohesion: 0.20
@@ -359,7 +364,7 @@ Nodes (9): Test adding components in dry run mode., Test ShadcnInstaller class.,
 
 ### Community 25 - "BatchesController"
 Cohesion: 0.12
-Nodes (9): BatchesController, Body, Controller, Delete, Get, Param, Post, UseGuards (+1 more)
+Nodes (8): BatchesController, Body, Controller, Delete, Get, Param, Post, UseGuards
 
 ### Community 26 - "Tailwind CSS Utility Reference"
 Cohesion: 0.05
@@ -801,9 +806,9 @@ Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.22
 Nodes (3): authSlice, developerApi, publicApi
 
-### Community 175 - "BbsService"
-Cohesion: 0.07
-Nodes (13): BbsController, createBbsRouter(), BbsService, Injectable, Body, Controller, CurrentUser, Delete (+5 more)
+### Community 175 - "BbsController"
+Cohesion: 0.13
+Nodes (11): BbsController, Body, Controller, CurrentUser, Delete, Get, Param, Post (+3 more)
 
 ### Community 176 - "none"
 Cohesion: 0.67
@@ -854,8 +859,8 @@ Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
 ### Community 214 - "bbs.module.ts"
-Cohesion: 0.06
-Nodes (33): BbsCalculationService, DEFAULT_CLEAR_COVERS, LD_MATRIX, Injectable, BlockWing, BlockWingSchema, Prop, Schema (+25 more)
+Cohesion: 0.11
+Nodes (27): DEFAULT_CLEAR_COVERS, LD_MATRIX, BlockWing, BlockWingSchema, Prop, Schema, ElementTemplate, ElementTemplateSchema (+19 more)
 
 ### Community 215 - "App.jsx"
 Cohesion: 0.14
@@ -873,25 +878,29 @@ Nodes (4): $type, $value, md, md
 Cohesion: 0.50
 Nodes (3): http, jwt, token
 
+### Community 225 - "LevelFloor"
+Cohesion: 0.40
+Nodes (4): LevelFloor, InjectModel, Prop, Schema
+
 ## Knowledge Gaps
-- **1148 isolated node(s):** `mongoose`, `mongoose`, `mongoose`, `LD_MATRIX`, `DEFAULT_CLEAR_COVERS` (+1143 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1562 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **63 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1148 isolated node(s):** `CONCRETE_GRADES`, `STEEL_GRADES`, `failedQueue`, `BarLayout`, `PartLayoutItem` (+1143 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1565 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **67 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `radius`, `fontSize`, `design-tokens-starter.json`, `shadow`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `color` connect `gray` to `primitive`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `BbsService` connect `BbsService` to `User`, `bbs.module.ts`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `User` connect `User` to `BatchesController`, `auth.module.ts`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `TailwindConfigGenerator` connect `TailwindConfigGenerator` to `TestTailwindConfigGenerator`, `.test_add_fonts`, `test_tailwind_config_gen.py`, `._base_config`, `.generate_config_string`, `.test_init_default_typescript`, `.test_generate_javascript_config`, `.test_full_configuration_typescript`, `.test_base_config_structure`, `.test_default_content_paths_react`, `.test_generate_config_with_plugins`, `.test_validate_config_no_content`, `.test_write_config_creates_content`, `.test_default_output_path_typescript`, `.test_default_content_paths_vue`, `.test_recommend_plugins`, `.test_recommend_plugins_nextjs`, `.test_generate_config_with_colors`, `.test_validate_config_valid`, `.test_write_config_invalid_path`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Why does `devDependencies` connect `devDependencies` to `backend/package.json`, `@eslint/eslintrc`, `@eslint/js`, `eslint-plugin-prettier`, `globals`, `jest`, `@nestjs/cli`, `@nestjs/schematics`, `@nestjs/testing`, `prettier`, `source-map-support`, `supertest`, `ts-jest`, `ts-loader`, `ts-node`, `@types/bcryptjs`, `@types/express`, `@types/jest`, `@types/node`, `@types/pdfkit`, `@types/supertest`, `typescript`, `typescript-eslint`, `tsconfig-paths`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 30 inferred relationships involving `createBbsRouter()` (e.g. with `.addRebarItem()` and `.createBlock()`) actually correct?**
-  _`createBbsRouter()` has 30 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `mongoose`, `mongoose`, `mongoose` to the rest of the system?**
+- **Are the 31 inferred relationships involving `createBbsRouter()` (e.g. with `.addRebarItem()` and `.createBlock()`) actually correct?**
+  _`createBbsRouter()` has 31 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `CONCRETE_GRADES`, `STEEL_GRADES`, `failedQueue` to the rest of the system?**
   _1148 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
   _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._

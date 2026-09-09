@@ -17,17 +17,17 @@
       "source_location": "L37"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller",
-      "label": "InventoryController",
+      "id": "backend_src_bbs_bbs_service_bbsservice",
+      "label": "BbsService",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": "inventorycontroller",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L9"
+      "norm_label": "bbsservice",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L14"
     },
     {
       "id": "backend_src_inventory_inventory_service_inventoryservice",
@@ -101,24 +101,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "bbscontroller",
       "source_file": "backend/src/bbs/bbs.controller.ts",
       "source_location": "L12"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice",
-      "label": "BbsService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": "bbsservice",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L14"
     },
     {
       "id": "agents_skills_ui_ux_pro_max_scripts_design_system_designsystemgenerator",
@@ -251,6 +238,19 @@
       "source_location": "L6"
     },
     {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller",
+      "label": "InventoryController",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "inventorycontroller",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L9"
+    },
+    {
       "id": "backend_src_users_user_schema_user",
       "label": "User",
       "_callable": true,
@@ -277,19 +277,6 @@
       "source_location": "L7"
     },
     {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice",
-      "label": "BbsCalculationService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": "bbscalculationservice",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L43"
-    },
-    {
       "id": "backend_src_bbs_schemas_block_wing_schema_blockwing",
       "label": "BlockWing",
       "_callable": true,
@@ -313,19 +300,6 @@
       "file_type": "code",
       "norm_label": "elementtemplate",
       "source_file": "backend/src/bbs/schemas/element-template.schema.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "backend_src_bbs_schemas_level_floor_schema_levelfloor",
-      "label": "LevelFloor",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": "levelfloor",
-      "source_file": "backend/src/bbs/schemas/level-floor.schema.ts",
       "source_location": "L5"
     },
     {
@@ -378,6 +352,32 @@
       "file_type": "code",
       "norm_label": "structuralmember",
       "source_file": "backend/src/bbs/schemas/structural-member.schema.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice",
+      "label": "BbsCalculationService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": "bbscalculationservice",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "backend_src_bbs_schemas_level_floor_schema_levelfloor",
+      "label": "LevelFloor",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "LevelFloor",
+      "file_type": "code",
+      "norm_label": "levelfloor",
+      "source_file": "backend/src/bbs/schemas/level-floor.schema.ts",
       "source_location": "L5"
     },
     {
@@ -898,124 +898,436 @@
       "source_location": "L37"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_constructor",
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateconcretevolume",
+      "label": ".calculateConcreteVolume()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".calculateconcretevolume()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L91"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculaterebarweight",
+      "label": ".calculateRebarWeight()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".calculaterebarweight()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L298"
+    },
+    {
+      "id": "backend_src_bbs_bbs_controller_bbscontroller_constructor",
       "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
       "norm_label": ".constructor()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_deletestockitem",
-      "label": ".deleteStockItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": ".deletestockitem()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_getinventory",
-      "label": ".getInventory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": ".getinventory()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
       "source_location": "L13"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_getledger",
-      "label": ".getLedger()",
+      "id": "backend_src_bbs_bbs_express_createbbsrouter",
+      "label": "createBbsRouter()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".getledger()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L48"
+      "norm_label": "createbbsrouter()",
+      "source_file": "backend/src/bbs/bbs.express.ts",
+      "source_location": "L13"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_getscraprules",
-      "label": ".getScrapRules()",
+      "id": "backend_src_bbs_bbs_service_bbsservice_addrebaritem",
+      "label": ".addRebarItem()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".getscraprules()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L35"
+      "norm_label": ".addrebaritem()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L213"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_inwardentry",
-      "label": ".inwardEntry()",
+      "id": "backend_src_bbs_bbs_service_bbsservice_createblock",
+      "label": ".createBlock()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".inwardentry()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L18"
+      "norm_label": ".createblock()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L70"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_inventorycontroller_updatescraprules",
-      "label": ".updateScrapRules()",
+      "id": "backend_src_bbs_bbs_service_bbsservice_createlevel",
+      "label": ".createLevel()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".updatescraprules()",
-      "source_file": "backend/src/inventory/inventory.controller.ts",
-      "source_location": "L40"
+      "norm_label": ".createlevel()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L93"
     },
     {
-      "id": "backend_src_inventory_inventory_service_inventoryservice_deletestockitem",
-      "label": ".deleteStockItem()",
+      "id": "backend_src_bbs_bbs_service_bbsservice_createmember",
+      "label": ".createMember()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".deletestockitem()",
-      "source_file": "backend/src/inventory/inventory.service.ts",
-      "source_location": "L156"
+      "norm_label": ".createmember()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L139"
     },
     {
-      "id": "backend_src_inventory_inventory_service_inventoryservice_getinventory",
-      "label": ".getInventory()",
+      "id": "backend_src_bbs_bbs_service_bbsservice_createproject",
+      "label": ".createProject()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".getinventory()",
-      "source_file": "backend/src/inventory/inventory.service.ts",
-      "source_location": "L22"
+      "norm_label": ".createproject()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L30"
     },
     {
-      "id": "backend_src_inventory_inventory_service_inventoryservice_getledger",
-      "label": ".getLedger()",
+      "id": "backend_src_bbs_bbs_service_bbsservice_createshape",
+      "label": ".createShape()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": ".getledger()",
-      "source_file": "backend/src/inventory/inventory.service.ts",
-      "source_location": "L150"
+      "norm_label": ".createshape()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L379"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_createtemplate",
+      "label": ".createTemplate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".createtemplate()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L387"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_deleteblock",
+      "label": ".deleteBlock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".deleteblock()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L87"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_deletelevel",
+      "label": ".deleteLevel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".deletelevel()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L115"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_deletemember",
+      "label": ".deleteMember()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".deletemember()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L202"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_deleteproject",
+      "label": ".deleteProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".deleteproject()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L54"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_deleterebaritem",
+      "label": ".deleteRebarItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".deleterebaritem()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L284"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getblocks",
+      "label": ".getBlocks()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getblocks()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L74"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getdashboardmatrix",
+      "label": ".getDashboardMatrix()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getdashboardmatrix()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L306"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getlevels",
+      "label": ".getLevels()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getlevels()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L105"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getmaterialtakeoff",
+      "label": ".getMaterialTakeOff()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getmaterialtakeoff()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L348"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getmember",
+      "label": ".getMember()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getmember()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L168"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getmembers",
+      "label": ".getMembers()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getmembers()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L174"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getmembersbycell",
+      "label": ".getMembersByCell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getmembersbycell()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L178"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getproject",
+      "label": ".getProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getproject()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getprojectrebars",
+      "label": ".getProjectRebars()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getprojectrebars()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L342"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getprojects",
+      "label": ".getProjects()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getprojects()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getrebaritems",
+      "label": ".getRebarItems()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getrebaritems()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L243"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_getshapes",
+      "label": ".getShapes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".getshapes()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L375"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_gettemplates",
+      "label": ".getTemplates()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".gettemplates()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L383"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_recalculatememberweight",
+      "label": ".recalculateMemberWeight()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".recalculatememberweight()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L295"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_reorderlevels",
+      "label": ".reorderLevels()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".reorderlevels()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L121"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_updateblock",
+      "label": ".updateBlock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".updateblock()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L81"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_updatelevel",
+      "label": ".updateLevel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".updatelevel()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L109"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_updatemember",
+      "label": ".updateMember()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".updatemember()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L182"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_updateproject",
+      "label": ".updateProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".updateproject()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L44"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_updaterebaritem",
+      "label": ".updateRebarItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "BbsService",
+      "file_type": "code",
+      "norm_label": ".updaterebaritem()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L247"
     },
     {
       "id": "frontend_src_store_slices_permissionsslice_getinitialpermissions",
@@ -1414,6 +1726,18 @@
       "source_location": "L6"
     },
     {
+      "id": "backend_src_batches_batches_service_batchesservice_commitbatch",
+      "label": ".commitBatch()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "inventory.module.ts",
+      "file_type": "code",
+      "norm_label": ".commitbatch()",
+      "source_file": "backend/src/batches/batches.service.ts",
+      "source_location": "L19"
+    },
+    {
       "id": "backend_src_batches_batches_service_batchesservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -1424,18 +1748,6 @@
       "norm_label": ".constructor()",
       "source_file": "backend/src/batches/batches.service.ts",
       "source_location": "L12"
-    },
-    {
-      "id": "backend_src_batches_batches_service_batchesservice_deletebatch",
-      "label": ".deleteBatch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "inventory.module.ts",
-      "file_type": "code",
-      "norm_label": ".deletebatch()",
-      "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L454"
     },
     {
       "id": "backend_src_inventory_inventory_service_inventoryservice_constructor",
@@ -1822,52 +2134,16 @@
       "source_location": "L5"
     },
     {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateconcretevolume",
-      "label": ".calculateConcreteVolume()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".calculateconcretevolume()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L91"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculaterebarweight",
-      "label": ".calculateRebarWeight()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".calculaterebarweight()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L298"
-    },
-    {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_addrebaritem",
       "label": ".addRebarItem()",
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".addrebaritem()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L152"
-    },
-    {
-      "id": "backend_src_bbs_bbs_controller_bbscontroller_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L13"
+      "source_location": "L160"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_createblock",
@@ -1875,7 +2151,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".createblock()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -1887,7 +2163,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".createlevel()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -1899,11 +2175,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".createmember()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L104"
+      "source_location": "L112"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_createproject",
@@ -1911,7 +2187,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".createproject()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -1923,11 +2199,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".createshape()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L204"
+      "source_location": "L212"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_createtemplate",
@@ -1935,11 +2211,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".createtemplate()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L214"
+      "source_location": "L222"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_deleteblock",
@@ -1947,7 +2223,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".deleteblock()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -1959,7 +2235,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".deletelevel()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -1971,11 +2247,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".deletemember()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L143"
+      "source_location": "L151"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_deleteproject",
@@ -1983,7 +2259,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".deleteproject()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -1995,11 +2271,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".deleterebaritem()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L176"
+      "source_location": "L184"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getblocks",
@@ -2007,7 +2283,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getblocks()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2019,11 +2295,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getdashboardmatrix()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L185"
+      "source_location": "L193"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getlevels",
@@ -2031,7 +2307,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getlevels()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2043,11 +2319,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getmember()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L133"
+      "source_location": "L141"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getmembers",
@@ -2055,11 +2331,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getmembers()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L119"
+      "source_location": "L127"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
@@ -2067,11 +2343,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getmembersbycell()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L124"
+      "source_location": "L132"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getmto",
@@ -2079,11 +2355,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getmto()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L190"
+      "source_location": "L198"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getproject",
@@ -2091,7 +2367,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getproject()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2103,7 +2379,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getprojects()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2115,11 +2391,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getrebaritems()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L166"
+      "source_location": "L174"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_getshapes",
@@ -2127,11 +2403,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".getshapes()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L199"
+      "source_location": "L207"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_gettemplates",
@@ -2139,11 +2415,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".gettemplates()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L209"
+      "source_location": "L217"
+    },
+    {
+      "id": "backend_src_bbs_bbs_controller_bbscontroller_reorderlevels",
+      "label": ".reorderLevels()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 175,
+      "community_name": "BbsController",
+      "file_type": "code",
+      "norm_label": ".reorderlevels()",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L100"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_updateblock",
@@ -2151,7 +2439,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".updateblock()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2163,7 +2451,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".updatelevel()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2175,11 +2463,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".updatemember()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L138"
+      "source_location": "L146"
     },
     {
       "id": "backend_src_bbs_bbs_controller_bbscontroller_updateproject",
@@ -2187,7 +2475,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".updateproject()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
@@ -2199,395 +2487,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": ".updaterebaritem()",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L171"
-    },
-    {
-      "id": "backend_src_bbs_bbs_express_createbbsrouter",
-      "label": "createBbsRouter()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": "createbbsrouter()",
-      "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_addrebaritem",
-      "label": ".addRebarItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".addrebaritem()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L195"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_createblock",
-      "label": ".createBlock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".createblock()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L70"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_createlevel",
-      "label": ".createLevel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".createlevel()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L93"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_createmember",
-      "label": ".createMember()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".createmember()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L121"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_createproject",
-      "label": ".createProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".createproject()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_createshape",
-      "label": ".createShape()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".createshape()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L361"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_createtemplate",
-      "label": ".createTemplate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".createtemplate()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L369"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_deleteblock",
-      "label": ".deleteBlock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".deleteblock()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L87"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_deletelevel",
-      "label": ".deleteLevel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".deletelevel()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L111"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_deletemember",
-      "label": ".deleteMember()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".deletemember()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L184"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_deleteproject",
-      "label": ".deleteProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".deleteproject()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L54"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_deleterebaritem",
-      "label": ".deleteRebarItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".deleterebaritem()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L266"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getblocks",
-      "label": ".getBlocks()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getblocks()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L74"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getdashboardmatrix",
-      "label": ".getDashboardMatrix()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getdashboardmatrix()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L288"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getlevels",
-      "label": ".getLevels()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getlevels()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L101"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getmaterialtakeoff",
-      "label": ".getMaterialTakeOff()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getmaterialtakeoff()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L330"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getmember",
-      "label": ".getMember()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getmember()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L150"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getmembers",
-      "label": ".getMembers()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getmembers()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L156"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getmembersbycell",
-      "label": ".getMembersByCell()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getmembersbycell()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L160"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getproject",
-      "label": ".getProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getproject()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L38"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getprojectrebars",
-      "label": ".getProjectRebars()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getprojectrebars()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L324"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getprojects",
-      "label": ".getProjects()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getprojects()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L34"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getrebaritems",
-      "label": ".getRebarItems()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getrebaritems()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L225"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_getshapes",
-      "label": ".getShapes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".getshapes()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L357"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_gettemplates",
-      "label": ".getTemplates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".gettemplates()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L365"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_recalculatememberweight",
-      "label": ".recalculateMemberWeight()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".recalculatememberweight()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L277"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_updateblock",
-      "label": ".updateBlock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".updateblock()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L81"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_updatelevel",
-      "label": ".updateLevel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".updatelevel()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L105"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_updatemember",
-      "label": ".updateMember()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".updatemember()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L164"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_updateproject",
-      "label": ".updateProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".updateproject()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L44"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_updaterebaritem",
-      "label": ".updateRebarItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": ".updaterebaritem()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L229"
+      "source_location": "L179"
     },
     {
       "id": "agents_skills_ui_styling_scripts_tests_test_shadcn_add_testshadcninstaller_temp_project",
@@ -2914,18 +2818,6 @@
       "source_location": "L80"
     },
     {
-      "id": "backend_src_batches_batches_service_batchesservice_commitbatch",
-      "label": ".commitBatch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "batches.service.ts",
-      "file_type": "code",
-      "norm_label": ".commitbatch()",
-      "source_file": "backend/src/batches/batches.service.ts",
-      "source_location": "L19"
-    },
-    {
       "id": "backend_src_batches_batches_service_batchesservice_optimizebatch",
       "label": ".optimizeBatch()",
       "_callable": true,
@@ -3070,18 +2962,6 @@
       "source_location": "L36"
     },
     {
-      "id": "backend_src_auth_auth_service_authservice_signup",
-      "label": ".signup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".signup()",
-      "source_file": "backend/src/auth/auth.service.ts",
-      "source_location": "L14"
-    },
-    {
       "id": "backend_src_auth_jwt_auth_guard_jwtauthguard_canactivate",
       "label": ".canActivate()",
       "_callable": true,
@@ -3106,6 +2986,126 @@
       "source_location": "L7"
     },
     {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_deletestockitem",
+      "label": ".deleteStockItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".deletestockitem()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_getinventory",
+      "label": ".getInventory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".getinventory()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_getledger",
+      "label": ".getLedger()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".getledger()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_getscraprules",
+      "label": ".getScrapRules()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".getscraprules()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_inwardentry",
+      "label": ".inwardEntry()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".inwardentry()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_inventorycontroller_updatescraprules",
+      "label": ".updateScrapRules()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".updatescraprules()",
+      "source_file": "backend/src/inventory/inventory.controller.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "backend_src_inventory_inventory_service_inventoryservice_deletestockitem",
+      "label": ".deleteStockItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".deletestockitem()",
+      "source_file": "backend/src/inventory/inventory.service.ts",
+      "source_location": "L156"
+    },
+    {
+      "id": "backend_src_inventory_inventory_service_inventoryservice_getinventory",
+      "label": ".getInventory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".getinventory()",
+      "source_file": "backend/src/inventory/inventory.service.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "backend_src_inventory_inventory_service_inventoryservice_getledger",
+      "label": ".getLedger()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".getledger()",
+      "source_file": "backend/src/inventory/inventory.service.ts",
+      "source_location": "L150"
+    },
+    {
       "id": "backend_src_users_users_service_usersservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -3118,30 +3118,6 @@
       "source_location": "L8"
     },
     {
-      "id": "backend_src_users_users_service_usersservice_create",
-      "label": ".create()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".create()",
-      "source_file": "backend/src/users/users.service.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "backend_src_users_users_service_usersservice_findbyemail",
-      "label": ".findByEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".findbyemail()",
-      "source_file": "backend/src/users/users.service.ts",
-      "source_location": "L10"
-    },
-    {
       "id": "backend_src_users_users_service_usersservice_findbyid",
       "label": ".findById()",
       "_callable": true,
@@ -3152,234 +3128,6 @@
       "norm_label": ".findbyid()",
       "source_file": "backend/src/users/users.service.ts",
       "source_location": "L14"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatebarquantity",
-      "label": ".calculateBarQuantity()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatebarquantity()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L82"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatebenddeduction",
-      "label": ".calculateBendDeduction()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatebenddeduction()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L103"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatechajjalegdrop",
-      "label": ".calculateChajjaLegDrop()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatechajjalegdrop()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L246"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateclosedstirrup",
-      "label": ".calculateClosedStirrup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculateclosedstirrup()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L180"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatecrankaddition",
-      "label": ".calculateCrankAddition()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatecrankaddition()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L217"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatedevelopmentlength",
-      "label": ".calculateDevelopmentLength()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatedevelopmentlength()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L131"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatediamondstirrup",
-      "label": ".calculateDiamondStirrup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatediamondstirrup()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L189"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatehelicalring",
-      "label": ".calculateHelicalRing()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatehelicalring()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L200"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateseismichookaddition",
-      "label": ".calculateSeismicHookAddition()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculateseismichookaddition()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L119"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatestaircaseflightlength",
-      "label": ".calculateStaircaseFlightLength()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatestaircaseflightlength()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L237"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatestaircaseslopelength",
-      "label": ".calculateStaircaseSlopeLength()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatestaircaseslopelength()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L233"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatestockbarsplits",
-      "label": ".calculateStockBarSplits()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatestockbarsplits()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L262"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatetotalbenddeductions",
-      "label": ".calculateTotalBendDeductions()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatetotalbenddeductions()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L111"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatetotalcuttinglength",
-      "label": ".calculateTotalCuttingLength()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculatetotalcuttinglength()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L68"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateunitweight",
-      "label": ".calculateUnitWeight()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculateunitweight()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateunitweightpermm",
-      "label": ".calculateUnitWeightPerMm()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".calculateunitweightpermm()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L60"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_getdefaultclearcover",
-      "label": ".getDefaultClearCover()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".getdefaultclearcover()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L147"
-    },
-    {
-      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_iszerodeduction",
-      "label": ".isZeroDeduction()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".iszerodeduction()",
-      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
-      "source_location": "L159"
-    },
-    {
-      "id": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15"
     },
     {
       "id": "frontend_src_components_shaperenderer_shaperenderer_shaperenderer",
@@ -3427,7 +3175,7 @@
       "file_type": "code",
       "norm_label": "bbsprojectspage()",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "frontend_src_pages_bbspage_bbsreportspage_bbsreportspage",
@@ -3658,6 +3406,234 @@
       "source_location": "L5"
     },
     {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatebarquantity",
+      "label": ".calculateBarQuantity()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatebarquantity()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L82"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatebenddeduction",
+      "label": ".calculateBendDeduction()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatebenddeduction()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L103"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatechajjalegdrop",
+      "label": ".calculateChajjaLegDrop()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatechajjalegdrop()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L246"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateclosedstirrup",
+      "label": ".calculateClosedStirrup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculateclosedstirrup()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L180"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatecrankaddition",
+      "label": ".calculateCrankAddition()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatecrankaddition()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L217"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatedevelopmentlength",
+      "label": ".calculateDevelopmentLength()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatedevelopmentlength()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L131"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatediamondstirrup",
+      "label": ".calculateDiamondStirrup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatediamondstirrup()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L189"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatehelicalring",
+      "label": ".calculateHelicalRing()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatehelicalring()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L200"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateseismichookaddition",
+      "label": ".calculateSeismicHookAddition()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculateseismichookaddition()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L119"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatestaircaseflightlength",
+      "label": ".calculateStaircaseFlightLength()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatestaircaseflightlength()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L237"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatestaircaseslopelength",
+      "label": ".calculateStaircaseSlopeLength()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatestaircaseslopelength()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L233"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatestockbarsplits",
+      "label": ".calculateStockBarSplits()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatestockbarsplits()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L262"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatetotalbenddeductions",
+      "label": ".calculateTotalBendDeductions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatetotalbenddeductions()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L111"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculatetotalcuttinglength",
+      "label": ".calculateTotalCuttingLength()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculatetotalcuttinglength()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L68"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateunitweight",
+      "label": ".calculateUnitWeight()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculateunitweight()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_calculateunitweightpermm",
+      "label": ".calculateUnitWeightPerMm()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".calculateunitweightpermm()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L60"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_getdefaultclearcover",
+      "label": ".getDefaultClearCover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".getdefaultclearcover()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L147"
+    },
+    {
+      "id": "backend_src_bbs_bbs_calculation_service_bbscalculationservice_iszerodeduction",
+      "label": ".isZeroDeduction()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": ".iszerodeduction()",
+      "source_file": "backend/src/bbs/bbs-calculation.service.ts",
+      "source_location": "L159"
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_bbsservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "LevelFloor",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L15"
+    },
+    {
       "id": "agents_skills_ui_styling_scripts_tests_test_shadcn_add_testshadcninstaller_test_add_all_components_dry_run",
       "label": ".test_add_all_components_dry_run()",
       "_callable": true,
@@ -3836,6 +3812,18 @@
       "norm_label": ".updatebatch()",
       "source_file": "backend/src/batches/batches.controller.ts",
       "source_location": "L54"
+    },
+    {
+      "id": "backend_src_batches_batches_service_batchesservice_deletebatch",
+      "label": ".deleteBatch()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "BatchesController",
+      "file_type": "code",
+      "norm_label": ".deletebatch()",
+      "source_file": "backend/src/batches/batches.service.ts",
+      "source_location": "L454"
     },
     {
       "id": "backend_src_batches_batches_service_batchesservice_getbatchhistory",
@@ -5986,6 +5974,18 @@
       "source_location": "L73"
     },
     {
+      "id": "backend_src_auth_auth_service_authservice_signup",
+      "label": ".signup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "auth.module.ts",
+      "file_type": "code",
+      "norm_label": ".signup()",
+      "source_file": "backend/src/auth/auth.service.ts",
+      "source_location": "L14"
+    },
+    {
       "id": "backend_src_companies_companies_service_companiesservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -6020,6 +6020,30 @@
       "norm_label": ".findbyid()",
       "source_file": "backend/src/companies/companies.service.ts",
       "source_location": "L15"
+    },
+    {
+      "id": "backend_src_users_users_service_usersservice_create",
+      "label": ".create()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "auth.module.ts",
+      "file_type": "code",
+      "norm_label": ".create()",
+      "source_file": "backend/src/users/users.service.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "backend_src_users_users_service_usersservice_findbyemail",
+      "label": ".findByEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "auth.module.ts",
+      "file_type": "code",
+      "norm_label": ".findbyemail()",
+      "source_file": "backend/src/users/users.service.ts",
+      "source_location": "L10"
     },
     {
       "id": "backend_src_app_controller_appcontroller_constructor",
@@ -7609,79 +7633,13 @@
       "source_location": "L60"
     },
     {
-      "id": "backend_src_inventory_inventory_controller_ts_body",
-      "label": "Body",
+      "id": "injectable",
+      "label": "Injectable",
       "_origin": "ast",
       "community": 11,
-      "community_name": "InventoryController",
+      "community_name": "BbsService",
       "file_type": "code",
-      "norm_label": "body",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_controller",
-      "label": "Controller",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": "controller",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_delete",
-      "label": "Delete",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": "delete",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_get",
-      "label": "Get",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": "get",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_param",
-      "label": "Param",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": "param",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_post",
-      "label": "Post",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": "post",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_inventory_inventory_controller_ts_useguards",
-      "label": "UseGuards",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "InventoryController",
-      "file_type": "code",
-      "norm_label": "useguards",
+      "norm_label": "injectable",
       "source_file": "",
       "source_location": ""
     },
@@ -16662,22 +16620,11 @@
       "source_location": "L180"
     },
     {
-      "id": "backend_src_bbs_bbs_service_ts_injectable",
-      "label": "Injectable",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "BbsService",
-      "file_type": "code",
-      "norm_label": "injectable",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "body",
       "label": "Body",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "body",
       "source_file": "",
@@ -16688,7 +16635,7 @@
       "label": "Controller",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "controller",
       "source_file": "",
@@ -16699,7 +16646,7 @@
       "label": "CurrentUser",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "currentuser",
       "source_file": "",
@@ -16710,7 +16657,7 @@
       "label": "Delete",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "delete",
       "source_file": "",
@@ -16721,7 +16668,7 @@
       "label": "Get",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "get",
       "source_file": "",
@@ -16732,7 +16679,7 @@
       "label": "Param",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "param",
       "source_file": "",
@@ -16743,7 +16690,7 @@
       "label": "Post",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "post",
       "source_file": "",
@@ -16754,9 +16701,20 @@
       "label": "Put",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "put",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "query",
+      "label": "Query",
+      "_origin": "ast",
+      "community": 175,
+      "community_name": "BbsController",
+      "file_type": "code",
+      "norm_label": "query",
       "source_file": "",
       "source_location": ""
     },
@@ -16765,7 +16723,7 @@
       "label": "UseGuards",
       "_origin": "ast",
       "community": 175,
-      "community_name": "BbsService",
+      "community_name": "BbsController",
       "file_type": "code",
       "norm_label": "useguards",
       "source_file": "",
@@ -18196,6 +18154,83 @@
       "source_location": "L1"
     },
     {
+      "id": "backend_src_inventory_inventory_controller_ts_body",
+      "label": "Body",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "body",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_ts_controller",
+      "label": "Controller",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "controller",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_ts_delete",
+      "label": "Delete",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "delete",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_ts_get",
+      "label": "Get",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "get",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_ts_param",
+      "label": "Param",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "param",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_ts_post",
+      "label": "Post",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "post",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_inventory_inventory_controller_ts_useguards",
+      "label": "UseGuards",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "useguards",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "backend_src_users_user_schema",
       "label": "user.schema.ts",
       "_origin": "ast",
@@ -18449,17 +18484,6 @@
       "source_location": "L8"
     },
     {
-      "id": "backend_src_bbs_bbs_calculation_service_ts_injectable",
-      "label": "Injectable",
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": "injectable",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "backend_src_bbs_bbs_express",
       "label": "bbs.express.ts",
       "_origin": "ast",
@@ -18600,29 +18624,7 @@
       "file_type": "code",
       "norm_label": "levelfloorschema",
       "source_file": "backend/src/bbs/schemas/level-floor.schema.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "backend_src_bbs_schemas_level_floor_schema_ts_prop",
-      "label": "Prop",
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": "prop",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_src_bbs_schemas_level_floor_schema_ts_schema",
-      "label": "Schema",
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": "schema",
-      "source_file": "",
-      "source_location": ""
+      "source_location": "L19"
     },
     {
       "id": "backend_src_bbs_schemas_project_schema",
@@ -18801,17 +18803,6 @@
       "source_location": ""
     },
     {
-      "id": "injectmodel",
-      "label": "InjectModel",
-      "_origin": "ast",
-      "community": 214,
-      "community_name": "bbs.module.ts",
-      "file_type": "code",
-      "norm_label": "injectmodel",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "frontend_src_app",
       "label": "App.jsx",
       "_origin": "ast",
@@ -18875,7 +18866,7 @@
       "file_type": "code",
       "norm_label": "concrete_grades",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "frontend_src_pages_bbspage_bbsprojectspage_steel_grades",
@@ -18886,7 +18877,7 @@
       "file_type": "code",
       "norm_label": "steel_grades",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L16"
+      "source_location": "L17"
     },
     {
       "id": "frontend_src_pages_bbspage_bbsreportspage",
@@ -19373,6 +19364,83 @@
       "source_location": "L1"
     },
     {
+      "id": "backend_src_bbs_bbs_calculation_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 224,
+      "community_name": "BbsCalculationService",
+      "file_type": "code",
+      "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "injectmodel",
+      "label": "InjectModel",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "LevelFloor",
+      "file_type": "code",
+      "norm_label": "injectmodel",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "prop",
+      "label": "Prop",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "LevelFloor",
+      "file_type": "code",
+      "norm_label": "prop",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "schema",
+      "label": "Schema",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "LevelFloor",
+      "file_type": "code",
+      "norm_label": "schema",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_bbs_bbs_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "Injectable",
+      "file_type": "code",
+      "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_bbs_schemas_level_floor_schema_ts_prop",
+      "label": "Prop",
+      "_origin": "ast",
+      "community": 227,
+      "community_name": "Prop",
+      "file_type": "code",
+      "norm_label": "prop",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_src_bbs_schemas_level_floor_schema_ts_schema",
+      "label": "Schema",
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "Schema",
+      "file_type": "code",
+      "norm_label": "schema",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "agents_skills_design_system_templates_design_tokens_starter_2xl_type",
       "label": "$type",
       "_origin": "ast",
@@ -19710,17 +19778,6 @@
       "community_name": "BatchesController",
       "file_type": "code",
       "norm_label": "useguards",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "query",
-      "label": "Query",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "BatchesController",
-      "file_type": "code",
-      "norm_label": "query",
       "source_file": "",
       "source_location": ""
     },
@@ -34371,7 +34428,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L220",
+      "source_location": "L238",
       "weight": 1.0
     },
     {
@@ -34383,7 +34440,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L269",
+      "source_location": "L287",
       "weight": 1.0
     },
     {
@@ -34395,7 +34452,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L260",
+      "source_location": "L278",
       "weight": 1.0
     },
     {
@@ -35571,7 +35628,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L151",
+      "source_location": "L159",
       "weight": 1.0
     },
     {
@@ -35583,7 +35640,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L152",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -35667,7 +35724,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L103",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -35679,7 +35736,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L104",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -35727,7 +35784,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L203",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -35739,7 +35796,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L204",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -35751,7 +35808,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L213",
+      "source_location": "L221",
       "weight": 1.0
     },
     {
@@ -35763,7 +35820,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L214",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -35823,7 +35880,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L142",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -35835,7 +35892,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L143",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -35883,7 +35940,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L175",
+      "source_location": "L183",
       "weight": 1.0
     },
     {
@@ -35895,7 +35952,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L176",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -35931,7 +35988,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L184",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -35943,7 +36000,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L185",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -35955,7 +36012,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L185",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -35991,7 +36048,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L132",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -36003,55 +36060,55 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembers",
+      "target": "get",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembers",
+      "target": "param",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
+      "target": "get",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
+      "target": "param",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
       "source_location": "L133",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembers",
-      "target": "get",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "decorator",
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L118",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembers",
-      "target": "param",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "decorator",
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L119",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
-      "target": "get",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "decorator",
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L123",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
-      "target": "param",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "decorator",
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -36063,7 +36120,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L127",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -36075,7 +36132,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L189",
+      "source_location": "L197",
       "weight": 1.0
     },
     {
@@ -36087,7 +36144,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L190",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -36159,7 +36216,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L165",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -36171,7 +36228,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L166",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -36183,7 +36240,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L198",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -36195,7 +36252,43 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L208",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_reorderlevels",
+      "target": "param",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_reorderlevels",
+      "target": "body",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_reorderlevels",
+      "target": "put",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -36279,7 +36372,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L137",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -36291,7 +36384,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L138",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -36303,7 +36396,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L138",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -36363,7 +36456,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L170",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -36375,7 +36468,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L171",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -36387,7 +36480,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L171",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -36404,7 +36497,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_service_bbsservice",
-      "target": "backend_src_bbs_bbs_service_ts_injectable",
+      "target": "injectable",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -36476,19 +36569,19 @@
     },
     {
       "source": "backend_src_bbs_schemas_level_floor_schema_levelfloor",
-      "target": "backend_src_bbs_schemas_level_floor_schema_ts_prop",
+      "target": "prop",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/src/bbs/schemas/level-floor.schema.ts",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
       "source": "backend_src_bbs_schemas_level_floor_schema_levelfloor",
-      "target": "backend_src_bbs_schemas_level_floor_schema_ts_schema",
+      "target": "schema",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -37172,79 +37265,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_schemas_block_wing_schema_blockwing",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "generic_arg",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_schemas_element_template_schema_elementtemplate",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "generic_arg",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
       "target": "backend_src_bbs_schemas_level_floor_schema_levelfloor",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "generic_arg",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_schemas_project_schema_project",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "generic_arg",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_schemas_rebar_item_schema_rebaritem",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "generic_arg",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_schemas_shape_register_schema_shaperegister",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "generic_arg",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_schemas_structural_member_schema_structuralmember",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -39879,7 +39900,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -39891,7 +39912,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -41943,7 +41964,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -41955,7 +41976,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -41967,7 +41988,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -43012,18 +43033,6 @@
       "context": "parameter_type",
       "source_file": "backend/src/bbs/bbs.controller.ts",
       "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice_constructor",
-      "target": "backend_src_bbs_bbs_calculation_service_bbscalculationservice",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -61314,7 +61323,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/schemas/level-floor.schema.ts",
-      "source_location": "L16",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -62678,7 +62687,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -62689,7 +62698,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -62700,7 +62709,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/BBSPage/BbsProjectsPage.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -65554,13 +65563,24 @@
     },
     {
       "source": "backend_src_bbs_bbs_controller_bbscontroller",
+      "target": "backend_src_bbs_bbs_controller_bbscontroller_reorderlevels",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller",
       "target": "backend_src_bbs_bbs_controller_bbscontroller_createmember",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L104",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -65571,18 +65591,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L119",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_controller_bbscontroller",
-      "target": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L124",
+      "source_location": "L127",
       "weight": 1.0
     },
     {
@@ -65598,13 +65607,24 @@
     },
     {
       "source": "backend_src_bbs_bbs_controller_bbscontroller",
+      "target": "backend_src_bbs_bbs_controller_bbscontroller_getmembersbycell",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller",
       "target": "backend_src_bbs_bbs_controller_bbscontroller_getmember",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L133",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -65615,7 +65635,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L138",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -65626,7 +65646,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L143",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -65637,7 +65657,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L152",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -65648,7 +65668,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L166",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -65659,7 +65679,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L171",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -65670,7 +65690,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L176",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -65681,7 +65701,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L185",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -65692,18 +65712,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L190",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_controller_bbscontroller",
-      "target": "backend_src_bbs_bbs_controller_bbscontroller_getshapes",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L199",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -65719,13 +65728,24 @@
     },
     {
       "source": "backend_src_bbs_bbs_controller_bbscontroller",
+      "target": "backend_src_bbs_bbs_controller_bbscontroller_getshapes",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L207",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller",
       "target": "backend_src_bbs_bbs_controller_bbscontroller_createshape",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L204",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -65736,7 +65756,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L209",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -65747,7 +65767,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L214",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -65890,7 +65910,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L101",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -65901,7 +65921,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L105",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -65912,7 +65932,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L111",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_service_bbsservice",
+      "target": "backend_src_bbs_bbs_service_bbsservice_reorderlevels",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -65923,7 +65954,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L121",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -65945,7 +65976,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L150",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -65956,7 +65987,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L156",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -65967,7 +65998,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L160",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -65978,7 +66009,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L164",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -65989,7 +66020,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L184",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
@@ -66000,7 +66031,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L195",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -66011,7 +66042,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L225",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -66022,7 +66053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L229",
+      "source_location": "L247",
       "weight": 1.0
     },
     {
@@ -66033,7 +66064,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L266",
+      "source_location": "L284",
       "weight": 1.0
     },
     {
@@ -66044,18 +66075,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L277",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getdashboardmatrix",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L288",
+      "source_location": "L295",
       "weight": 1.0
     },
     {
@@ -66071,24 +66091,13 @@
     },
     {
       "source": "backend_src_bbs_bbs_service_bbsservice",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getprojectrebars",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getdashboardmatrix",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L324",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getmaterialtakeoff",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L330",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -66104,13 +66113,35 @@
     },
     {
       "source": "backend_src_bbs_bbs_service_bbsservice",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getprojectrebars",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L342",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_service_bbsservice",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getmaterialtakeoff",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L348",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_service_bbsservice",
       "target": "backend_src_bbs_bbs_service_bbsservice_getshapes",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L357",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -66121,29 +66152,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L361",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice",
-      "target": "backend_src_bbs_bbs_service_bbsservice_gettemplates",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L365",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_src_bbs_bbs_service_bbsservice",
-      "target": "backend_src_bbs_bbs_service_bbsservice_createtemplate",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L369",
+      "source_location": "L379",
       "weight": 1.0
     },
     {
@@ -66155,6 +66164,28 @@
       "confidence_score": 1.0,
       "source_file": "backend/src/bbs/bbs.service.ts",
       "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_service_bbsservice",
+      "target": "backend_src_bbs_bbs_service_bbsservice_gettemplates",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L383",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_service_bbsservice",
+      "target": "backend_src_bbs_bbs_service_bbsservice_createtemplate",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/src/bbs/bbs.service.ts",
+      "source_location": "L387",
       "weight": 1.0
     },
     {
@@ -69236,7 +69267,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L162",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -69272,7 +69303,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L115",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -69296,7 +69327,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L205",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -69308,7 +69339,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L215",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -69344,7 +69375,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L144",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -69368,7 +69399,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L177",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -69392,7 +69423,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L186",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
@@ -69416,7 +69447,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L134",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -69428,7 +69459,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L120",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -69440,7 +69471,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L129",
+      "source_location": "L137",
       "weight": 1.0
     },
     {
@@ -69452,7 +69483,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L191",
+      "source_location": "L199",
       "weight": 1.0
     },
     {
@@ -69488,7 +69519,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L167",
+      "source_location": "L175",
       "weight": 1.0
     },
     {
@@ -69500,7 +69531,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L200",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
@@ -69512,7 +69543,19 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L210",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_controller_bbscontroller_reorderlevels",
+      "target": "backend_src_bbs_bbs_service_bbsservice_reorderlevels",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "context": "call",
+      "source_file": "backend/src/bbs/bbs.controller.ts",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -69548,7 +69591,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L139",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -69572,7 +69615,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.controller.ts",
-      "source_location": "L172",
+      "source_location": "L180",
       "weight": 1.0
     },
     {
@@ -69661,7 +69704,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_updatelevel",
+      "target": "backend_src_bbs_bbs_service_bbsservice_reorderlevels",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69673,7 +69716,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_deletelevel",
+      "target": "backend_src_bbs_bbs_service_bbsservice_updatelevel",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69685,19 +69728,19 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_createshape",
+      "target": "backend_src_bbs_bbs_service_bbsservice_deletelevel",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L187",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getshapes",
+      "target": "backend_src_bbs_bbs_service_bbsservice_createshape",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69709,19 +69752,19 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_createmember",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getshapes",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L206",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getmembers",
+      "target": "backend_src_bbs_bbs_service_bbsservice_createmember",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69733,7 +69776,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getmembersbycell",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getmembers",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69745,7 +69788,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getmember",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getmembersbycell",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69757,7 +69800,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_updatemember",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getmember",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69769,7 +69812,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_deletemember",
+      "target": "backend_src_bbs_bbs_service_bbsservice_updatemember",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69781,19 +69824,19 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_addrebaritem",
+      "target": "backend_src_bbs_bbs_service_bbsservice_deletemember",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L261",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getrebaritems",
+      "target": "backend_src_bbs_bbs_service_bbsservice_addrebaritem",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69805,7 +69848,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_updaterebaritem",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getrebaritems",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69817,7 +69860,7 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_deleterebaritem",
+      "target": "backend_src_bbs_bbs_service_bbsservice_updaterebaritem",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69829,19 +69872,19 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_gettemplates",
+      "target": "backend_src_bbs_bbs_service_bbsservice_deleterebaritem",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L298",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_createtemplate",
+      "target": "backend_src_bbs_bbs_service_bbsservice_gettemplates",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69853,19 +69896,19 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getprojectrebars",
+      "target": "backend_src_bbs_bbs_service_bbsservice_createtemplate",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L317",
+      "source_location": "L316",
       "weight": 1.0
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
-      "target": "backend_src_bbs_bbs_service_bbsservice_getmaterialtakeoff",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getprojectrebars",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
@@ -69877,6 +69920,18 @@
     },
     {
       "source": "backend_src_bbs_bbs_express_createbbsrouter",
+      "target": "backend_src_bbs_bbs_service_bbsservice_getmaterialtakeoff",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "context": "call",
+      "source_file": "backend/src/bbs/bbs.express.ts",
+      "source_location": "L335",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_src_bbs_bbs_express_createbbsrouter",
       "target": "backend_src_bbs_bbs_service_bbsservice_getdashboardmatrix",
       "relation": "calls",
       "_origin": "ast",
@@ -69884,7 +69939,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.express.ts",
-      "source_location": "L336",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
@@ -69944,7 +69999,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L205",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -69956,7 +70011,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L133",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -69968,7 +70023,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L173",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -69980,7 +70035,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "backend/src/bbs/bbs.service.ts",
-      "source_location": "L245",
+      "source_location": "L263",
       "weight": 1.0
     },
     {
@@ -70318,5 +70373,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "cb34da17bd2ad9b329ea3b1ae1fc96b7a7979af9"
+  "built_at_commit": "d1ba157fecce2dbd499ba543d6f53d06e4165b68"
 }

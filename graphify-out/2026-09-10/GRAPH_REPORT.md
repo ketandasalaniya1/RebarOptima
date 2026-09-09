@@ -1,16 +1,16 @@
-# Graph Report - RebarOptima  (2026-09-06)
+# Graph Report - RebarOptima  (2026-09-10)
 
 ## Corpus Check
-- 176 files · ~251,109 words
+- 201 files · ~262,770 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2487 nodes · 3046 edges · 218 communities (152 shown, 59 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 50 edges (avg confidence: 0.83)
+- 2666 nodes · 3458 edges · 224 communities (153 shown, 63 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 114 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b22201d5`
+- Built from commit: `cb34da17`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,7 +26,7 @@
 - html-token-validator.py
 - TestTailwindConfigGenerator
 - BM25
-- InventoryService
+- InventoryController
 - compilerOptions
 - generate-slide.py
 - .test_add_fonts
@@ -40,7 +40,7 @@
 - icon/generate.py
 - fontSize
 - TestShadcnInstaller
-- BatchesService
+- BatchesController
 - Tailwind CSS Utility Reference
 - extract-colors.cjs
 - validate-asset.cjs
@@ -51,7 +51,7 @@
 - test_tailwind_config_gen.py
 - inject-brand-context.cjs
 - embed-tokens.cjs
-- duration
+- primitive
 - patch
 - search
 - dependencies
@@ -74,11 +74,11 @@
 - devDependencies
 - Canvas Design System
 - Prerequisites
-- sm
+- shadow
 - nest-cli.json
 - lg
+- auth.module.ts
 - app.module.ts
-- batches.module.ts
 - NewBatchPage.jsx
 - is_server_ready
 - moduleFileExtensions
@@ -183,8 +183,8 @@
 - ponytail-debt/SKILL.md
 - React + Vite
 - .oxlintrc.json
-- App.jsx
-- .deleteStockItem
+- authSlice.js
+- BbsService
 - none
 - .temp_project
 - .test_init_default_project_root
@@ -222,22 +222,27 @@
 - primary-foreground
 - ring
 - secondary-foreground
-- 16
-- 1
-- 3
-- 8
+- bbs.module.ts
+- App.jsx
+- SettingsPage.jsx
+- md
+- test_api.js
+- test_mongoose.js
+- check_db.js
+- check_projects.js
+- check_user.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 58 edges
-2. `TestTailwindConfigGenerator` - 35 edges
-3. `ShadcnInstaller` - 34 edges
-4. `TestShadcnInstaller` - 26 edges
-5. `User` - 24 edges
-6. `react` - 23 edges
-7. `compilerOptions` - 22 edges
-8. `UI Styling Skill` - 17 edges
-9. `CurrentUser` - 16 edges
-10. `InventoryService` - 15 edges
+2. `BbsService` - 39 edges
+3. `createBbsRouter()` - 35 edges
+4. `TestTailwindConfigGenerator` - 35 edges
+5. `BbsController` - 34 edges
+6. `ShadcnInstaller` - 34 edges
+7. `react` - 29 edges
+8. `BbsCalculationService` - 27 edges
+9. `TestShadcnInstaller` - 26 edges
+10. `User` - 25 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `TestGeneratedConfigIsValidJs` --uses--> `TailwindConfigGenerator`  [INFERRED]
@@ -246,18 +251,18 @@
   .agents/skills/ui-styling/scripts/tests/test_tailwind_config_gen.py → .agents/skills/ui-styling/scripts/tailwind_config_gen.py
 - `TestShadcnInstaller` --uses--> `ShadcnInstaller`  [INFERRED]
   .agents/skills/ui-styling/scripts/tests/test_shadcn_add.py → .agents/skills/ui-styling/scripts/shadcn_add.py
-- `_generate_intelligent_overrides()` --calls--> `search()`  [EXTRACTED]
-  .agents/skills/ui-ux-pro-max/scripts/design_system.py → .agents/skills/ui-ux-pro-max/scripts/core.py
-- `generate_design_brief()` --calls--> `search_all()`  [EXTRACTED]
-  .agents/skills/design/scripts/logo/search.py → .agents/skills/design/scripts/logo/core.py
+- `createBbsRouter()` --calls--> `BbsCalculationService`  [EXTRACTED]
+  backend/src/bbs/bbs.express.ts → backend/src/bbs/bbs-calculation.service.ts
+- `startServer()` --calls--> `createBbsRouter()`  [EXTRACTED]
+  backend/src/main.ts → backend/src/bbs/bbs.express.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (218 total, 59 thin omitted)
+## Communities (224 total, 63 thin omitted)
 
 ### Community 0 - "react"
-Cohesion: 0.27
+Cohesion: 0.26
 Nodes (3): ThemeToggle(), authApi, react
 
 ### Community 1 - "gray"
@@ -265,8 +270,8 @@ Cohesion: 0.05
 Nodes (53): $type, $value, $type, $value, $type, $value, $type, $value (+45 more)
 
 ### Community 2 - "batches.service.ts"
-Cohesion: 0.40
-Nodes (7): BarLayout, OptimizationResult, OptimizerOptions, PartInputRow, PartLayoutItem, solve1DCSP(), StockInputRow
+Cohesion: 0.20
+Nodes (13): Batch, BatchSchema, Prop, Schema, BatchesService, Injectable, BarLayout, OptimizationResult (+5 more)
 
 ### Community 3 - "search"
 Cohesion: 0.07
@@ -285,8 +290,8 @@ Cohesion: 0.08
 Nodes (36): format_context(), format_result(), main(), Format a single search result for display, Format contextual recommendations for display., BM25, calculate_pattern_break(), detect_domain() (+28 more)
 
 ### Community 7 - "spacing"
-Cohesion: 0.09
-Nodes (22): $type, $value, $type, $value, $type, $value, $type, $value (+14 more)
+Cohesion: 0.06
+Nodes (34): $type, $value, $type, $value, $type, $value, $type, $value (+26 more)
 
 ### Community 8 - "html-token-validator.py"
 Cohesion: 0.13
@@ -300,9 +305,9 @@ Nodes (16): Test adding colors multiple times., Test adding full color palette.,
 Cohesion: 0.11
 Nodes (19): BM25, detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+11 more)
 
-### Community 11 - "InventoryService"
-Cohesion: 0.12
-Nodes (10): Delete, InventoryController, Body, Controller, Get, Post, UseGuards, InventoryService (+2 more)
+### Community 11 - "InventoryController"
+Cohesion: 0.14
+Nodes (8): InventoryController, Body, Controller, Delete, Get, Param, Post, UseGuards
 
 ### Community 12 - "compilerOptions"
 Cohesion: 0.09
@@ -317,8 +322,8 @@ Cohesion: 0.18
 Nodes (16): _detect_page_type(), format_markdown(), format_master_md(), format_page_override_md(), generate_design_system(), _generate_intelligent_overrides(), persist_design_system(), Format a page-specific override file with intelligent AI-generated content. (+8 more)
 
 ### Community 16 - "inventory.module.ts"
-Cohesion: 0.17
-Nodes (14): InjectModel, InjectModel, InventoryTransaction, InventoryTransactionSchema, Prop, Schema, ScrapRule, ScrapRuleSchema (+6 more)
+Cohesion: 0.13
+Nodes (16): InjectModel, InventoryService, Injectable, InjectModel, InventoryTransaction, InventoryTransactionSchema, Prop, Schema (+8 more)
 
 ### Community 17 - "TailwindConfigGenerator"
 Cohesion: 0.10
@@ -337,7 +342,7 @@ Cohesion: 0.17
 Nodes (17): generate_css_for_background(), get_background_image(), get_curated_images(), get_overlay_css(), get_pexels_search_url(), load_backgrounds_config(), load_brand_colors(), main() (+9 more)
 
 ### Community 21 - "User"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (10): JwtAuthGuard, Injectable, CurrentUser, Prop, Schema, User, UserSchema, Injectable (+2 more)
 
 ### Community 22 - "icon/generate.py"
@@ -352,9 +357,9 @@ Nodes (16): $type, $value, $type, $value, $type, $value, $type, $value (+8 more)
 Cohesion: 0.12
 Nodes (9): Test adding components in dry run mode., Test ShadcnInstaller class., Test adding all components without config., Test adding all components in dry run mode., Test listing installed components without config., Test listing installed components when none exist., Test initialization with custom project root., Test checking for non-existent shadcn config. (+1 more)
 
-### Community 25 - "BatchesService"
-Cohesion: 0.14
-Nodes (10): BatchesController, Body, Controller, Get, Param, Post, UseGuards, BatchesService (+2 more)
+### Community 25 - "BatchesController"
+Cohesion: 0.12
+Nodes (9): BatchesController, Body, Controller, Delete, Get, Param, Post, UseGuards (+1 more)
 
 ### Community 26 - "Tailwind CSS Utility Reference"
 Cohesion: 0.05
@@ -396,9 +401,9 @@ Nodes (10): extractColorsFromTable(), extractCoreAttributes(), extractHexColors(
 Cohesion: 0.18
 Nodes (8): args, fs, minimal, MINIMAL_TOKENS, path, projectRoot, tokensPath, wrapStyle
 
-### Community 36 - "duration"
-Cohesion: 0.20
-Nodes (10): fast, normal, slow, $type, $value, $type, $value, duration (+2 more)
+### Community 36 - "primitive"
+Cohesion: 0.18
+Nodes (11): fast, normal, slow, $type, $value, $type, $value, primitive (+3 more)
 
 ### Community 37 - "patch"
 Cohesion: 0.18
@@ -449,8 +454,8 @@ Cohesion: 0.22
 Nodes (9): jest, collectCoverageFrom, coverageDirectory, rootDir, testEnvironment, testRegex, transform, ^.+\\.(t|j)s$ (+1 more)
 
 ### Community 49 - "radius"
-Cohesion: 0.19
-Nodes (14): $type, $value, $type, $value, $type, $value, primitive, radius (+6 more)
+Cohesion: 0.29
+Nodes (8): $type, $value, $type, $value, radius, default, full, default
 
 ### Community 50 - ".generate_config_string"
 Cohesion: 0.20
@@ -461,8 +466,8 @@ Cohesion: 0.25
 Nodes (8): ansi_ljust(), format_ascii_box(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤, Format design system as Unicode box with ANSI color swatches., section_header()
 
 ### Community 52 - "main.ts"
-Cohesion: 0.10
-Nodes (20): AccessResult, app, canAccess(), connectDB(), DEFAULT_SUBSCRIPTION_PACKAGES, DEFAULT_SYSTEM_ROLES, ensureScrapRules(), getEffectivePermissions() (+12 more)
+Cohesion: 0.11
+Nodes (21): AccessResult, app, authMiddleware(), canAccess(), connectDB(), DEFAULT_SUBSCRIPTION_PACKAGES, DEFAULT_SYSTEM_ROLES, ensureScrapRules() (+13 more)
 
 ### Community 53 - "exclude"
 Cohesion: 0.25
@@ -488,9 +493,9 @@ Nodes (35): 1. Visual Communication First, 2. Minimal Text Integration, 3. Exper
 Cohesion: 0.06
 Nodes (33): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+25 more)
 
-### Community 59 - "sm"
-Cohesion: 0.60
-Nodes (5): sm, sm, sm, $type, $value
+### Community 59 - "shadow"
+Cohesion: 0.47
+Nodes (6): sm, shadow, sm, sm, $type, $value
 
 ### Community 60 - "nest-cli.json"
 Cohesion: 0.33
@@ -500,13 +505,13 @@ Nodes (5): collection, compilerOptions, deleteOutDir, $schema, sourceRoot
 Cohesion: 0.60
 Nodes (5): lg, $type, $value, lg, lg
 
-### Community 62 - "app.module.ts"
-Cohesion: 0.07
-Nodes (27): AppController, Controller, Get, AppModule, Module, AppService, Injectable, AuthController (+19 more)
+### Community 62 - "auth.module.ts"
+Cohesion: 0.11
+Nodes (16): AuthController, Body, Controller, Post, AuthService, Injectable, CompaniesModule, Module (+8 more)
 
-### Community 63 - "batches.module.ts"
-Cohesion: 0.24
-Nodes (8): Batch, BatchSchema, Prop, Schema, InventoryModule, Module, Module, UsersModule
+### Community 63 - "app.module.ts"
+Cohesion: 0.11
+Nodes (17): AppController, Controller, Get, AppModule, Module, AppService, Injectable, AuthModule (+9 more)
 
 ### Community 64 - "NewBatchPage.jsx"
 Cohesion: 0.40
@@ -571,10 +576,6 @@ Nodes (24): Accessibility, Accessibility Requirements, ARIA States, Color Contra
 ### Community 89 - "UI Styling Skill"
 Cohesion: 0.08
 Nodes (24): Accessibility Patterns, Alternative: Tailwind-Only Setup, Best Practices, Common Patterns, Component Layer: shadcn/ui, Component Library Guide, Component + Styling Setup, Core Stack (+16 more)
-
-### Community 116 - "permissionsSlice.js"
-Cohesion: 0.14
-Nodes (4): App(), permissionsSlice, settingsSlice, store
 
 ### Community 117 - "xl"
 Cohesion: 0.67
@@ -729,8 +730,8 @@ Cohesion: 0.22
 Nodes (8): 1. Project Purpose & Core Domain, 2. Codebase Architecture, 3. Database Entity Schema Summary, 4. Key Files to Know, 5. Current Implementation Status, A. Frontend (React + Vite), B. Backend (NestJS + Mongoose + MongoDB), RebarOptima Project Overview
 
 ### Community 156 - "api.js"
-Cohesion: 0.13
-Nodes (13): DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, UserManagementPage(), activityLogsApi, apiRequest(), companyApi, failedQueue (+5 more)
+Cohesion: 0.14
+Nodes (11): DATA_SCOPE_OPTIONS, FEATURE_LABELS, MODULE_LABELS, activityLogsApi, apiRequest(), failedQueue, permissionsApi, processQueue() (+3 more)
 
 ### Community 157 - "Ponytail Help"
 Cohesion: 0.25
@@ -796,9 +797,13 @@ Nodes (3): Expanding the Oxlint configuration, React Compiler, React + Vite
 Cohesion: 0.25
 Nodes (7): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, warn
 
-### Community 174 - "App.jsx"
-Cohesion: 0.18
-Nodes (6): SettingsPage(), SubscribePage(), authSlice, routingSlice, developerApi, publicApi
+### Community 174 - "authSlice.js"
+Cohesion: 0.22
+Nodes (3): authSlice, developerApi, publicApi
+
+### Community 175 - "BbsService"
+Cohesion: 0.07
+Nodes (13): BbsController, createBbsRouter(), BbsService, Injectable, Body, Controller, CurrentUser, Delete (+5 more)
 
 ### Community 176 - "none"
 Cohesion: 0.67
@@ -848,41 +853,45 @@ Nodes (3): ring, $type, $value
 Cohesion: 0.67
 Nodes (3): secondary-foreground, $type, $value
 
-### Community 214 - "16"
-Cohesion: 0.67
-Nodes (3): $type, $value, 16
+### Community 214 - "bbs.module.ts"
+Cohesion: 0.06
+Nodes (33): BbsCalculationService, DEFAULT_CLEAR_COVERS, LD_MATRIX, Injectable, BlockWing, BlockWingSchema, Prop, Schema (+25 more)
 
-### Community 215 - "1"
-Cohesion: 0.67
-Nodes (3): $type, $value, 1
+### Community 215 - "App.jsx"
+Cohesion: 0.14
+Nodes (15): ShapeRenderer(), SideNavbar(), BbsDashboardPage(), BbsProjectsPage(), CONCRETE_GRADES, STEEL_GRADES, BbsReportsPage(), BbsShapesPage() (+7 more)
 
-### Community 216 - "3"
-Cohesion: 0.67
-Nodes (3): $type, $value, 3
+### Community 216 - "SettingsPage.jsx"
+Cohesion: 0.22
+Nodes (4): App(), settingsSlice, store, companyApi
 
-### Community 217 - "8"
+### Community 217 - "md"
 Cohesion: 0.67
-Nodes (3): $type, $value, 8
+Nodes (4): $type, $value, md, md
+
+### Community 218 - "test_api.js"
+Cohesion: 0.50
+Nodes (3): http, jwt, token
 
 ## Knowledge Gaps
-- **1132 isolated node(s):** `app`, `memoryDbInstance`, `PLATFORM_MODULES`, `DEFAULT_SYSTEM_ROLES`, `DEFAULT_SUBSCRIPTION_PACKAGES` (+1127 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1512 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1148 isolated node(s):** `mongoose`, `mongoose`, `mongoose`, `LD_MATRIX`, `DEFAULT_CLEAR_COVERS` (+1143 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1562 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **63 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `radius` to `gray`, `duration`, `spacing`, `fontSize`, `design-tokens-starter.json`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `semantic` connect `design-tokens-starter.json` to `color`?**
+- **Why does `primitive` connect `primitive` to `gray`, `spacing`, `radius`, `fontSize`, `design-tokens-starter.json`, `shadow`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `component` connect `design-tokens-starter.json` to `button`, `card`, `input`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Why does `BbsService` connect `BbsService` to `User`, `bbs.module.ts`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `TestTailwindConfigGenerator`) actually correct?**
   _`TailwindConfigGenerator` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `app`, `memoryDbInstance`, `PLATFORM_MODULES` to the rest of the system?**
-  _1132 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Are the 30 inferred relationships involving `createBbsRouter()` (e.g. with `.addRebarItem()` and `.createBlock()`) actually correct?**
+  _`createBbsRouter()` has 30 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `mongoose`, `mongoose`, `mongoose` to the rest of the system?**
+  _1148 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `gray` be split into smaller, more focused modules?**
   _Cohesion score 0.05370101596516691 - nodes in this community are weakly interconnected._
-- **Should `search` be split into smaller, more focused modules?**
-  _Cohesion score 0.0653061224489796 - nodes in this community are weakly interconnected._

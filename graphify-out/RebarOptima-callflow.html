@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>RebarOptima — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 2666 nodes, 3458 edges, 224 communities. Commit: cb34da1</p>
+<p class="subtitle">Generated from graphify knowledge graph: 2671 nodes, 3458 edges, 229 communities. Commit: d1ba157</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -72,12 +72,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#ingest-cache-update">Ingestion &amp; Updates</a>
     <a href="#serve-api">Serving API</a>
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
-    <a href="#bbsservice">BbsService</a>
     <a href="#tailwind-css-utility-reference">Tailwind CSS Utility Reference</a>
+    <a href="#bbscontroller">BbsController</a>
+    <a href="#bbsservice">BbsService</a>
     <a href="#brand-guidelines-v1-0">Brand Guidelines v1.0</a>
     <a href="#tailwind-css-responsive-design">Tailwind CSS Responsive Design</a>
     <a href="#typography-specifications">Typography Specifications</a>
-    <a href="#logo-usage-rules">Logo Usage Rules</a>
     <a href="#other">Other</a>
 </div>
 
@@ -90,7 +90,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>30 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>651 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>649 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>10 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
@@ -104,32 +104,32 @@ flowchart LR
     class SERVE_API_35EC8E86 module;
     TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>168 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
-    BBSSERVICE_3828B184("BbsService<br/><small>76 nodes</small>")
-    class BBSSERVICE_3828B184 module;
     TAILWIND_CSS_UTILITY_REFERENCE_1E86E088("Tailwind CSS Utility Reference<br/><small>44 nodes</small>")
     class TAILWIND_CSS_UTILITY_REFERENCE_1E86E088 module;
+    BBSCONTROLLER_5E82C96B("BbsController<br/><small>41 nodes</small>")
+    class BBSCONTROLLER_5E82C96B module;
+    BBSSERVICE_3828B184("BbsService<br/><small>38 nodes</small>")
+    class BBSSERVICE_3828B184 module;
     BRAND_GUIDELINES_V1_0_A3847392("Brand Guidelines v1.0<br/><small>38 nodes</small>")
     class BRAND_GUIDELINES_V1_0_A3847392 module;
     TAILWIND_CSS_RESPONSIVE_DESIGN_A1E4AA18("Tailwind CSS Responsive Design<br/><small>33 nodes</small>")
     class TAILWIND_CSS_RESPONSIVE_DESIGN_A1E4AA18 module;
     TYPOGRAPHY_SPECIFICATIONS_19424601("Typography Specifications<br/><small>31 nodes</small>")
     class TYPOGRAPHY_SPECIFICATIONS_19424601 module;
-    LOGO_USAGE_RULES_91E51D96("Logo Usage Rules<br/><small>29 nodes</small>")
-    class LOGO_USAGE_RULES_91E51D96 module;
-    OTHER_D0941E68("Other<br/><small>843 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>876 nodes</small>")
     class OTHER_D0941E68 module;
-    OTHER_D0941E68 -->|references x38| BUILD_GRAPH_321CBB04
     OTHER_D0941E68 -->|imports x28| SERVE_API_35EC8E86
+    OTHER_D0941E68 -->|references x24| BUILD_GRAPH_321CBB04
     SERVE_API_35EC8E86 -->|imports x22| OTHER_D0941E68
-    BUILD_GRAPH_321CBB04 -->|method x21| OTHER_D0941E68
-    BUILD_GRAPH_321CBB04 -->|imports x9| BBSSERVICE_3828B184
+    BUILD_GRAPH_321CBB04 -->|imports x21| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|method x6| EXTRACT_PIPELINE_5F350230
     TESTS_FIXTURES_B84B1DCC -->|method x6| BUILD_GRAPH_321CBB04
     CLI_SKILLS_9964CBB8 -->|imports x6| OTHER_D0941E68
+    BUILD_GRAPH_321CBB04 -->|imports x5| BBSSERVICE_3828B184
     TESTS_FIXTURES_B84B1DCC -->|method x4| ANALYSIS_CLUSTERING_C79796DA
-    BBSSERVICE_3828B184 -->|calls x3| BUILD_GRAPH_321CBB04
     OTHER_D0941E68 -->|imports x3| CLI_SKILLS_9964CBB8
     CLI_SKILLS_9964CBB8 -->|imports x3| SERVE_API_35EC8E86
+    CLI_SKILLS_9964CBB8 -->|imports x3| BUILD_GRAPH_321CBB04
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>30</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>651</td><td><code>214, 1, 39, 7, 62, 16, 21, 12, 54, 124, 19, 2, 4, 23, 151, 31, 29, 5, 36, 195, 48, 173, 203, 49, 53, 162, 55, 56, 59, 60, 204, 205, 61, 117, 176, 206, 217, 66, 208, 209, 210, 211, 212, 213, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 201, 202, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>309</td><td><code>52, 44, 58, 69, 89, 120, 122, 136, 86, 148, 216, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>219</td><td><code>3, 6, 10, 156, 166, 18, 15, 38, 174, 218, 200</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>168</td><td><code>9, 17, 24, 30, 33, 37, 46, 219, 177, 67, 119, 14, 178, 183, 184, 185, 186, 187, 188, 189, 190, 191, 193, 194, 196, 197, 198, 199, 75, 76, 77, 78, 81</code></td></tr><tr><td>BbsService</td><td>76</td><td><code>175</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Logo Usage Rules</td><td>29</td><td><code>72</code></td></tr><tr><td>Other</td><td>843</td><td><code>74, 79, 215, 80, 82, 63, 83, 84, 88, 121, 25, 123, 125, 126, 11, 127, 128, 129, 130, 131, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 0, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 116, 51, 159, 64, 164, 165, 172, 65, 179, 220, 221, 222, 73, 170, 180, 181, 182, 192, 85, 111, 113, 114, 207, 223</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>30</td><td><code>27, 50, 109, 110</code></td></tr><tr><td>Graph Build</td><td>649</td><td><code>1, 21, 214, 39, 62, 7, 16, 12, 54, 124, 19, 4, 2, 23, 151, 31, 29, 5, 36, 195, 48, 173, 203, 49, 53, 162, 55, 56, 59, 60, 204, 205, 225, 61, 117, 176, 206, 217, 66, 208, 209, 210, 211, 212, 213, 100, 101, 102, 103, 104, 105, 106, 107, 108, 115, 201, 202, 87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 228</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>10</td><td><code>43</code></td></tr><tr><td>Outputs &amp; Docs</td><td>134</td><td><code>57, 8, 118, 22, 132, 160, 161, 112</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>309</td><td><code>52, 44, 58, 69, 89, 120, 122, 136, 86, 148, 216, 154, 157, 158, 163, 167, 168, 169, 171, 68</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>51</td><td><code>13, 20, 142</code></td></tr><tr><td>Serving API</td><td>219</td><td><code>3, 6, 10, 156, 166, 18, 15, 38, 174, 218, 200</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>168</td><td><code>9, 17, 24, 30, 33, 37, 46, 219, 177, 67, 119, 14, 178, 183, 184, 185, 186, 187, 188, 189, 190, 191, 193, 194, 196, 197, 198, 199, 75, 76, 77, 78, 81</code></td></tr><tr><td>Tailwind CSS Utility Reference</td><td>44</td><td><code>26</code></td></tr><tr><td>BbsController</td><td>41</td><td><code>175</code></td></tr><tr><td>BbsService</td><td>38</td><td><code>11</code></td></tr><tr><td>Brand Guidelines v1.0</td><td>38</td><td><code>40</code></td></tr><tr><td>Tailwind CSS Responsive Design</td><td>33</td><td><code>70</code></td></tr><tr><td>Typography Specifications</td><td>31</td><td><code>71</code></td></tr><tr><td>Other</td><td>876</td><td><code>72, 74, 79, 215, 80, 82, 63, 83, 84, 88, 121, 25, 123, 224, 125, 126, 127, 128, 129, 130, 131, 133, 134, 135, 137, 138, 139, 140, 141, 28, 143, 144, 0, 145, 32, 146, 147, 34, 35, 149, 150, 152, 153, 41, 42, 155, 45, 47, 116, 51, 159, 64, 164, 165, 172, 65, 179, 220, 221, 222, 73, 170, 180, 181, 182, 192, 85, 111, 113, 114, 207, 223, 226, 227</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,12 +158,12 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>2666 nodes · 3458 edges · 224 communities (153 shown, 63 thin omitted)</li>
-      <li>Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 114 edges (avg confidence: 0.81)</li>
+      <li>2671 nodes · 3458 edges · 229 communities (154 shown, 67 thin omitted)</li>
+      <li>Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 116 edges (avg confidence: 0.81)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `TailwindConfigGenerator` - 58 edges</li>
-      <li>2. `BbsService` - 39 edges</li>
-      <li>3. `createBbsRouter()` - 35 edges</li>
+      <li>2. `BbsService` - 40 edges</li>
+      <li>3. `createBbsRouter()` - 36 edges</li>
     </ul>
   </div>
 </div>
@@ -516,30 +516,30 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around design, agents, skills, backend, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 651 nodes and 870 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around design, agents, skills, backend, mostly in design-system/templates/design-tokens-starter.json, backend/package.json, frontend/package.json. This section covers 649 nodes and 876 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (651 nodes, 870 edges)
-    subgraph build_graph_src_batches_batches_service_ts_eda289fe["src/batches/batches.service.ts"]
-        backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
-        backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_7b0e3880("constructor()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_d075144b("commitBatch()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_6df6e253("deleteBatch()<br/><small>src/batches/batches.service.ts</small>")
-        backend_src_batches_batches_service_batchesservi_4bb7e713("optimizeBatch()<br/><small>src/batches/batches.service.ts</small>")
-    end
+    %% Section: Graph Build (649 nodes, 876 edges)
     subgraph build_graph_src_inventory_inventory_service_ts_8ee4a7f1["src/inventory/inventory.service.ts"]
         backend_src_inventory_inventory_service_inventor_9c4e3c1a("InventoryService<br/><small>src/inventory/inventory.service.ts</small>")
         backend_src_inventory_inventory_service_inventor_64a2cc8c("constructor()<br/><small>src/inventory/inventory.service.ts</small>")
         backend_src_inventory_inventory_service_inventor_43ceebdf("getScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
         backend_src_inventory_inventory_service_inventor_b1e6121d("updateScrapRules()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_9068537b("getLedger()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_45e75a8f("deleteStockItem()<br/><small>src/inventory/inventory.service.ts</small>")
         backend_src_inventory_inventory_service_inventor_1819b19c("getSingleBarWeight()<br/><small>src/inventory/inventory.service.ts</small>")
+        backend_src_inventory_inventory_service_inventor_6d6b0870("getInventory()<br/><small>src/inventory/inventory.service.ts</small>")
         backend_src_inventory_inventory_service_inventor_440c1b98("inwardEntry()<br/><small>src/inventory/inventory.service.ts</small>")
     end
-    backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d("JwtAuthGuard<br/><small>src/auth/jwt-auth.guard.ts</small>")
-    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988("BbsCalculationService<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+    subgraph build_graph_src_batches_batches_service_ts_eda289fe["src/batches/batches.service.ts"]
+        backend_src_batches_batches_service_4ee6c1f9("batches.service.ts")
+        backend_src_batches_batches_service_batchesservi_961f7b14("BatchesService<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_7b0e3880("constructor()<br/><small>src/batches/batches.service.ts</small>")
+        backend_src_batches_batches_service_batchesservi_d075144b("commitBatch()<br/><small>src/batches/batches.service.ts</small>")
+    end
+    backend_src_batches_batches_module_cc7c447b("batches.module.ts")
     backend_src_bbs_bbs_express_5ac6b825("bbs.express.ts")
     backend_src_bbs_bbs_module_5f4d3950("bbs.module.ts")
     backend_src_bbs_bbs_service_91fcbbb9("bbs.service.ts")
@@ -547,36 +547,37 @@ flowchart LR
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_64a2cc8c
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_43ceebdf
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_b1e6121d
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_9068537b
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_45e75a8f
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_1819b19c
+    backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_6d6b0870
     backend_src_inventory_inventory_service_inventor_9c4e3c1a -->|method| backend_src_inventory_inventory_service_inventor_440c1b98
     backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_7b0e3880
     backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_d075144b
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_6df6e253
-    backend_src_batches_batches_service_batchesservi_961f7b14 -->|method| backend_src_batches_batches_service_batchesservi_4bb7e713
     backend_src_inventory_inventory_service_inventor_440c1b98 -->|calls| backend_src_inventory_inventory_service_inventor_1819b19c
     backend_src_inventory_inventory_service_inventor_b1e6121d -->|calls| backend_src_inventory_inventory_service_inventor_43ceebdf
     backend_src_inventory_inventory_module_66f489cd -->|imports| backend_src_inventory_inventory_service_inventor_9c4e3c1a
+    backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_batches_batches_service_batchesservi_961f7b14
+    backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_batches_batches_service_4ee6c1f9
+    backend_src_batches_batches_module_cc7c447b -->|imports| backend_src_inventory_inventory_module_66f489cd
     backend_src_batches_batches_service_4ee6c1f9 -->|imports| backend_src_inventory_inventory_service_inventor_9c4e3c1a
-    backend_src_bbs_bbs_express_5ac6b825 -->|imports| backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988
     backend_src_bbs_bbs_express_5ac6b825 -->|imports| backend_src_bbs_bbs_service_91fcbbb9
-    backend_src_bbs_bbs_module_5f4d3950 -->|imports| backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988
     backend_src_bbs_bbs_module_5f4d3950 -->|imports| backend_src_bbs_bbs_service_91fcbbb9
-    backend_src_bbs_bbs_service_91fcbbb9 -->|imports| backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988
-    %% Omitted for readability: 633 nodes, 0 edges
-    class backend_src_batches_batches_service_4ee6c1f9 module;
-    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
-    class backend_src_batches_batches_service_batchesservi_7b0e3880 function;
-    class backend_src_batches_batches_service_batchesservi_d075144b function;
-    class backend_src_batches_batches_service_batchesservi_6df6e253 function;
-    class backend_src_batches_batches_service_batchesservi_4bb7e713 function;
+    %% Omitted for readability: 631 nodes, 0 edges
     class backend_src_inventory_inventory_service_inventor_9c4e3c1a klass;
     class backend_src_inventory_inventory_service_inventor_64a2cc8c function;
     class backend_src_inventory_inventory_service_inventor_43ceebdf function;
     class backend_src_inventory_inventory_service_inventor_b1e6121d function;
+    class backend_src_inventory_inventory_service_inventor_9068537b function;
+    class backend_src_inventory_inventory_service_inventor_45e75a8f function;
     class backend_src_inventory_inventory_service_inventor_1819b19c function;
+    class backend_src_inventory_inventory_service_inventor_6d6b0870 function;
     class backend_src_inventory_inventory_service_inventor_440c1b98 function;
-    class backend_src_auth_jwt_auth_guard_jwtauthguard_3375256d klass;
-    class backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 klass;
+    class backend_src_batches_batches_service_4ee6c1f9 module;
+    class backend_src_batches_batches_service_batchesservi_961f7b14 async;
+    class backend_src_batches_batches_service_batchesservi_7b0e3880 function;
+    class backend_src_batches_batches_service_batchesservi_d075144b function;
+    class backend_src_batches_batches_module_cc7c447b module;
     class backend_src_bbs_bbs_express_5ac6b825 module;
     class backend_src_bbs_bbs_module_5f4d3950 module;
     class backend_src_bbs_bbs_service_91fcbbb9 module;
@@ -604,243 +605,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.express.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br>+1 more</td>
-  <td><code>calculateBarQuantity()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateBendDeduction()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateChajjaLegDrop()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br>+17 more</td>
-  <td>BbsCalculationService node in src/bbs/bbs-calculation.service.ts.</td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>BlockWing</code><br><small style="color:var(--muted)">bbs/schemas/block-wing.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>BlockWing node in bbs/schemas/block-wing.schema.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>ElementTemplate</code><br><small style="color:var(--muted)">bbs/schemas/element-template.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>ElementTemplate node in bbs/schemas/element-template.schema.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>LevelFloor</code><br><small style="color:var(--muted)">bbs/schemas/level-floor.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>LevelFloor node in bbs/schemas/level-floor.schema.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>Project</code><br><small style="color:var(--muted)">bbs/schemas/project.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Project node in bbs/schemas/project.schema.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>RebarItem</code><br><small style="color:var(--muted)">bbs/schemas/rebar-item.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>RebarItem node in bbs/schemas/rebar-item.schema.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>ShapeRegister</code><br><small style="color:var(--muted)">bbs/schemas/shape-register.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>ShapeRegister node in bbs/schemas/shape-register.schema.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>StructuralMember</code><br><small style="color:var(--muted)">bbs/schemas/structural-member.schema.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>StructuralMember node in bbs/schemas/structural-member.schema.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>.calculateBarQuantity()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateBarQuantity() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>.calculateBendDeduction()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateTotalBendDeductions()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateBendDeduction() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>.calculateChajjaLegDrop()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateChajjaLegDrop() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>.calculateClosedStirrup()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateClosedStirrup() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>.calculateCrankAddition()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateCrankAddition() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>.calculateDevelopmentLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateStockBarSplits()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateDevelopmentLength() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>.calculateDiamondStirrup()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateDiamondStirrup() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>.calculateHelicalRing()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateHelicalRing() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>.calculateSeismicHookAddition()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateSeismicHookAddition() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>.calculateStaircaseFlightLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><code>calculateStaircaseSlopeLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>.calculateStaircaseSlopeLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateStaircaseFlightLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>.calculateStockBarSplits()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><code>calculateDevelopmentLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>.calculateTotalBendDeductions()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$type</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><code>calculateBendDeduction()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td>.calculateTotalBendDeductions() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>$type node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>.calculateTotalCuttingLength()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>$value</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateTotalCuttingLength() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>$value node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>.calculateUnitWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>50</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateRebarWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>calculateUnitWeightPerMm()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.calculateUnitWeight() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>50 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>.calculateUnitWeightPerMm()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>500</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><code>calculateUnitWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td>.calculateUnitWeightPerMm() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>500 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>.getDefaultClearCover()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>600</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.getDefaultClearCover() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>600 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>.isZeroDeduction()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><code>700</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.isZeroDeduction() node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>700 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>800</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>.constructor() node in src/bbs/bbs.service.ts.</td>
+  <td>800 node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>bbs-calculation.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>bbs.express.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br><code>bbs.service.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>blue</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Module file in src/bbs/bbs-calculation.service.ts.</td>
+  <td>blue node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>DEFAULT_CLEAR_COVERS</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>gray</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>DEFAULT_CLEAR_COVERS node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>gray node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>LD_MATRIX</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>green</code><br><small style="color:var(--muted)">design-system/templates/design-tokens-starter.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>LD_MATRIX node in src/bbs/bbs-calculation.service.ts.</td>
+  <td>green node in design-system/templates/design-tokens-starter.json.</td>
 </tr>
 </table>
 
@@ -853,15 +854,15 @@ flowchart LR
 <tr><td><code>backend/package.json</code></td><td>105 nodes</td></tr>
 <tr><td><code>frontend/package.json</code></td><td>38 nodes</td></tr>
 <tr><td><code>backend/tsconfig.json</code></td><td>23 nodes</td></tr>
-<tr><td><code>src/bbs/bbs-calculation.service.ts</code></td><td>22 nodes</td></tr>
 <tr><td><code>package.json</code></td><td>20 nodes</td></tr>
 <tr><td><code>brand/references/asset-organization.md</code></td><td>19 nodes</td></tr>
 <tr><td><code>ui-styling/scripts/shadcn_add.py</code></td><td>12 nodes</td></tr>
+<tr><td><code>src/inventory/inventory.service.ts</code></td><td>10 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x500, imports x129, references x78, imports x72. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x500, imports x127, references x95, imports x72. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2781,354 +2782,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 10. BbsService ====== -->
-<h2 id="bbsservice">10. BbsService</h2>
-<p>BbsService groups implementation around bbs, backend, bbsservicets, bbscontrollerts, mostly in src/bbs/bbs.service.ts, src/bbs/bbs.controller.ts, src/bbs/bbs-calculation.service.ts. This section covers 76 nodes and 200 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: BbsService (76 nodes, 200 edges)
-    subgraph bbsservice_src_bbs_bbs_controller_ts_481705eb["src/bbs/bbs.controller.ts"]
-        backend_src_bbs_bbs_controller_bbscontroller_c897ed17("BbsController<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_cre_10766247("createMember()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_get_fb3a7050("getMembers()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_get_941c3a69("getMembersByCell()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_con_5e833524("constructor()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_get_b02cb952("getMember()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_upd_7f0d2ee3("updateMember()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_del_22a5c29d("deleteMember()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_add_de7a8058("addRebarItem()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_get_45be457d("getRebarItems()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_upd_a5676aa8("updateRebarItem()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_del_09e28269("deleteRebarItem()<br/><small>src/bbs/bbs.controller.ts</small>")
-        backend_src_bbs_bbs_controller_bbscontroller_get_6bcc9952("getDashboardMatrix()<br/><small>src/bbs/bbs.controller.ts</small>")
-    end
-    subgraph bbsservice_src_bbs_bbs_service_ts_70016196["src/bbs/bbs.service.ts"]
-        backend_src_bbs_bbs_service_bbsservice_7ded1194("BbsService<br/><small>src/bbs/bbs.service.ts</small>")
-        backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da("addRebarItem()<br/><small>src/bbs/bbs.service.ts</small>")
-        backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34("deleteRebarItem()<br/><small>src/bbs/bbs.service.ts</small>")
-        backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7("updateRebarItem()<br/><small>src/bbs/bbs.service.ts</small>")
-    end
-    backend_src_bbs_bbs_express_createbbsrouter_c4eea7a8("createBbsRouter()<br/><small>src/bbs/bbs.express.ts</small>")
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_cre_10766247
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_fb3a7050
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_941c3a69
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_con_5e833524
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_b02cb952
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_upd_7f0d2ee3
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_del_22a5c29d
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_add_de7a8058
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_45be457d
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_upd_a5676aa8
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_del_09e28269
-    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_6bcc9952
-    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da
-    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7
-    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34
-    backend_src_bbs_bbs_express_createbbsrouter_c4eea7a8 -->|calls| backend_src_bbs_bbs_service_bbsservice_7ded1194
-    %% Omitted for readability: 58 nodes, 0 edges
-    class backend_src_bbs_bbs_controller_bbscontroller_c897ed17 klass;
-    class backend_src_bbs_bbs_controller_bbscontroller_cre_10766247 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_get_fb3a7050 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_get_941c3a69 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_con_5e833524 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_get_b02cb952 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_upd_7f0d2ee3 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_del_22a5c29d function;
-    class backend_src_bbs_bbs_controller_bbscontroller_add_de7a8058 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_get_45be457d function;
-    class backend_src_bbs_bbs_controller_bbscontroller_upd_a5676aa8 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_del_09e28269 function;
-    class backend_src_bbs_bbs_controller_bbscontroller_get_6bcc9952 function;
-    class backend_src_bbs_bbs_service_bbsservice_7ded1194 async;
-    class backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da function;
-    class backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34 function;
-    class backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7 function;
-    class backend_src_bbs_bbs_express_createbbsrouter_c4eea7a8 api;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small></td>
-  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br>+27 more</td>
-  <td>BbsController node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td><span class="tag tag-async">Async</span></td>
-  <td><code>bbs.controller.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>bbs.express.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br>+1 more</td>
-  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br>+29 more</td>
-  <td>BbsService node in src/bbs/bbs.service.ts.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>.calculateConcreteVolume()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>updateMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>.calculateConcreteVolume() node in src/bbs/bbs-calculation.service.ts.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>.calculateRebarWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>updateRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td><code>calculateUnitWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
-  <td>.calculateRebarWeight() node in src/bbs/bbs-calculation.service.ts.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>.addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.addRebarItem() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>.constructor() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>.createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.createBlock() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>.createLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>createLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.createLevel() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>.createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.createMember() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>.createProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>createProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.createProject() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>.createShape()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>createShape()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.createShape() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>.createTemplate()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>createTemplate()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.createTemplate() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>.deleteBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>deleteBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.deleteBlock() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>.deleteLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>deleteLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.deleteLevel() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>.deleteMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>deleteMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.deleteMember() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>.deleteProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>deleteProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.deleteProject() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>.deleteRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>deleteRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.deleteRebarItem() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>.getBlocks()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getBlocks()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getBlocks() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>.getDashboardMatrix()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getDashboardMatrix()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getDashboardMatrix() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>.getLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getLevels() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>21</td>
-  <td><code>.getMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getMember() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>.getMembers()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getMembers()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getMembers() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>.getMembersByCell()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getMembersByCell()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getMembersByCell() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>24</td>
-  <td><code>.getMTO()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getMaterialTakeOff()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getMTO() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>.getProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getProject() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>26</td>
-  <td><code>.getProjects()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getProjects()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getProjects() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>.getRebarItems()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getRebarItems()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getRebarItems() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>.getShapes()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getShapes()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getShapes() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>.getTemplates()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>getTemplates()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.getTemplates() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>.updateBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
-  <td><code>updateBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
-  <td>.updateBlock() node in src/bbs/bbs.controller.ts.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>src/bbs/bbs.service.ts</code></td><td>32 nodes</td></tr>
-<tr><td><code>src/bbs/bbs.controller.ts</code></td><td>31 nodes</td></tr>
-<tr><td><code>src/bbs/bbs-calculation.service.ts</code></td><td>2 nodes</td></tr>
-<tr><td><code>src/bbs/bbs.express.ts</code></td><td>1 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: references x72, method x61, calls x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 11. Tailwind CSS Utility Reference ====== -->
-<h2 id="tailwind-css-utility-reference">11. Tailwind CSS Utility Reference</h2>
+<!-- ====== 10. Tailwind CSS Utility Reference ====== -->
+<h2 id="tailwind-css-utility-reference">10. Tailwind CSS Utility Reference</h2>
 <p>Tailwind CSS Utility Reference groups implementation around tailwind, utilitiesmd, agents, skills, mostly in ui-styling/references/tailwind-utilities.md. This section covers 44 nodes and 43 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3467,8 +3122,696 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 12. Brand Guidelines v1.0 ====== -->
-<h2 id="brand-guidelines-v1-0">12. Brand Guidelines v1.0</h2>
+<!-- ====== 11. BbsController ====== -->
+<h2 id="bbscontroller">11. BbsController</h2>
+<p>BbsController groups implementation around backend, bbs, bbscontrollerts, bbscontroller, mostly in src/bbs/bbs.controller.ts. This section covers 41 nodes and 104 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: BbsController (41 nodes, 104 edges)
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17("BbsController<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_reo_c6d1419f("reorderLevels()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_cre_10766247("createMember()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_fb3a7050("getMembers()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_941c3a69("getMembersByCell()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_b02cb952("getMember()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_upd_7f0d2ee3("updateMember()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_del_22a5c29d("deleteMember()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_add_de7a8058("addRebarItem()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_45be457d("getRebarItems()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_upd_a5676aa8("updateRebarItem()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_del_09e28269("deleteRebarItem()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_6bcc9952("getDashboardMatrix()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_45ef643b("getMTO()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_cre_bcae2561("createProject()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_631feef5("getShapes()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_cre_c0867262("createShape()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_get_9e2233dd("getTemplates()<br/><small>src/bbs/bbs.controller.ts</small>")
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_reo_c6d1419f
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_cre_10766247
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_fb3a7050
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_941c3a69
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_b02cb952
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_upd_7f0d2ee3
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_del_22a5c29d
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_add_de7a8058
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_45be457d
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_upd_a5676aa8
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_del_09e28269
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_6bcc9952
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_45ef643b
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_cre_bcae2561
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_631feef5
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_cre_c0867262
+    backend_src_bbs_bbs_controller_bbscontroller_c897ed17 -->|method| backend_src_bbs_bbs_controller_bbscontroller_get_9e2233dd
+    %% Omitted for readability: 23 nodes, 0 edges
+    class backend_src_bbs_bbs_controller_bbscontroller_c897ed17 klass;
+    class backend_src_bbs_bbs_controller_bbscontroller_reo_c6d1419f function;
+    class backend_src_bbs_bbs_controller_bbscontroller_cre_10766247 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_fb3a7050 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_941c3a69 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_b02cb952 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_upd_7f0d2ee3 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_del_22a5c29d function;
+    class backend_src_bbs_bbs_controller_bbscontroller_add_de7a8058 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_45be457d function;
+    class backend_src_bbs_bbs_controller_bbscontroller_upd_a5676aa8 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_del_09e28269 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_6bcc9952 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_45ef643b function;
+    class backend_src_bbs_bbs_controller_bbscontroller_cre_bcae2561 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_631feef5 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_cre_c0867262 function;
+    class backend_src_bbs_bbs_controller_bbscontroller_get_9e2233dd function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small></td>
+  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br>+28 more</td>
+  <td>BbsController node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>.addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.addRebarItem() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>.createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.createBlock() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>.createLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>createLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.createLevel() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>.createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.createMember() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>.createProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>createProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.createProject() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>.createShape()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>createShape()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.createShape() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>.createTemplate()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>createTemplate()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.createTemplate() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>.deleteBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>deleteBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.deleteBlock() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.deleteLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>deleteLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.deleteLevel() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.deleteMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>deleteMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.deleteMember() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.deleteProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>deleteProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.deleteProject() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.deleteRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>deleteRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.deleteRebarItem() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>.getBlocks()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getBlocks()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getBlocks() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>.getDashboardMatrix()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getDashboardMatrix()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getDashboardMatrix() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>.getLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getLevels() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.getMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getMember() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.getMembers()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getMembers()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getMembers() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>.getMembersByCell()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getMembersByCell()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getMembersByCell() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>.getMTO()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getMaterialTakeOff()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getMTO() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>.getProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getProject() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>.getProjects()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getProjects()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getProjects() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>.getRebarItems()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getRebarItems()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getRebarItems() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>.getShapes()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getShapes()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getShapes() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>.getTemplates()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>getTemplates()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.getTemplates() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>.reorderLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>reorderLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.reorderLevels() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>.updateBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>updateBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.updateBlock() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>.updateLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>updateLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.updateLevel() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>.updateMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>updateMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.updateMember() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>.updateProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>updateProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.updateProject() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/bbs/bbs.controller.ts</code></td><td>31 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x74, method x30. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 12. BbsService ====== -->
+<h2 id="bbsservice">12. BbsService</h2>
+<p>BbsService groups implementation around bbs, backend, bbsservicets, calculationservicets, mostly in src/bbs/bbs.service.ts, src/bbs/bbs-calculation.service.ts, src/bbs/bbs.controller.ts. This section covers 38 nodes and 73 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: BbsService (38 nodes, 73 edges)
+    subgraph bbsservice_src_bbs_bbs_service_ts_70016196["src/bbs/bbs.service.ts"]
+        backend_src_bbs_bbs_service_bbsservice_7ded1194("BbsService<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da("addRebarItem()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34("deleteRebarItem()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7("updateRebarItem()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_getlevels_32c61e82("getLevels()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_updatelev_2ae5c3eb("updateLevel()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_deletelev_84a0a8f6("deleteLevel()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_reorderle_94b7bc49("reorderLevels()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_createmem_6b43c999("createMember()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_getmember_8ae2dc3b("getMember()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_getmember_5160a01e("getMembers()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_getmember_4214d1a5("getMembersByCell()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_updatemem_1f185325("updateMember()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_deletemem_dad5fdd5("deleteMember()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_getrebari_ae447cf2("getRebarItems()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_recalcula_23cdaec3("recalculateMemberWeight()<br/><small>src/bbs/bbs.service.ts</small>")
+        backend_src_bbs_bbs_service_bbsservice_createpro_63090c85("createProject()<br/><small>src/bbs/bbs.service.ts</small>")
+    end
+    backend_src_bbs_bbs_express_createbbsrouter_c4eea7a8("createBbsRouter()<br/><small>src/bbs/bbs.express.ts</small>")
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_getlevels_32c61e82
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_updatelev_2ae5c3eb
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_deletelev_84a0a8f6
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_reorderle_94b7bc49
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_createmem_6b43c999
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_getmember_8ae2dc3b
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_getmember_5160a01e
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_getmember_4214d1a5
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_updatemem_1f185325
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_deletemem_dad5fdd5
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_getrebari_ae447cf2
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_recalcula_23cdaec3
+    backend_src_bbs_bbs_service_bbsservice_7ded1194 -->|method| backend_src_bbs_bbs_service_bbsservice_createpro_63090c85
+    backend_src_bbs_bbs_express_createbbsrouter_c4eea7a8 -->|calls| backend_src_bbs_bbs_service_bbsservice_7ded1194
+    backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da -->|calls| backend_src_bbs_bbs_service_bbsservice_recalcula_23cdaec3
+    backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34 -->|calls| backend_src_bbs_bbs_service_bbsservice_recalcula_23cdaec3
+    backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7 -->|calls| backend_src_bbs_bbs_service_bbsservice_recalcula_23cdaec3
+    %% Omitted for readability: 20 nodes, 0 edges
+    class backend_src_bbs_bbs_service_bbsservice_7ded1194 async;
+    class backend_src_bbs_bbs_service_bbsservice_addrebari_c84243da function;
+    class backend_src_bbs_bbs_service_bbsservice_deletereb_3884fc34 function;
+    class backend_src_bbs_bbs_service_bbsservice_updatereb_f4b2e5c7 function;
+    class backend_src_bbs_bbs_service_bbsservice_getlevels_32c61e82 function;
+    class backend_src_bbs_bbs_service_bbsservice_updatelev_2ae5c3eb function;
+    class backend_src_bbs_bbs_service_bbsservice_deletelev_84a0a8f6 function;
+    class backend_src_bbs_bbs_service_bbsservice_reorderle_94b7bc49 function;
+    class backend_src_bbs_bbs_service_bbsservice_createmem_6b43c999 function;
+    class backend_src_bbs_bbs_service_bbsservice_getmember_8ae2dc3b function;
+    class backend_src_bbs_bbs_service_bbsservice_getmember_5160a01e function;
+    class backend_src_bbs_bbs_service_bbsservice_getmember_4214d1a5 function;
+    class backend_src_bbs_bbs_service_bbsservice_updatemem_1f185325 function;
+    class backend_src_bbs_bbs_service_bbsservice_deletemem_dad5fdd5 function;
+    class backend_src_bbs_bbs_service_bbsservice_getrebari_ae447cf2 function;
+    class backend_src_bbs_bbs_service_bbsservice_recalcula_23cdaec3 function;
+    class backend_src_bbs_bbs_service_bbsservice_createpro_63090c85 function;
+    class backend_src_bbs_bbs_express_createbbsrouter_c4eea7a8 api;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td><code>bbs.controller.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>bbs.express.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>bbs.module.ts</code><br><small style="color:var(--muted)">src/bbs/bbs.module.ts</small><br>+1 more</td>
+  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br>+30 more</td>
+  <td>BbsService node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>.calculateConcreteVolume()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>updateMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.calculateConcreteVolume() node in src/bbs/bbs-calculation.service.ts.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>.calculateRebarWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>updateRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><code>calculateUnitWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>.calculateRebarWeight() node in src/bbs/bbs-calculation.service.ts.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>.constructor()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsController</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.constructor() node in src/bbs/bbs.controller.ts.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>main.ts</code><br><small style="color:var(--muted)">backend/src/main.ts</small><br><code>startServer()</code><br><small style="color:var(--muted)">backend/src/main.ts</small></td>
+  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>BbsCalculationService</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br>+30 more</td>
+  <td>createBbsRouter() node in src/bbs/bbs.express.ts.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>.addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>addRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small><br><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small></td>
+  <td><code>calculateRebarWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small><br><code>recalculateMemberWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.addRebarItem() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>.createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>createBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.createBlock() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>.createLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>createLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.createLevel() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>.createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>createMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>calculateConcreteVolume()</code><br><small style="color:var(--muted)">src/bbs/bbs-calculation.service.ts</small></td>
+  <td>.createMember() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.createProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>createProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.createProject() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.createShape()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>createShape()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.createShape() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.createTemplate()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>createTemplate()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.createTemplate() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.deleteBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>deleteBlock()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.deleteBlock() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>.deleteLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>deleteLevel()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.deleteLevel() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>.deleteMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>deleteMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.deleteMember() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>.deleteProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>deleteProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.deleteProject() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.deleteRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>deleteRebarItem()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td><code>recalculateMemberWeight()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td>.deleteRebarItem() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.getBlocks()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getBlocks()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getBlocks() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>.getDashboardMatrix()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getDashboardMatrix()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getDashboardMatrix() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>.getLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getLevels()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getLevels() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>.getMaterialTakeOff()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getMTO()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getMaterialTakeOff() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>.getMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getMember()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getMember() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>.getMembers()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getMembers()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getMembers() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>.getMembersByCell()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getMembersByCell()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getMembersByCell() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>.getProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getProject()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getProject() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>.getProjectRebars()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getProjectRebars() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>.getProjects()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getProjects()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getProjects() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>.getRebarItems()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getRebarItems()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getRebarItems() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>.getShapes()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getShapes()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getShapes() node in src/bbs/bbs.service.ts.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>.getTemplates()</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BbsService</code><br><small style="color:var(--muted)">src/bbs/bbs.service.ts</small><br><code>createBbsRouter()</code><br><small style="color:var(--muted)">src/bbs/bbs.express.ts</small><br><code>getTemplates()</code><br><small style="color:var(--muted)">src/bbs/bbs.controller.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>.getTemplates() node in src/bbs/bbs.service.ts.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/bbs/bbs.service.ts</code></td><td>33 nodes</td></tr>
+<tr><td><code>src/bbs/bbs-calculation.service.ts</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/bbs/bbs.controller.ts</code></td><td>1 nodes</td></tr>
+<tr><td><code>src/bbs/bbs.express.ts</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: method x32, calls x4, references x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 13. Brand Guidelines v1.0 ====== -->
+<h2 id="brand-guidelines-v1-0">13. Brand Guidelines v1.0</h2>
 <p>Brand Guidelines v1.0 groups implementation around brand, guidelines, startermd, agents, mostly in brand/templates/brand-guidelines-starter.md. This section covers 38 nodes and 37 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3807,8 +4150,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 13. Tailwind CSS Responsive Design ====== -->
-<h2 id="tailwind-css-responsive-design">13. Tailwind CSS Responsive Design</h2>
+<!-- ====== 14. Tailwind CSS Responsive Design ====== -->
+<h2 id="tailwind-css-responsive-design">14. Tailwind CSS Responsive Design</h2>
 <p>Tailwind CSS Responsive Design groups implementation around tailwind, responsivemd, agents, skills, mostly in ui-styling/references/tailwind-responsive.md. This section covers 33 nodes and 32 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -4147,8 +4490,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 14. Typography Specifications ====== -->
-<h2 id="typography-specifications">14. Typography Specifications</h2>
+<!-- ====== 15. Typography Specifications ====== -->
+<h2 id="typography-specifications">15. Typography Specifications</h2>
 <p>Typography Specifications groups implementation around typography, specificationsmd, agents, skills, mostly in brand/references/typography-specifications.md. This section covers 31 nodes and 30 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -4487,68 +4830,68 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 15. Logo Usage Rules ====== -->
-<h2 id="logo-usage-rules">15. Logo Usage Rules</h2>
-<p>Logo Usage Rules groups implementation around logo, usage, rulesmd, agents, mostly in brand/references/logo-usage-rules.md. This section covers 29 nodes and 28 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around agents, skills, references, design, mostly in brand/references/logo-usage-rules.md, design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md. This section covers 876 nodes and 913 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Logo Usage Rules (29 nodes, 28 edges)
-    agents_skills_brand_references_logo_usage_rules_4e812cd0("Logo Usage Rules<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_2265f145("Platform-Specific Guidelines<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_0a82ef1c("Co-branding<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_3d6999c8("Color Usage<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_dfa8ecfe("File Formats<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_73f1d70d("Incorrect Usage<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_c9c907b5("Logo Approval Process<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_1109d9d8("Logo Variants<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_9e62c78f("Minimum Size<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_9f99ee5d("Clear Space<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_d0a4176b("Absolute Don'ts<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_bb7cc1d9("Approved Backgrounds<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_aafbe545("Before Using Logo<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_4f73f8e8("Color Rules<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_7bb088aa("Color Variants<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_0adb8f32("Digital<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_aac7ced7("Documents<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_3cc0ffe6("File Organization<br/><small>brand/references/logo-usage-rules.md</small>")
-    agents_skills_brand_references_logo_usage_rules_3d6999c8 -->|contains| agents_skills_brand_references_logo_usage_rules_bb7cc1d9
-    agents_skills_brand_references_logo_usage_rules_3d6999c8 -->|contains| agents_skills_brand_references_logo_usage_rules_4f73f8e8
-    agents_skills_brand_references_logo_usage_rules_dfa8ecfe -->|contains| agents_skills_brand_references_logo_usage_rules_3cc0ffe6
-    agents_skills_brand_references_logo_usage_rules_73f1d70d -->|contains| agents_skills_brand_references_logo_usage_rules_d0a4176b
-    agents_skills_brand_references_logo_usage_rules_c9c907b5 -->|contains| agents_skills_brand_references_logo_usage_rules_aafbe545
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_dfa8ecfe
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_2265f145
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_c9c907b5
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_9f99ee5d
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_9e62c78f
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_1109d9d8
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_3d6999c8
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_73f1d70d
-    agents_skills_brand_references_logo_usage_rules_4e812cd0 -->|contains| agents_skills_brand_references_logo_usage_rules_0a82ef1c
-    agents_skills_brand_references_logo_usage_rules_1109d9d8 -->|contains| agents_skills_brand_references_logo_usage_rules_7bb088aa
-    agents_skills_brand_references_logo_usage_rules_9e62c78f -->|contains| agents_skills_brand_references_logo_usage_rules_0adb8f32
-    agents_skills_brand_references_logo_usage_rules_2265f145 -->|contains| agents_skills_brand_references_logo_usage_rules_aac7ced7
-    %% Omitted for readability: 11 nodes, 0 edges
-    class agents_skills_brand_references_logo_usage_rules_4e812cd0 concept;
-    class agents_skills_brand_references_logo_usage_rules_2265f145 concept;
-    class agents_skills_brand_references_logo_usage_rules_0a82ef1c concept;
-    class agents_skills_brand_references_logo_usage_rules_3d6999c8 concept;
-    class agents_skills_brand_references_logo_usage_rules_dfa8ecfe concept;
-    class agents_skills_brand_references_logo_usage_rules_73f1d70d concept;
-    class agents_skills_brand_references_logo_usage_rules_c9c907b5 concept;
-    class agents_skills_brand_references_logo_usage_rules_1109d9d8 concept;
-    class agents_skills_brand_references_logo_usage_rules_9e62c78f concept;
-    class agents_skills_brand_references_logo_usage_rules_9f99ee5d concept;
-    class agents_skills_brand_references_logo_usage_rules_d0a4176b concept;
-    class agents_skills_brand_references_logo_usage_rules_bb7cc1d9 concept;
-    class agents_skills_brand_references_logo_usage_rules_aafbe545 concept;
-    class agents_skills_brand_references_logo_usage_rules_4f73f8e8 concept;
-    class agents_skills_brand_references_logo_usage_rules_7bb088aa concept;
-    class agents_skills_brand_references_logo_usage_rules_0adb8f32 concept;
-    class agents_skills_brand_references_logo_usage_rules_aac7ced7 concept;
-    class agents_skills_brand_references_logo_usage_rules_3cc0ffe6 concept;
+    %% Section: Other (876 nodes, 913 edges)
+    subgraph other_src_bbs_bbs_calculation_service_ts_9db7d500["src/bbs/bbs-calculation.service.ts"]
+        backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988("BbsCalculationService<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_34c3dc63("calculateBendDeduction()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_2c68e0a0("calculateTotalBendDeductions()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_bf825552("calculateSeismicHookAddition()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_2c1bcd9b("calculateDevelopmentLength()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_eb232a00("getDefaultClearCover()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_67dfba61("isZeroDeduction()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_2b918626("calculateClosedStirrup()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_31d238c4("calculateDiamondStirrup()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_b2c6c527("calculateHelicalRing()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_75cf19c5("calculateCrankAddition()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_1a6e76c0("calculateStaircaseSlopeLength()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+        backend_src_bbs_bbs_calculation_service_bbscalcu_9db377f3("calculateStaircaseFlightLength()<br/><small>src/bbs/bbs-calculation.service.ts</small>")
+    end
+    backend_src_app_module_97b3bc74("app.module.ts")
+    agents_skills_brand_scripts_inject_brand_context_67503864("main()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
+    frontend_src_app_7da8908b("App.jsx")
+    frontend_src_pages_bbspage_bbsshapespage_6faadf5e("BbsShapesPage.jsx")
+    backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_34c3dc63
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_2c68e0a0
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_bf825552
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_2c1bcd9b
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_eb232a00
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_67dfba61
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_2b918626
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_31d238c4
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_b2c6c527
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_75cf19c5
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_1a6e76c0
+    backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 -->|method| backend_src_bbs_bbs_calculation_service_bbscalcu_9db377f3
+    backend_src_bbs_bbs_calculation_service_bbscalcu_9db377f3 -->|calls| backend_src_bbs_bbs_calculation_service_bbscalcu_1a6e76c0
+    backend_src_bbs_bbs_calculation_service_bbscalcu_2c68e0a0 -->|calls| backend_src_bbs_bbs_calculation_service_bbscalcu_34c3dc63
+    frontend_src_app_7da8908b -->|imports| frontend_src_pages_bbspage_bbsshapespage_6faadf5e
+    %% Omitted for readability: 858 nodes, 0 edges
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_0c990988 klass;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_34c3dc63 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_2c68e0a0 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_bf825552 ui;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_2c1bcd9b function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_eb232a00 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_67dfba61 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_2b918626 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_31d238c4 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_b2c6c527 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_75cf19c5 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_1a6e76c0 function;
+    class backend_src_bbs_bbs_calculation_service_bbscalcu_9db377f3 function;
+    class backend_src_app_module_97b3bc74 module;
+    class agents_skills_brand_scripts_inject_brand_context_67503864 function;
+    class frontend_src_app_7da8908b ui;
+    class frontend_src_pages_bbspage_bbsshapespage_6faadf5e ui;
+    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -4802,6 +5145,14 @@ flowchart LR
   <td>No direct outbound edge</td>
   <td>Documentation node describing Website.</td>
 </tr>
+<tr>
+  <td>30</td>
+  <td><code>component-specs.md</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing component-specs.md.</td>
+</tr>
 </table>
 
 <div class="grid">
@@ -4810,358 +5161,18 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>brand/references/logo-usage-rules.md</code></td><td>29 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x28. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 16. Other ====== -->
-<h2 id="other">16. Other</h2>
-<p>Other groups implementation around agents, skills, references, design, mostly in design-system/references/component-specs.md, ui-styling/references/shadcn-accessibility.md, brand/references/approval-checklist.md. This section covers 843 nodes and 883 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Other (843 nodes, 883 edges)
-    subgraph other_src_inventory_inventory_controller_ts_3c6b9196["src/inventory/inventory.controller.ts"]
-        backend_src_inventory_inventory_controller_inven_1a33e367("InventoryController<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_cefb14d8("constructor()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_b9e9de2a("getInventory()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_67405f62("inwardEntry()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_4ee6fb47("getScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_9f307d0d("updateScrapRules()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_0c6f629a("getLedger()<br/><small>src/inventory/inventory.controller.ts</small>")
-        backend_src_inventory_inventory_controller_inven_39522dd1("deleteStockItem()<br/><small>src/inventory/inventory.controller.ts</small>")
-    end
-    subgraph other_src_batches_batches_controller_ts_0ac29545["src/batches/batches.controller.ts"]
-        backend_src_batches_batches_controller_batchesco_4f4aa609("BatchesController<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_309045c6("constructor()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_ac0f1eb0("optimizeBatch()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_c52c26f7("commitBatch()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_26e1e091("getBatchHistory()<br/><small>src/batches/batches.controller.ts</small>")
-        backend_src_batches_batches_controller_batchesco_a3855cd0("getDashboardStats()<br/><small>src/batches/batches.controller.ts</small>")
-    end
-    backend_src_app_module_97b3bc74("app.module.ts")
-    agents_skills_brand_scripts_inject_brand_context_67503864("main()<br/><small>brand/scripts/inject-brand-context.cjs</small>")
-    frontend_src_app_7da8908b("App.jsx")
-    frontend_src_pages_bbspage_bbsshapespage_6faadf5e("BbsShapesPage.jsx")
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_cefb14d8
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_b9e9de2a
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_67405f62
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_4ee6fb47
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_9f307d0d
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_0c6f629a
-    backend_src_inventory_inventory_controller_inven_1a33e367 -->|method| backend_src_inventory_inventory_controller_inven_39522dd1
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_309045c6
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_ac0f1eb0
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_c52c26f7
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_26e1e091
-    backend_src_batches_batches_controller_batchesco_4f4aa609 -->|method| backend_src_batches_batches_controller_batchesco_a3855cd0
-    frontend_src_app_7da8908b -->|imports| frontend_src_pages_bbspage_bbsshapespage_6faadf5e
-    %% Omitted for readability: 825 nodes, 0 edges
-    class backend_src_inventory_inventory_controller_inven_1a33e367 klass;
-    class backend_src_inventory_inventory_controller_inven_cefb14d8 function;
-    class backend_src_inventory_inventory_controller_inven_b9e9de2a function;
-    class backend_src_inventory_inventory_controller_inven_67405f62 function;
-    class backend_src_inventory_inventory_controller_inven_4ee6fb47 function;
-    class backend_src_inventory_inventory_controller_inven_9f307d0d function;
-    class backend_src_inventory_inventory_controller_inven_0c6f629a function;
-    class backend_src_inventory_inventory_controller_inven_39522dd1 function;
-    class backend_src_batches_batches_controller_batchesco_4f4aa609 klass;
-    class backend_src_batches_batches_controller_batchesco_309045c6 function;
-    class backend_src_batches_batches_controller_batchesco_ac0f1eb0 function;
-    class backend_src_batches_batches_controller_batchesco_c52c26f7 function;
-    class backend_src_batches_batches_controller_batchesco_26e1e091 function;
-    class backend_src_batches_batches_controller_batchesco_a3855cd0 function;
-    class backend_src_app_module_97b3bc74 module;
-    class agents_skills_brand_scripts_inject_brand_context_67503864 function;
-    class frontend_src_app_7da8908b ui;
-    class frontend_src_pages_bbspage_bbsshapespage_6faadf5e ui;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>component-specs.md</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing component-specs.md.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>Alert</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Alert.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>Anatomy</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Anatomy.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>Anatomy</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Anatomy.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>Anatomy</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Anatomy.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>Anatomy</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Anatomy.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>Anatomy</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Anatomy.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>Badge</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Badge.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>Button</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Button.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>Card</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Card.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>Cell Alignment</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Cell Alignment.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>Component Specifications</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Component Specifications.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>Dialog</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Dialog.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>Input</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Input.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>Row States</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Row States.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>Sizes</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Sizes.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>Sizes</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Sizes.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>Sizes</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Sizes.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>Sizes</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Sizes.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>Spacing</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Spacing.</td>
-</tr>
-<tr>
-  <td>21</td>
-  <td><code>Spacing</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Spacing.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>States</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing States.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>States</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing States.</td>
-</tr>
-<tr>
-  <td>24</td>
-  <td><code>Table</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Table.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>Variants</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Variants.</td>
-</tr>
-<tr>
-  <td>26</td>
-  <td><code>Variants</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Variants.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>Variants</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Variants.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>Variants</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Variants.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>Variants</code><br><small style="color:var(--muted)">design-system/references/component-specs.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Variants.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>shadcn-accessibility.md</code><br><small style="color:var(--muted)">ui-styling/references/shadcn-accessibility.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing shadcn-accessibility.md.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>design-system/references/component-specs.md</code></td><td>29 nodes</td></tr>
+<tr><td><code>design-system/references/component-specs.md</code></td><td>29 nodes</td></tr>
 <tr><td><code>ui-styling/references/shadcn-accessibility.md</code></td><td>29 nodes</td></tr>
 <tr><td><code>brand/references/approval-checklist.md</code></td><td>26 nodes</td></tr>
 <tr><td><code>design/references/logo-prompt-engineering.md</code></td><td>26 nodes</td></tr>
 <tr><td><code>brand/references/color-palette-management.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>design-system/references/states-and-variants.md</code></td><td>25 nodes</td></tr>
 <tr><td><code>design/references/cip-deliverable-guide.md</code></td><td>25 nodes</td></tr>
-<tr><td><code>ui-styling/references/tailwind-customization.md</code></td><td>23 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x676, imports x52, calls x45, references x36. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x704, imports x52, calls x49, method x33. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5172,18 +5183,18 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>2666</td></tr>
+      <tr><td>Nodes</td><td>2671</td></tr>
       <tr><td>Edges</td><td>3458</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>224</td></tr>
+      <tr><td>Communities</td><td>229</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>3344</td></tr>
-      <tr><td>INFERRED</td><td>114</td></tr>
+      <tr><td>EXTRACTED</td><td>3342</td></tr>
+      <tr><td>INFERRED</td><td>116</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
   </div>
@@ -5191,7 +5202,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>RebarOptima — Architecture Documentation</p>
-  <p>Generated: 2026-09-09 20:59 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-09-09 21:35 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

@@ -936,54 +936,7 @@ async function seedDefaults(db: Db) {
     await devColl.updateOne({ _id: existingSuperadmin._id }, { $set: { passwordHash: superadminHash, isActive: true } });
   }
 
-  // 3. Seed team members for K B Lights firm: Devji Patel (Active), Ketan Patel (Active), Darshan Patel (Inactive)
-  const companyColl = db.collection('companies');
-  let kbCompany = await companyColl.findOne({ name: 'K B Lights' });
-  if (!kbCompany) {
-    kbCompany = await companyColl.findOne({});
-  }
-  let companyId: any = kbCompany ? kbCompany._id : null;
-  if (!companyId) {
-    const compRes = await companyColl.insertOne({
-      name: 'K B Lights',
-      projectName: 'Vastral Warehouse',
-      location: 'Ahmedabad',
-      status: 'active',
-      createdAt: new Date()
-    });
-    companyId = compRes.insertedId;
-  }
 
-  const sampleUsers = [
-    { email: 'dev@gmail.com', firstName: 'Devji', lastName: 'Patel', role: 'Admin', isActive: true },
-    { email: 'ketan@gmail.com', firstName: 'Ketan', lastName: 'Patel', role: 'Senior Site Engineer', isActive: true },
-    { email: 'darshan1@gmail.com', firstName: 'Darshan', lastName: 'Patel', role: 'Project Manager', isActive: false }
-  ];
-
-  const userColl = db.collection('users');
-  for (const su of sampleUsers) {
-    const existing = await userColl.findOne({ email: su.email.toLowerCase().trim() });
-    const userRole = await rolesColl.findOne({ name: su.role }) || await rolesColl.findOne({ name: 'Admin' });
-    if (!existing) {
-      await userColl.insertOne({
-        email: su.email.toLowerCase().trim(),
-        passwordHash: hash,
-        firstName: su.firstName,
-        lastName: su.lastName,
-        role: su.role,
-        roleId: userRole?._id || null,
-        companyId: companyId,
-        isActive: su.isActive,
-        createdAt: new Date()
-      });
-      console.log(`  ✅ Seeded team member: ${su.firstName} ${su.lastName} (${su.email})`);
-    } else {
-      await userColl.updateOne(
-        { _id: existing._id },
-        { $set: { companyId: companyId, isActive: su.isActive, role: su.role, roleId: userRole?._id || existing.roleId } }
-      );
-    }
-  }
 
   // 4. Backfill existing companies with status and subscription
   const companiesColl = db.collection('companies');

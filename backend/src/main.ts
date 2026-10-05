@@ -4,7 +4,13 @@ import jwt from 'jsonwebtoken';
 import { MongoClient, Db, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import path from 'path';
+import dns from 'dns';
 import { solve1DCSP } from './batches/optimizer.engine';
+import { createBBSRouter } from './bbs/bbs.routes';
+
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch {}
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -18,6 +24,19 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
+});
+
+// ── HEALTH & DB STATUS CHECK ────────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  const isAtlasConnected = !isInMemoryActive && db !== null;
+  res.json({
+    status: 'ok',
+    database: {
+      connected: isAtlasConnected,
+      type: isAtlasConnected ? 'MongoDB Atlas' : 'In-Memory Fallback (Offline)',
+      timestamp: new Date().toISOString()
+    }
+  });
 });
 
 // ── DB ──────────────────────────────────────────────────────────────────────
@@ -157,15 +176,9 @@ async function connectDB(): Promise<Db> {
   }
 
   if (!isInMemoryActive) {
-    console.log('⚡ Using In-Memory Database Fallback. Seeding default data...');
+    console.warn('⚠️ MongoDB Atlas is not accessible. Using clean In-Memory DB (No test/default data created).');
     isInMemoryActive = true;
     db = memoryDbInstance as any;
-    try {
-      await seedDefaults(db!);
-      console.log('✅ In-Memory DB seeded successfully!');
-    } catch (err) {
-      console.error('In-Memory seeding error:', err);
-    }
   }
   return db as Db;
 }
@@ -459,6 +472,9 @@ function authMiddleware(req: any, res: any, next: any) {
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 }
+
+// Mount BBS Isolated Module Routes
+app.use('/api/bbs', createBBSRouter(() => db, authMiddleware));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {
@@ -2963,12 +2979,9 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    const database = await connectDB();
-    console.log('🌱 Seeding defaults...');
-    await seedDefaults(database);
-    console.log('🌱 Seeding complete.');
+    await connectDB();
   } catch (err) {
-    console.error('⚠️  Seed failed (non-fatal):', err);
+    console.error('⚠️  Database connection error:', err);
   }
   app.listen(PORT, () => console.log(`🚀 Express server listening on port ${PORT}`));
 }

@@ -3,10 +3,12 @@ import {
   Building2, Plus, ArrowLeft, ChevronRight, Layers, LayoutGrid, 
   CheckCircle2, Clock, Trash2, Edit3, MoveUp, MoveDown, Search, 
   FolderPlus, PlusCircle, AlertCircle, Info, Hash, MapPin, 
-  ShieldCheck, RefreshCw, MoreVertical, X
+  ShieldCheck, RefreshCw, MoreVertical, X, Shapes, PenTool
 } from 'lucide-react';
 import { bbsApi } from './bbsApi';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import ShapeLibrary from './ShapeLibrary';
+import CADEditor from './cad/CADEditor';
 import './BBSPage.css';
 
 const MEMBER_TYPE_OPTIONS = [
@@ -42,6 +44,11 @@ const DEFAULT_PREFIX_MAP = {
 };
 
 export default function BBSPage() {
+  // Main Module Tab State ('projects' | 'shapes' | 'cad')
+  const [activeMainTab, setActiveMainTab] = useState('projects');
+  const [customShapes, setCustomShapes] = useState([]);
+  const [editingShape, setEditingShape] = useState(null);
+
   // Navigation & Drilldown State
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [selectedBlockId, setSelectedBlockId] = useState(null);
@@ -53,6 +60,7 @@ export default function BBSPage() {
   const [blocks, setBlocks] = useState([]);
   const [levels, setLevels] = useState([]);
   const [members, setMembers] = useState([]);
+
 
   // UI State
   const [loading, setLoading] = useState(true);
@@ -88,11 +96,12 @@ export default function BBSPage() {
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Load Projects on mount or when returning to projects list
+  // Load Projects and Custom Shapes on mount
   useEffect(() => {
     if (!selectedProjectId) {
       loadProjects();
     }
+    loadShapes();
   }, [selectedProjectId]);
 
   const loadProjects = async () => {
@@ -106,6 +115,45 @@ export default function BBSPage() {
       setLoading(false);
     }
   };
+
+  const loadShapes = async () => {
+    try {
+      const data = await bbsApi.getShapes();
+      setCustomShapes(data || []);
+    } catch (err) {
+      // Fallback gracefully
+      console.warn('Could not load custom shapes:', err.message);
+    }
+  };
+
+  const handleSaveShape = async (shapeData) => {
+    try {
+      if (shapeData._id || (editingShape && (editingShape._id || editingShape.id))) {
+        const id = shapeData._id || editingShape._id || editingShape.id;
+        await bbsApi.updateShape(id, shapeData);
+        showToast(`Shape "${shapeData.name}" updated successfully!`);
+      } else {
+        await bbsApi.createShape(shapeData);
+        showToast(`Shape "${shapeData.name}" saved to library!`);
+      }
+      await loadShapes();
+      setEditingShape(null);
+      setActiveMainTab('shapes');
+    } catch (err) {
+      showToast(err.message || 'Error saving shape', 'error');
+    }
+  };
+
+  const handleDeleteShape = async (shapeId) => {
+    try {
+      await bbsApi.deleteShape(shapeId);
+      showToast('Shape deleted from library');
+      await loadShapes();
+    } catch (err) {
+      showToast(err.message || 'Error deleting shape', 'error');
+    }
+  };
+
 
   // Load Project Details, Blocks when a project is selected
   useEffect(() => {
@@ -534,6 +582,67 @@ export default function BBSPage() {
   const currentLevelProgress = members.length > 0 ? Math.round((totalCompletedMembers / members.length) * 100) : 0;
 
   // ════════════════════════════════════════════════════════════════════════════
+  // RENDER: CAD WORKSPACE VIEW (PHASE 2A)
+  // ════════════════════════════════════════════════════════════════════════════
+  if (activeMainTab === 'cad') {
+    return (
+      <div style={{ width: '100%', height: 'calc(100vh - 40px)', position: 'relative' }}>
+        {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
+        <CADEditor
+          shape={editingShape}
+          onSave={handleSaveShape}
+          onBack={() => {
+            setEditingShape(null);
+            setActiveMainTab('shapes');
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // RENDER: SHAPE LIBRARY VIEW (PHASE 2A)
+  // ════════════════════════════════════════════════════════════════════════════
+  if (activeMainTab === 'shapes') {
+    return (
+      <div className="bbs-container">
+        {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
+
+        {/* Main BBS Tabs */}
+        <div className="bbs-nav-tabs">
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'projects' ? 'active' : ''}`}
+            onClick={() => setActiveMainTab('projects')}
+          >
+            <Building2 size={16} />
+            <span>Projects & Members</span>
+          </button>
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'shapes' ? 'active' : ''}`}
+            onClick={() => setActiveMainTab('shapes')}
+          >
+            <Shapes size={16} />
+            <span>Shape Library & CAD</span>
+          </button>
+        </div>
+
+        <ShapeLibrary
+          customShapes={customShapes}
+          onCreateNewShape={() => {
+            setEditingShape(null);
+            setActiveMainTab('cad');
+          }}
+          onOpenInCAD={(shape) => {
+            setEditingShape(shape);
+            setActiveMainTab('cad');
+          }}
+          onDeleteShape={handleDeleteShape}
+        />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
   // RENDER: PROJECTS DASHBOARD VIEW
   // ════════════════════════════════════════════════════════════════════════════
   if (!selectedProjectId) {
@@ -542,16 +651,34 @@ export default function BBSPage() {
         {/* Toast alert */}
         {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
 
+        {/* Main BBS Tabs */}
+        <div className="bbs-nav-tabs">
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'projects' ? 'active' : ''}`}
+            onClick={() => setActiveMainTab('projects')}
+          >
+            <Building2 size={16} />
+            <span>Projects & Members</span>
+          </button>
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'shapes' ? 'active' : ''}`}
+            onClick={() => setActiveMainTab('shapes')}
+          >
+            <Shapes size={16} />
+            <span>Shape Library & CAD</span>
+          </button>
+        </div>
+
         {/* Header */}
         <div className="bbs-header-row">
           <div>
             <div className="bbs-title-with-badge">
               <Building2 className="bbs-main-icon" size={28} />
               <h1 className="bbs-main-title">Bar Bending Schedule (BBS)</h1>
-              <span className="bbs-badge bbs-badge-accent">Phase 1 Foundation</span>
+              <span className="bbs-badge bbs-badge-accent">Phase 1 & 2A Foundation</span>
             </div>
             <p className="bbs-subtitle">
-              Manage multi-tier construction hierarchy (Project → Block → Level → Structural Members) with automated BBS completion tracking.
+              Manage multi-tier construction hierarchy (Project → Block → Level → Structural Members) with automated BBS completion tracking and Parametric Shape CAD.
             </p>
           </div>
           <button className="bbs-btn bbs-btn-primary" onClick={() => openProjectModal('create')}>
@@ -559,6 +686,7 @@ export default function BBSPage() {
             <span>New Project</span>
           </button>
         </div>
+
 
         {/* Toolbar */}
         <div className="bbs-toolbar-card">

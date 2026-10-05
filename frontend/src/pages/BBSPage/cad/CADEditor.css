@@ -1,0 +1,780 @@
+/* RebarOptima CAD Editor - Dark Modern Engineering Theme (Phase 2C) */
+
+.cad-editor-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 70px);
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* TOP BAR */
+.cad-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+  padding: 0 16px;
+  z-index: 10;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cad-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cad-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cad-back-btn:hover {
+  background-color: #334155;
+  color: #ffffff;
+  border-color: #64748b;
+}
+
+.cad-shape-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cad-shape-name-input {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 180px;
+  transition: border-color 0.15s;
+}
+
+.cad-shape-name-input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px #38bdf8;
+}
+
+.cad-shape-badge {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.cad-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cad-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.cad-btn-icon:hover:not(:disabled) {
+  background: #334155;
+  color: #ffffff;
+  border-color: #64748b;
+}
+
+.cad-btn-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cad-btn-icon.active {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+
+.cad-divider {
+  width: 1px;
+  height: 22px;
+  background-color: #334155;
+  margin: 0 4px;
+}
+
+.cad-param-quick {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: #94a3b8;
+  background: #0f172a;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+.cad-param-input {
+  width: 48px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #38bdf8;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.cad-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0284c7;
+  border: 1px solid #0369a1;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-save-btn:hover {
+  background: #0369a1;
+}
+
+/* WORKSPACE MAIN BODY */
+.cad-workspace {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 52px - 32px - 70px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* LEFT TOOLBAR */
+.cad-toolbar {
+  width: 58px;
+  background-color: #181f2c;
+  border-right: 1px solid #2d3748;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 16px 0;
+  gap: 4px;
+  z-index: 5;
+  overflow-y: auto;
+  user-select: none;
+}
+
+.cad-tool-group-label {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  text-transform: uppercase;
+  margin: 4px 0 2px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.cad-tool-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cad-tool-btn:hover {
+  background: #283548;
+  color: #38bdf8;
+  border-color: #475569;
+  transform: translateY(-1px);
+}
+
+.cad-tool-btn.active {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+}
+
+.cad-tool-btn .tooltip {
+  position: absolute;
+  left: 64px;
+  background: #090d16;
+  color: #f8fafc;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cad-tool-btn .tooltip em {
+  font-style: normal;
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.cad-tool-btn:hover .tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cad-toolbar-divider {
+  width: 36px;
+  height: 1px;
+  background: #334155;
+  margin: 6px 0 2px 0;
+  flex-shrink: 0;
+}
+
+/* CENTER CANVAS AREA */
+.cad-canvas-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* FLOATING VIEWPORT CONTROLS */
+.cad-floating-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cad-float-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.cad-float-btn:hover {
+  background: #334155;
+  color: #38bdf8;
+}
+
+/* RIGHT PROPERTIES & PARAMETERS PANEL (PHASE 2C) */
+.cad-properties-panel {
+  width: 310px;
+  background-color: #1e293b;
+  border-left: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 5;
+}
+
+.cad-panel-tabs {
+  display: flex;
+  background: #0f172a;
+  border-bottom: 1px solid #334155;
+}
+
+.cad-panel-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-bottom: 2px solid transparent;
+}
+
+.cad-panel-tab:hover {
+  color: #f8fafc;
+}
+
+.cad-panel-tab.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.cad-panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #334155;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cad-panel-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+.cad-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #38bdf8;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cad-prop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.cad-prop-label {
+  color: #94a3b8;
+}
+
+.cad-prop-value {
+  color: #f1f5f9;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.cad-prop-input {
+  background: #0f172a;
+  border: 1px solid #475569;
+  color: #38bdf8;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  width: 80px;
+  text-align: right;
+}
+
+.cad-prop-input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+/* LINKED PARAMETER BADGE */
+.cad-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.cad-create-param-btn {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-create-param-btn:hover {
+  background: rgba(56, 189, 248, 0.3);
+}
+
+/* PARAMETERS LIST (PHASE 2C) */
+.cad-param-item {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+  transition: all 0.15s;
+}
+
+.cad-param-item:hover {
+  border-color: #475569;
+}
+
+.cad-param-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.cad-param-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  font-family: monospace;
+}
+
+.cad-param-badge {
+  font-size: 10px;
+  background: #334155;
+  color: #94a3b8;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.cad-param-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cad-param-val-input {
+  flex: 1;
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #38bdf8;
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: right;
+}
+
+.cad-param-val-input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.cad-param-delete-btn {
+  background: transparent;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 13px;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.cad-param-delete-btn:hover {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.cad-add-param-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px dashed rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 6px;
+}
+
+.cad-add-param-btn:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+}
+
+.cad-quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.cad-quick-btn {
+  background: #334155;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-quick-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0369a1;
+}
+
+.cad-delete-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+}
+
+/* CONSTRAINTS TAB & CARDS (PHASE 2D) */
+.cad-dof-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.cad-dof-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.cad-dof-badge.under-constrained {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.cad-dof-badge.fully-constrained {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.cad-dof-badge.over-constrained {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.cad-constraint-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s;
+}
+
+.cad-constraint-card:hover {
+  border-color: #475569;
+}
+
+.cad-constraint-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cad-constraint-type-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #38bdf8;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* FLOATING CONTEXT MENU */
+.cad-context-menu {
+  position: fixed;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.cad-context-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.cad-context-item:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.cad-context-divider {
+  height: 1px;
+  background: #334155;
+  margin: 4px 0;
+}
+
+.cad-context-danger:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* BOTTOM STATUS BAR */
+.cad-statusbar {
+  height: 32px;
+  background-color: #0f172a;
+  border-top: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #94a3b8;
+  z-index: 10;
+}
+
+.cad-status-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cad-status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cad-status-item strong {
+  color: #f8fafc;
+}
+
+.cad-status-toggle {
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  font-size: 11px;
+}
+
+.cad-status-toggle.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.cad-status-toggle:hover {
+  border-color: #475569;
+}
+
+.cad-status-hint {
+  color: #38bdf8;
+  font-weight: 500;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

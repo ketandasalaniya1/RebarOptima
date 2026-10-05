@@ -28,4 +28,11 @@ export const bbsApi = {
   createMembersBatch: (levelId, data) => apiRequest(`/bbs/levels/${levelId}/members/batch`, { method: 'POST', body: data }),
   updateMember: (id, data) => apiRequest(`/bbs/members/${id}`, { method: 'PUT', body: data }),
   deleteMember: (id) => apiRequest(`/bbs/members/${id}`, { method: 'DELETE' }),
+
+  // Shape Library & Parametric Blocks (Phase 2A)
+  getShapes: () => apiRequest('/bbs/shapes'),
+  createShape: (data) => apiRequest('/bbs/shapes', { method: 'POST', body: data }),
+  updateShape: (id, data) => apiRequest(`/bbs/shapes/${id}`, { method: 'PUT', body: data }),
+  deleteShape: (id) => apiRequest(`/bbs/shapes/${id}`, { method: 'DELETE' }),
 };
+

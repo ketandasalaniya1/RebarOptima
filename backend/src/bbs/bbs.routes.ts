@@ -661,5 +661,96 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
     }
   });
 
+  // ════════════════════════════════════════════════════════════════════════════
+  // 5. BBS SHAPE LIBRARY & PARAMETRIC BLOCKS (PHASE 2A)
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // GET all custom shapes for company
+  router.get('/shapes', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+
+      const shapes = await db.collection('bbs_shapes').find({ companyId }).sort({ updatedAt: -1 }).toArray();
+      res.json(shapes);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching shapes' });
+    }
+  });
+
+  // POST create / save a new shape
+  router.post('/shapes', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { name, code, category, unit, geometry } = req.body;
+
+      if (!name) {
+        return res.status(400).json({ message: 'Shape name is required' });
+      }
+
+      const newShape = {
+        companyId,
+        name: name.trim(),
+        code: (code || 'CUSTOM').trim().toUpperCase(),
+        category: category || 'Custom Drafts',
+        unit: unit || 'mm',
+        geometry: geometry || { objects: [] },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      const result = await db.collection('bbs_shapes').insertOne(newShape);
+      res.status(201).json({ ...newShape, _id: result.insertedId });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error creating shape' });
+    }
+  });
+
+  // PUT update existing shape
+  router.put('/shapes/:id', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const { name, code, category, unit, geometry } = req.body;
+
+      const updateData: any = { updatedAt: new Date() };
+      if (name !== undefined) updateData.name = name.trim();
+      if (code !== undefined) updateData.code = code.trim().toUpperCase();
+      if (category !== undefined) updateData.category = category;
+      if (unit !== undefined) updateData.unit = unit;
+      if (geometry !== undefined) updateData.geometry = geometry;
+
+      await db.collection('bbs_shapes').updateOne(
+        { $or: [{ _id: new ObjectId(id) }, { _id: id }] },
+        { $set: updateData }
+      );
+
+      const updated = await db.collection('bbs_shapes').findOne({
+        $or: [{ _id: new ObjectId(id) }, { _id: id }]
+      });
+      res.json(updated);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error updating shape' });
+    }
+  });
+
+  // DELETE a custom shape
+  router.delete('/shapes/:id', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+
+      await db.collection('bbs_shapes').deleteMany({
+        $or: [{ _id: new ObjectId(id) }, { _id: id }]
+      });
+
+      res.json({ success: true, message: 'Shape deleted' });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error deleting shape' });
+    }
+  });
+
   return router;
 }
+

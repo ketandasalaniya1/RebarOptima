@@ -8,7 +8,8 @@ import {
   PARAMETER_CATEGORIES,
   DIMENSION_TYPES,
   CONSTRAINT_TYPES,
-  CONSTRAINT_STATUS
+  CONSTRAINT_STATUS,
+  STANDARD_BAR_DIAMETERS
 } from './types';
 import { fitToObjects, resetViewport, zoomAtPoint } from './viewport';
 import { rotateObject, mirrorObject, moveObject } from './editEngine';
@@ -30,6 +31,10 @@ import {
   calculateDegreesOfFreedom,
   cleanOrphanedConstraints
 } from './constraintEngine';
+import {
+  updateRebarGeometry,
+  generateRebarShapeParameters
+} from './rebarEngine';
 import {
   IconCadSelect,
   IconCadLine,
@@ -67,8 +72,22 @@ import {
   IconCadConstraintCoincident,
   IconCadConstraintFixed,
   IconCadConstraintDistance,
-  IconCadConstraintAngle
+  IconCadConstraintAngle,
+  IconCadRebarStraight,
+  IconCadRebarLBar,
+  IconCadRebarUBar,
+  IconCadRebarCranked,
+  IconCadRebarHook,
+  IconCadRebarBend,
+  IconCadRebarStirrup,
+  IconCadRebarOpenLink,
+  IconCadRebarCustom,
+  IconCadCalculation
 } from './cadIcons';
+import { calculateRebarShape, CALCULATION_STATUS } from './calculationEngine';
+import { engineeringRuleProvider } from './engineeringRules';
+import CalculationPanel from './CalculationPanel';
+import CalculationTraceModal from './CalculationTraceModal';
 import './CADEditor.css';
 
 // Smooth local numeric property input component
@@ -151,8 +170,12 @@ export default function CADEditor({
   const [constraints, setConstraints] = useState(shape?.constraints || []);
   const [showConstraints, setShowConstraints] = useState(true);
 
-  // Right Panel Active Tab ('properties' | 'parameters' | 'constraints')
+  // Right Panel Active Tab ('properties' | 'parameters' | 'constraints' | 'calculation')
   const [rightPanelTab, setRightPanelTab] = useState('properties');
+
+  // Engineering Rule Set & Calculation Trace Modal State (Phase 2F)
+  const [selectedRuleSetId, setSelectedRuleSetId] = useState(shape?.ruleSet || 'RULE_SET_CENTERLINE_EXACT');
+  const [showTraceModal, setShowTraceModal] = useState(false);
 
   // Custom Rotation Angle state
   const [customRotateAngle, setCustomRotateAngle] = useState(45);
@@ -337,16 +360,39 @@ export default function CADEditor({
     updateHistoryFlags();
   };
 
-  // Quick Action: Create and Link Parameter directly from an Object Property (e.g. Rectangle Width -> WIDTH, Line Angle -> LINE_ANG)
+  // Quick Action: Create and Link Parameter directly from an Object Property (e.g. Rectangle Width -> WIDTH, Line Angle -> LINE_ANG, Rebar -> LEG_A)
   const handleCreateParamFromProperty = (obj, propName, currentValue, defaultName) => {
+    let category = PARAMETER_CATEGORIES.GEOMETRY;
+    let unit = 'mm';
+    let type = PARAMETER_TYPES.LENGTH;
+
+    if (propName === 'diameter') {
+      category = PARAMETER_CATEGORIES.REBAR;
+    } else if (propName === 'bendRadius' || propName === 'bendAngle') {
+      category = PARAMETER_CATEGORIES.BENDING;
+      if (propName.includes('Angle') || propName.includes('angle')) {
+        unit = '°';
+        type = PARAMETER_TYPES.ANGLE;
+      }
+    } else if (propName === 'hookAngle' || propName === 'hookExtension') {
+      category = PARAMETER_CATEGORIES.HOOK;
+      if (propName.includes('Angle')) {
+        unit = '°';
+        type = PARAMETER_TYPES.ANGLE;
+      }
+    } else if (propName === 'angle' || propName.includes('Angle') || propName.includes('angle')) {
+      unit = '°';
+      type = PARAMETER_TYPES.ANGLE;
+    }
+
     const paramName = defaultName || `${obj.type.toUpperCase()}_${propName.toUpperCase()}`;
-    const isAngle = propName === 'angle';
     const newParam = createParameter({
       name: paramName,
       displayName: paramName,
-      value: Number(currentValue.toFixed(1)),
-      unit: isAngle ? '°' : 'mm',
-      type: isAngle ? PARAMETER_TYPES.ANGLE : PARAMETER_TYPES.LENGTH,
+      value: Number((typeof currentValue === 'number' ? currentValue : 100).toFixed(1)),
+      unit,
+      type,
+      category,
       targetRef: {
         objectId: obj.id,
         property: propName
@@ -525,6 +571,17 @@ export default function CADEditor({
     return null;
   }, [selectedDimensionIds, dimensions]);
 
+  // Active Rebar & Authoritative Engineering Calculation (Phase 2F)
+  const activeRebar = useMemo(() => {
+    if (selectedObject?.type === 'rebar') return selectedObject;
+    return objects.find(o => o.type === 'rebar') || null;
+  }, [objects, selectedObject]);
+
+  const activeCalculation = useMemo(() => {
+    if (!activeRebar) return null;
+    return calculateRebarShape(activeRebar, selectedRuleSetId);
+  }, [activeRebar, selectedRuleSetId]);
+
   // Live Property Field Change Handler
   const handlePropertyChange = (key, num) => {
     if (!selectedObject) return;
@@ -537,9 +594,12 @@ export default function CADEditor({
       parameters
     });
 
-    const updated = JSON.parse(JSON.stringify(selectedObject));
+    let updated = JSON.parse(JSON.stringify(selectedObject));
 
-    if (updated.type === 'rectangle') {
+    if (updated.type === 'rebar') {
+      const regenerated = updateRebarGeometry(updated, { [key]: num });
+      updated = regenerated || updated;
+    } else if (updated.type === 'rectangle') {
       if (key === 'width') updated.width = Math.max(1, num);
       if (key === 'height') updated.height = Math.max(1, num);
       if (key === 'x') updated.x = num;
@@ -701,10 +761,19 @@ export default function CADEditor({
 
   const handleSaveShape = () => {
     const shapePayload = {
-      id: shape?.id || `shape_${Date.now()}`,
+      ...(shape || {}),
+      id: shape?._id || shape?.id || `shape_${Date.now()}`,
+      _id: shape?._id || shape?.id,
       name: shapeName,
       code: shapeCode,
+      shapeCode: shapeCode,
       category: shapeCategory,
+      ownership: shape?.ownership || 'CUSTOM',
+      status: shape?.status || 'DRAFT',
+      version: shape?.version || '1.0',
+      versionId: shape?.versionId || `v_${Date.now()}`,
+      description: shape?.description || '',
+      tags: shape?.tags || ['custom', 'parametric'],
       unit: 'mm',
       geometry: {
         objects: objects
@@ -712,6 +781,20 @@ export default function CADEditor({
       dimensions: dimensions,
       parameters: parameters,
       constraints: constraints,
+      ruleSet: selectedRuleSetId,
+      calculationRules: {
+        ruleSet: selectedRuleSetId
+      },
+      calculation: activeCalculation,
+      cuttingLength: activeCalculation?.cuttingLength || 0,
+      developedLength: activeCalculation?.developedLength || 0,
+      unitWeight: activeCalculation?.unitWeight || 0,
+      totalWeight: activeCalculation?.totalWeight || 0,
+      metadata: {
+        ...(shape?.metadata || {}),
+        unit: 'mm',
+        lastEditedInCAD: true
+      },
       updatedAt: new Date().toISOString()
     };
     if (onSave) onSave(shapePayload);
@@ -991,6 +1074,91 @@ export default function CADEditor({
             <span className="tooltip">Circle <em>[C]</em></span>
           </button>
 
+          {/* REBAR PARAMETRIC PALETTE (PHASE 2E) */}
+          <div className="cad-toolbar-divider" />
+          <div className="cad-tool-group-label" style={{ color: '#f59e0b' }}>REBAR</div>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_STRAIGHT ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_STRAIGHT); setStatusPrompt('Straight Bar: Click start point -> end point'); }}
+            title="Straight Bar (Parametric Centerline)"
+          >
+            <IconCadRebarStraight size={18} />
+            <span className="tooltip">Straight Bar</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_L_BAR ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_L_BAR); setStatusPrompt('L-Bar: Click corner / origin point to place'); }}
+            title="L-Bar (Leg A + Leg B + Bend Fillet)"
+          >
+            <IconCadRebarLBar size={18} />
+            <span className="tooltip">L-Bar</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_U_BAR ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_U_BAR); setStatusPrompt('U-Bar: Click origin point to place'); }}
+            title="U-Bar (Leg A + Base + Leg C + Fillet Bends)"
+          >
+            <IconCadRebarUBar size={18} />
+            <span className="tooltip">U-Bar</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_CRANKED ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_CRANKED); setStatusPrompt('Cranked / Joggle Bar: Click origin point to place'); }}
+            title="Cranked / Joggle Bar"
+          >
+            <IconCadRebarCranked size={18} />
+            <span className="tooltip">Cranked Bar</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_HOOK ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_HOOK); setStatusPrompt('Hook (90°/135°/180°): Click origin point to place'); }}
+            title="Standard Hook"
+          >
+            <IconCadRebarHook size={18} />
+            <span className="tooltip">Hook</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_BEND ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_BEND); setStatusPrompt('Bend: Click origin point to place'); }}
+            title="Mandrel Bend"
+          >
+            <IconCadRebarBend size={18} />
+            <span className="tooltip">Mandrel Bend</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_STIRRUP ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_STIRRUP); setStatusPrompt('Closed Stirrup / Link: Click origin point to place'); }}
+            title="Closed Stirrup / Link (A x B with 135° Hooks)"
+          >
+            <IconCadRebarStirrup size={18} />
+            <span className="tooltip">Closed Stirrup</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_OPEN_LINK ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_OPEN_LINK); setStatusPrompt('Open Link / U-Stirrup: Click origin point to place'); }}
+            title="Open Link / U-Stirrup"
+          >
+            <IconCadRebarOpenLink size={18} />
+            <span className="tooltip">Open Link</span>
+          </button>
+
+          <button
+            className={`cad-tool-btn ${activeTool === CAD_TOOLS.REBAR_CUSTOM ? 'active' : ''}`}
+            onClick={() => { setActiveTool(CAD_TOOLS.REBAR_CUSTOM); setStatusPrompt('Custom Rebar: Click points. Double-click or Enter to finish'); }}
+            title="Custom Rebar Path (Multi-Segment Continuous Centerline)"
+          >
+            <IconCadRebarCustom size={18} />
+            <span className="tooltip">Custom Rebar</span>
+          </button>
+
           {/* DIMENSIONS / ANNOTATIONS PALETTE (PHASE 2C) */}
           <div className="cad-toolbar-divider" />
           <div className="cad-tool-group-label">DIM</div>
@@ -1188,6 +1356,13 @@ export default function CADEditor({
             >
               <IconCadConstraintParallel size={13} /> Rules ({constraints.length})
             </button>
+            <button
+              className={`cad-panel-tab ${rightPanelTab === 'calculation' ? 'active' : ''}`}
+              onClick={() => setRightPanelTab('calculation')}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+            >
+              <IconCadCalculation size={13} /> Calc
+            </button>
           </div>
 
           {rightPanelTab === 'properties' ? (
@@ -1260,6 +1435,451 @@ export default function CADEditor({
                     <span className="cad-prop-label">Type</span>
                     <span className="cad-prop-value">{selectedObject.type}</span>
                   </div>
+
+                  {selectedObject.type === 'rebar' && (() => {
+                    const r = selectedObject;
+                    return (
+                      <>
+                        {/* REBAR SHAPE CLASSIFICATION */}
+                        <div className="cad-prop-row">
+                          <span className="cad-prop-label">Rebar Shape</span>
+                          <span className="cad-link-badge" style={{ color: '#f59e0b', borderColor: '#f59e0b' }}>
+                            {r.rebarShapeType?.toUpperCase() || 'CUSTOM'}
+                          </span>
+                        </div>
+
+                        {/* BAR DIAMETER (PHASE 2E) */}
+                        <div className="cad-prop-row">
+                          <span className="cad-prop-label">Bar Diameter (Ø)</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <CADPropInput
+                              value={r.diameter || 16}
+                              min={1}
+                              allowZero={false}
+                              onChange={(num) => handlePropertyChange('diameter', num)}
+                            />
+                            <button
+                              className="cad-create-param-btn"
+                              title="Convert bar diameter to parameter"
+                              onClick={() => handleCreateParamFromProperty(r, 'diameter', r.diameter || 16, 'BAR_DIA')}
+                            >
+                              Param
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Standard Diameter Quick Select Chips */}
+                        <div style={{ display: 'flex', gap: '4px', marginTop: '4px', marginBottom: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                          <span style={{ fontSize: '10.5px', color: '#94a3b8', marginRight: '2px' }}>Standard Ø:</span>
+                          {STANDARD_BAR_DIAMETERS.map(dia => (
+                            <button
+                              key={dia}
+                              className={`cad-quick-btn ${r.diameter === dia ? 'active' : ''}`}
+                              style={{
+                                padding: '2px 5px',
+                                fontSize: '10px',
+                                minWidth: '28px',
+                                background: r.diameter === dia ? '#f59e0b' : undefined,
+                                color: r.diameter === dia ? '#000000' : undefined,
+                                fontWeight: r.diameter === dia ? 700 : 500
+                              }}
+                              onClick={() => handlePropertyChange('diameter', dia)}
+                              title={`Set Diameter to Ø${dia} mm`}
+                            >
+                              Ø{dia}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* STRAIGHT BAR PARAMETERS */}
+                        {r.rebarShapeType === 'straight' && (
+                          <div className="cad-prop-row">
+                            <span className="cad-prop-label">Bar Length (mm)</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <CADPropInput
+                                value={r.length || 1000}
+                                min={1}
+                                allowZero={false}
+                                onChange={(num) => handlePropertyChange('length', num)}
+                              />
+                              <button
+                                className="cad-create-param-btn"
+                                onClick={() => handleCreateParamFromProperty(r, 'length', r.length || 1000, 'LENGTH')}
+                              >
+                                Param
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* L-BAR PARAMETERS */}
+                        {r.rebarShapeType === 'l_bar' && (
+                          <>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Leg A (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.legA || 500}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('legA', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'legA', r.legA || 500, 'LEG_A')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Leg B (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.legB || 300}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('legB', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'legB', r.legB || 300, 'LEG_B')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Bend Angle (°)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.bendAngle || 90}
+                                  onChange={(num) => handlePropertyChange('bendAngle', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'bendAngle', r.bendAngle || 90, 'BEND_ANG')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* U-BAR PARAMETERS */}
+                        {r.rebarShapeType === 'u_bar' && (
+                          <>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Leg A (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.legA || 500}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('legA', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'legA', r.legA || 500, 'LEG_A')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Base Length (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.baseLength || 300}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('baseLength', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'baseLength', r.baseLength || 300, 'BASE_B')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Leg C (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.legC || 500}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('legC', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'legC', r.legC || 500, 'LEG_C')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* CRANKED / JOGGLE BAR PARAMETERS */}
+                        {r.rebarShapeType === 'cranked' && (
+                          <>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Main Length (mm)</span>
+                              <CADPropInput
+                                value={r.mainLength || 600}
+                                min={1}
+                                allowZero={false}
+                                onChange={(num) => handlePropertyChange('mainLength', num)}
+                              />
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Crank Length (mm)</span>
+                              <CADPropInput
+                                value={r.crankLength || 250}
+                                min={1}
+                                allowZero={false}
+                                onChange={(num) => handlePropertyChange('crankLength', num)}
+                              />
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Crank Offset (mm)</span>
+                              <CADPropInput
+                                value={r.offsetDistance || 150}
+                                min={1}
+                                allowZero={false}
+                                onChange={(num) => handlePropertyChange('offsetDistance', num)}
+                              />
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Crank Angle (°)</span>
+                              <CADPropInput
+                                value={r.crankAngle || 45}
+                                onChange={(num) => handlePropertyChange('crankAngle', num)}
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        {/* HOOK PARAMETERS */}
+                        {r.rebarShapeType === 'hook' && (
+                          <>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Hook Angle (°)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.hookAngle || 135}
+                                  onChange={(num) => handlePropertyChange('hookAngle', num)}
+                                />
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '4px', marginTop: '2px', marginBottom: '8px' }}>
+                              {[90, 135, 180].map(deg => (
+                                <button
+                                  key={deg}
+                                  className="cad-quick-btn"
+                                  style={{ padding: '2px 6px', fontSize: '10.5px' }}
+                                  onClick={() => handlePropertyChange('hookAngle', deg)}
+                                >
+                                  {deg}°
+                                </button>
+                              ))}
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Extension (mm)</span>
+                              <CADPropInput
+                                value={r.hookExtension || 75}
+                                min={1}
+                                allowZero={false}
+                                onChange={(num) => handlePropertyChange('hookExtension', num)}
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        {/* BEND OBJECT PARAMETERS */}
+                        {r.rebarShapeType === 'bend' && (
+                          <div className="cad-prop-row">
+                            <span className="cad-prop-label">Bend Angle (°)</span>
+                            <CADPropInput
+                              value={r.bendAngle || 90}
+                              onChange={(num) => handlePropertyChange('bendAngle', num)}
+                            />
+                          </div>
+                        )}
+
+                        {/* CLOSED STIRRUP / OPEN LINK PARAMETERS */}
+                        {(r.rebarShapeType === 'closed_stirrup' || r.rebarShapeType === 'open_link') && (
+                          <>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Width (A) (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.width || 300}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('width', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'width', r.width || 300, 'WIDTH')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Height (B) (mm)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.height || 450}
+                                  min={1}
+                                  allowZero={false}
+                                  onChange={(num) => handlePropertyChange('height', num)}
+                                />
+                                <button
+                                  className="cad-create-param-btn"
+                                  onClick={() => handleCreateParamFromProperty(r, 'height', r.height || 450, 'HEIGHT')}
+                                >
+                                  Param
+                                </button>
+                              </div>
+                            </div>
+                            {r.rebarShapeType === 'open_link' && (
+                              <div className="cad-prop-row">
+                                <span className="cad-prop-label">Opening Gap (mm)</span>
+                                <CADPropInput
+                                  value={r.opening || 100}
+                                  min={0}
+                                  onChange={(num) => handlePropertyChange('opening', num)}
+                                />
+                              </div>
+                            )}
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Hook Angle (°)</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CADPropInput
+                                  value={r.hookAngle || 135}
+                                  onChange={(num) => handlePropertyChange('hookAngle', num)}
+                                />
+                              </div>
+                            </div>
+                            <div className="cad-prop-row">
+                              <span className="cad-prop-label">Hook Ext (mm)</span>
+                              <CADPropInput
+                                value={r.hookExtension || 75}
+                                min={1}
+                                allowZero={false}
+                                onChange={(num) => handlePropertyChange('hookExtension', num)}
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        {/* MANDREL BEND RADIUS (INDEPENDENT PARAMETER) */}
+                        <div className="cad-prop-row" style={{ marginTop: '8px' }}>
+                          <span className="cad-prop-label">Bend Mandrel Radius (R)</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <CADPropInput
+                              value={r.bendRadius || 32}
+                              min={1}
+                              allowZero={false}
+                              onChange={(num) => handlePropertyChange('bendRadius', num)}
+                            />
+                            <button
+                              className="cad-create-param-btn"
+                              onClick={() => handleCreateParamFromProperty(r, 'bendRadius', r.bendRadius || 32, 'BEND_RAD')}
+                            >
+                              Param
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Quick Mandrel Radius Multipliers (e.g. 2d, 3d, 4d, 5d) */}
+                        <div style={{ display: 'flex', gap: '4px', marginTop: '4px', marginBottom: '12px', alignItems: 'center' }}>
+                          <span style={{ fontSize: '10.5px', color: '#94a3b8', marginRight: '2px' }}>Mandrel:</span>
+                          {[2, 3, 4, 5, 6].map(mult => (
+                            <button
+                              key={mult}
+                              className="cad-quick-btn"
+                              style={{ padding: '2px 5px', fontSize: '10px' }}
+                              onClick={() => handlePropertyChange('bendRadius', (r.diameter || 16) * mult)}
+                              title={`Set Mandrel Radius to ${mult}x Diameter (${(r.diameter || 16) * mult} mm)`}
+                            >
+                              {mult}d
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* SEMANTIC SUB-ELEMENTS INFO */}
+                        <div style={{ background: '#090d16', border: '1px solid #1e293b', borderRadius: '6px', padding: '8px', marginTop: '6px', fontSize: '11px', color: '#94a3b8' }}>
+                          <div style={{ fontWeight: 600, color: '#e2e8f0', marginBottom: '4px' }}>Semantic Structure</div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                            <span>Centerline Vertices:</span>
+                            <span style={{ color: '#38bdf8', fontWeight: 600 }}>{r.centerline?.length || 0}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                            <span>Sub-Segments:</span>
+                            <span style={{ color: '#38bdf8', fontWeight: 600 }}>{r.subSegments?.length || 0}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                            <span>Fillet Bends:</span>
+                            <span style={{ color: '#38bdf8', fontWeight: 600 }}>{r.subBends?.length || 0}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span>End Hooks:</span>
+                            <span style={{ color: '#38bdf8', fontWeight: 600 }}>{r.centerline?.hooks?.length || r.subHooks?.length || 0}</span>
+                          </div>
+                        </div>
+
+                        {/* LIVE CALCULATION SNAPSHOT (PHASE 2F) */}
+                        {activeCalculation && (
+                          <div style={{ background: '#090d16', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '6px', padding: '10px', marginTop: '10px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                              <span style={{ fontWeight: 700, color: '#38bdf8', fontSize: '11.5px', textTransform: 'uppercase' }}>
+                                Calculation Result
+                              </span>
+                              <span className={`cad-calc-badge ${activeCalculation.status.toLowerCase()}`}>
+                                {activeCalculation.isTrusted ? '✓ Valid' : '✕ Warning'}
+                              </span>
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '3px' }}>
+                              <span style={{ color: '#94a3b8' }}>Cutting Length:</span>
+                              <strong style={{ color: '#38bdf8', fontFamily: 'monospace' }}>{activeCalculation.cuttingLength} mm</strong>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '3px' }}>
+                              <span style={{ color: '#94a3b8' }}>Developed Length:</span>
+                              <span style={{ color: '#cbd5e1', fontFamily: 'monospace' }}>{activeCalculation.developedLength} mm</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
+                              <span style={{ color: '#94a3b8' }}>Total Steel Weight:</span>
+                              <strong style={{ color: '#22c55e', fontFamily: 'monospace' }}>{activeCalculation.totalWeight.toFixed(3)} kg</strong>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="cad-quick-btn"
+                              style={{ width: '100%', background: 'rgba(56, 189, 248, 0.15)', borderColor: '#38bdf8', color: '#38bdf8' }}
+                              onClick={() => setShowTraceModal(true)}
+                            >
+                              🔍 View Calculation Details & Trace
+                            </button>
+                          </div>
+                        )}
+
+                        <div className="cad-section-title" style={{ marginTop: '14px' }}>Apply Constraint</div>
+                        <div className="cad-quick-actions">
+                          <button className="cad-quick-btn" onClick={() => handleApplyConstraint(CONSTRAINT_TYPES.FIXED)} title="Lock rebar origin">
+                            🔒 Fix Origin
+                          </button>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   {selectedObject.type === 'line' && (() => {
                     const p1 = selectedObject.p1 || { x: selectedObject.x1, y: selectedObject.y1 };
@@ -1693,7 +2313,7 @@ export default function CADEditor({
                 </form>
               )}
             </div>
-          ) : (
+          ) : rightPanelTab === 'constraints' ? (
             // CONSTRAINTS TAB (PHASE 2D)
             <div className="cad-panel-section">
               <div className="cad-section-title">
@@ -1767,6 +2387,24 @@ export default function CADEditor({
                 ⚡ Re-Solve Constraints
               </button>
             </div>
+          ) : (
+            // CALCULATION TAB (PHASE 2F)
+            <div className="cad-panel-section">
+              <div className="cad-section-title">
+                <span>Engineering Calculations</span>
+                {activeCalculation && (
+                  <span className={`cad-shape-badge ${activeCalculation.isTrusted ? 'valid' : 'invalid'}`}>
+                    {activeCalculation.isTrusted ? 'TRUSTED' : 'WARNING'}
+                  </span>
+                )}
+              </div>
+              <CalculationPanel
+                calculation={activeCalculation}
+                currentRuleSetId={selectedRuleSetId}
+                onRuleSetChange={setSelectedRuleSetId}
+                onOpenTraceModal={() => setShowTraceModal(true)}
+              />
+            </div>
           )}
         </aside>
       </div>
@@ -1817,6 +2455,16 @@ export default function CADEditor({
           </div>
         </div>
       </footer>
+
+      {/* CALCULATION TRACE & ENGINEERING BREAKDOWN MODAL (PHASE 2F) */}
+      {showTraceModal && activeCalculation && (
+        <CalculationTraceModal
+          calculation={activeCalculation}
+          currentRuleSetId={selectedRuleSetId}
+          onRuleSetChange={setSelectedRuleSetId}
+          onClose={() => setShowTraceModal(false)}
+        />
+      )}
     </div>
   );
 }

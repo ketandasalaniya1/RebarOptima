@@ -29,10 +29,29 @@ export const bbsApi = {
   updateMember: (id, data) => apiRequest(`/bbs/members/${id}`, { method: 'PUT', body: data }),
   deleteMember: (id) => apiRequest(`/bbs/members/${id}`, { method: 'DELETE' }),
 
-  // Shape Library & Parametric Blocks (Phase 2A)
-  getShapes: () => apiRequest('/bbs/shapes'),
+  // Shape Library & Parametric Block Management (Phase 2G)
+  getShapes: (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.status) query.set('status', params.status);
+    if (params.category) query.set('category', params.category);
+    if (params.ownership) query.set('ownership', params.ownership);
+    if (params.search) query.set('search', params.search);
+    if (params.sort) query.set('sort', params.sort);
+    const qs = query.toString();
+    return apiRequest(`/bbs/shapes${qs ? `?${qs}` : ''}`);
+  },
+  getShapeById: (id) => apiRequest(`/bbs/shapes/${id}`),
   createShape: (data) => apiRequest('/bbs/shapes', { method: 'POST', body: data }),
   updateShape: (id, data) => apiRequest(`/bbs/shapes/${id}`, { method: 'PUT', body: data }),
+  duplicateShape: (id) => apiRequest(`/bbs/shapes/${id}/duplicate`, { method: 'POST' }),
+  createShapeVersion: (id, data) => apiRequest(`/bbs/shapes/${id}/version`, { method: 'POST', body: data }),
+  updateShapeStatus: (id, status) => apiRequest(`/bbs/shapes/${id}/status`, { method: 'PUT', body: { status } }),
+  archiveShape: (id) => apiRequest(`/bbs/shapes/${id}/archive`, { method: 'POST' }),
+  restoreShape: (id) => apiRequest(`/bbs/shapes/${id}/restore`, { method: 'POST' }),
   deleteShape: (id) => apiRequest(`/bbs/shapes/${id}`, { method: 'DELETE' }),
+
+  // Shape Instances (Rebar Usages on Structural Members)
+  getShapeInstances: (memberId) => apiRequest(`/bbs/shapes/instances/member/${memberId}`),
+  createShapeInstance: (data) => apiRequest('/bbs/shapes/instances', { method: 'POST', body: data })
 };
 

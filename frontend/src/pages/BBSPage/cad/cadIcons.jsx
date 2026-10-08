@@ -476,3 +476,121 @@ export function IconCadConstraintAngle({ size = 16, className = "" }) {
   );
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// 38-46. REBAR SPECIFIC CAD ICONS (PHASE 2E)
+// ══════════════════════════════════════════════════════════════════════════════
+
+// 38. REBAR STRAIGHT BAR
+export function IconCadRebarStraight({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className={className}>
+      <line x1="3" y1="12" x2="21" y2="12" stroke="#38bdf8" />
+      <circle cx="3" cy="12" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="21" cy="12" r="1.5" fill="#38bdf8" stroke="none" />
+    </svg>
+  );
+}
+
+// 39. REBAR L-BAR (Leg A + Bend + Leg B)
+export function IconCadRebarLBar({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M4 6 L16 6 Q19 6 19 9 L19 20" stroke="#38bdf8" />
+      <circle cx="4" cy="6" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="19" cy="20" r="1.5" fill="#38bdf8" stroke="none" />
+    </svg>
+  );
+}
+
+// 40. REBAR U-BAR (Leg A + Bend + Base + Bend + Leg C)
+export function IconCadRebarUBar({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M5 6 L5 16 Q5 19 8 19 L16 19 Q19 19 19 16 L19 6" stroke="#38bdf8" />
+      <circle cx="5" cy="6" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="19" cy="6" r="1.5" fill="#38bdf8" stroke="none" />
+    </svg>
+  );
+}
+
+// 41. REBAR CRANKED BAR (Main + Slope Crank + Offset)
+export function IconCadRebarCranked({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 8 L9 8 L15 16 L21 16" stroke="#38bdf8" />
+      <circle cx="3" cy="8" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="21" cy="16" r="1.5" fill="#38bdf8" stroke="none" />
+    </svg>
+  );
+}
+
+// 42. REBAR HOOK (Straight + Tangent Arc Return)
+export function IconCadRebarHook({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 16 L14 16 Q19 16 19 11 Q19 6 14 6 L10 6" stroke="#38bdf8" />
+      <circle cx="3" cy="16" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="10" cy="6" r="1.5" fill="#38bdf8" stroke="none" />
+    </svg>
+  );
+}
+
+// 43. REBAR BEND (Curved transition)
+export function IconCadRebarBend({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" className={className}>
+      <path d="M4 18 Q4 6 16 6 L20 6" stroke="#38bdf8" />
+      {/* Mandrel radius circle indicator */}
+      <circle cx="4" cy="6" r="5" stroke="#f59e0b" strokeWidth="1" strokeDasharray="1.5 1.5" />
+    </svg>
+  );
+}
+
+// 44. REBAR CLOSED STIRRUP (Rectangular link with dual 135° seismic hooks)
+export function IconCadRebarStirrup({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      {/* Outer rectangular loop */}
+      <rect x="4" y="5" width="15" height="15" rx="2" stroke="#38bdf8" />
+      {/* Hook 1 (135°) */}
+      <path d="M7 5 L5 8 L8 11" stroke="#38bdf8" strokeWidth="1.75" />
+      {/* Hook 2 (135°) */}
+      <path d="M4 7 L7 9 L10 6" stroke="#38bdf8" strokeWidth="1.75" />
+    </svg>
+  );
+}
+
+// 45. REBAR OPEN LINK (U-link with 90°/135° end hooks)
+export function IconCadRebarOpenLink({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M7 6 L4 6 L4 18 Q4 20 6 20 L18 20 Q20 20 20 18 L20 6 L17 6" stroke="#38bdf8" />
+    </svg>
+  );
+}
+
+// 46. CUSTOM REBAR PATH (Continuous poly-rebar spline)
+export function IconCadRebarCustom({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 18 L8 8 L14 15 L21 6" stroke="#38bdf8" />
+      <circle cx="3" cy="18" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="8" cy="8" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="14" cy="15" r="1.5" fill="#38bdf8" stroke="none" />
+      <circle cx="21" cy="6" r="1.5" fill="#38bdf8" stroke="none" />
+    </svg>
+  );
+}
+
+// 47. ENGINEERING CALCULATION & VALIDATION (Phase 2F)
+export function IconCadCalculation({ size = 18, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="4" y="2" width="16" height="20" rx="2" stroke="#38bdf8" />
+      <line x1="8" y1="6" x2="16" y2="6" stroke="#38bdf8" />
+      <line x1="16" y1="14" x2="16" y2="18" stroke="#22c55e" />
+      <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" stroke="#fbbf24" strokeWidth="2.5" />
+    </svg>
+  );
+}
+

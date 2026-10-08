@@ -144,14 +144,101 @@ export default function BBSPage() {
     }
   };
 
-  const handleDeleteShape = async (shapeId) => {
+  const handleDuplicateShape = async (shape) => {
     try {
-      await bbsApi.deleteShape(shapeId);
-      showToast('Shape deleted from library');
+      const id = shape._id || shape.id;
+      if (shape.isStandard || shape.ownership === 'STANDARD') {
+        // Standard template duplication -> create new custom shape
+        const duplicatePayload = {
+          name: `${shape.name} (Custom)`,
+          code: `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
+          shapeCode: `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
+          description: `Customized from standard ${shape.name}`,
+          category: shape.category || 'Custom',
+          ownership: 'CUSTOM',
+          status: 'DRAFT',
+          version: '1.0',
+          unit: shape.unit || 'mm',
+          geometry: shape.geometry || { objects: [] },
+          parameters: shape.parameters || [],
+          dimensions: shape.dimensions || [],
+          constraints: shape.constraints || [],
+          calculationRules: shape.calculationRules || { ruleSet: 'RULE_SET_CENTERLINE_EXACT' },
+          tags: [...(shape.tags || []), 'custom']
+        };
+        await bbsApi.createShape(duplicatePayload);
+        showToast(`Duplicated "${shape.name}" as new custom shape`);
+      } else {
+        await bbsApi.duplicateShape(id);
+        showToast(`Duplicated "${shape.name}" successfully`);
+      }
       await loadShapes();
     } catch (err) {
-      showToast(err.message || 'Error deleting shape', 'error');
+      showToast(err.message || 'Error duplicating shape', 'error');
     }
+  };
+
+  const handleNewVersionShape = async (shape, versionData) => {
+    try {
+      const id = shape._id || shape.id;
+      await bbsApi.createShapeVersion(id, versionData);
+      showToast(`Version ${versionData.newVersion} created for "${shape.name}"`);
+      await loadShapes();
+    } catch (err) {
+      showToast(err.message || 'Error creating shape version', 'error');
+    }
+  };
+
+  const handleStatusChangeShape = async (shape, newStatus) => {
+    try {
+      const id = shape._id || shape.id;
+      await bbsApi.updateShapeStatus(id, newStatus);
+      showToast(`Shape "${shape.name}" status updated to ${newStatus}`);
+      await loadShapes();
+    } catch (err) {
+      showToast(err.message || 'Error updating status', 'error');
+    }
+  };
+
+  const handleArchiveShape = async (shape) => {
+    try {
+      const id = shape._id || shape.id;
+      await bbsApi.archiveShape(id);
+      showToast(`Shape "${shape.name}" archived`);
+      await loadShapes();
+    } catch (err) {
+      showToast(err.message || 'Error archiving shape', 'error');
+    }
+  };
+
+  const handleRestoreShape = async (shape) => {
+    try {
+      const id = shape._id || shape.id;
+      await bbsApi.restoreShape(id);
+      showToast(`Shape "${shape.name}" restored to active library`);
+      await loadShapes();
+    } catch (err) {
+      showToast(err.message || 'Error restoring shape', 'error');
+    }
+  };
+
+  const handleDeleteShape = (shapeOrId) => {
+    let targetId = shapeOrId;
+    let shapeName = '';
+    if (typeof shapeOrId === 'object' && shapeOrId !== null) {
+      targetId = shapeOrId._id || shapeOrId.id;
+      shapeName = shapeOrId.name || '';
+    }
+    if (typeof targetId === 'object' && targetId !== null && targetId.toString) {
+      targetId = targetId.toString();
+    }
+
+    if (!targetId || targetId === 'undefined' || targetId === 'null') {
+      showToast('Invalid shape identifier', 'error');
+      return;
+    }
+
+    confirmDelete('shape', targetId, shapeName || 'this shape');
   };
 
 
@@ -553,6 +640,15 @@ export default function BBSPage() {
         setModalType(null);
         setMembers(members.filter(m => (m._id || m.id) !== id));
         setLevels(levels.map(l => (l._id || l.id) === selectedLevelId ? { ...l, memberCount: Math.max(0, (l.memberCount || 1) - 1) } : l));
+      } else if (type === 'shape') {
+        setCustomShapes(prev => prev.filter(s => {
+          const sid = (s._id || s.id || '').toString();
+          return sid !== String(id);
+        }));
+        await bbsApi.deleteShape(String(id));
+        showToast(`Shape "${name}" deleted from library`);
+        setModalType(null);
+        await loadShapes();
       }
     } catch (err) {
       showToast(err.message || 'Error executing delete', 'error');
@@ -628,16 +724,52 @@ export default function BBSPage() {
 
         <ShapeLibrary
           customShapes={customShapes}
-          onCreateNewShape={() => {
-            setEditingShape(null);
+          onCreateNewShape={(newShapeDef) => {
+            setEditingShape(newShapeDef || null);
             setActiveMainTab('cad');
           }}
           onOpenInCAD={(shape) => {
             setEditingShape(shape);
             setActiveMainTab('cad');
           }}
+          onDuplicateShape={handleDuplicateShape}
+          onNewVersionShape={handleNewVersionShape}
+          onStatusChangeShape={handleStatusChangeShape}
+          onArchiveShape={handleArchiveShape}
+          onRestoreShape={handleRestoreShape}
           onDeleteShape={handleDeleteShape}
         />
+
+        {/* MODAL: Delete Confirmation */}
+        {modalType === 'confirmDelete' && (
+          <div className="bbs-modal-backdrop" onClick={() => setModalType(null)}>
+            <div className="bbs-modal bbs-modal-sm" onClick={e => e.stopPropagation()}>
+              <div className="bbs-modal-header bbs-modal-header-danger">
+                <h3>Confirm Deletion</h3>
+                <button className="bbs-close-btn" onClick={() => setModalType(null)}><X size={20} /></button>
+              </div>
+              <div className="bbs-modal-body">
+                <div className="bbs-delete-warning">
+                  <AlertCircle size={28} className="bbs-danger-icon" />
+                  <div>
+                    <p>Are you sure you want to delete <strong>"{deleteTarget?.name}"</strong>?</p>
+                    <p className="bbs-danger-subtext">
+                      {deleteTarget?.type === 'shape' && 'This custom shape will be permanently removed from your library.'}
+                      {deleteTarget?.type === 'project' && 'This will remove all blocks, levels, and structural members contained in this project.'}
+                      {deleteTarget?.type === 'block' && 'This will remove all levels and structural members contained in this block.'}
+                      {deleteTarget?.type === 'level' && 'This will remove all structural members registered under this level.'}
+                      {deleteTarget?.type === 'member' && 'This structural member record will be removed.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bbs-modal-footer">
+                <button type="button" className="bbs-btn bbs-btn-secondary" onClick={() => setModalType(null)}>Cancel</button>
+                <button type="button" className="bbs-btn bbs-btn-danger" onClick={executeDelete}>Delete Permanently</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -897,8 +1029,9 @@ export default function BBSPage() {
                 <div className="bbs-delete-warning">
                   <AlertCircle size={28} className="bbs-danger-icon" />
                   <div>
-                    <p>Are you sure you want to delete <strong>{deleteTarget?.name}</strong>?</p>
+                    <p>Are you sure you want to delete <strong>"{deleteTarget?.name}"</strong>?</p>
                     <p className="bbs-danger-subtext">
+                      {deleteTarget?.type === 'shape' && 'This custom shape will be permanently removed from your library.'}
                       {deleteTarget?.type === 'project' && 'This will remove all blocks, levels, and structural members contained in this project.'}
                       {deleteTarget?.type === 'block' && 'This will remove all levels and structural members contained in this block.'}
                       {deleteTarget?.type === 'level' && 'This will remove all structural members registered under this level.'}
@@ -1687,8 +1820,9 @@ export default function BBSPage() {
               <div className="bbs-delete-warning">
                 <AlertCircle size={28} className="bbs-danger-icon" />
                 <div>
-                  <p>Are you sure you want to delete <strong>{deleteTarget?.name}</strong>?</p>
+                  <p>Are you sure you want to delete <strong>"{deleteTarget?.name}"</strong>?</p>
                   <p className="bbs-danger-subtext">
+                    {deleteTarget?.type === 'shape' && 'This custom shape will be permanently removed from your library.'}
                     {deleteTarget?.type === 'project' && 'This will remove all blocks, levels, and structural members contained in this project.'}
                     {deleteTarget?.type === 'block' && 'This will remove all levels and structural members contained in this block.'}
                     {deleteTarget?.type === 'level' && 'This will remove all structural members registered under this level.'}

@@ -1,4 +1,5 @@
 import { worldToScreen } from './viewport';
+import { renderRebarObject, hitTestRebar } from './rebarEngine';
 
 /**
  * RebarOptima 2D Geometry Engine
@@ -205,6 +206,9 @@ export function hitTest(obj, rawWorld, zoom = 1.0) {
       return distanceToSegment(wx, wy, p1.x, p1.y, p2.x, p2.y) <= toleranceMm * 1.5;
     }
 
+    case 'rebar':
+      return hitTestRebar(obj, wx, wy, toleranceMm);
+
     default:
       return false;
   }
@@ -357,6 +361,11 @@ export function renderObject(ctx, obj, viewport, isSelected = false) {
       ctx.fillText(`${dist.toFixed(1)} mm`, midX, midY - 6);
 
       ctx.restore();
+      break;
+    }
+
+    case 'rebar': {
+      renderRebarObject(ctx, obj, viewport, isSelected, true, true);
       break;
     }
   }

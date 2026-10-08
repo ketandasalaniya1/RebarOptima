@@ -13,7 +13,8 @@ import {
   AlertTriangle,
   Sparkles,
   Layers,
-  BarChart3
+  BarChart3,
+  RefreshCw
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import './OverviewPage.css'
@@ -22,23 +23,67 @@ export default function OverviewPage({ onNavigate }) {
   const user = useSelector((state) => state.auth.user)
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [lastSynced, setLastSynced] = useState(null)
+  const [relativeTime, setRelativeTime] = useState('just now')
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    async function fetchStats() {
-      try {
+  const fetchStats = async (isManual = false) => {
+    try {
+      if (isManual) {
+        setIsSyncing(true)
+      } else if (!stats) {
         setLoading(true)
-        setError('')
-        const data = await batchesApi.getStats()
-        setStats(data)
-      } catch (err) {
-        setError(err.message || 'Failed to fetch overview statistics.')
-      } finally {
-        setLoading(false)
+      }
+      setError('')
+      const data = await batchesApi.getStats()
+      setStats(data)
+      setLastSynced(Date.now())
+      setRelativeTime('just now')
+    } catch (err) {
+      setError(err.message || 'Failed to fetch overview statistics.')
+    } finally {
+      setLoading(false)
+      if (isManual) {
+        setTimeout(() => setIsSyncing(false), 450)
       }
     }
-    fetchStats()
+  }
+
+  useEffect(() => {
+    fetchStats(false)
+
+    // Background auto-refresh every 30 seconds
+    const autoRefreshTimer = setInterval(() => {
+      fetchStats(false)
+    }, 30000)
+
+    return () => clearInterval(autoRefreshTimer)
   }, [])
+
+  // Relative time ticker effect (updates every 3 seconds)
+  useEffect(() => {
+    if (!lastSynced) return
+
+    const updateRelativeTime = () => {
+      const diffSec = Math.floor((Date.now() - lastSynced) / 1000)
+      if (diffSec < 8) {
+        setRelativeTime('just now')
+      } else if (diffSec < 60) {
+        setRelativeTime(`${diffSec}s ago`)
+      } else if (diffSec < 3600) {
+        const mins = Math.floor(diffSec / 60)
+        setRelativeTime(`${mins}m ago`)
+      } else {
+        const hours = Math.floor(diffSec / 3600)
+        setRelativeTime(`${hours}h ago`)
+      }
+    }
+
+    updateRelativeTime()
+    const ticker = setInterval(updateRelativeTime, 3000)
+    return () => clearInterval(ticker)
+  }, [lastSynced])
 
   // Currency & count integer formatter: e.g. 33,00,000 or 0
   const formatCurrency = (num) => {
@@ -116,9 +161,18 @@ export default function OverviewPage({ onNavigate }) {
           <div className="header-title-group">
             <div className="title-row">
               <h1 className="overview-title">Dashboard Overview</h1>
-              <span className="live-status-pill">
-                <span className="pulse-dot"></span> Live Sync
-              </span>
+              <button
+                type="button"
+                className={`live-status-pill interactive ${isSyncing ? 'syncing' : ''}`}
+                onClick={() => !isSyncing && fetchStats(true)}
+                title={`Last updated at ${lastSynced ? new Date(lastSynced).toLocaleTimeString() : 'N/A'}. Click to sync now.`}
+              >
+                <span className="pulse-dot"></span>
+                <span className="live-sync-text">
+                  {isSyncing ? 'Syncing...' : `Synced ${relativeTime}`}
+                </span>
+                <RefreshCw size={11} className={`sync-icon ${isSyncing ? 'spin-icon' : ''}`} />
+              </button>
             </div>
             <p className="overview-subtitle">
               Real-time material analytics for <span className="highlight-company">{user?.companyName || 'Enterprise'}</span>

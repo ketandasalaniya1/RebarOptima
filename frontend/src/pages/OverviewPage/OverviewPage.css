@@ -108,6 +108,61 @@
   letter-spacing: 0.2px;
 }
 
+.live-status-pill.interactive {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(16, 185, 129, 0.09);
+  outline: none;
+  font-family: inherit;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.live-status-pill.interactive:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.25);
+}
+
+.live-status-pill.interactive:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.live-status-pill.interactive.syncing {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+  cursor: wait;
+}
+
+.live-sync-text {
+  white-space: nowrap;
+}
+
+.sync-icon {
+  color: #34d399;
+  transition: transform 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.live-status-pill.interactive:hover .sync-icon {
+  color: #6ee7b7;
+}
+
+.spin-icon {
+  animation: syncSpin 0.75s linear infinite;
+}
+
+@keyframes syncSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .pulse-dot {
   width: 6px;
   height: 6px;

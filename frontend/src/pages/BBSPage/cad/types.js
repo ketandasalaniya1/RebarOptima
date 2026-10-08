@@ -32,8 +32,48 @@ export const CAD_TOOLS = {
   DIM_ALIGNED: 'dim_aligned',
   DIM_ANGULAR: 'dim_angular',
   DIM_RADIUS: 'dim_radius',
-  DIM_DIAMETER: 'dim_diameter'
+  DIM_DIAMETER: 'dim_diameter',
+
+  // Rebar Tools (Phase 2E)
+  REBAR_STRAIGHT: 'rebar_straight',
+  REBAR_L_BAR: 'rebar_l_bar',
+  REBAR_U_BAR: 'rebar_u_bar',
+  REBAR_CRANKED: 'rebar_cranked',
+  REBAR_HOOK: 'rebar_hook',
+  REBAR_BEND: 'rebar_bend',
+  REBAR_STIRRUP: 'rebar_stirrup',
+  REBAR_OPEN_LINK: 'rebar_open_link',
+  REBAR_CUSTOM: 'rebar_custom'
 };
+
+/**
+ * Rebar Shape Type Constants (Phase 2E)
+ */
+export const REBAR_SHAPE_TYPES = {
+  STRAIGHT: 'straight',
+  L_BAR: 'l_bar',
+  U_BAR: 'u_bar',
+  CRANKED: 'cranked',
+  HOOK: 'hook',
+  BEND: 'bend',
+  CLOSED_STIRRUP: 'closed_stirrup',
+  OPEN_LINK: 'open_link',
+  CUSTOM_REBAR: 'custom_rebar'
+};
+
+/**
+ * Rebar Hook Angle Types (Phase 2E)
+ */
+export const REBAR_HOOK_TYPES = {
+  HOOK_90: 90,
+  HOOK_135: 135,
+  HOOK_180: 180
+};
+
+/**
+ * Standard Rebar Bar Diameters (mm)
+ */
+export const STANDARD_BAR_DIAMETERS = [6, 8, 10, 12, 16, 20, 25, 32, 40];
 
 /**
  * Dimension Types Constants
@@ -56,12 +96,13 @@ export const PARAMETER_TYPES = {
 };
 
 /**
- * Parameter Categories Constants
+ * Parameter Categories Constants (Phase 2E Extended)
  */
 export const PARAMETER_CATEGORIES = {
   GEOMETRY: 'Geometry',
   REBAR: 'Rebar',
   BENDING: 'Bending',
+  HOOK: 'Hook',
   CALCULATION: 'Calculation'
 };
 

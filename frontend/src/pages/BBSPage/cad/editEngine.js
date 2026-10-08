@@ -70,6 +70,27 @@ export function moveObject(obj, dx, dy) {
         });
       }
       break;
+
+    case 'rebar':
+      if (clone.origin) { clone.origin.x += dx; clone.origin.y += dy; }
+      if (clone.centerline?.points) {
+        clone.centerline.points.forEach(p => { p.x += dx; p.y += dy; });
+      }
+      if (clone.centerline?.segments) {
+        clone.centerline.segments.forEach(seg => {
+          seg.start.x += dx; seg.start.y += dy;
+          seg.end.x += dx; seg.end.y += dy;
+        });
+      }
+      if (clone.centerline?.bends) {
+        clone.centerline.bends.forEach(b => {
+          if (b.center) { b.center.x += dx; b.center.y += dy; }
+          if (b.vertex) { b.vertex.x += dx; b.vertex.y += dy; }
+          if (b.t1) { b.t1.x += dx; b.t1.y += dy; }
+          if (b.t2) { b.t2.x += dx; b.t2.y += dy; }
+        });
+      }
+      break;
   }
 
   return clone;
@@ -121,10 +142,12 @@ export function rotateObject(obj, center, angleRad) {
       const c2 = { x: clone.x + clone.width, y: clone.y };
       const c3 = { x: clone.x + clone.width, y: clone.y + clone.height };
       const c4 = { x: clone.x, y: clone.y + clone.height };
+
       const r1 = rotatePoint(c1, center, angleRad);
       const r2 = rotatePoint(c2, center, angleRad);
       const r3 = rotatePoint(c3, center, angleRad);
       const r4 = rotatePoint(c4, center, angleRad);
+
       return {
         id: clone.id,
         type: 'polyline',
@@ -149,6 +172,29 @@ export function rotateObject(obj, center, angleRad) {
     case 'polyline':
       if (clone.points) {
         clone.points = clone.points.map(p => rotatePoint(p, center, angleRad));
+      }
+      break;
+
+    case 'rebar':
+      if (clone.origin) clone.origin = rotatePoint(clone.origin, center, angleRad);
+      if (clone.centerline?.points) {
+        clone.centerline.points = clone.centerline.points.map(p => rotatePoint(p, center, angleRad));
+      }
+      if (clone.centerline?.segments) {
+        clone.centerline.segments.forEach(seg => {
+          seg.start = rotatePoint(seg.start, center, angleRad);
+          seg.end = rotatePoint(seg.end, center, angleRad);
+        });
+      }
+      if (clone.centerline?.bends) {
+        clone.centerline.bends.forEach(b => {
+          if (b.center) b.center = rotatePoint(b.center, center, angleRad);
+          if (b.vertex) b.vertex = rotatePoint(b.vertex, center, angleRad);
+          if (b.t1) b.t1 = rotatePoint(b.t1, center, angleRad);
+          if (b.t2) b.t2 = rotatePoint(b.t2, center, angleRad);
+          b.startAngle += angleRad;
+          b.endAngle += angleRad;
+        });
       }
       break;
   }
@@ -246,6 +292,28 @@ export function mirrorObject(obj, p1, p2) {
     case 'polyline':
       if (clone.points) {
         clone.points = clone.points.map(p => mirrorPoint(p, p1, p2));
+      }
+      break;
+
+    case 'rebar':
+      if (clone.origin) clone.origin = mirrorPoint(clone.origin, p1, p2);
+      if (clone.centerline?.points) {
+        clone.centerline.points = clone.centerline.points.map(p => mirrorPoint(p, p1, p2));
+      }
+      if (clone.centerline?.segments) {
+        clone.centerline.segments.forEach(seg => {
+          seg.start = mirrorPoint(seg.start, p1, p2);
+          seg.end = mirrorPoint(seg.end, p1, p2);
+        });
+      }
+      if (clone.centerline?.bends) {
+        clone.centerline.bends.forEach(b => {
+          if (b.center) b.center = mirrorPoint(b.center, p1, p2);
+          if (b.vertex) b.vertex = mirrorPoint(b.vertex, p1, p2);
+          if (b.t1) b.t1 = mirrorPoint(b.t1, p1, p2);
+          if (b.t2) b.t2 = mirrorPoint(b.t2, p1, p2);
+          b.counterClockwise = !b.counterClockwise;
+        });
       }
       break;
   }

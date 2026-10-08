@@ -1,4 +1,5 @@
 import { PARAMETER_TYPES, PARAMETER_CATEGORIES } from './types';
+import { updateRebarGeometry } from './rebarEngine';
 
 /**
  * RebarOptima Parameter Engine (Phase 2C)
@@ -132,6 +133,12 @@ export function applyParametersToGeometry(objects, parameters) {
           }
         }
         break;
+
+      case 'rebar': {
+        const recomputed = updateRebarGeometry(targetObj, { [prop]: val });
+        Object.assign(targetObj, recomputed);
+        break;
+      }
     }
   });
 
@@ -166,6 +173,10 @@ export function syncGeometryToParameters(updatedObject, parameters) {
       const p2 = updatedObject.p2 || { x: updatedObject.x2, y: updatedObject.y2 };
       if (prop === 'length') newVal = Math.hypot(p2.x - p1.x, p2.y - p1.y);
       else if (prop === 'angle') newVal = (Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI + 360) % 360;
+    } else if (updatedObject.type === 'rebar') {
+      if (updatedObject.parameters && updatedObject.parameters[prop] !== undefined) {
+        newVal = updatedObject.parameters[prop];
+      }
     }
 
     if (newVal !== param.value) {

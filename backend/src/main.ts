@@ -58,6 +58,8 @@ function matchesQuery(doc: any, query: any): boolean {
       }
     } else if (docVal !== undefined && val !== undefined) {
       if (String(docVal) !== String(val)) return false;
+    } else if (docVal === undefined && val !== undefined) {
+      return false;
     }
   }
   return true;

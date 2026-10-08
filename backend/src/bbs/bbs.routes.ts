@@ -662,42 +662,160 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
   });
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 5. BBS SHAPE LIBRARY & PARAMETRIC BLOCKS (PHASE 2A)
+  // 5. BBS SHAPE LIBRARY & PARAMETRIC BLOCK MANAGEMENT (PHASE 2G)
   // ════════════════════════════════════════════════════════════════════════════
 
-  // GET all custom shapes for company
+  // GET shapes with filtering, search, sort, and status lifecycle
   router.get('/shapes', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
+      const { status, category, ownership, search, sort } = req.query;
 
-      const shapes = await db.collection('bbs_shapes').find({ companyId }).sort({ updatedAt: -1 }).toArray();
+      const query: any = { companyId };
+
+      // Status filter (by default show all except ARCHIVED unless specifically requested)
+      if (status && status !== 'ALL' && status !== 'all') {
+        query.status = status.toUpperCase();
+      } else if (!status) {
+        query.status = { $ne: 'ARCHIVED' };
+      }
+
+      // Category filter
+      if (category && category !== 'All' && category !== 'ALL') {
+        query.category = category;
+      }
+
+      // Ownership filter (STANDARD / CUSTOM)
+      if (ownership && ownership !== 'ALL' && ownership !== 'all') {
+        query.ownership = ownership.toUpperCase();
+      }
+
+      // Search across name, code, description, tags
+      if (search && typeof search === 'string' && search.trim() !== '') {
+        const s = search.trim();
+        query.$or = [
+          { name: { $regex: s, $options: 'i' } },
+          { code: { $regex: s, $options: 'i' } },
+          { shapeCode: { $regex: s, $options: 'i' } },
+          { description: { $regex: s, $options: 'i' } },
+          { tags: { $in: [new RegExp(s, 'i')] } }
+        ];
+      }
+
+      let sortOptions: any = { updatedAt: -1 };
+      if (sort === 'name') sortOptions = { name: 1 };
+      else if (sort === 'code') sortOptions = { code: 1, shapeCode: 1 };
+      else if (sort === 'createdAt') sortOptions = { createdAt: -1 };
+      else if (sort === 'usage') sortOptions = { 'metadata.usageCount': -1, updatedAt: -1 };
+
+      const shapes = await db.collection('bbs_shapes').find(query).sort(sortOptions).toArray();
       res.json(shapes);
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error fetching shapes' });
     }
   });
 
-  // POST create / save a new shape
+  // GET single shape details by ID
+  router.get('/shapes/:id', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      const shape = await db.collection('bbs_shapes').findOne(idFilter);
+      if (!shape) {
+        return res.status(404).json({ message: 'Shape not found' });
+      }
+      res.json(shape);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching shape' });
+    }
+  });
+
+  // POST create a new shape definition
   router.post('/shapes', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
-      const { name, code, category, unit, geometry } = req.body;
+      const {
+        name,
+        code,
+        shapeCode,
+        description,
+        category,
+        subCategory,
+        ownership,
+        status,
+        version,
+        unit,
+        tags,
+        geometry,
+        parameters,
+        dimensions,
+        constraints,
+        calculationRules,
+        validationRules,
+        metadata
+      } = req.body;
 
       if (!name) {
         return res.status(400).json({ message: 'Shape name is required' });
       }
 
+      const initialVersion = version || '1.0';
+      const versionId = `v_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const creator = req.user?.email || req.user?.name || 'User';
+
+      const initialVersionSnapshot = {
+        versionId,
+        version: initialVersion,
+        status: (status || 'DRAFT').toUpperCase(),
+        createdAt: new Date(),
+        createdBy: creator,
+        changeSummary: 'Initial shape definition creation',
+        geometry: geometry || { objects: [] },
+        parameters: parameters || [],
+        dimensions: dimensions || [],
+        constraints: constraints || [],
+        calculationRules: calculationRules || { ruleSet: 'RULE_SET_CENTERLINE_EXACT' },
+        validationRules: validationRules || {}
+      };
+
       const newShape = {
         companyId,
         name: name.trim(),
-        code: (code || 'CUSTOM').trim().toUpperCase(),
-        category: category || 'Custom Drafts',
+        code: (code || shapeCode || `SH-${Math.floor(100 + Math.random() * 900)}`).trim().toUpperCase(),
+        shapeCode: (code || shapeCode || `SH-${Math.floor(100 + Math.random() * 900)}`).trim().toUpperCase(),
+        description: description || '',
+        category: category || 'Custom',
+        subCategory: subCategory || '',
+        ownership: (ownership || 'CUSTOM').toUpperCase(),
+        status: (status || 'DRAFT').toUpperCase(),
+        version: initialVersion,
+        versionId,
+        tags: Array.isArray(tags) ? tags : [],
         unit: unit || 'mm',
         geometry: geometry || { objects: [] },
+        parameters: parameters || [],
+        dimensions: dimensions || [],
+        constraints: constraints || [],
+        calculationRules: calculationRules || { ruleSet: 'RULE_SET_CENTERLINE_EXACT' },
+        validationRules: validationRules || {},
+        versions: [initialVersionSnapshot],
+        metadata: {
+          ...(metadata || {}),
+          unit: unit || 'mm',
+          usageCount: 0,
+          favorite: false,
+          author: creator
+        },
         createdAt: new Date(),
-        updatedAt: new Date()
+        createdBy: creator,
+        updatedAt: new Date(),
+        updatedBy: creator
       };
 
       const result = await db.collection('bbs_shapes').insertOne(newShape);
@@ -707,47 +825,437 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
     }
   });
 
-  // PUT update existing shape
+  // PUT update existing shape definition
   router.put('/shapes/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const id = req.params.id;
-      const { name, code, category, unit, geometry } = req.body;
+      const user = req.user?.email || req.user?.name || 'User';
 
-      const updateData: any = { updatedAt: new Date() };
+      const {
+        name,
+        code,
+        shapeCode,
+        description,
+        category,
+        subCategory,
+        ownership,
+        status,
+        version,
+        unit,
+        tags,
+        geometry,
+        parameters,
+        dimensions,
+        constraints,
+        calculationRules,
+        validationRules,
+        metadata
+      } = req.body;
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      const existing = await db.collection('bbs_shapes').findOne(idFilter);
+      if (!existing) {
+        return res.status(404).json({ message: 'Shape not found' });
+      }
+
+      const updateData: any = {
+        updatedAt: new Date(),
+        updatedBy: user
+      };
+
       if (name !== undefined) updateData.name = name.trim();
-      if (code !== undefined) updateData.code = code.trim().toUpperCase();
+      if (code !== undefined || shapeCode !== undefined) {
+        updateData.code = (code || shapeCode).trim().toUpperCase();
+        updateData.shapeCode = (code || shapeCode).trim().toUpperCase();
+      }
+      if (description !== undefined) updateData.description = description;
       if (category !== undefined) updateData.category = category;
+      if (subCategory !== undefined) updateData.subCategory = subCategory;
+      if (ownership !== undefined) updateData.ownership = ownership.toUpperCase();
+      if (status !== undefined) updateData.status = status.toUpperCase();
+      if (version !== undefined) updateData.version = version;
       if (unit !== undefined) updateData.unit = unit;
+      if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : [];
       if (geometry !== undefined) updateData.geometry = geometry;
+      if (parameters !== undefined) updateData.parameters = parameters;
+      if (dimensions !== undefined) updateData.dimensions = dimensions;
+      if (constraints !== undefined) updateData.constraints = constraints;
+      if (calculationRules !== undefined) updateData.calculationRules = calculationRules;
+      if (validationRules !== undefined) updateData.validationRules = validationRules;
+      if (metadata !== undefined) updateData.metadata = { ...(existing.metadata || {}), ...metadata };
 
-      await db.collection('bbs_shapes').updateOne(
-        { $or: [{ _id: new ObjectId(id) }, { _id: id }] },
-        { $set: updateData }
-      );
+      // Update current version snapshot in the versions array
+      const currentVersionStr = existing.version || '1.0';
+      const versions = Array.isArray(existing.versions) ? [...existing.versions] : [];
+      const currentVersionIndex = versions.findIndex(v => v.version === currentVersionStr);
 
-      const updated = await db.collection('bbs_shapes').findOne({
-        $or: [{ _id: new ObjectId(id) }, { _id: id }]
-      });
+      const updatedSnapshot = {
+        versionId: existing.versionId || `v_${Date.now()}`,
+        version: currentVersionStr,
+        status: updateData.status || existing.status || 'DRAFT',
+        createdAt: existing.createdAt || new Date(),
+        createdBy: existing.createdBy || user,
+        updatedAt: new Date(),
+        updatedBy: user,
+        changeSummary: versions[currentVersionIndex]?.changeSummary || 'Updated active draft',
+        geometry: updateData.geometry || existing.geometry || { objects: [] },
+        parameters: updateData.parameters || existing.parameters || [],
+        dimensions: updateData.dimensions || existing.dimensions || [],
+        constraints: updateData.constraints || existing.constraints || [],
+        calculationRules: updateData.calculationRules || existing.calculationRules || {},
+        validationRules: updateData.validationRules || existing.validationRules || {}
+      };
+
+      if (currentVersionIndex >= 0) {
+        versions[currentVersionIndex] = updatedSnapshot;
+      } else {
+        versions.push(updatedSnapshot);
+      }
+      updateData.versions = versions;
+
+      await db.collection('bbs_shapes').updateOne(idFilter, { $set: updateData });
+      const updated = await db.collection('bbs_shapes').findOne(idFilter);
       res.json(updated);
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error updating shape' });
     }
   });
 
-  // DELETE a custom shape
+  // POST create a new version of an existing shape (Shape Versioning)
+  router.post('/shapes/:id/version', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const user = req.user?.email || req.user?.name || 'User';
+      const { bumpType, newVersion, changeSummary, geometry, parameters, dimensions, constraints } = req.body;
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      const existing = await db.collection('bbs_shapes').findOne(idFilter);
+      if (!existing) {
+        return res.status(404).json({ message: 'Shape not found' });
+      }
+
+      // Calculate new version string
+      let nextVersionStr = newVersion;
+      if (!nextVersionStr) {
+        const curVer = parseFloat(existing.version || '1.0') || 1.0;
+        if (bumpType === 'major') {
+          nextVersionStr = `${Math.floor(curVer) + 1}.0`;
+        } else {
+          // minor
+          nextVersionStr = (curVer + 0.1).toFixed(1);
+        }
+      }
+
+      const versionId = `v_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const newVersionSnapshot = {
+        versionId,
+        version: nextVersionStr,
+        status: 'DRAFT',
+        createdAt: new Date(),
+        createdBy: user,
+        changeSummary: changeSummary || `Version ${nextVersionStr} created from ${existing.version}`,
+        geometry: geometry || existing.geometry || { objects: [] },
+        parameters: parameters || existing.parameters || [],
+        dimensions: dimensions || existing.dimensions || [],
+        constraints: constraints || existing.constraints || [],
+        calculationRules: existing.calculationRules || {},
+        validationRules: existing.validationRules || {}
+      };
+
+      const versions = Array.isArray(existing.versions) ? [...existing.versions] : [];
+      // Mark previous version as DEPRECATED if it was active
+      const updatedVersions = versions.map(v => {
+        if (v.version === existing.version && v.status === 'ACTIVE') {
+          return { ...v, status: 'DEPRECATED' };
+        }
+        return v;
+      });
+      updatedVersions.push(newVersionSnapshot);
+
+      const updateData = {
+        version: nextVersionStr,
+        versionId,
+        status: 'DRAFT',
+        geometry: newVersionSnapshot.geometry,
+        parameters: newVersionSnapshot.parameters,
+        dimensions: newVersionSnapshot.dimensions,
+        constraints: newVersionSnapshot.constraints,
+        versions: updatedVersions,
+        updatedAt: new Date(),
+        updatedBy: user
+      };
+
+      await db.collection('bbs_shapes').updateOne(idFilter, { $set: updateData });
+      const updated = await db.collection('bbs_shapes').findOne(idFilter);
+      res.json({ success: true, message: `Version ${nextVersionStr} created successfully`, shape: updated });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error creating shape version' });
+    }
+  });
+
+  // POST duplicate shape to a new custom shape definition
+  router.post('/shapes/:id/duplicate', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const companyId = await resolveCompanyId(req, db);
+      const user = req.user?.email || req.user?.name || 'User';
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      const existing = await db.collection('bbs_shapes').findOne(idFilter);
+      if (!existing) {
+        return res.status(404).json({ message: 'Source shape not found' });
+      }
+
+      const newShapeCode = `CUST-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newVersionId = `v_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
+      const duplicatedShape = {
+        companyId,
+        name: `${existing.name} (Copy)`,
+        code: newShapeCode,
+        shapeCode: newShapeCode,
+        description: `Duplicated from ${existing.name} (${existing.code || existing.shapeCode})`,
+        category: existing.category || 'Custom',
+        subCategory: existing.subCategory || '',
+        ownership: 'CUSTOM',
+        status: 'DRAFT',
+        version: '1.0',
+        versionId: newVersionId,
+        tags: Array.isArray(existing.tags) ? [...existing.tags, 'duplicate'] : ['duplicate'],
+        unit: existing.unit || 'mm',
+        geometry: JSON.parse(JSON.stringify(existing.geometry || { objects: [] })),
+        parameters: JSON.parse(JSON.stringify(existing.parameters || [])),
+        dimensions: JSON.parse(JSON.stringify(existing.dimensions || [])),
+        constraints: JSON.parse(JSON.stringify(existing.constraints || [])),
+        calculationRules: JSON.parse(JSON.stringify(existing.calculationRules || {})),
+        validationRules: JSON.parse(JSON.stringify(existing.validationRules || {})),
+        versions: [
+          {
+            versionId: newVersionId,
+            version: '1.0',
+            status: 'DRAFT',
+            createdAt: new Date(),
+            createdBy: user,
+            changeSummary: `Initial duplicated copy from ${existing.code || existing.name}`,
+            geometry: JSON.parse(JSON.stringify(existing.geometry || { objects: [] })),
+            parameters: JSON.parse(JSON.stringify(existing.parameters || [])),
+            dimensions: JSON.parse(JSON.stringify(existing.dimensions || [])),
+            constraints: JSON.parse(JSON.stringify(existing.constraints || []))
+          }
+        ],
+        metadata: {
+          unit: existing.unit || 'mm',
+          usageCount: 0,
+          favorite: false,
+          sourceShapeId: String(existing._id || existing.id)
+        },
+        createdAt: new Date(),
+        createdBy: user,
+        updatedAt: new Date(),
+        updatedBy: user
+      };
+
+      const result = await db.collection('bbs_shapes').insertOne(duplicatedShape);
+      res.status(201).json({ ...duplicatedShape, _id: result.insertedId });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error duplicating shape' });
+    }
+  });
+
+  // PUT update shape lifecycle status (DRAFT | ACTIVE | DEPRECATED | ARCHIVED)
+  router.put('/shapes/:id/status', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const user = req.user?.email || req.user?.name || 'User';
+      const { status } = req.body;
+
+      if (!status || !['DRAFT', 'ACTIVE', 'DEPRECATED', 'ARCHIVED'].includes(status.toUpperCase())) {
+        return res.status(400).json({ message: 'Valid status required: DRAFT, ACTIVE, DEPRECATED, or ARCHIVED' });
+      }
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      const existing = await db.collection('bbs_shapes').findOne(idFilter);
+      if (!existing) {
+        return res.status(404).json({ message: 'Shape not found' });
+      }
+
+      const newStatus = status.toUpperCase();
+      const versions = Array.isArray(existing.versions) ? [...existing.versions] : [];
+      const currentVersionIndex = versions.findIndex(v => v.version === existing.version);
+      if (currentVersionIndex >= 0) {
+        versions[currentVersionIndex].status = newStatus;
+      }
+
+      await db.collection('bbs_shapes').updateOne(
+        idFilter,
+        {
+          $set: {
+            status: newStatus,
+            versions,
+            updatedAt: new Date(),
+            updatedBy: user
+          }
+        }
+      );
+
+      const updated = await db.collection('bbs_shapes').findOne(idFilter);
+      res.json({ success: true, status: newStatus, shape: updated });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error updating shape status' });
+    }
+  });
+
+  // POST archive shape (safe soft-archive)
+  router.post('/shapes/:id/archive', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const user = req.user?.email || req.user?.name || 'User';
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      await db.collection('bbs_shapes').updateOne(
+        idFilter,
+        { $set: { status: 'ARCHIVED', updatedAt: new Date(), updatedBy: user } }
+      );
+
+      res.json({ success: true, message: 'Shape archived' });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error archiving shape' });
+    }
+  });
+
+  // POST restore shape from archive
+  router.post('/shapes/:id/restore', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const id = req.params.id;
+      const user = req.user?.email || req.user?.name || 'User';
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      await db.collection('bbs_shapes').updateOne(
+        idFilter,
+        { $set: { status: 'ACTIVE', updatedAt: new Date(), updatedBy: user } }
+      );
+
+      res.json({ success: true, message: 'Shape restored to active library' });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error restoring shape' });
+    }
+  });
+
+  // DELETE a custom shape (Safe Delete Policy: preferred for drafts/unreferenced)
   router.delete('/shapes/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const id = req.params.id;
 
-      await db.collection('bbs_shapes').deleteMany({
-        $or: [{ _id: new ObjectId(id) }, { _id: id }]
-      });
+      if (!id || id === 'undefined' || id === 'null') {
+        return res.status(400).json({ message: 'Valid Shape ID is required' });
+      }
+
+      const idFilter = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { _id: id }, { id: id }] }
+        : { $or: [{ _id: id }, { id: id }] };
+
+      await db.collection('bbs_shapes').deleteMany(idFilter);
 
       res.json({ success: true, message: 'Shape deleted' });
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error deleting shape' });
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // 6. BBS SHAPE INSTANCES (REBAR USAGES ON STRUCTURAL MEMBERS)
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // GET instances for a member
+  router.get('/shapes/instances/member/:memberId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const { memberId } = req.params;
+      const instances = await db.collection('bbs_shape_instances').find({ memberId }).toArray();
+      res.json(instances);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching shape instances' });
+    }
+  });
+
+  // POST create a shape instance (Independent instance with parameter overrides & frozen calculation)
+  router.post('/shapes/instances', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const {
+        shapeId,
+        shapeVersionId,
+        shapeVersion,
+        memberId,
+        projectId,
+        blockId,
+        levelId,
+        label,
+        barMark,
+        barDiameter,
+        parameterValues,
+        calculationSnapshot
+      } = req.body;
+
+      if (!shapeId) {
+        return res.status(400).json({ message: 'shapeId is required' });
+      }
+
+      const newInstance = {
+        companyId,
+        shapeId,
+        shapeVersionId: shapeVersionId || 'v1.0',
+        shapeVersion: shapeVersion || '1.0',
+        memberId: memberId || null,
+        projectId: projectId || null,
+        blockId: blockId || null,
+        levelId: levelId || null,
+        label: label || 'Rebar',
+        barMark: barMark || '',
+        barDiameter: Number(barDiameter) || 16,
+        parameterValues: parameterValues || {},
+        calculationSnapshot: calculationSnapshot || {},
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      const result = await db.collection('bbs_shape_instances').insertOne(newInstance);
+
+      // Increment usageCount in master shape definition metadata
+      const idFilter = ObjectId.isValid(shapeId)
+        ? { $or: [{ _id: new ObjectId(shapeId) }, { _id: shapeId }, { id: shapeId }] }
+        : { $or: [{ _id: shapeId }, { id: shapeId }] };
+      await db.collection('bbs_shapes').updateOne(idFilter, { $inc: { 'metadata.usageCount': 1 } });
+
+      res.status(201).json({ ...newInstance, _id: result.insertedId });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error creating shape instance' });
     }
   });
 

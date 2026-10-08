@@ -16,6 +16,17 @@ import {
   renderObject
 } from './geometry';
 import {
+  createStraightBar,
+  createLBar,
+  createUBar,
+  createCrankedBar,
+  createClosedStirrup,
+  createOpenLink,
+  createHookObject,
+  createBendObject,
+  createCustomRebarPath
+} from './rebarEngine';
+import {
   renderDimension,
   createLinearDimension,
   createRadiusDimension,
@@ -351,7 +362,7 @@ export default function CADCanvas({
       const dist = Math.hypot(currentPoint.x - points[0].x, currentPoint.y - points[0].y);
       const angle = (Math.atan2(currentPoint.y - points[0].y, currentPoint.x - points[0].x) * 180 / Math.PI + 360) % 360;
       drawBadge(ctx, `${dist.toFixed(1)} mm  ∠ ${angle.toFixed(1)}°`, (p1.x + p2.x) / 2, (p1.y + p2.y) / 2 - 12);
-    } else if (tool === CAD_TOOLS.POLYLINE && points.length > 0) {
+    } else if ((tool === CAD_TOOLS.POLYLINE || tool === CAD_TOOLS.REBAR_CUSTOM) && points.length > 0) {
       ctx.beginPath();
       const first = worldToScreen(points[0].x, points[0].y, vp);
       ctx.moveTo(first.x, first.y);
@@ -361,12 +372,16 @@ export default function CADCanvas({
       }
       const cur = worldToScreen(currentPoint.x, currentPoint.y, vp);
       ctx.lineTo(cur.x, cur.y);
+      if (tool === CAD_TOOLS.REBAR_CUSTOM) {
+        ctx.lineWidth = Math.max(3, 16 * vp.zoom);
+        ctx.strokeStyle = '#38bdf8';
+      }
       ctx.stroke();
 
       const last = points[points.length - 1];
       const dist = Math.hypot(currentPoint.x - last.x, currentPoint.y - last.y);
       const curScreen = worldToScreen(currentPoint.x, currentPoint.y, vp);
-      drawBadge(ctx, `${dist.toFixed(1)} mm`, curScreen.x + 12, curScreen.y - 12);
+      drawBadge(ctx, `${tool === CAD_TOOLS.REBAR_CUSTOM ? 'REBAR Ø16: ' : ''}${dist.toFixed(1)} mm`, curScreen.x + 12, curScreen.y - 12);
     } else if (tool === CAD_TOOLS.RECTANGLE && points.length === 1) {
       const p1 = worldToScreen(points[0].x, points[0].y, vp);
       const p2 = worldToScreen(currentPoint.x, currentPoint.y, vp);
@@ -787,7 +802,76 @@ export default function CADCanvas({
       if (onToolComplete) onToolComplete();
     }
 
-    // 5. TRANSFORMATION TOOLS
+    // 5. REBAR TOOLS (Phase 2E)
+    else if (activeTool === CAD_TOOLS.REBAR_STRAIGHT) {
+      const newRebar = createStraightBar({ origin: snappedWorld, length: 1000, diameter: 16 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_L_BAR) {
+      const newRebar = createLBar({ origin: snappedWorld, legA: 500, legB: 300, diameter: 16, bendRadius: 32 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_U_BAR) {
+      const newRebar = createUBar({ origin: snappedWorld, legA: 300, baseB: 500, legC: 300, diameter: 16, bendRadius: 32 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_CRANKED) {
+      const newRebar = createCrankedBar({ origin: snappedWorld, lengthA: 600, offset: 80, lengthC: 600, diameter: 16, bendRadius: 32 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_STIRRUP) {
+      const newRebar = createClosedStirrup({ origin: snappedWorld, width: 300, height: 450, diameter: 8, bendRadius: 16, hookAngle: 135 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_OPEN_LINK) {
+      const newRebar = createOpenLink({ origin: snappedWorld, width: 250, height: 400, diameter: 10, bendRadius: 20, hookAngle: 135 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_HOOK) {
+      const newRebar = createHookObject({ origin: snappedWorld, hookAngle: 135, hookExtension: 80, hookRadius: 24, diameter: 16 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_BEND) {
+      const newRebar = createBendObject({ origin: snappedWorld, bendAngle: 90, bendRadius: 40, diameter: 16 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, newRebar]);
+      onSelectObjects([newRebar.id]);
+      if (onToolComplete) onToolComplete();
+    } else if (activeTool === CAD_TOOLS.REBAR_CUSTOM) {
+      if (!interactiveState) {
+        setInteractiveState({
+          tool: CAD_TOOLS.REBAR_CUSTOM,
+          points: [snappedWorld],
+          currentPoint: snappedWorld
+        });
+        if (onStatusPromptChange) onStatusPromptChange('Custom Rebar: Click next vertex point, press Enter or double-click to finish');
+      } else {
+        const lastPt = interactiveState.points[interactiveState.points.length - 1];
+        if (lastPt.x !== snappedWorld.x || lastPt.y !== snappedWorld.y) {
+          setInteractiveState({
+            ...interactiveState,
+            points: [...interactiveState.points, snappedWorld],
+            currentPoint: snappedWorld
+          });
+        }
+      }
+    }
+
+    // 6. TRANSFORMATION TOOLS
     else if (activeTool === CAD_TOOLS.MOVE || activeTool === CAD_TOOLS.COPY) {
       if (!interactiveState) {
         setInteractiveState({
@@ -1086,12 +1170,22 @@ export default function CADCanvas({
     onViewportChange(newViewport);
   };
 
-  // Double Click for Polyline finish or Dimension editing
+  // Double Click for Polyline/Custom Rebar finish or Dimension editing
   const handleDoubleClick = (e) => {
     if (activeTool === CAD_TOOLS.POLYLINE && interactiveState && interactiveState.points.length >= 2) {
       const newPoly = createPolylineObject(interactiveState.points);
       historyManager.pushSnapshot(objects);
       onObjectsChange([...objects, newPoly]);
+      setInteractiveState(null);
+      if (onToolComplete) onToolComplete();
+      return;
+    }
+
+    if (activeTool === CAD_TOOLS.REBAR_CUSTOM && interactiveState && interactiveState.points.length >= 2) {
+      const customRebar = createCustomRebarPath({ points: interactiveState.points, diameter: 16, bendRadius: 32 });
+      historyManager.pushSnapshot(objects);
+      onObjectsChange([...objects, customRebar]);
+      onSelectObjects([customRebar.id]);
       setInteractiveState(null);
       if (onToolComplete) onToolComplete();
       return;
@@ -1128,6 +1222,13 @@ export default function CADCanvas({
           const newPoly = createPolylineObject(interactiveState.points);
           historyManager.pushSnapshot(objects);
           onObjectsChange([...objects, newPoly]);
+          setInteractiveState(null);
+          if (onToolComplete) onToolComplete();
+        } else if (activeTool === CAD_TOOLS.REBAR_CUSTOM && interactiveState && interactiveState.points.length >= 2) {
+          const customRebar = createCustomRebarPath({ points: interactiveState.points, diameter: 16, bendRadius: 32 });
+          historyManager.pushSnapshot(objects);
+          onObjectsChange([...objects, customRebar]);
+          onSelectObjects([customRebar.id]);
           setInteractiveState(null);
           if (onToolComplete) onToolComplete();
         }

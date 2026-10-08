@@ -778,3 +778,558 @@
   font-size: 12px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   PHASE 2F — CALCULATION & ENGINEERING VALIDATION STYLES
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.cad-calc-panel-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.cad-calc-status-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.cad-calc-status-card.calculated {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.cad-calc-status-card.invalid {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.cad-calc-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cad-calc-badge.calculated {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.cad-calc-badge.invalid {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.cad-calc-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cad-calc-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.cad-calc-rule-dropdown {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #38bdf8;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cad-calc-rule-dropdown:focus {
+  border-color: #38bdf8;
+}
+
+.cad-calc-metrics-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cad-calc-metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+}
+
+.cad-calc-metric-row.primary {
+  background: rgba(56, 189, 248, 0.06);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.cad-calc-metric-name {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.cad-calc-metric-sub {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.cad-calc-metric-number {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: #cbd5e1;
+}
+
+.cad-calc-metric-number.highlight {
+  color: #38bdf8;
+  font-size: 14px;
+}
+
+.cad-calc-metric-number.highlight-green {
+  color: #22c55e;
+  font-size: 14px;
+}
+
+.cad-calc-elements-summary {
+  display: flex;
+  gap: 6px;
+}
+
+.cad-calc-chip {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.cad-calc-chip .chip-label {
+  color: #94a3b8;
+}
+
+.cad-calc-chip .chip-val {
+  font-weight: 700;
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.cad-calc-warning-box {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+}
+
+.cad-calc-inspect-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1px solid #38bdf8;
+  color: #ffffff;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+.cad-calc-inspect-btn:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.5);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   CALCULATION TRACE MODAL STYLES
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.cad-calc-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 24px;
+}
+
+.cad-calc-modal-container {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.cad-calc-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1e293b;
+}
+
+.cad-calc-modal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.cad-calc-modal-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.cad-calc-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.cad-calc-close-btn:hover {
+  color: #ffffff;
+  background: #334155;
+}
+
+.cad-calc-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 14px 20px;
+  background: #0b1120;
+  border-bottom: 1px solid #1e293b;
+}
+
+.cad-calc-metric-box {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cad-calc-metric-box.primary {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.cad-calc-metric-box .cad-calc-metric-label {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.cad-calc-metric-box .cad-calc-metric-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f8fafc;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cad-calc-metric-box .cad-calc-metric-value.highlight {
+  color: #38bdf8;
+}
+
+.cad-calc-metric-box .cad-calc-metric-value.highlight-green {
+  color: #22c55e;
+}
+
+.cad-calc-metric-box .cad-calc-metric-hint {
+  font-size: 9.5px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cad-calc-rule-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #131d33;
+  border-bottom: 1px solid #1e293b;
+}
+
+.cad-calc-rule-select {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #38bdf8;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  outline: none;
+}
+
+.cad-calc-modal-tabs {
+  display: flex;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  padding: 0 20px;
+  gap: 4px;
+}
+
+.cad-calc-tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.cad-calc-tab-btn:hover {
+  color: #f8fafc;
+}
+
+.cad-calc-tab-btn.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+}
+
+.cad-calc-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cad-calc-trace-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cad-calc-trace-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.cad-calc-trace-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cad-calc-step-number {
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.cad-calc-step-title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.cad-calc-step-desc {
+  margin: 0 0 8px 0;
+  font-size: 12.5px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.cad-calc-formula-box {
+  background: #0f172a;
+  border: 1px solid #334155;
+  padding: 6px 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cad-calc-formula-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.cad-calc-formula-box code {
+  color: #38bdf8;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cad-calc-data-list {
+  margin: 8px 0 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cad-calc-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+.cad-calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+.cad-calc-table th {
+  background: #1e293b;
+  color: #94a3b8;
+  padding: 8px 12px;
+  font-weight: 600;
+  border-bottom: 1px solid #334155;
+}
+
+.cad-calc-table td {
+  padding: 8px 12px;
+  color: #cbd5e1;
+  border-bottom: 1px solid #1e293b;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cad-calc-sub-section {
+  margin-bottom: 20px;
+}
+
+.cad-calc-section-heading {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.cad-validation-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.cad-validation-card.error {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.cad-validation-card.warning {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.cad-val-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.cad-val-severity-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.cad-val-severity-badge.error {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.cad-val-severity-badge.warning {
+  background: #f59e0b;
+  color: #0f172a;
+}
+
+.cad-val-severity-badge.info {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.cad-val-code {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.cad-val-message {
+  margin: 0;
+  font-size: 12.5px;
+  color: #f1f5f9;
+}
+
+.cad-val-refs {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.cad-val-refs code {
+  color: #38bdf8;
+  margin-left: 4px;
+}
+
+.cad-calc-modal-footer {
+  padding: 12px 20px;
+  background: #1e293b;
+  border-top: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -66,19 +66,23 @@ export default function CastingPage() {
     setErrorMsg('');
     try {
       const [projList, types, recipeList] = await Promise.all([
-        castingApi.getProjects(),
+        castingApi.getProjects().catch(() => []),
         castingApi.getMemberTypes().catch(() => [
           'Slab', 'Beam', 'Column', 'Footing', 'Pedestal', 'Retaining Wall', 'Staircase', 'Grade Slab', 'Plinth Beam', 'Overhead Tank', 'Other'
         ]),
         castingApi.getRecipes().catch(() => ({ success: true, data: [] }))
       ]);
 
-      setProjects(projList || []);
-      setMemberTypes(types || []);
-      setRecipes(recipeList.data || []);
+      const safeProjects = Array.isArray(projList) ? projList : (projList?.data || []);
+      const safeTypes = Array.isArray(types) ? types : (types?.data || []);
+      const safeRecipes = Array.isArray(recipeList) ? recipeList : (recipeList?.data || []);
 
-      if (projList && projList.length > 0) {
-        setSelectedProject(projList[0]);
+      setProjects(safeProjects);
+      setMemberTypes(safeTypes);
+      setRecipes(safeRecipes);
+
+      if (safeProjects.length > 0) {
+        setSelectedProject(safeProjects[0]);
       }
     } catch (err) {
       setErrorMsg(err.message || 'Error connecting to Casting API');
@@ -90,9 +94,8 @@ export default function CastingPage() {
   const handleRefreshRecipes = async () => {
     try {
       const res = await castingApi.getRecipes();
-      if (res.success) {
-        setRecipes(res.data || []);
-      }
+      const safe = Array.isArray(res) ? res : (res?.data || []);
+      setRecipes(safe);
     } catch (err) {
       console.error('Error refreshing recipes:', err);
     }
@@ -117,24 +120,27 @@ export default function CastingPage() {
   const loadProjectDetails = async (projectId) => {
     try {
       const [blockList, eventList] = await Promise.all([
-        castingApi.getBlocks(projectId),
-        castingApi.getEvents({ projectId })
+        castingApi.getBlocks(projectId).catch(() => []),
+        castingApi.getEvents({ projectId }).catch(() => [])
       ]);
 
-      setBlocks(blockList || []);
-      setEvents(eventList || []);
+      const safeBlocks = Array.isArray(blockList) ? blockList : (blockList?.data || []);
+      const safeEvents = Array.isArray(eventList) ? eventList : (eventList?.data || []);
 
-      if (blockList && blockList.length > 0) {
-        const firstBlock = blockList[0];
+      setBlocks(safeBlocks);
+      setEvents(safeEvents);
+
+      if (safeBlocks.length > 0) {
+        const firstBlock = safeBlocks[0];
         setSelectedBlock(firstBlock);
 
         // Load levels for all blocks
         const levelsMap = {};
         await Promise.all(
-          blockList.map(async (b) => {
+          safeBlocks.map(async (b) => {
             const bId = b.id || b._id;
             const lvls = await castingApi.getLevels(bId).catch(() => []);
-            levelsMap[bId] = lvls;
+            levelsMap[bId] = Array.isArray(lvls) ? lvls : (lvls?.data || []);
           })
         );
 
@@ -169,8 +175,8 @@ export default function CastingPage() {
 
   const loadLevelMembers = async (levelId) => {
     try {
-      const mbrs = await castingApi.getMembers(levelId);
-      setMembers(mbrs || []);
+      const mbrs = await castingApi.getMembers(levelId).catch(() => []);
+      setMembers(Array.isArray(mbrs) ? mbrs : (mbrs?.data || []));
     } catch (err) {
       console.error('Error loading members:', err);
     }
@@ -190,21 +196,27 @@ export default function CastingPage() {
 
   const handleRefreshEvents = async () => {
     if (selectedProject) {
-      const eventList = await castingApi.getEvents({ projectId: selectedProject.id || selectedProject._id });
-      setEvents(eventList || []);
+      const eventList = await castingApi.getEvents({ projectId: selectedProject.id || selectedProject._id }).catch(() => []);
+      setEvents(Array.isArray(eventList) ? eventList : (eventList?.data || []));
       if (selectedLevel) {
         await loadLevelMembers(selectedLevel.id || selectedLevel._id);
       }
     }
   };
 
+  // Safe Arrays for Rendering & Calculations
+  const safeProjects = Array.isArray(projects) ? projects : [];
+  const safeEvents = Array.isArray(events) ? events : [];
+  const safeRecipes = Array.isArray(recipes) ? recipes : [];
+  const safeMembers = Array.isArray(members) ? members : [];
+
   // Compute Global Summary Stats for Active Project
-  const totalProjectMembers = Object.values(levels).reduce((sum, lvlArr) => {
-    return sum + (lvlArr || []).reduce((lSum, l) => lSum + (l.memberCount || 0), 0);
+  const totalProjectMembers = Object.values(levels || {}).reduce((sum, lvlArr) => {
+    return sum + (Array.isArray(lvlArr) ? lvlArr : []).reduce((lSum, l) => lSum + (l?.memberCount || 0), 0);
   }, 0);
 
-  const totalPlannedVolume = events.reduce((sum, e) => sum + (Number(e.plannedTotalVolumeM3) || 0), 0);
-  const totalPouredVolume = events.reduce((sum, e) => sum + (Number(e.actualTotalVolumeM3) || 0), 0);
+  const totalPlannedVolume = safeEvents.reduce((sum, e) => sum + (Number(e?.plannedTotalVolumeM3) || 0), 0);
+  const totalPouredVolume = safeEvents.reduce((sum, e) => sum + (Number(e?.actualTotalVolumeM3) || 0), 0);
 
   return (
     <div className="casting-container">

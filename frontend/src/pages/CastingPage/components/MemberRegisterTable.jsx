@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Edit3, Layers, Calculator, Info, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Edit3, Layers, Calculator, Info, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { castingApi } from '../castingApi';
 
 export default function MemberRegisterTable({

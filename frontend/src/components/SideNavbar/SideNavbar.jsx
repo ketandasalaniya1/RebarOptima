@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Building2 } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Building2, Boxes } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -60,6 +60,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       label: 'BBS',
       icon: <Building2 size={18} />,
       moduleKey: 'bbs'
+    },
+    {
+      id: 'casting',
+      label: 'Casting Management',
+      icon: <Boxes size={18} />,
+      moduleKey: 'casting'
     },
     {
       id: 'ledger',

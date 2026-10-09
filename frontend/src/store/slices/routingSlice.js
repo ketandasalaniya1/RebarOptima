@@ -21,7 +21,8 @@ const getInitialView = () => {
     if (path === '/inventory') return 'inventory';
     if (path === '/inputs') return 'inputs';
     if (path === '/results') return 'results';
-    if (path === '/history') return 'history';
+    if (path === '/bbs') return 'bbs';
+    if (path === '/casting') return 'casting';
     if (path === '/ledger') return 'ledger';
     if (path === '/settings') return 'settings';
     if (path === '/profile') return 'profile';

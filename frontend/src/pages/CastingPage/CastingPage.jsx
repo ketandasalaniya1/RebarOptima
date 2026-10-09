@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Boxes, Building, Layers, Calendar, Plus, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Boxes, Building, Layers, Calendar, Plus, RefreshCw, CheckCircle2, FlaskConical, PackageCheck } from 'lucide-react';
 import { castingApi } from './castingApi';
 import ProjectHierarchyManager from './components/ProjectHierarchyManager';
 import MemberRegisterTable from './components/MemberRegisterTable';
@@ -7,10 +7,15 @@ import CreateMemberModal from './components/CreateMemberModal';
 import CastingEventList from './components/CastingEventList';
 import CreateCastingEventModal from './components/CreateCastingEventModal';
 import RecordActualPourModal from './components/RecordActualPourModal';
+import RecipeListTable from './components/RecipeListTable';
+import CreateRecipeModal from './components/CreateRecipeModal';
+import RecipeApprovalModal from './components/RecipeApprovalModal';
+import SegmentRecipeAssignModal from './components/SegmentRecipeAssignModal';
+import MaterialRequirementSheetModal from './components/MaterialRequirementSheetModal';
 import './CastingPage.css';
 
 export default function CastingPage() {
-  const [activeTab, setActiveTab] = useState('structural'); // 'structural' | 'events'
+  const [activeTab, setActiveTab] = useState('structural'); // 'structural' | 'events' | 'recipes'
 
   // Hierarchy Data States
   const [projects, setProjects] = useState([]);
@@ -25,11 +30,18 @@ export default function CastingPage() {
   const [members, setMembers] = useState([]);
   const [memberTypes, setMemberTypes] = useState([]);
   const [events, setEvents] = useState([]);
+  const [recipes, setRecipes] = useState([]);
 
   // Modals
   const [showCreateMemberModal, setShowCreateMemberModal] = useState(false);
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [activeEventForActuals, setActiveEventForActuals] = useState(null);
+
+  // Phase 2 Modals
+  const [showCreateRecipeModal, setShowCreateRecipeModal] = useState(false);
+  const [selectedRecipeForApproval, setSelectedRecipeForApproval] = useState(null);
+  const [selectedEventForBinding, setSelectedEventForBinding] = useState(null);
+  const [activeEventForMRS, setActiveEventForMRS] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -43,15 +55,17 @@ export default function CastingPage() {
     setIsLoading(true);
     setErrorMsg('');
     try {
-      const [projList, types] = await Promise.all([
+      const [projList, types, recipeList] = await Promise.all([
         castingApi.getProjects(),
         castingApi.getMemberTypes().catch(() => [
           'Slab', 'Beam', 'Column', 'Footing', 'Pedestal', 'Retaining Wall', 'Staircase', 'Grade Slab', 'Plinth Beam', 'Overhead Tank', 'Other'
-        ])
+        ]),
+        castingApi.getRecipes().catch(() => ({ success: true, data: [] }))
       ]);
 
       setProjects(projList || []);
       setMemberTypes(types || []);
+      setRecipes(recipeList.data || []);
 
       if (projList && projList.length > 0) {
         setSelectedProject(projList[0]);
@@ -60,6 +74,17 @@ export default function CastingPage() {
       setErrorMsg(err.message || 'Error connecting to Casting API');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRefreshRecipes = async () => {
+    try {
+      const res = await castingApi.getRecipes();
+      if (res.success) {
+        setRecipes(res.data || []);
+      }
+    } catch (err) {
+      console.error('Error refreshing recipes:', err);
     }
   };
 
@@ -182,7 +207,7 @@ export default function CastingPage() {
           <div>
             <h1 className="casting-title">Casting Management</h1>
             <p className="casting-subtitle">
-              Structural Register, Volume Calculation Engine & Multi-Pour Event Log (Phase 1)
+              Mix Designs, Material Planning (MRS), Structural Register & Multi-Pour Tracking (Phase 1 & 2)
             </p>
           </div>
         </div>
@@ -190,7 +215,10 @@ export default function CastingPage() {
         <div className="casting-header-right">
           <button
             className="btn-secondary-dark"
-            onClick={handleRefreshHierarchy}
+            onClick={async () => {
+              await handleRefreshHierarchy();
+              await handleRefreshRecipes();
+            }}
             title="Refresh Casting Data"
           >
             <RefreshCw size={15} /> Refresh
@@ -222,11 +250,11 @@ export default function CastingPage() {
 
         <div className="casting-stat-card">
           <div className="casting-stat-icon purple">
-            <Calendar size={20} />
+            <FlaskConical size={20} />
           </div>
           <div className="casting-stat-info">
-            <span className="casting-stat-label">Total Planned Volume</span>
-            <span className="casting-stat-val">{totalPlannedVolume.toFixed(3)} m³</span>
+            <span className="casting-stat-label">Mix Design Recipes</span>
+            <span className="casting-stat-val">{recipes.length}</span>
           </div>
         </div>
 
@@ -235,8 +263,8 @@ export default function CastingPage() {
             <CheckCircle2 size={20} />
           </div>
           <div className="casting-stat-info">
-            <span className="casting-stat-label">Total Poured Concrete</span>
-            <span className="casting-stat-val">{totalPouredVolume.toFixed(3)} m³</span>
+            <span className="casting-stat-label">Total Planned Volume</span>
+            <span className="casting-stat-val">{totalPlannedVolume.toFixed(3)} m³</span>
           </div>
         </div>
       </div>
@@ -259,6 +287,15 @@ export default function CastingPage() {
           <Calendar size={16} />
           <span>Casting Events & Pour Log</span>
           <span className="casting-tab-count">{events.length}</span>
+        </button>
+
+        <button
+          className={`casting-tab-btn ${activeTab === 'recipes' ? 'active' : ''}`}
+          onClick={() => setActiveTab('recipes')}
+        >
+          <FlaskConical size={16} />
+          <span>Mix Design Recipes</span>
+          <span className="casting-tab-count">{recipes.length}</span>
         </button>
       </div>
 
@@ -311,6 +348,31 @@ export default function CastingPage() {
           onOpenCreateModal={() => setShowCreateEventModal(true)}
           onRecordActuals={(evt) => setActiveEventForActuals(evt)}
           onRefreshEvents={handleRefreshEvents}
+          onAssignRecipes={(evt) => setSelectedEventForBinding(evt)}
+          onViewMRS={(evt) => setActiveEventForMRS(evt)}
+        />
+      )}
+
+      {activeTab === 'recipes' && (
+        <RecipeListTable
+          recipes={recipes}
+          onRefresh={handleRefreshRecipes}
+          onCreateNew={() => setShowCreateRecipeModal(true)}
+          onViewRecipe={(rec) => {
+            // View / fork recipe
+            setShowCreateRecipeModal(true);
+          }}
+          onApproveRecipe={(rec, vNum) => {
+            setSelectedRecipeForApproval({ recipe: rec, versionNumber: vNum });
+          }}
+          onForkVersion={async (rec) => {
+            try {
+              await castingApi.createRecipeVersion(rec._id, {});
+              await handleRefreshRecipes();
+            } catch (err) {
+              alert(err.message || 'Failed to fork new version');
+            }
+          }}
         />
       )}
 
@@ -346,6 +408,68 @@ export default function CastingPage() {
         event={activeEventForActuals}
         onActualRecorded={handleRefreshEvents}
       />
+
+      {/* Modal: Create Mix Design Recipe (Phase 2) */}
+      <CreateRecipeModal
+        isOpen={showCreateRecipeModal}
+        onClose={() => setShowCreateRecipeModal(false)}
+        onSubmit={async (payload) => {
+          await castingApi.createRecipe(payload);
+          await handleRefreshRecipes();
+        }}
+      />
+
+      {/* Modal: Recipe Approval & Maker-Checker Review (Phase 2) */}
+      {selectedRecipeForApproval && (
+        <RecipeApprovalModal
+          isOpen={!!selectedRecipeForApproval}
+          onClose={() => setSelectedRecipeForApproval(null)}
+          recipe={selectedRecipeForApproval.recipe}
+          versionNumber={selectedRecipeForApproval.versionNumber}
+          onApprove={async (recId, vNum, remarks) => {
+            await castingApi.approveRecipeVersion(recId, vNum, remarks);
+            await handleRefreshRecipes();
+          }}
+          onReject={async (recId, vNum, remarks) => {
+            await castingApi.rejectRecipeVersion(recId, vNum, remarks);
+            await handleRefreshRecipes();
+          }}
+        />
+      )}
+
+      {/* Modal: Segment Recipe Assigner (Phase 2) */}
+      {selectedEventForBinding && (
+        <SegmentRecipeAssignModal
+          isOpen={!!selectedEventForBinding}
+          onClose={() => setSelectedEventForBinding(null)}
+          event={selectedEventForBinding}
+          recipes={recipes}
+          onSaveBindings={async (eventId, bindings) => {
+            await castingApi.bindSegmentRecipes(eventId, bindings);
+            await handleRefreshEvents();
+          }}
+          onGenerateMRS={async (eventId, reason) => {
+            await castingApi.generateMRS(eventId, reason);
+            await handleRefreshEvents();
+            // Open MRS modal immediately
+            const updatedEvt = events.find(e => (e.id || e._id) === eventId) || selectedEventForBinding;
+            setActiveEventForMRS(updatedEvt);
+          }}
+        />
+      )}
+
+      {/* Modal: Material Requirement Sheet (Phase 2) */}
+      {activeEventForMRS && (
+        <MaterialRequirementSheetModal
+          isOpen={!!activeEventForMRS}
+          onClose={() => setActiveEventForMRS(null)}
+          event={activeEventForMRS}
+          onRegenerateMRS={async (eventId, reason) => {
+            await castingApi.generateMRS(eventId, reason);
+            await handleRefreshEvents();
+          }}
+        />
+      )}
     </div>
   );
 }

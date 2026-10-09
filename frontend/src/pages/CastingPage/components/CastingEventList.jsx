@@ -8,7 +8,9 @@ export default function CastingEventList({
   selectedProject,
   onOpenCreateModal,
   onRecordActuals,
-  onRefreshEvents
+  onRefreshEvents,
+  onAssignRecipes,
+  onViewMRS
 }) {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedEventDetails, setSelectedEventDetails] = useState(null);
@@ -143,7 +145,27 @@ export default function CastingEventList({
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        <button
+                          className="btn-secondary-dark"
+                          style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', background: '#3b82f6', borderColor: '#2563eb', color: '#fff' }}
+                          onClick={() => onViewMRS && onViewMRS(e)}
+                          title="View Material Requirement Sheet"
+                        >
+                          📦 Material Sheet (MRS)
+                        </button>
+
+                        {!isPoured && (
+                          <button
+                            className="btn-secondary-dark"
+                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                            onClick={() => onAssignRecipes && onAssignRecipes(e)}
+                            title="Assign Mix Recipes to Segments"
+                          >
+                            🧪 Mix Recipes
+                          </button>
+                        )}
+
                         {!isPoured && (
                           <button
                             className="btn-primary-teal"

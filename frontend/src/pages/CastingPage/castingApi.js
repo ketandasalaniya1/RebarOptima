@@ -44,5 +44,33 @@ export const castingApi = {
   getEventById: (id) => apiRequest(`/casting/events/${id}`),
   createEvent: (data) => apiRequest('/casting/events', { method: 'POST', body: data }),
   updateEvent: (id, data) => apiRequest(`/casting/events/${id}`, { method: 'PUT', body: data }),
-  deleteEvent: (id, reason = '') => apiRequest(`/casting/events/${id}`, { method: 'DELETE', body: { reason } })
+  deleteEvent: (id, reason = '') => apiRequest(`/casting/events/${id}`, { method: 'DELETE', body: { reason } }),
+
+  // Phase 2: Concrete Mix Recipes
+  getRecipes: (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.grade) query.set('grade', params.grade);
+    if (params.status) query.set('status', params.status);
+    if (params.search) query.set('search', params.search);
+    const qs = query.toString();
+    return apiRequest(`/casting/recipes${qs ? `?${qs}` : ''}`);
+  },
+  getRecipeById: (id) => apiRequest(`/casting/recipes/${id}`),
+  createRecipe: (data) => apiRequest('/casting/recipes', { method: 'POST', body: data }),
+  createRecipeVersion: (id, data) => apiRequest(`/casting/recipes/${id}/versions`, { method: 'POST', body: data }),
+  updateRecipeVersion: (id, vNum, data) => apiRequest(`/casting/recipes/${id}/versions/${vNum}`, { method: 'PUT', body: data }),
+  submitRecipeVersion: (id, vNum) => apiRequest(`/casting/recipes/${id}/versions/${vNum}/submit`, { method: 'POST' }),
+  approveRecipeVersion: (id, vNum, remarks = '') => apiRequest(`/casting/recipes/${id}/versions/${vNum}/approve`, { method: 'POST', body: { remarks } }),
+  rejectRecipeVersion: (id, vNum, remarks = '') => apiRequest(`/casting/recipes/${id}/versions/${vNum}/reject`, { method: 'POST', body: { remarks } }),
+  archiveRecipe: (id) => apiRequest(`/casting/recipes/${id}`, { method: 'DELETE' }),
+
+  // Phase 2: Segment Recipe Binding & Material Requirement Sheet (MRS)
+  bindSegmentRecipes: (eventId, bindings) => apiRequest(`/casting/events/${eventId}/segments/recipes`, { method: 'PUT', body: { bindings } }),
+  generateMRS: (eventId, changeReason = '') => apiRequest(`/casting/events/${eventId}/mrs/generate`, { method: 'POST', body: { changeReason } }),
+  getMRS: (eventId, revision = null) => {
+    const qs = revision ? `?revision=${revision}` : '';
+    return apiRequest(`/casting/events/${eventId}/mrs${qs}`);
+  },
+  getMRSRevisions: (eventId) => apiRequest(`/casting/events/${eventId}/mrs/revisions`)
 };
+

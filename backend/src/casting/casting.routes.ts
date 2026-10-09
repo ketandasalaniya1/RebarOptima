@@ -1,9 +1,28 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { CASTING_MEMBER_TYPES, ICastingProject, ICastingBlock, ICastingLevel, ICastingMember, ICastingEvent } from './casting.types';
+import {
+  CASTING_MEMBER_TYPES,
+  ICastingProject,
+  ICastingBlock,
+  ICastingLevel,
+  ICastingMember,
+  ICastingEvent,
+  IMaterialRequirementSheetRevision,
+  ICastingRecipe
+} from './casting.types';
+import { createCastingRecipeRouter } from './casting.recipe.routes';
+import {
+  calculateSegmentMaterials,
+  calculateGradeSubtotals,
+  consolidateIngredients,
+  checkInventoryAvailability
+} from './casting.calculation.service';
 
 export function createCastingRouter(getDb: () => any, authMiddleware: any, logAudit?: any) {
   const router = Router();
+
+  // Mount Recipe Management Router (Phase 2)
+  router.use('/recipes', createCastingRecipeRouter(getDb, authMiddleware, logAudit));
 
   // Helper to resolve companyId from authenticated user
   const resolveCompanyId = async (req: any, db: any): Promise<string> => {
@@ -1106,10 +1125,10 @@ export function createCastingRouter(getDb: () => any, authMiddleware: any, logAu
         isDeleted: { $ne: true }
       }).toArray();
 
-      const memberMap = new Map(members.map((m: any) => [m._id.toString(), m]));
+      const memberMap = new Map<string, any>(members.map((m: any) => [m._id.toString(), m]));
 
       let plannedTotalVolumeM3 = 0;
-      const validatedSegments = segments.map((s: any, idx: number) => {
+      const validatedSegments: any[] = segments.map((s: any, idx: number) => {
         const m = memberMap.get(String(s.memberId));
         if (!m) throw new Error(`Member with ID '${s.memberId}' does not exist or is deleted`);
 
@@ -1130,7 +1149,7 @@ export function createCastingRouter(getDb: () => any, authMiddleware: any, logAu
           segmentLiftNumber: s.segmentLiftNumber !== undefined ? Number(s.segmentLiftNumber) : 1,
           plannedVolumeM3: Math.round(pVol * 1000) / 1000,
           actualVolumeM3: s.actualVolumeM3 !== undefined ? Number(s.actualVolumeM3) : undefined,
-          status: 'PLANNED',
+          status: 'PLANNED' as const,
           remarks: s.remarks || ''
         };
       });
@@ -1237,16 +1256,20 @@ export function createCastingRouter(getDb: () => any, authMiddleware: any, logAu
           plannedSum += pVol;
           if (typeof aVol === 'number') actualSum += aVol;
 
+          const existingSeg = (event.segments || []).find((oldS: any) => oldS.segmentId === s.segmentId);
+
           return {
+            ...existingSeg,
             ...s,
             plannedVolumeM3: Math.round(pVol * 1000) / 1000,
             actualVolumeM3: typeof aVol === 'number' ? Math.round(aVol * 1000) / 1000 : undefined,
-            status: s.status || (updateData.status === 'POURED' ? 'POURED' : 'PLANNED')
+            status: s.status || existingSeg?.status || (updateData.status === 'POURED' ? 'POURED' : 'PLANNED')
           };
         });
 
         updateData.segments = updatedSegments;
         updateData.plannedTotalVolumeM3 = Math.round(plannedSum * 1000) / 1000;
+        updateData.isMrsStale = true;
         if (actualSum > 0 || actualTotalVolumeM3 !== undefined) {
           updateData.actualTotalVolumeM3 = actualTotalVolumeM3 !== undefined
             ? Math.round(Number(actualTotalVolumeM3) * 1000) / 1000
@@ -1319,6 +1342,328 @@ export function createCastingRouter(getDb: () => any, authMiddleware: any, logAu
       res.json({ success: true, message: 'Casting event cancelled and removed from active schedule' });
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error cancelling casting event' });
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // 6. PHASE 2 — PRE-CASTING PLANNING & MATERIAL REQUIREMENT SHEET (MRS)
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // PUT /events/:id/segments/recipes — Bind approved recipes to segments in a casting event
+  router.put('/events/:id/segments/recipes', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { id } = req.params;
+      const { bindings } = req.body; // Array of { segmentId, recipeId, versionNumber, appliedWastagePercent }
+
+      if (!Array.isArray(bindings)) {
+        return res.status(400).json({ success: false, message: 'bindings array is required' });
+      }
+
+      const event = await db.collection('casting_events').findOne({
+        ...idQuery(id),
+        companyId,
+        isDeleted: { $ne: true }
+      });
+      if (!event) return res.status(404).json({ success: false, message: 'Casting event not found' });
+
+      // Verify each recipe binding
+      const updatedSegments = [...(event.segments || [])];
+      for (const b of bindings) {
+        const segIndex = updatedSegments.findIndex((s: any) => s.segmentId === b.segmentId);
+        if (segIndex === -1) {
+          return res.status(400).json({ success: false, message: `Segment ID ${b.segmentId} not found in event` });
+        }
+
+        const recipe = await db.collection('casting_recipes').findOne({
+          ...idQuery(b.recipeId),
+          companyId,
+          isArchived: { $ne: true }
+        });
+        if (!recipe) {
+          return res.status(400).json({ success: false, message: `Recipe ${b.recipeId} not found` });
+        }
+
+        const ver = recipe.versions?.find((v: any) => v.versionNumber === b.versionNumber);
+        if (!ver) {
+          return res.status(400).json({ success: false, message: `Recipe version ${b.versionNumber} not found for recipe ${recipe.recipeCode}` });
+        }
+
+        if (ver.approvalStatus !== 'APPROVED') {
+          return res.status(400).json({
+            success: false,
+            message: `Cannot bind unapproved recipe. Version ${b.versionNumber} is in '${ver.approvalStatus}' status.`
+          });
+        }
+
+        updatedSegments[segIndex] = {
+          ...updatedSegments[segIndex],
+          grade: recipe.grade,
+          recipeBinding: {
+            recipeId: recipe._id.toString(),
+            recipeCode: recipe.recipeCode,
+            versionNumber: ver.versionNumber,
+            grade: recipe.grade,
+            appliedWastagePercent: Number(b.appliedWastagePercent ?? ver.ingredients[0]?.wastageAllowancePercent ?? 0),
+            isApprovedVersion: true
+          }
+        };
+      }
+
+      await db.collection('casting_events').updateOne(
+        { _id: event._id },
+        {
+          $set: {
+            segments: updatedSegments,
+            isMrsStale: true, // Flag MRS as stale when recipe bindings change
+            updatedAt: new Date()
+          }
+        }
+      );
+
+      return res.json({ success: true, message: 'Segment recipe bindings updated successfully', segments: updatedSegments });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  });
+
+  // POST /events/:id/mrs/generate — Atomic MRS revision generation with CAS concurrency control
+  router.post('/events/:id/mrs/generate', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { id } = req.params;
+      const { changeReason } = req.body;
+      const userId = req.user?.sub || 'system';
+      const userName = req.user?.name || req.user?.email || 'Site Engineer';
+
+      const event = await db.collection('casting_events').findOne({
+        ...idQuery(id),
+        companyId,
+        isDeleted: { $ne: true }
+      });
+      if (!event) return res.status(404).json({ success: false, message: 'Casting event not found' });
+
+      if (!event.segments || event.segments.length === 0) {
+        return res.status(400).json({ success: false, message: 'Cannot generate MRS: Casting event has no structural segments' });
+      }
+
+      // Check all segments have recipe bindings and collect recipe snapshots
+      const segmentRequirements: any[] = [];
+      const recipeSnapshotsMap = new Map<string, any>();
+      let totalWaterContributedAcrossEvent = 0;
+
+      for (const seg of event.segments) {
+        if (!seg.recipeBinding?.recipeId || !seg.recipeBinding?.versionNumber) {
+          return res.status(400).json({
+            success: false,
+            message: `Segment '${seg.segmentName}' (${seg.segmentId}) lacks an assigned mix recipe. Please assign approved recipes to all segments before generating the Material Requirement Sheet.`
+          });
+        }
+
+        const recipe = await db.collection('casting_recipes').findOne({
+          ...idQuery(seg.recipeBinding.recipeId),
+          companyId
+        });
+        if (!recipe) {
+          return res.status(400).json({
+            success: false,
+            message: `Recipe '${seg.recipeBinding.recipeCode}' for segment '${seg.segmentName}' was not found.`
+          });
+        }
+
+        const version = recipe.versions?.find((v: any) => v.versionNumber === seg.recipeBinding.versionNumber);
+        if (!version) {
+          return res.status(400).json({
+            success: false,
+            message: `Recipe version '${seg.recipeBinding.versionNumber}' for segment '${seg.segmentName}' was not found.`
+          });
+        }
+
+        // Calculate materials for this segment
+        const { segmentRequirement, totalWaterContributedLiters } = calculateSegmentMaterials(seg, version);
+        segmentRequirements.push(segmentRequirement);
+        totalWaterContributedAcrossEvent += totalWaterContributedLiters;
+
+        // Collect frozen recipe snapshot
+        const snapshotKey = `${recipe.recipeCode}__${version.versionNumber}`;
+        if (!recipeSnapshotsMap.has(snapshotKey)) {
+          recipeSnapshotsMap.set(snapshotKey, {
+            recipeId: recipe._id.toString(),
+            recipeCode: recipe.recipeCode,
+            versionNumber: version.versionNumber,
+            grade: recipe.grade,
+            calculatedWaterCementRatio: version.calculatedWaterCementRatio,
+            calculatedWaterCementitiousRatio: version.calculatedWaterCementitiousRatio,
+            engineeringLimits: version.engineeringLimits,
+            ingredients: version.ingredients,
+            approvedBy: version.approvedBy
+          });
+        }
+      }
+
+      // Calculate grade subtotals and consolidated grand totals
+      const gradeSubtotals = calculateGradeSubtotals(segmentRequirements);
+      const rawConsolidated = consolidateIngredients(segmentRequirements);
+
+      // Perform read-only inventory availability check
+      const consolidatedTotals = await checkInventoryAvailability(rawConsolidated, db, companyId);
+
+      // Calculate new revision number
+      const currentCounter = Number(event.mrsRevisionCounter || (event.mrsRevisions?.length ?? 0));
+      const nextRevisionNumber = currentCounter + 1;
+      const mrsCode = `MRS-${event.eventNumber}-R${nextRevisionNumber}`;
+
+      const newMrsRevision: IMaterialRequirementSheetRevision = {
+        revisionNumber: nextRevisionNumber,
+        mrsCode,
+        generatedAt: new Date(),
+        generatedBy: {
+          userId: String(userId),
+          name: userName
+        },
+        changeReason: changeReason ? String(changeReason).trim() : (nextRevisionNumber === 1 ? 'Initial Material Requirement Sheet generation' : 'Plan or recipe update'),
+        totalPlannedVolumeM3: event.plannedTotalVolumeM3,
+        segmentsBreakdown: segmentRequirements,
+        gradeSubtotals,
+        consolidatedTotals,
+        effectiveWaterAdjustmentLiters: Number(totalWaterContributedAcrossEvent.toFixed(2)),
+        recipeSnapshots: Array.from(recipeSnapshotsMap.values())
+      };
+
+      // Atomic Compare-And-Swap Update to prevent duplicate revisions or race conditions
+      const updateResult = await db.collection('casting_events').findOneAndUpdate(
+        {
+          _id: event._id,
+          companyId,
+          $or: [
+            { mrsRevisionCounter: currentCounter },
+            { mrsRevisionCounter: { $exists: false } }
+          ]
+        },
+        {
+          $inc: { mrsRevisionCounter: 1 },
+          $set: {
+            activeMrsRevision: nextRevisionNumber,
+            isMrsStale: false,
+            updatedAt: new Date()
+          },
+          $push: {
+            mrsRevisions: newMrsRevision
+          }
+        },
+        { returnDocument: 'after' }
+      );
+
+      if (!updateResult) {
+        return res.status(409).json({
+          success: false,
+          message: 'CONCURRENT_MRS_MUTATION_CONFLICT: A newer revision of this Material Requirement Sheet was generated concurrently. Please reload the casting event.'
+        });
+      }
+
+      if (logAudit) {
+        await logAudit(db, {
+          actorId: req.user.sub,
+          actorType: req.user.accountType || 'user',
+          companyId,
+          module: 'casting',
+          action: 'MRS_REVISION_GENERATED',
+          resource: 'casting_events',
+          resourceId: event._id.toString(),
+          description: `Generated Material Requirement Sheet ${mrsCode} for event '${event.title}'`
+        });
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: `Material Requirement Sheet revision ${nextRevisionNumber} generated successfully`,
+        data: newMrsRevision
+      });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  });
+
+  // GET /events/:id/mrs — Retrieve active or specified revision of MRS
+  router.get('/events/:id/mrs', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { id } = req.params;
+      const { revision } = req.query;
+
+      const event = await db.collection('casting_events').findOne({
+        ...idQuery(id),
+        companyId,
+        isDeleted: { $ne: true }
+      });
+      if (!event) return res.status(404).json({ success: false, message: 'Casting event not found' });
+
+      const revisions = event.mrsRevisions || [];
+      if (revisions.length === 0) {
+        return res.json({
+          success: true,
+          hasMrs: false,
+          isStale: false,
+          activeRevision: null,
+          data: null
+        });
+      }
+
+      let selectedRevision: any;
+      if (revision) {
+        const revNum = parseInt(String(revision), 10);
+        selectedRevision = revisions.find((r: any) => r.revisionNumber === revNum);
+        if (!selectedRevision) {
+          return res.status(404).json({ success: false, message: `Revision R${revision} not found for this event` });
+        }
+      } else {
+        const activeRevNum = event.activeMrsRevision || revisions[revisions.length - 1].revisionNumber;
+        selectedRevision = revisions.find((r: any) => r.revisionNumber === activeRevNum) || revisions[revisions.length - 1];
+      }
+
+      return res.json({
+        success: true,
+        hasMrs: true,
+        isStale: !!event.isMrsStale,
+        activeRevisionNumber: event.activeMrsRevision || selectedRevision.revisionNumber,
+        totalRevisions: revisions.length,
+        data: selectedRevision
+      });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  });
+
+  // GET /events/:id/mrs/revisions — List all revision metadata
+  router.get('/events/:id/mrs/revisions', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { id } = req.params;
+
+      const event = await db.collection('casting_events').findOne({
+        ...idQuery(id),
+        companyId,
+        isDeleted: { $ne: true }
+      });
+      if (!event) return res.status(404).json({ success: false, message: 'Casting event not found' });
+
+      const revisions = (event.mrsRevisions || []).map((r: any) => ({
+        revisionNumber: r.revisionNumber,
+        mrsCode: r.mrsCode,
+        generatedAt: r.generatedAt,
+        generatedBy: r.generatedBy,
+        changeReason: r.changeReason,
+        totalPlannedVolumeM3: r.totalPlannedVolumeM3,
+        isActive: r.revisionNumber === event.activeMrsRevision
+      }));
+
+      return res.json({ success: true, data: revisions, isStale: !!event.isMrsStale });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err.message });
     }
   });
 

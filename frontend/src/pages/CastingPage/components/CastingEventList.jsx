@@ -10,7 +10,9 @@ export default function CastingEventList({
   onRecordActuals,
   onRefreshEvents,
   onAssignRecipes,
-  onViewMRS
+  onViewMRS,
+  onReviewConsumption,
+  onOpenStockRegister
 }) {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedEventDetails, setSelectedEventDetails] = useState(null);
@@ -52,6 +54,17 @@ export default function CastingEventList({
             <option value="PLANNED">Planned / Scheduled</option>
             <option value="POURED">Poured / Completed</option>
           </select>
+
+          {selectedProject && onOpenStockRegister && (
+            <button
+              className="btn-secondary-dark"
+              style={{ padding: '0.45rem 0.75rem', fontSize: '0.8rem', background: '#0284c7', borderColor: '#0369a1', color: '#fff' }}
+              onClick={onOpenStockRegister}
+              title="Open Project Material Stock Register"
+            >
+              📦 Material Stock Register
+            </button>
+          )}
 
           {selectedProject && (
             <button className="btn-primary-teal" onClick={onOpenCreateModal}>
@@ -166,26 +179,24 @@ export default function CastingEventList({
                           </button>
                         )}
 
-                        {!isPoured && (
-                          <button
-                            className="btn-primary-teal"
-                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
-                            onClick={() => onRecordActuals(e)}
-                            title="Record Actual Pour Execution"
-                          >
-                            <CheckCircle2 size={13} /> Record Actuals
-                          </button>
-                        )}
-                        {isPoured && (
-                          <button
-                            className="btn-secondary-dark"
-                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
-                            onClick={() => onRecordActuals(e)}
-                            title="Update Actual Pour Data"
-                          >
-                            <Edit3 size={13} /> Edit Actuals
-                          </button>
-                        )}
+                        <button
+                          className="btn-primary-teal"
+                          style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                          onClick={() => onRecordActuals(e)}
+                          title="Record Actual Pour & Material Consumption"
+                        >
+                          <CheckCircle2 size={13} /> {isPoured ? 'Actuals & Variance' : 'Record Actuals'}
+                        </button>
+
+                        <button
+                          className="btn-secondary-dark"
+                          style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', background: '#10b981', borderColor: '#059669', color: '#fff' }}
+                          onClick={() => onReviewConsumption && onReviewConsumption(e)}
+                          title="Maker-Checker Review & Atomic Stock Posting"
+                        >
+                          🛡️ Review & Post
+                        </button>
+
                         <button
                           className="btn-icon-danger"
                           onClick={() => handleCancelEvent(e)}
@@ -205,3 +216,4 @@ export default function CastingEventList({
     </div>
   );
 }
+

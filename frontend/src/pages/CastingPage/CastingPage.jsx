@@ -7,9 +7,13 @@ import CreateMemberModal from './components/CreateMemberModal';
 import CastingEventList from './components/CastingEventList';
 import CreateCastingEventModal from './components/CreateCastingEventModal';
 import RecordActualPourModal from './components/RecordActualPourModal';
+import ActualConsumptionModal from './components/ActualConsumptionModal';
+import ConsumptionApprovalModal from './components/ConsumptionApprovalModal';
+import ProjectStockRegisterModal from './components/ProjectStockRegisterModal';
 import RecipeListTable from './components/RecipeListTable';
 import CreateRecipeModal from './components/CreateRecipeModal';
 import RecipeApprovalModal from './components/RecipeApprovalModal';
+import RecipeDetailModal from './components/RecipeDetailModal';
 import SegmentRecipeAssignModal from './components/SegmentRecipeAssignModal';
 import MaterialRequirementSheetModal from './components/MaterialRequirementSheetModal';
 import './CastingPage.css';
@@ -39,9 +43,15 @@ export default function CastingPage() {
 
   // Phase 2 Modals
   const [showCreateRecipeModal, setShowCreateRecipeModal] = useState(false);
+  const [editingRecipeData, setEditingRecipeData] = useState(null);
+  const [selectedRecipeForDetail, setSelectedRecipeForDetail] = useState(null);
   const [selectedRecipeForApproval, setSelectedRecipeForApproval] = useState(null);
   const [selectedEventForBinding, setSelectedEventForBinding] = useState(null);
   const [activeEventForMRS, setActiveEventForMRS] = useState(null);
+
+  // Phase 3 Modals
+  const [activeEventForApproval, setActiveEventForApproval] = useState(null);
+  const [showStockRegisterModal, setShowStockRegisterModal] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -350,6 +360,8 @@ export default function CastingPage() {
           onRefreshEvents={handleRefreshEvents}
           onAssignRecipes={(evt) => setSelectedEventForBinding(evt)}
           onViewMRS={(evt) => setActiveEventForMRS(evt)}
+          onReviewConsumption={(evt) => setActiveEventForApproval(evt)}
+          onOpenStockRegister={() => setShowStockRegisterModal(true)}
         />
       )}
 
@@ -357,10 +369,12 @@ export default function CastingPage() {
         <RecipeListTable
           recipes={recipes}
           onRefresh={handleRefreshRecipes}
-          onCreateNew={() => setShowCreateRecipeModal(true)}
-          onViewRecipe={(rec) => {
-            // View / fork recipe
+          onCreateNew={() => {
+            setEditingRecipeData(null);
             setShowCreateRecipeModal(true);
+          }}
+          onViewRecipe={(rec) => {
+            setSelectedRecipeForDetail(rec);
           }}
           onApproveRecipe={(rec, vNum) => {
             setSelectedRecipeForApproval({ recipe: rec, versionNumber: vNum });
@@ -409,15 +423,60 @@ export default function CastingPage() {
         onActualRecorded={handleRefreshEvents}
       />
 
-      {/* Modal: Create Mix Design Recipe (Phase 2) */}
+      {/* Modal: Create / Edit Mix Design Recipe (Phase 2) */}
       <CreateRecipeModal
         isOpen={showCreateRecipeModal}
-        onClose={() => setShowCreateRecipeModal(false)}
+        initialData={editingRecipeData}
+        onClose={() => {
+          setShowCreateRecipeModal(false);
+          setEditingRecipeData(null);
+        }}
         onSubmit={async (payload) => {
-          await castingApi.createRecipe(payload);
+          if (editingRecipeData && editingRecipeData._id) {
+            const vNum = editingRecipeData.activeVersionDetails?.versionNumber || '1.0';
+            await castingApi.updateRecipeVersion(editingRecipeData._id, vNum, payload);
+          } else {
+            await castingApi.createRecipe(payload);
+          }
           await handleRefreshRecipes();
         }}
       />
+
+      {/* Modal: Recipe Detail Inspector (Phase 2) */}
+      {selectedRecipeForDetail && (
+        <RecipeDetailModal
+          isOpen={!!selectedRecipeForDetail}
+          onClose={() => setSelectedRecipeForDetail(null)}
+          recipe={selectedRecipeForDetail}
+          onApproveRecipe={(rec, vNum) => {
+            setSelectedRecipeForDetail(null);
+            setSelectedRecipeForApproval({ recipe: rec, versionNumber: vNum });
+          }}
+          onForkVersion={async (rec) => {
+            try {
+              await castingApi.createRecipeVersion(rec._id, {});
+              await handleRefreshRecipes();
+              setSelectedRecipeForDetail(null);
+            } catch (err) {
+              alert(err.message || 'Failed to fork new version');
+            }
+          }}
+          onEditRecipe={(rec) => {
+            setSelectedRecipeForDetail(null);
+            setEditingRecipeData(rec);
+            setShowCreateRecipeModal(true);
+          }}
+          onSubmitForReview={async (rec, vNum) => {
+            try {
+              await castingApi.submitRecipeVersion(rec._id, vNum);
+              await handleRefreshRecipes();
+              setSelectedRecipeForDetail(null);
+            } catch (err) {
+              alert(err.message || 'Failed to submit recipe for review');
+            }
+          }}
+        />
+      )}
 
       {/* Modal: Recipe Approval & Maker-Checker Review (Phase 2) */}
       {selectedRecipeForApproval && (
@@ -468,6 +527,36 @@ export default function CastingPage() {
             await castingApi.generateMRS(eventId, reason);
             await handleRefreshEvents();
           }}
+        />
+      )}
+
+      {/* Modal: Actual Pour & Material Consumption Recording (Phase 3) */}
+      {activeEventForActuals && (
+        <ActualConsumptionModal
+          isOpen={!!activeEventForActuals}
+          onClose={() => setActiveEventForActuals(null)}
+          event={activeEventForActuals}
+          onSaved={handleRefreshEvents}
+        />
+      )}
+
+      {/* Modal: Consumption Approval & Atomic Posting (Phase 3) */}
+      {activeEventForApproval && (
+        <ConsumptionApprovalModal
+          isOpen={!!activeEventForApproval}
+          onClose={() => setActiveEventForApproval(null)}
+          event={activeEventForApproval}
+          onActionComplete={handleRefreshEvents}
+        />
+      )}
+
+      {/* Modal: Project Material Stock Register & Inward (Phase 3) */}
+      {showStockRegisterModal && selectedProject && (
+        <ProjectStockRegisterModal
+          isOpen={showStockRegisterModal}
+          onClose={() => setShowStockRegisterModal(false)}
+          projectId={selectedProject.id || selectedProject._id}
+          projectName={selectedProject.name}
         />
       )}
     </div>

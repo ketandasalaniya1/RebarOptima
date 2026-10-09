@@ -8,6 +8,7 @@ import dns from 'dns';
 import { solve1DCSP } from './batches/optimizer.engine';
 import { createBBSRouter } from './bbs/bbs.routes';
 import { createCastingRouter } from './casting/casting.routes';
+import { verifyMultiDocumentTransactionRollback } from './casting/casting.inventory.service';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
@@ -166,6 +167,12 @@ async function connectDB(): Promise<Db> {
       const connectedDb = client.db();
       db = connectedDb;
       console.log('✅ Connected to MongoDB Atlas');
+      try {
+        await verifyMultiDocumentTransactionRollback(client, connectedDb);
+        console.log('✅ Multi-Document Transaction Rollback Probe Verified');
+      } catch (probeErr: any) {
+        console.warn('⚠️ Transaction Probe Warning:', probeErr.message);
+      }
       try {
         await seedDefaults(connectedDb);
         console.log('✅ MongoDB Atlas seeded/synced successfully!');
@@ -488,7 +495,7 @@ function authMiddleware(req: any, res: any, next: any) {
 app.use('/api/bbs', createBBSRouter(() => db, authMiddleware));
 
 // Mount Casting Management Isolated Module Routes
-app.use('/api/casting', createCastingRouter(() => db, authMiddleware, logAudit));
+app.use('/api/casting', createCastingRouter(() => db, () => client, authMiddleware, logAudit));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {

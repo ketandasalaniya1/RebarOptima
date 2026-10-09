@@ -11,6 +11,8 @@ import {
   ICastingRecipe
 } from './casting.types';
 import { createCastingRecipeRouter } from './casting.recipe.routes';
+import { createCastingConsumptionRouter } from './casting.consumption.routes';
+import { createCastingStockRouter } from './casting.stock.routes';
 import {
   calculateSegmentMaterials,
   calculateGradeSubtotals,
@@ -18,11 +20,37 @@ import {
   checkInventoryAvailability
 } from './casting.calculation.service';
 
-export function createCastingRouter(getDb: () => any, authMiddleware: any, logAudit?: any) {
+export function createCastingRouter(
+  getDb: () => any,
+  getClientOrAuth: any,
+  authMiddlewareOrLog?: any,
+  logAuditOrNone?: any
+) {
   const router = Router();
+
+  // Normalize arguments for backward compatibility
+  let getClient: () => any;
+  let authMiddleware: any;
+  let logAudit: any;
+
+  if (typeof getClientOrAuth === 'function' && typeof authMiddlewareOrLog === 'function') {
+    getClient = getClientOrAuth;
+    authMiddleware = authMiddlewareOrLog;
+    logAudit = logAuditOrNone;
+  } else {
+    getClient = () => null;
+    authMiddleware = getClientOrAuth;
+    logAudit = authMiddlewareOrLog;
+  }
 
   // Mount Recipe Management Router (Phase 2)
   router.use('/recipes', createCastingRecipeRouter(getDb, authMiddleware, logAudit));
+
+  // Mount Consumption & Actuals Router (Phase 3)
+  router.use('/', createCastingConsumptionRouter(getDb, getClient, authMiddleware, logAudit));
+
+  // Mount Project Stock & Ledger Router (Phase 3)
+  router.use('/', createCastingStockRouter(getDb, getClient, authMiddleware, logAudit));
 
   // Helper to resolve companyId from authenticated user
   const resolveCompanyId = async (req: any, db: any): Promise<string> => {

@@ -71,6 +71,31 @@ export const castingApi = {
     const qs = revision ? `?revision=${revision}` : '';
     return apiRequest(`/casting/events/${eventId}/mrs${qs}`);
   },
-  getMRSRevisions: (eventId) => apiRequest(`/casting/events/${eventId}/mrs/revisions`)
+  getMRSRevisions: (eventId) => apiRequest(`/casting/events/${eventId}/mrs/revisions`),
+
+  // Phase 3: Actual Casting & Material Consumption
+  draftConsumption: (eventId, data) => apiRequest(`/casting/events/${eventId}/consumption`, { method: 'POST', body: data }),
+  getConsumptionRecords: (eventId) => apiRequest(`/casting/events/${eventId}/consumption`),
+  getConsumptionById: (eventId, cid) => apiRequest(`/casting/events/${eventId}/consumption/${cid}`),
+  updateConsumption: (eventId, cid, data) => apiRequest(`/casting/events/${eventId}/consumption/${cid}`, { method: 'PUT', body: data }),
+  submitConsumption: (eventId, cid) => apiRequest(`/casting/events/${eventId}/consumption/${cid}/submit`, { method: 'POST' }),
+  calculateConsumptionVariance: (eventId, materials) => apiRequest(`/casting/events/${eventId}/consumption/calculate-variance`, { method: 'POST', body: { materials } }),
+  approveAndPostConsumption: (eventId, cid, remarks = '') => apiRequest(`/casting/events/${eventId}/consumption/${cid}/approve-and-post`, { method: 'POST', body: { approvalRemarks: remarks } }),
+  rejectConsumption: (eventId, cid, reason = '') => apiRequest(`/casting/events/${eventId}/consumption/${cid}/reject`, { method: 'POST', body: { rejectionReason: reason } }),
+  reverseConsumption: (eventId, cid, reason = '') => apiRequest(`/casting/events/${eventId}/consumption/${cid}/reverse`, { method: 'POST', body: { reversalReason: reason } }),
+
+  // Phase 3: Project Material Stock & Inward Receipts
+  getProjectStock: (projectId) => apiRequest(`/casting/projects/${projectId}/stock`),
+  recordStockInward: (projectId, data) => apiRequest(`/casting/projects/${projectId}/stock/inward`, { method: 'POST', body: data }),
+  getStockLedger: (projectId, params = {}) => {
+    const query = new URLSearchParams();
+    if (params.materialIdentifier) query.set('materialIdentifier', params.materialIdentifier);
+    if (params.transactionType) query.set('transactionType', params.transactionType);
+    if (params.limit) query.set('limit', params.limit);
+    if (params.page) query.set('page', params.page);
+    const qs = query.toString();
+    return apiRequest(`/casting/projects/${projectId}/stock/ledger${qs ? `?${qs}` : ''}`);
+  }
 };
+
 

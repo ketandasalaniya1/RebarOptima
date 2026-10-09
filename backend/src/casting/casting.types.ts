@@ -357,3 +357,251 @@ export interface ICastingEvent {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PHASE 3 — ACTUAL CASTING, MATERIAL CONSUMPTION, APPROVAL & INVENTORY POSTING
+// ══════════════════════════════════════════════════════════════════════════════
+
+export type CanonicalUnit = 'KG' | 'LITERS';
+
+export type VarianceClassification =
+  | 'EXACT_MATCH'
+  | 'UNDER_CONSUMPTION_NORMAL'
+  | 'UNDER_CONSUMPTION_HIGH'
+  | 'OVER_CONSUMPTION_TOLERABLE'
+  | 'OVER_CONSUMPTION_MODERATE'
+  | 'OVER_CONSUMPTION_HIGH'
+  | 'UNBUDGETED';
+
+export type ConsumptionStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'REJECTED'
+  | 'APPROVED_POSTED'
+  | 'REVERSED';
+
+export type CastingStockTransactionType =
+  | 'CASTING_INWARD'
+  | 'CASTING_CONSUMPTION_OUTWARD'
+  | 'CASTING_REVERSAL'
+  | 'CASTING_ADJUSTMENT';
+
+export interface ICastingMaterialConsumptionItem {
+  materialIdentifier: string;
+  specificationStandard: string;
+  name: string;
+  category: IngredientCategory;
+  plannedQuantity: number;
+  actualQuantity: number;
+  canonicalUnit: CanonicalUnit;
+  enteredQuantity?: number;
+  enteredUnit?: IngredientUnit;
+  varianceQuantity: number; // actualQuantity - plannedQuantity
+  variancePercentage: number | null; // null if plannedQuantity === 0
+  varianceClassification: VarianceClassification;
+  wastageReasonCode?: string;
+  remarks?: string;
+  isUntrackedBulk?: boolean;
+}
+
+export interface ICastingSegmentActual {
+  segmentId: string;
+  memberId: string;
+  segmentName: string;
+  grade: ConcreteGrade;
+  recipeCode: string;
+  recipeVersion: string;
+  plannedVolumeM3: number;
+  actualVolumeM3: number;
+  varianceVolumeM3: number;
+  pourStartTime?: string;
+  pourEndTime?: string;
+  transitMixerChallans?: string[];
+  testCubeBatchIds?: string[];
+  status: 'POURED' | 'PARTIAL' | 'ABORTED';
+}
+
+export interface ICastingPostingReceipt {
+  _id?: any;
+  postingKey: string;
+  companyId: string;
+  projectId: string;
+  eventId: string;
+  consumptionRecordId: string;
+  postingNumber: string;
+  status: 'COMMITTED';
+  postedAt: Date;
+  postedBy: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  itemsCount: number;
+  totalActualVolumeM3: number;
+  isDuplicateReplay?: boolean;
+}
+
+export interface ICastingInwardItem {
+  materialIdentifier: string;
+  specificationStandard: string;
+  name: string;
+  category: IngredientCategory;
+  enteredQuantity: number;
+  enteredUnit: IngredientUnit;
+  canonicalQuantity: number;
+  canonicalUnit: CanonicalUnit;
+  unitCost?: number;
+  specificGravity?: number;
+  remarks?: string;
+}
+
+export interface ICastingInwardReceipt {
+  _id?: any;
+  inwardKey: string;
+  companyId: string;
+  projectId: string;
+  challanNumber: string;
+  vendorName: string;
+  vendorGstin?: string;
+  vehicleNumber?: string;
+  deliveryDate: string;
+  itemsCount: number;
+  items: ICastingInwardItem[];
+  receivedAt: Date;
+  receivedBy: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  remarks?: string;
+  isDuplicateReplay?: boolean;
+}
+
+export interface ICastingReversalReceipt {
+  _id?: any;
+  reversalKey: string;
+  originalPostingKey: string;
+  companyId: string;
+  projectId: string;
+  eventId: string;
+  consumptionRecordId: string;
+  reversalReason: string;
+  itemsCount: number;
+  reversedAt: Date;
+  reversedBy: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  isDuplicateReplay?: boolean;
+}
+
+export interface ICastingStockTransaction {
+  _id?: any;
+  operationKey: string; // postingKey | inwardKey | reversalKey
+  lineIndex: number;
+  transactionType: CastingStockTransactionType;
+  companyId: string;
+  projectId: string;
+  materialIdentifier: string;
+  specificationStandard: string;
+  name: string;
+  category: IngredientCategory;
+  canonicalQuantity: number; // strictly positive magnitude
+  canonicalUnit: CanonicalUnit;
+  enteredQuantity?: number;
+  enteredUnit?: IngredientUnit;
+  conversionFactor?: number;
+  originalTransactionId?: any; // populated for CASTING_REVERSAL
+  originalOperationKey?: string;
+  isUntrackedBulk?: boolean;
+  postedBy: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  createdAt: Date;
+}
+
+export interface ICastingMaterialStock {
+  _id?: any;
+  companyId: string;
+  projectId: string;
+  materialIdentifier: string;
+  specificationStandard: string;
+  name: string;
+  category: IngredientCategory;
+  canonicalUnit: CanonicalUnit;
+  currentBalance: number;
+  minimumThreshold?: number;
+  updatedAt: Date;
+}
+
+export interface ICastingActualConsumptionRecord {
+  _id?: any;
+  companyId: string;
+  projectId: string;
+  eventId: string;
+  eventNumber: string;
+  consumptionCode: string;
+  mrsRevisionNumber: number;
+  mrsCode: string;
+  actualPourDate: string;
+  actualPourStartTime?: string;
+  actualPourEndTime?: string;
+  totalPlannedVolumeM3: number;
+  totalActualVolumeM3: number;
+  varianceVolumeM3: number;
+  segmentsActual: ICastingSegmentActual[];
+  materialsConsumed: ICastingMaterialConsumptionItem[];
+  status: ConsumptionStatus;
+  
+  // Maker-Checker & Approvals
+  createdBy: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  submittedBy?: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+    date: Date;
+  };
+  approvedBy?: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+    date: Date;
+    remarks?: string;
+  };
+  rejectedBy?: {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+    date: Date;
+    reason: string;
+  };
+  
+  // Posting & Reversal References
+  postingReceiptId?: any;
+  postingReceipt?: ICastingPostingReceipt;
+  reversalReceiptId?: any;
+  reversalReceipt?: ICastingReversalReceipt;
+  
+  weatherConditions?: string;
+  batchingPlantName?: string;
+  generalNotes?: string;
+  
+  createdAt: Date;
+  updatedAt: Date;
+}
+

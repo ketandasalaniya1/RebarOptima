@@ -1,4 +1,18 @@
 import React, { useState } from 'react';
+import {
+  ShieldCheck,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  FlaskConical,
+  Layers,
+  FileCheck,
+  Info,
+  Clock,
+  User,
+  Calendar,
+  Check
+} from 'lucide-react';
 
 export default function RecipeApprovalModal({
   isOpen,
@@ -8,7 +22,7 @@ export default function RecipeApprovalModal({
   onApprove,
   onReject
 }) {
-  const [remarks, setRemarks] = useState('Technically approved for structural casting');
+  const [remarks, setRemarks] = useState('Technically approved for structural casting. Complies with IS 456 / IS 10262 durability specifications.');
   const [rejectReason, setRejectReason] = useState('');
   const [isRejectMode, setIsRejectMode] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -16,7 +30,43 @@ export default function RecipeApprovalModal({
 
   if (!isOpen || !recipe) return null;
 
-  const version = recipe.versions?.find(v => v.versionNumber === versionNumber) || recipe.activeVersionDetails;
+  const version = recipe.versions?.find((v) => v.versionNumber === versionNumber) || recipe.activeVersionDetails || (recipe.versions && recipe.versions[0]);
+  const ingredients = version?.ingredients || [];
+  const limits = version?.engineeringLimits || {};
+
+  // Ratios & Calculations
+  const pureCement = ingredients
+    .filter((i) => i.category === 'CEMENT')
+    .reduce((s, i) => s + (Number(i.quantityPerM3) || 0), 0);
+
+  const scmTotal = ingredients
+    .filter((i) => i.category === 'SUPPLEMENTARY_CEMENTITIOUS')
+    .reduce((s, i) => s + (Number(i.quantityPerM3) || 0), 0);
+
+  const fineAgg = ingredients
+    .filter((i) => i.category === 'FINE_AGGREGATE')
+    .reduce((s, i) => s + (Number(i.quantityPerM3) || 0), 0);
+
+  const coarseAgg = ingredients
+    .filter((i) => i.category === 'COARSE_AGGREGATE')
+    .reduce((s, i) => s + (Number(i.quantityPerM3) || 0), 0);
+
+  const freeWater = ingredients
+    .filter((i) => i.category === 'WATER')
+    .reduce((s, i) => s + (Number(i.quantityPerM3) || 0), 0);
+
+  const totalBinder = pureCement + scmTotal;
+  const totalAggregates = fineAgg + coarseAgg;
+  const wcVal = version?.calculatedWaterCementRatio ?? (pureCement > 0 ? freeWater / pureCement : null);
+  const wcmVal = version?.calculatedWaterCementitiousRatio ?? (totalBinder > 0 ? freeWater / totalBinder : null);
+
+  const maxWC = limits.maxWaterCementRatio || 0.45;
+  const minCement = limits.minCementContentKgPerM3 || 300;
+  const maxBinder = limits.maxTotalCementitiousKgPerM3 || 450;
+
+  const isWcPass = wcVal !== null ? wcVal <= maxWC : true;
+  const isMinCementPass = pureCement >= minCement;
+  const isMaxBinderPass = totalBinder <= maxBinder;
 
   const handleApprove = async () => {
     setActionLoading(true);
@@ -33,7 +83,7 @@ export default function RecipeApprovalModal({
 
   const handleReject = async () => {
     if (!rejectReason.trim()) {
-      setErrorMsg('Rejection remarks are mandatory');
+      setErrorMsg('Rejection remarks explaining non-conformance are mandatory.');
       return;
     }
     setActionLoading(true);
@@ -49,145 +99,221 @@ export default function RecipeApprovalModal({
   };
 
   return (
-    <div className="casting-modal-overlay">
-      <div className="casting-modal" style={{ maxWidth: '750px' }}>
-        <div className="casting-modal-header">
-          <h2 style={{ margin: 0, fontSize: '1.25rem' }}>
-            Technical Review: {recipe.displayName} ({recipe.recipeCode})
-          </h2>
+    <div className="casting-modal-backdrop" onClick={onClose}>
+      <div
+        className="casting-modal large recipe-approval-modal"
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: '820px' }}
+      >
+        {/* Header */}
+        <div className="recipe-approval-header">
+          <div className="recipe-approval-title-wrap">
+            <div className={`approval-header-icon ${isRejectMode ? 'reject' : 'approve'}`}>
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <h2 className="approval-modal-title">
+                Technical Review & QA Sign-Off: {recipe.displayName}
+              </h2>
+              <div className="approval-meta-row">
+                <code>{recipe.recipeCode}</code>
+                <span className="approval-grade-pill">{recipe.grade}</span>
+                <span className="approval-ver-pill">v{version?.versionNumber || '1.0'}</span>
+                {version?.submittedBy && (
+                  <span className="approval-submitter-text">
+                    <User size={12} /> {version.submittedBy.name} ({new Date(version.submittedBy.date).toLocaleDateString()})
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
           <button className="casting-modal-close" onClick={onClose}>✕</button>
         </div>
 
         {errorMsg && (
-          <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.75rem 1rem', margin: '1rem 1.5rem 0', borderRadius: '6px', fontSize: '0.9rem' }}>
-            ⚠️ {errorMsg}
+          <div className="recipe-error-banner" style={{ margin: '1rem 1.5rem 0' }}>
+            <AlertTriangle size={16} />
+            <span>{errorMsg}</span>
           </div>
         )}
 
-        <div style={{ padding: '1.5rem' }}>
-          {/* Header Summary Card */}
-          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', marginBottom: '1.25rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', fontSize: '0.85rem' }}>
-              <div>
-                <span style={{ color: '#64748b' }}>Grade:</span>
-                <strong style={{ display: 'block', fontSize: '1rem', color: '#1e293b' }}>{recipe.grade}</strong>
+        <div className="recipe-approval-body">
+          {/* Engineering Compliance Summary Cards */}
+          <div className="approval-checkpoint-grid">
+            <div className={`approval-checkpoint ${isWcPass ? 'pass' : 'fail'}`}>
+              <div className="checkpoint-icon">
+                {isWcPass ? <CheckCircle2 size={16} color="#2dd4bf" /> : <AlertTriangle size={16} color="#ef4444" />}
               </div>
-              <div>
-                <span style={{ color: '#64748b' }}>Version:</span>
-                <strong style={{ display: 'block', fontSize: '1rem', color: '#1e293b' }}>v{version?.versionNumber}</strong>
-              </div>
-              <div>
-                <span style={{ color: '#64748b' }}>w/c Ratio:</span>
-                <strong style={{ display: 'block', fontSize: '1rem', color: '#1e293b' }}>
-                  {version?.calculatedWaterCementRatio !== null && version?.calculatedWaterCementRatio !== undefined
-                    ? version.calculatedWaterCementRatio.toFixed(3)
-                    : 'N/A'}
-                </strong>
-              </div>
-              <div>
-                <span style={{ color: '#64748b' }}>w/cm Ratio:</span>
-                <strong style={{ display: 'block', fontSize: '1rem', color: '#1e293b' }}>
-                  {version?.calculatedWaterCementitiousRatio !== null && version?.calculatedWaterCementitiousRatio !== undefined
-                    ? version.calculatedWaterCementitiousRatio.toFixed(3)
-                    : 'N/A'}
-                </strong>
+              <div className="checkpoint-info">
+                <span className="checkpoint-lbl">w/c Ratio</span>
+                <strong className="checkpoint-val">{wcVal ? wcVal.toFixed(3) : 'N/A'}</strong>
+                <span className="checkpoint-sub">Max allowed {maxWC.toFixed(2)}</span>
               </div>
             </div>
-            {version?.submittedBy && (
-              <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748b' }}>
-                Submitted by: <strong>{version.submittedBy.name}</strong> on {new Date(version.submittedBy.date).toLocaleDateString()}
+
+            <div className={`approval-checkpoint ${isMinCementPass ? 'pass' : 'fail'}`}>
+              <div className="checkpoint-icon">
+                {isMinCementPass ? <CheckCircle2 size={16} color="#2dd4bf" /> : <AlertTriangle size={16} color="#ef4444" />}
               </div>
-            )}
+              <div className="checkpoint-info">
+                <span className="checkpoint-lbl">Pure Cement</span>
+                <strong className="checkpoint-val">{pureCement} kg</strong>
+                <span className="checkpoint-sub">Min required {minCement} kg</span>
+              </div>
+            </div>
+
+            <div className={`approval-checkpoint ${isMaxBinderPass ? 'pass' : 'fail'}`}>
+              <div className="checkpoint-icon">
+                {isMaxBinderPass ? <CheckCircle2 size={16} color="#2dd4bf" /> : <AlertTriangle size={16} color="#ef4444" />}
+              </div>
+              <div className="checkpoint-info">
+                <span className="checkpoint-lbl">Total Binder</span>
+                <strong className="checkpoint-val">{totalBinder} kg</strong>
+                <span className="checkpoint-sub">Upper limit {maxBinder} kg</span>
+              </div>
+            </div>
+
+            <div className="approval-checkpoint pass">
+              <div className="checkpoint-icon">
+                <CheckCircle2 size={16} color="#2dd4bf" />
+              </div>
+              <div className="checkpoint-info">
+                <span className="checkpoint-lbl">Target Slump</span>
+                <strong className="checkpoint-val">{limits.targetSlumpMinMm || 120}-{limits.targetSlumpMaxMm || 150} mm</strong>
+                <span className="checkpoint-sub">Pumpable Workability</span>
+              </div>
+            </div>
           </div>
 
-          {/* Ingredients Table */}
-          <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.95rem' }}>Ingredient Proportions (per m³)</h4>
-          <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '6px', marginBottom: '1.25rem' }}>
-            <table className="casting-table" style={{ fontSize: '0.8rem' }}>
-              <thead>
-                <tr>
-                  <th>Material SKU</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Rate / m³</th>
-                  <th>Display Qty</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(version?.ingredients || []).map((ing, idx) => (
-                  <tr key={idx}>
-                    <td style={{ fontFamily: 'monospace' }}>{ing.materialIdentifier}</td>
-                    <td>{ing.name}</td>
-                    <td>{ing.category}</td>
-                    <td>{ing.quantityPerM3} {ing.baseUnit}</td>
-                    <td><strong>{ing.quantityPerM3} {ing.displayUnit}</strong></td>
+          {/* Proportions Quick Table */}
+          <div className="approval-table-section">
+            <h4 className="approval-section-title">
+              <Layers size={14} /> Mix Proportions per 1.0 m³ Concrete
+            </h4>
+            <div className="casting-table-container" style={{ maxHeight: '180px', overflowY: 'auto' }}>
+              <table className="casting-table">
+                <thead>
+                  <tr>
+                    <th>Material Name</th>
+                    <th>Identifier</th>
+                    <th>Category</th>
+                    <th>Rate / m³</th>
+                    <th>Equivalent Display Qty</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {ingredients.map((ing, idx) => (
+                    <tr key={idx}>
+                      <td><strong>{ing.name}</strong></td>
+                      <td><code>{ing.materialIdentifier}</code></td>
+                      <td>
+                        <span className="ingredient-category-pill">
+                          {ing.category.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        <strong style={{ color: '#2dd4bf' }}>{ing.quantityPerM3}</strong> {ing.baseUnit}
+                      </td>
+                      <td>
+                        {ing.category === 'CEMENT' ? (
+                          <span style={{ color: '#60a5fa', fontWeight: 600 }}>
+                            {(ing.quantityPerM3 / 50).toFixed(2)} Bags (50kg)
+                          </span>
+                        ) : (
+                          <span>{ing.quantityPerM3} {ing.displayUnit || ing.baseUnit}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          {/* Maker-Checker Remarks Section */}
+          {/* Maker-Checker Sign-off Input */}
           {!isRejectMode ? (
-            <div>
-              <label className="casting-label">Approval Remarks / Sign-off Comments</label>
+            <div className="approval-signoff-box">
+              <div className="signoff-box-header">
+                <label className="form-label" style={{ margin: 0 }}>
+                  Quality Sign-Off & Approval Remarks
+                </label>
+                <span className="signoff-stamp-preview">
+                  <Check size={12} /> Digital Approval Stamp
+                </span>
+              </div>
               <textarea
-                className="casting-textarea"
+                className="form-input"
                 rows={2}
                 value={remarks}
-                onChange={e => setRemarks(e.target.value)}
-                placeholder="Enter technical approval remarks..."
+                onChange={(e) => setRemarks(e.target.value)}
+                placeholder="Enter technical QA remarks for the structural engineering log..."
               />
             </div>
           ) : (
-            <div>
-              <label className="casting-label" style={{ color: '#dc2626' }}>Mandatory Rejection Remarks *</label>
+            <div className="approval-signoff-box reject">
+              <div className="signoff-box-header">
+                <label className="form-label" style={{ margin: 0, color: '#f87171' }}>
+                  Mandatory Rejection Remarks & Corrective Actions *
+                </label>
+              </div>
               <textarea
-                className="casting-textarea"
-                rows={2}
+                className="form-input"
+                rows={3}
                 value={rejectReason}
-                onChange={e => setRejectReason(e.target.value)}
-                placeholder="Explain why this mix design is rejected (e.g. Slump out of specification, w/c ratio too high)..."
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="Explain the technical reasons for rejection (e.g., Slump target exceeds safe envelope, insufficient cement content, coarse aggregate gap grading)..."
                 required
               />
             </div>
           )}
+        </div>
 
-          <div className="casting-modal-footer" style={{ padding: 0, marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between' }}>
+        {/* Modal Footer Actions */}
+        <div className="recipe-approval-footer">
+          <button
+            type="button"
+            className="btn-secondary-dark"
+            onClick={() => {
+              setIsRejectMode(!isRejectMode);
+              setErrorMsg('');
+            }}
+          >
+            {isRejectMode ? '↩️ Switch to Approval Mode' : '❌ Switch to Rejection Mode'}
+          </button>
+
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button
               type="button"
-              className="casting-btn casting-btn-secondary"
-              onClick={() => setIsRejectMode(!isRejectMode)}
+              className="btn-secondary-dark"
+              onClick={onClose}
+              disabled={actionLoading}
             >
-              {isRejectMode ? '↩️ Switch to Approval Mode' : '❌ Switch to Reject Mode'}
+              Cancel
             </button>
 
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button type="button" className="casting-btn casting-btn-secondary" onClick={onClose} disabled={actionLoading}>
-                Cancel
+            {!isRejectMode ? (
+              <button
+                type="button"
+                className="btn-primary-teal"
+                style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
+                onClick={handleApprove}
+                disabled={actionLoading}
+              >
+                <ShieldCheck size={15} />
+                {actionLoading ? 'Approving...' : '✅ Approve Mix Design'}
               </button>
-
-              {!isRejectMode ? (
-                <button
-                  type="button"
-                  className="casting-btn casting-btn-primary"
-                  style={{ background: '#059669' }}
-                  onClick={handleApprove}
-                  disabled={actionLoading}
-                >
-                  {actionLoading ? 'Approving...' : '✅ Approve Mix Design'}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="casting-btn casting-btn-danger"
-                  onClick={handleReject}
-                  disabled={actionLoading || !rejectReason.trim()}
-                >
-                  {actionLoading ? 'Rejecting...' : '🚫 Confirm Rejection'}
-                </button>
-              )}
-            </div>
+            ) : (
+              <button
+                type="button"
+                className="btn-icon-danger"
+                style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem', fontWeight: 600 }}
+                onClick={handleReject}
+                disabled={actionLoading || !rejectReason.trim()}
+              >
+                <XCircle size={15} />
+                {actionLoading ? 'Rejecting...' : '🚫 Confirm Rejection'}
+              </button>
+            )}
           </div>
         </div>
       </div>

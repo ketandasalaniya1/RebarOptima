@@ -489,7 +489,25 @@ export default function CreateRecipeModal({
   const [errorMsg, setErrorMsg] = useState('');
   const [saving, setSaving] = useState(false);
 
+  const applyPreset = (key) => {
+    const p = PRESETS[key];
+    if (!p) return;
+    setGrade(p.grade);
+    setRecipeCode(`${p.codePrefix}-${Math.floor(10 + Math.random() * 90)}`);
+    setDisplayName(p.displayName);
+    setDescription(p.description);
+    setMixType(p.mixType);
+    setMinCement(p.minCement);
+    setMaxTotalBinder(p.maxTotalBinder);
+    setMaxWC(p.maxWC);
+    setMaxWCM(p.maxWCM);
+    setSlumpMin(p.slumpMin);
+    setSlumpMax(p.slumpMax);
+    setIngredients(JSON.parse(JSON.stringify(p.ingredients)));
+  };
+
   useEffect(() => {
+    if (!isOpen) return;
     if (initialData) {
       setRecipeCode(initialData.recipeCode || '');
       setGrade(initialData.grade || 'M25');
@@ -520,25 +538,6 @@ export default function CreateRecipeModal({
       applyPreset('M25');
     }
   }, [initialData, isOpen]);
-
-  if (!isOpen) return null;
-
-  const applyPreset = (key) => {
-    const p = PRESETS[key];
-    if (!p) return;
-    setGrade(p.grade);
-    setRecipeCode(`${p.codePrefix}-${Math.floor(10 + Math.random() * 90)}`);
-    setDisplayName(p.displayName);
-    setDescription(p.description);
-    setMixType(p.mixType);
-    setMinCement(p.minCement);
-    setMaxTotalBinder(p.maxTotalBinder);
-    setMaxWC(p.maxWC);
-    setMaxWCM(p.maxWCM);
-    setSlumpMin(p.slumpMin);
-    setSlumpMax(p.slumpMax);
-    setIngredients(JSON.parse(JSON.stringify(p.ingredients)));
-  };
 
   // Live Calculations
   const pureCement = ingredients
@@ -661,6 +660,8 @@ export default function CreateRecipeModal({
       setSaving(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="casting-modal-backdrop" onClick={onClose}>

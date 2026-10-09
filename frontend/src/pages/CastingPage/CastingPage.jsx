@@ -403,56 +403,64 @@ export default function CastingPage() {
       )}
 
       {/* Modal: Create Structural Member (Single / Batch) */}
-      <CreateMemberModal
-        isOpen={showCreateMemberModal}
-        onClose={() => setShowCreateMemberModal(false)}
-        selectedProject={selectedProject}
-        selectedBlock={selectedBlock}
-        selectedLevel={selectedLevel}
-        memberTypes={memberTypes}
-        onMemberCreated={async () => {
-          if (selectedLevel) {
-            await loadLevelMembers(selectedLevel.id || selectedLevel._id);
-          }
-          await handleRefreshHierarchy();
-        }}
-      />
+      {showCreateMemberModal && (
+        <CreateMemberModal
+          isOpen={showCreateMemberModal}
+          onClose={() => setShowCreateMemberModal(false)}
+          selectedProject={selectedProject}
+          selectedBlock={selectedBlock}
+          selectedLevel={selectedLevel}
+          memberTypes={memberTypes}
+          onMemberCreated={async () => {
+            if (selectedLevel) {
+              await loadLevelMembers(selectedLevel.id || selectedLevel._id);
+            }
+            await handleRefreshHierarchy();
+          }}
+        />
+      )}
 
       {/* Modal: Schedule Casting Event (Multi-Member / Multi-Block) */}
-      <CreateCastingEventModal
-        isOpen={showCreateEventModal}
-        onClose={() => setShowCreateEventModal(false)}
-        projects={projects}
-        selectedProject={selectedProject}
-        onEventCreated={handleRefreshEvents}
-      />
+      {showCreateEventModal && (
+        <CreateCastingEventModal
+          isOpen={showCreateEventModal}
+          onClose={() => setShowCreateEventModal(false)}
+          projects={safeProjects}
+          selectedProject={selectedProject}
+          onEventCreated={handleRefreshEvents}
+        />
+      )}
 
       {/* Modal: Record Actual Pour Execution */}
-      <RecordActualPourModal
-        isOpen={!!activeEventForActuals}
-        onClose={() => setActiveEventForActuals(null)}
-        event={activeEventForActuals}
-        onActualRecorded={handleRefreshEvents}
-      />
+      {activeEventForActuals && (
+        <RecordActualPourModal
+          isOpen={!!activeEventForActuals}
+          onClose={() => setActiveEventForActuals(null)}
+          event={activeEventForActuals}
+          onActualRecorded={handleRefreshEvents}
+        />
+      )}
 
       {/* Modal: Create / Edit Mix Design Recipe (Phase 2) */}
-      <CreateRecipeModal
-        isOpen={showCreateRecipeModal}
-        initialData={editingRecipeData}
-        onClose={() => {
-          setShowCreateRecipeModal(false);
-          setEditingRecipeData(null);
-        }}
-        onSubmit={async (payload) => {
-          if (editingRecipeData && editingRecipeData._id) {
-            const vNum = editingRecipeData.activeVersionDetails?.versionNumber || '1.0';
-            await castingApi.updateRecipeVersion(editingRecipeData._id, vNum, payload);
-          } else {
-            await castingApi.createRecipe(payload);
-          }
-          await handleRefreshRecipes();
-        }}
-      />
+      {showCreateRecipeModal && (
+        <CreateRecipeModal
+          isOpen={showCreateRecipeModal}
+          initialData={editingRecipeData}
+          onClose={() => {
+            setShowCreateRecipeModal(false);
+            setEditingRecipeData(null);
+          }}
+          onSubmit={async (payload) => {
+            if (editingRecipeData && editingRecipeData._id) {
+              const vNum = editingRecipeData.activeVersionDetails?.versionNumber || '1.0';
+              await castingApi.updateRecipeVersion(editingRecipeData._id, vNum, payload);
+            } else {
+              await castingApi.createRecipe(payload);
+            }
+            await handleRefreshRecipes();
+          }}
+        />
+      )}
 
       {/* Modal: Recipe Detail Inspector (Phase 2) */}
       {selectedRecipeForDetail && (

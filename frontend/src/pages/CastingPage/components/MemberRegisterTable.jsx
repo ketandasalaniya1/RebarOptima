@@ -70,8 +70,8 @@ export default function MemberRegisterTable({
 
         <div className="content-pane-actions">
           {selectedLevel && (
-            <button className="btn-primary-teal" onClick={onOpenCreateModal}>
-              <Plus size={16} /> + Add Members
+            <button className="casting-btn casting-btn-primary" onClick={onOpenCreateModal}>
+              <Plus size={15} /> Add Members
             </button>
           )}
         </div>
@@ -79,18 +79,18 @@ export default function MemberRegisterTable({
 
       {/* Member Level Stats Bar */}
       {selectedLevel && members.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', background: 'rgba(15, 23, 42, 0.4)', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-          <div>
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Target Volume</div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc' }}>{totalRequired.toFixed(3)} m³</div>
+        <div className="casting-member-stats-bar">
+          <div className="casting-member-stat-col">
+            <span className="casting-member-stat-lbl">Target Volume</span>
+            <span className="casting-member-stat-val primary">{totalRequired.toFixed(3)} m³</span>
           </div>
-          <div>
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Actual Poured</div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#34d399' }}>{totalPoured.toFixed(3)} m³</div>
+          <div className="casting-member-stat-col">
+            <span className="casting-member-stat-lbl">Actual Poured</span>
+            <span className="casting-member-stat-val emerald">{totalPoured.toFixed(3)} m³</span>
           </div>
-          <div>
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Balance Volume</div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fbbf24' }}>{totalRemaining.toFixed(3)} m³</div>
+          <div className="casting-member-stat-col">
+            <span className="casting-member-stat-lbl">Balance Volume</span>
+            <span className="casting-member-stat-val amber">{totalRemaining.toFixed(3)} m³</span>
           </div>
         </div>
       )}
@@ -99,19 +99,19 @@ export default function MemberRegisterTable({
       {!selectedLevel ? (
         <div className="casting-empty-state">
           <Layers size={42} className="casting-empty-icon" />
-          <h4 style={{ margin: 0, color: '#f8fafc' }}>No Level Selected</h4>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>
+          <h4>No Level Selected</h4>
+          <p>
             Select a block and level from the left panel to manage structural members.
           </p>
         </div>
       ) : members.length === 0 ? (
         <div className="casting-empty-state">
           <Layers size={42} className="casting-empty-icon" />
-          <h4 style={{ margin: 0, color: '#f8fafc' }}>No Structural Members Registered</h4>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>
+          <h4>No Structural Members Registered</h4>
+          <p>
             Click '+ Add Members' above to register single elements or generate batch series.
           </p>
-          <button className="btn-primary-teal" onClick={onOpenCreateModal} style={{ marginTop: '0.5rem' }}>
+          <button className="casting-btn casting-btn-primary" onClick={onOpenCreateModal} style={{ marginTop: '0.75rem' }}>
             <Plus size={15} /> Add Member
           </button>
         </div>
@@ -137,7 +137,7 @@ export default function MemberRegisterTable({
 
                 return (
                   <tr key={m.id || m._id}>
-                    <td style={{ fontWeight: 700, color: '#f8fafc' }}>
+                    <td className="casting-member-id">
                       {m.displayId}
                     </td>
                     <td>
@@ -147,52 +147,52 @@ export default function MemberRegisterTable({
                     </td>
                     <td>
                       {m.volumeEntryMethod === 'DIMENSIONAL_CALC' && m.dimensions ? (
-                        <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                        <span className="casting-dimension-txt">
                           {m.dimensions.lengthMm} × {m.dimensions.widthMm} × {m.dimensions.depthMm} mm
                         </span>
                       ) : (
-                        <span style={{ fontSize: '0.8rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '0.3rem' }} title={m.basisOfCalculation}>
+                        <span className="casting-basis-txt" title={m.basisOfCalculation}>
                           <Info size={13} /> Direct Entry
                         </span>
                       )}
                       {m.description && (
-                        <div style={{ fontSize: '0.725rem', color: '#64748b', marginTop: '0.15rem' }}>
+                        <div className="casting-desc-sub">
                           {m.description}
                         </div>
                       )}
                     </td>
                     <td>
-                      <span className="volume-badge" style={{ color: '#f8fafc' }}>
+                      <span className="volume-badge">
                         {(m.totalRequiredVolumeM3 || 0).toFixed(3)} m³
                       </span>
                     </td>
                     <td>
-                      <span className="volume-badge" style={{ color: (m.actualPouredM3 || 0) > 0 ? '#34d399' : '#64748b' }}>
+                      <span className={`volume-badge ${(m.actualPouredM3 || 0) > 0 ? 'poured' : 'empty'}`}>
                         {(m.actualPouredM3 || 0).toFixed(3)} m³
                       </span>
                     </td>
                     <td>
-                      <span className="volume-badge" style={{ color: (m.remainingVolumeM3 || 0) > 0 ? '#fbbf24' : '#64748b' }}>
+                      <span className={`volume-badge ${(m.remainingVolumeM3 || 0) > 0 ? 'amber' : 'empty'}`}>
                         {(m.remainingVolumeM3 !== undefined ? m.remainingVolumeM3 : m.totalRequiredVolumeM3).toFixed(3)} m³
                       </span>
                     </td>
                     <td>
                       <span className={`status-tag ${isCompleted ? 'completed' : isPartially ? 'partially' : 'planned'}`}>
+                        <span className="status-dot"></span>
                         {isCompleted ? 'Completed' : isPartially ? 'Partially Poured' : 'Planned'}
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <div className="casting-row-actions">
                         <button
-                          className="btn-secondary-dark"
-                          style={{ padding: '0.25rem 0.45rem', fontSize: '0.75rem' }}
+                          className="casting-action-icon-btn"
                           onClick={() => handleStartEdit(m)}
                           title="Edit Member"
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
-                          className="btn-icon-danger"
+                          className="casting-action-btn-danger"
                           onClick={() => handleDeleteMember(m)}
                           title="Delete Member"
                         >

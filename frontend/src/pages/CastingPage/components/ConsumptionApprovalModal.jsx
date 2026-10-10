@@ -175,58 +175,51 @@ export default function ConsumptionApprovalModal({
           ) : (
             <>
               {/* Record Summary Card */}
-              <div style={{ background: '#1e293b', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem', border: '1px solid #334155' }}>
+              <div style={{ background: 'var(--card-bg, rgba(30, 41, 59, 0.6))', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem', border: '1px solid var(--card-border, rgba(255, 255, 255, 0.08))' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>Status</span>
+                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary, #94a3b8)' }}>Status</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-                      <span style={{
-                        padding: '3px 10px',
-                        borderRadius: '20px',
-                        fontSize: '0.8rem',
-                        fontWeight: 600,
-                        background: consumptionRecord.status === 'APPROVED_POSTED' ? 'rgba(34, 197, 94, 0.2)' : (consumptionRecord.status === 'SUBMITTED' ? 'rgba(56, 189, 248, 0.2)' : 'rgba(148, 163, 184, 0.2)'),
-                        color: consumptionRecord.status === 'APPROVED_POSTED' ? '#4ade80' : (consumptionRecord.status === 'SUBMITTED' ? '#38bdf8' : '#cbd5e1')
-                      }}>
+                      <span className={`status-badge ${consumptionRecord.status === 'APPROVED_POSTED' ? 'success' : (consumptionRecord.status === 'SUBMITTED' ? 'warning' : 'neutral')}`}>
                         {consumptionRecord.status}
                       </span>
-                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
                         MRS Baseline: <strong>R{consumptionRecord.mrsRevisionNumber}</strong>
                       </span>
                     </div>
                   </div>
 
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Submitted By</span>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 500, color: '#f8fafc' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>Submitted By</span>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-primary, #f8fafc)' }}>
                       {consumptionRecord.createdBy?.name || 'Site Engineer'} ({consumptionRecord.createdBy?.role || 'Engineer'})
                     </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #334155', fontSize: '0.825rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--card-border, #334155)', fontSize: '0.825rem' }}>
                   <div>
-                    <span style={{ color: '#94a3b8' }}>Actual Pour Date:</span> <strong style={{ color: '#f8fafc' }}>{consumptionRecord.actualPourDate}</strong>
+                    <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>Actual Pour Date:</span> <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{consumptionRecord.actualPourDate}</strong>
                   </div>
                   <div>
-                    <span style={{ color: '#94a3b8' }}>Total Actual Volume:</span> <strong style={{ color: '#38bdf8' }}>{(consumptionRecord.totalActualVolumeM3 || 0).toFixed(3)} m³</strong>
+                    <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>Total Actual Volume:</span> <strong style={{ color: 'var(--accent, #38bdf8)' }}>{(consumptionRecord.totalActualVolumeM3 || 0).toFixed(3)} m³</strong>
                   </div>
                   <div>
-                    <span style={{ color: '#94a3b8' }}>Batching Plant:</span> <strong style={{ color: '#f8fafc' }}>{consumptionRecord.batchingPlantName || 'N/A'}</strong>
+                    <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>Batching Plant:</span> <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{consumptionRecord.batchingPlantName || 'N/A'}</strong>
                   </div>
                 </div>
               </div>
 
               {/* Material Lines & Stock Check Table */}
               <div style={{ marginBottom: '1.25rem' }}>
-                <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Scale size={15} color="#38bdf8" /> Material Deductions & Project Store Stock Check
+                <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--text-primary, #f8fafc)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Scale size={15} color="var(--accent, #10b981)" /> Material Deductions & Project Store Stock Check
                 </h4>
 
-                <div className="casting-table-wrapper" style={{ background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+                <div className="casting-table-wrapper" style={{ background: 'var(--main-bg, #0f172a)', borderRadius: '8px', border: '1px solid var(--card-border, #334155)' }}>
                   <table className="casting-table" style={{ width: '100%', fontSize: '0.825rem' }}>
                     <thead>
-                      <tr style={{ background: '#1e293b' }}>
+                      <tr style={{ background: 'var(--card-bg, #1e293b)' }}>
                         <th style={{ padding: '8px 12px', textAlign: 'left' }}>Material</th>
                         <th style={{ padding: '8px 12px', textAlign: 'right' }}>Deduction Qty</th>
                         <th style={{ padding: '8px 12px', textAlign: 'right' }}>Store Stock</th>
@@ -239,10 +232,10 @@ export default function ConsumptionApprovalModal({
                         const isSufficient = mat.isUntrackedBulk || currentStock >= mat.actualQuantity;
 
                         return (
-                          <tr key={mat.materialIdentifier || idx} style={{ borderBottom: '1px solid #1e293b' }}>
+                          <tr key={mat.materialIdentifier || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                             <td style={{ padding: '8px 12px' }}>
-                              <div style={{ fontWeight: 600, color: '#f8fafc' }}>{mat.name}</div>
-                              <div style={{ fontSize: '0.725rem', color: '#94a3b8' }}>{mat.materialIdentifier}</div>
+                              <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{mat.name}</div>
+                              <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, #94a3b8)' }}>{mat.materialIdentifier}</div>
                             </td>
                             <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: '#38bdf8' }}>
                               {mat.actualQuantity} {mat.unit}

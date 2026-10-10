@@ -225,10 +225,10 @@ export default function RecordActualPourModal({
           </div>
 
           <div className="casting-modal-footer">
-            <button type="button" className="btn-secondary-dark" onClick={onClose}>
+            <button type="button" className="casting-btn casting-btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn-primary-teal" disabled={isSubmitting}>
+            <button type="submit" className="casting-btn casting-btn-primary" disabled={isSubmitting}>
               <CheckCircle2 size={16} />
               {isSubmitting ? 'Saving...' : 'Save Actual Pour Record'}
             </button>

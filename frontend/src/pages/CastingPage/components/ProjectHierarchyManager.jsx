@@ -137,19 +137,18 @@ export default function ProjectHierarchyManager({
     <div className="hierarchy-pane">
       <div className="hierarchy-pane-header">
         <span className="hierarchy-pane-title">
-          <Building size={18} className="text-teal-400" />
+          <Building size={18} className="casting-accent-icon" />
           Project & Hierarchy
         </span>
         <button
-          className="btn-secondary-dark"
-          style={{ padding: '0.35rem 0.65rem', fontSize: '0.775rem' }}
+          className="casting-btn casting-btn-secondary casting-btn-sm"
           onClick={() => {
             setErrorMsg('');
             setShowProjectModal(true);
           }}
           title="Create New Project"
         >
-          <FolderPlus size={14} /> + New
+          <FolderPlus size={14} /> + New Project
         </button>
       </div>
 
@@ -179,8 +178,7 @@ export default function ProjectHierarchyManager({
           <span className="project-select-lbl">Blocks & Floors</span>
           {selectedProject && (
             <button
-              className="btn-secondary-dark"
-              style={{ padding: '0.25rem 0.5rem', fontSize: '0.725rem' }}
+              className="casting-btn casting-btn-secondary casting-btn-xs"
               onClick={() => {
                 setErrorMsg('');
                 setShowBlockModal(true);
@@ -192,7 +190,7 @@ export default function ProjectHierarchyManager({
         </div>
 
         {blocks.length === 0 ? (
-          <div style={{ padding: '1rem', textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8' }}>
+          <div className="casting-tree-empty">
             No blocks found in this project. Click '+ Add Block' above.
           </div>
         ) : (
@@ -216,8 +214,7 @@ export default function ProjectHierarchyManager({
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <button
-                      className="btn-secondary-dark"
-                      style={{ padding: '0.2rem 0.4rem', fontSize: '0.7rem' }}
+                      className="casting-btn casting-btn-secondary casting-btn-xs"
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectBlock(block);
@@ -228,7 +225,7 @@ export default function ProjectHierarchyManager({
                       <Plus size={11} /> Floor
                     </button>
                     <button
-                      className="btn-icon-danger"
+                      className="casting-action-btn-danger"
                       onClick={(e) => handleDeleteBlock(block, e)}
                       title="Delete Block"
                     >

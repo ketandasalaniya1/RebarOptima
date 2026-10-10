@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { X, AlertTriangle, Save, Sparkles } from 'lucide-react';
 
 export default function SegmentRecipeAssignModal({
   isOpen,
@@ -89,12 +90,15 @@ export default function SegmentRecipeAssignModal({
           <h2 style={{ margin: 0, fontSize: '1.25rem' }}>
             Assign Mix Recipes: {event.title} ({event.eventNumber})
           </h2>
-          <button className="casting-modal-close" onClick={onClose}>✕</button>
+          <button className="casting-modal-close" onClick={onClose} title="Close modal">
+            <X size={18} />
+          </button>
         </div>
 
         {errorMsg && (
-          <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.75rem 1rem', margin: '1rem 1.5rem 0', borderRadius: '6px', fontSize: '0.9rem' }}>
-            ⚠️ {errorMsg}
+          <div style={{ background: 'rgba(239, 68, 68, 0.12)', color: 'var(--danger, #ef4444)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.75rem 1rem', margin: '1rem 1.5rem 0', borderRadius: '6px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <AlertTriangle size={15} />
+            <span>{errorMsg}</span>
           </div>
         )}
 
@@ -103,7 +107,7 @@ export default function SegmentRecipeAssignModal({
             Each pour segment in this event can reference its own approved concrete mix recipe. Match the member design grade with the corresponding mix design.
           </p>
 
-          <div style={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: '6px', marginBottom: '1.5rem' }}>
+          <div style={{ overflowX: 'auto', border: '1px solid var(--card-border, #e2e8f0)', borderRadius: '8px', marginBottom: '1.5rem' }}>
             <table className="casting-table" style={{ fontSize: '0.85rem' }}>
               <thead>
                 <tr>
@@ -142,7 +146,7 @@ export default function SegmentRecipeAssignModal({
                         {selectedRec ? (
                           <span className="casting-badge casting-badge-info">{selectedRec.grade}</span>
                         ) : (
-                          <span style={{ color: '#94a3b8' }}>—</span>
+                          <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>—</span>
                         )}
                       </td>
                       <td>
@@ -165,27 +169,31 @@ export default function SegmentRecipeAssignModal({
             </table>
           </div>
 
-          <div className="casting-modal-footer" style={{ padding: 0, display: 'flex', justifyContent: 'space-between' }}>
+          <div className="casting-modal-footer" style={{ padding: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <button type="button" className="casting-btn casting-btn-secondary" onClick={onClose} disabled={saving}>
               Cancel
             </button>
 
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.65rem' }}>
               <button
                 type="button"
                 className="casting-btn casting-btn-secondary"
                 onClick={handleSaveOnly}
                 disabled={saving}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
               >
-                {saving ? 'Saving...' : '💾 Save Bindings Only'}
+                <Save size={14} />
+                <span>{saving ? 'Saving...' : 'Save Bindings Only'}</span>
               </button>
               <button
                 type="button"
                 className="casting-btn casting-btn-primary"
                 onClick={handleSaveAndGenerate}
                 disabled={saving}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
               >
-                {saving ? 'Processing...' : '⚡ Save & Generate Material Sheet'}
+                <Sparkles size={14} />
+                <span>{saving ? 'Processing...' : 'Save & Generate Material Sheet'}</span>
               </button>
             </div>
           </div>

@@ -15,7 +15,9 @@ import {
   AlertTriangle,
   CheckCircle2,
   FileCheck,
-  ChevronRight
+  ChevronRight,
+  Save,
+  X
 } from 'lucide-react';
 
 const PRESETS = {
@@ -685,7 +687,9 @@ export default function CreateRecipeModal({
               </p>
             </div>
           </div>
-          <button className="casting-modal-close" onClick={onClose}>✕</button>
+          <button className="casting-modal-close" onClick={onClose} title="Close modal">
+            <X size={18} />
+          </button>
         </div>
 
         {/* IS 10262 Quick Presets Bar */}
@@ -721,7 +725,7 @@ export default function CreateRecipeModal({
             <span className="hud-lbl">Pure Cement</span>
             <strong className="hud-val">{pureCement} <small>kg/m³</small></strong>
             <span className={`hud-sub ${isMinCementViolated ? 'danger' : 'good'}`}>
-              {isMinCementViolated ? `⚠️ Min ${minCement}kg` : `Min ${minCement}kg ✓`}
+              {isMinCementViolated ? `Min ${minCement}kg (Deficit)` : `Min ${minCement}kg (Compliant)`}
             </span>
           </div>
 
@@ -729,7 +733,7 @@ export default function CreateRecipeModal({
             <span className="hud-lbl">Total Binder</span>
             <strong className="hud-val">{totalBinder} <small>kg/m³</small></strong>
             <span className={`hud-sub ${isBinderViolated ? 'danger' : 'good'}`}>
-              {isBinderViolated ? `⚠️ Max ${maxTotalBinder}kg` : `Max ${maxTotalBinder}kg ✓`}
+              {isBinderViolated ? `Max ${maxTotalBinder}kg (Exceeded)` : `Max ${maxTotalBinder}kg (Compliant)`}
             </span>
           </div>
 
@@ -745,7 +749,7 @@ export default function CreateRecipeModal({
               {liveWC ? liveWC.toFixed(3) : 'N/A'}
             </strong>
             <span className={`hud-sub ${isWcViolated ? 'danger' : 'good'}`}>
-              {isWcViolated ? `⚠️ Exceeds ${maxWC}` : `Limit ≤ ${maxWC} ✓`}
+              {isWcViolated ? `Exceeds ${maxWC} Limit` : `Limit ≤ ${maxWC} (Compliant)`}
             </span>
           </div>
 
@@ -979,8 +983,8 @@ export default function CreateRecipeModal({
                     value={mixType}
                     onChange={(e) => setMixType(e.target.value)}
                   >
-                    <option value="SITE_BATCHING">🏗️ Site Batching Plant</option>
-                    <option value="RMC_PROCUREMENT">🚚 Ready-Mix Concrete (RMC)</option>
+                    <option value="SITE_BATCHING">Site Batching Plant</option>
+                    <option value="RMC_PROCUREMENT">Ready-Mix Concrete (RMC)</option>
                   </select>
                 </div>
               </div>
@@ -1158,8 +1162,10 @@ export default function CreateRecipeModal({
                 type="submit"
                 className="btn-primary-teal"
                 disabled={saving}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
               >
-                {saving ? 'Saving Recipe...' : '💾 Save Mix Recipe'}
+                <Save size={16} />
+                <span>{saving ? 'Saving Recipe...' : 'Save Mix Recipe'}</span>
               </button>
             </div>
           </div>

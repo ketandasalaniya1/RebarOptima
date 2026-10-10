@@ -1,4 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import {
+  CheckCircle2,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  RefreshCw,
+  Download,
+  Printer,
+  Plus,
+  Layers,
+  Tag,
+  ListTree,
+  X
+} from 'lucide-react';
 import { castingApi } from '../castingApi';
 
 export default function MaterialRequirementSheetModal({
@@ -92,13 +106,21 @@ export default function MaterialRequirementSheetModal({
   const getStockBadge = (status, shortage) => {
     switch (status) {
       case 'SUFFICIENT':
-        return <span className="casting-badge casting-badge-completed">✓ Stock Available</span>;
+        return (
+          <span className="casting-badge casting-badge-completed" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <CheckCircle2 size={12} /> Stock Available
+          </span>
+        );
       case 'SHORTAGE':
-        return <span className="casting-badge casting-badge-danger">⚠️ Shortage: {shortage}</span>;
+        return (
+          <span className="casting-badge casting-badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <AlertTriangle size={12} /> Shortage: {shortage}
+          </span>
+        );
       default:
         return (
-          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.4rem', borderRadius: '4px', background: '#f1f5f9', color: '#475569' }}>
-            ℹ️ Not Tracked in Digital Stock
+          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'var(--card-border, #f1f5f9)', color: 'var(--text-secondary, #475569)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Info size={12} /> Not Tracked in Stock
           </span>
         );
     }
@@ -116,35 +138,40 @@ export default function MaterialRequirementSheetModal({
               Event: <strong>{event.eventNumber}</strong> | Planned Date: {event.plannedDate} | Total Volume: <strong>{event.plannedTotalVolumeM3} m³</strong>
             </div>
           </div>
-          <button className="casting-modal-close" onClick={onClose}>✕</button>
+          <button className="casting-modal-close" onClick={onClose} title="Close modal">
+            <X size={18} />
+          </button>
         </div>
 
         {errorMsg && (
-          <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.75rem 1rem', margin: '1rem 1.5rem 0', borderRadius: '6px', fontSize: '0.9rem' }}>
-            ⚠️ {errorMsg}
+          <div style={{ background: 'rgba(239, 68, 68, 0.12)', color: 'var(--danger, #ef4444)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.75rem 1rem', margin: '1rem 1.5rem 0', borderRadius: '6px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <AlertCircle size={16} />
+            <span>{errorMsg}</span>
           </div>
         )}
 
         {/* Staleness Banner */}
         {isStale && (
-          <div style={{ background: '#fef3c7', border: '1px solid #fde68a', color: '#92400e', padding: '0.75rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <strong>⚠️ Plan or Recipe Changed:</strong> The planned volumes or mix recipe bindings have been modified since this sheet was generated.
+          <div style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#fbbf24', padding: '0.75rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <AlertTriangle size={16} color="#fbbf24" />
+              <span><strong>Plan or Recipe Changed:</strong> The planned volumes or mix recipe bindings have been modified since this sheet was generated.</span>
             </div>
             <button
               className="casting-btn casting-btn-primary"
-              style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', background: '#d97706' }}
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
               onClick={() => setShowRegenDialog(true)}
             >
-              🔄 Regenerate Latest Revision
+              <RefreshCw size={13} />
+              <span>Regenerate Latest Revision</span>
             </button>
           </div>
         )}
 
         {/* Revision Header & Selector Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', background: 'var(--card-bg, #f8fafc)', borderBottom: '1px solid var(--card-border, #e2e8f0)', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Historical Revision:</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary, #475569)' }}>Historical Revision:</span>
             <select
               className="casting-select"
               style={{ minWidth: '180px', fontSize: '0.85rem' }}
@@ -153,14 +180,14 @@ export default function MaterialRequirementSheetModal({
             >
               {revisionsList.map(rev => (
                 <option key={rev.revisionNumber} value={rev.revisionNumber}>
-                  Rev {rev.revisionNumber} ({rev.mrsCode}) {rev.isActive ? '★ Active' : ''}
+                  Rev {rev.revisionNumber} ({rev.mrsCode}) {rev.isActive ? '(Active)' : ''}
                 </option>
               ))}
             </select>
           </div>
 
           {currentMRS && (
-            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #64748b)' }}>
               Generated by <strong>{currentMRS.generatedBy?.name}</strong> on {new Date(currentMRS.generatedAt).toLocaleString()}
               {currentMRS.changeReason && (
                 <div style={{ fontStyle: 'italic', marginTop: '0.1rem' }}>"{currentMRS.changeReason}"</div>
@@ -169,40 +196,40 @@ export default function MaterialRequirementSheetModal({
           )}
 
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button className="casting-btn casting-btn-secondary" style={{ fontSize: '0.8rem' }} onClick={handleExportCSV} disabled={!currentMRS}>
-              📥 Export CSV
+            <button className="casting-btn casting-btn-secondary" style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }} onClick={handleExportCSV} disabled={!currentMRS}>
+              <Download size={14} /> Export CSV
             </button>
-            <button className="casting-btn casting-btn-secondary" style={{ fontSize: '0.8rem' }} onClick={handlePrint} disabled={!currentMRS}>
-              🖨️ Print Slip
+            <button className="casting-btn casting-btn-secondary" style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }} onClick={handlePrint} disabled={!currentMRS}>
+              <Printer size={14} /> Print Slip
             </button>
-            <button className="casting-btn casting-btn-primary" style={{ fontSize: '0.8rem' }} onClick={() => setShowRegenDialog(true)}>
-              ➕ New Revision
+            <button className="casting-btn casting-btn-primary" style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }} onClick={() => setShowRegenDialog(true)}>
+              <Plus size={14} /> New Revision
             </button>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '0.5rem', padding: '0.75rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', padding: '0.75rem 1.5rem', borderBottom: '1px solid var(--card-border, #e2e8f0)' }}>
           <button
             className={`casting-btn ${activeTab === 'consolidated' ? 'casting-btn-primary' : 'casting-btn-secondary'}`}
-            style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem' }}
+            style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
             onClick={() => setActiveTab('consolidated')}
           >
-            📦 Consolidated Bill of Materials
+            <Layers size={14} /> Consolidated Bill of Materials
           </button>
           <button
             className={`casting-btn ${activeTab === 'grades' ? 'casting-btn-primary' : 'casting-btn-secondary'}`}
-            style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem' }}
+            style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
             onClick={() => setActiveTab('grades')}
           >
-            🏷️ Grade Subtotals
+            <Tag size={14} /> Grade Subtotals
           </button>
           <button
             className={`casting-btn ${activeTab === 'segments' ? 'casting-btn-primary' : 'casting-btn-secondary'}`}
-            style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem' }}
+            style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
             onClick={() => setActiveTab('segments')}
           >
-            📋 Pour Segment Lineage
+            <ListTree size={14} /> Pour Segment Lineage
           </button>
         </div>
 
@@ -240,7 +267,7 @@ export default function MaterialRequirementSheetModal({
                           <td><span className="casting-badge casting-badge-info">{item.category}</span></td>
                           <td>{item.totalQuantityRequired} {item.baseUnit}</td>
                           <td>
-                            <strong style={{ fontSize: '1rem', color: '#1e293b' }}>
+                            <strong style={{ fontSize: '1rem', color: 'var(--text-primary, #1e293b)' }}>
                               {item.displayQuantity} {item.displayUnit}
                             </strong>
                           </td>
@@ -256,13 +283,13 @@ export default function MaterialRequirementSheetModal({
               {activeTab === 'grades' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {(currentMRS.gradeSubtotals || []).map((gradeGroup, gIdx) => (
-                    <div key={gIdx} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
-                      <div style={{ background: '#f8fafc', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={gIdx} style={{ border: '1px solid var(--card-border, #e2e8f0)', borderRadius: '8px', overflow: 'hidden' }}>
+                      <div style={{ background: 'var(--card-bg, #f8fafc)', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <span className="casting-badge casting-badge-primary" style={{ marginRight: '0.5rem' }}>
                             Grade: {gradeGroup.grade}
                           </span>
-                          <strong style={{ color: '#334155' }}>Recipe: {gradeGroup.recipeCode} (v{gradeGroup.recipeVersion})</strong>
+                          <strong style={{ color: 'var(--text-primary, #334155)' }}>Recipe: {gradeGroup.recipeCode} (v{gradeGroup.recipeVersion})</strong>
                         </div>
                         <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
                           Subtotal Volume: <strong>{gradeGroup.totalVolumeM3} m³</strong>
@@ -300,10 +327,10 @@ export default function MaterialRequirementSheetModal({
               {activeTab === 'segments' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {(currentMRS.segmentsBreakdown || []).map((seg, sIdx) => (
-                    <div key={sIdx} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
-                      <div style={{ background: '#f8fafc', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={sIdx} style={{ border: '1px solid var(--card-border, #e2e8f0)', borderRadius: '8px', overflow: 'hidden' }}>
+                      <div style={{ background: 'var(--card-bg, #f8fafc)', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <strong style={{ fontSize: '1rem', color: '#1e293b' }}>{seg.memberName}</strong>
+                          <strong style={{ fontSize: '1rem', color: 'var(--text-primary, #1e293b)' }}>{seg.memberName}</strong>
                           <span className="casting-badge casting-badge-info" style={{ marginLeft: '0.5rem' }}>
                             {seg.grade}
                           </span>
@@ -334,15 +361,15 @@ export default function MaterialRequirementSheetModal({
                               <td><strong>{ing.displayQuantity} {ing.displayUnit}</strong></td>
                               <td>
                                 {ing.moistureAdjustment?.status === 'APPLIED' ? (
-                                  <span style={{ color: '#059669', fontSize: '0.75rem' }}>
-                                    ✓ {ing.moistureAdjustment.notes}
+                                  <span style={{ color: 'var(--accent, #10b981)', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                    <CheckCircle2 size={12} /> {ing.moistureAdjustment.notes}
                                   </span>
                                 ) : ing.moistureAdjustment?.status === 'UNVERIFIED_MOISTURE_BASIS' ? (
-                                  <span style={{ color: '#d97706', fontSize: '0.75rem' }}>
-                                    ⚠️ {ing.moistureAdjustment.notes}
+                                  <span style={{ color: '#f59e0b', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                    <AlertTriangle size={12} /> {ing.moistureAdjustment.notes}
                                   </span>
                                 ) : (
-                                  <span style={{ color: '#94a3b8' }}>—</span>
+                                  <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>—</span>
                                 )}
                               </td>
                             </tr>

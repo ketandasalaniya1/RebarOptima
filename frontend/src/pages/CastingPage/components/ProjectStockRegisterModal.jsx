@@ -242,10 +242,10 @@ export default function ProjectStockRegisterModal({
                 No material stock has been inwarded for this project yet. Use "Record Inward (GRN)" to add stock.
               </div>
             ) : (
-              <div className="casting-table-wrapper" style={{ background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+              <div className="casting-table-wrapper" style={{ background: 'var(--main-bg, #0f172a)', borderRadius: '8px', border: '1px solid var(--card-border, #334155)' }}>
                 <table className="casting-table" style={{ width: '100%', fontSize: '0.85rem' }}>
                   <thead>
-                    <tr style={{ background: '#1e293b' }}>
+                    <tr style={{ background: 'var(--card-bg, #1e293b)' }}>
                       <th style={{ padding: '10px 14px', textAlign: 'left' }}>Material Name</th>
                       <th style={{ padding: '10px 14px', textAlign: 'left' }}>Category</th>
                       <th style={{ padding: '10px 14px', textAlign: 'left' }}>Specification Standard</th>
@@ -255,12 +255,12 @@ export default function ProjectStockRegisterModal({
                   </thead>
                   <tbody>
                     {stockBalances.map((st, idx) => (
-                      <tr key={st._id || idx} style={{ borderBottom: '1px solid #1e293b' }}>
+                      <tr key={st._id || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                         <td style={{ padding: '10px 14px' }}>
-                          <div style={{ fontWeight: 600, color: '#f8fafc' }}>{st.name}</div>
-                          <div style={{ fontSize: '0.725rem', color: '#94a3b8' }}>{st.materialIdentifier}</div>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{st.name}</div>
+                          <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, #94a3b8)' }}>{st.materialIdentifier}</div>
                         </td>
-                        <td style={{ padding: '10px 14px', color: '#cbd5e1' }}>{st.category}</td>
+                        <td style={{ padding: '10px 14px', color: 'var(--text-secondary, #cbd5e1)' }}>{st.category}</td>
                         <td style={{ padding: '10px 14px', color: '#94a3b8' }}>{st.specificationStandard}</td>
                         <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 700, color: '#38bdf8', fontSize: '0.95rem' }}>
                           {st.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {st.canonicalUnit}
@@ -279,9 +279,9 @@ export default function ProjectStockRegisterModal({
           {/* TAB 2: Record Material Inward Form */}
           {activeTab === 'inward' && (
             <form onSubmit={handleRecordInward}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '10px', marginBottom: '1.25rem', border: '1px solid #334155' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', background: 'var(--card-bg, #1e293b)', padding: '1.25rem', borderRadius: '10px', marginBottom: '1.25rem', border: '1px solid var(--card-border, #334155)' }}>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Challan / GRN # *</label>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)', display: 'block', marginBottom: '4px' }}>Challan / GRN # *</label>
                   <input
                     type="text"
                     required
@@ -289,11 +289,11 @@ export default function ProjectStockRegisterModal({
                     value={deliveryChallanNumber}
                     onChange={(e) => setDeliveryChallanNumber(e.target.value)}
                     placeholder="e.g. DC-2026-9812"
-                    style={{ width: '100%', background: '#0f172a' }}
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Supplier / Vendor Name *</label>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)', display: 'block', marginBottom: '4px' }}>Supplier / Vendor Name *</label>
                   <input
                     type="text"
                     required
@@ -341,10 +341,10 @@ export default function ProjectStockRegisterModal({
                   </button>
                 </div>
 
-                <div className="casting-table-wrapper" style={{ background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+                <div className="casting-table-wrapper" style={{ background: 'var(--main-bg, #0f172a)', borderRadius: '8px', border: '1px solid var(--card-border, #334155)' }}>
                   <table className="casting-table" style={{ width: '100%', fontSize: '0.8rem' }}>
                     <thead>
-                      <tr style={{ background: '#1e293b' }}>
+                      <tr style={{ background: 'var(--card-bg, #1e293b)' }}>
                         <th style={{ padding: '8px 10px', textAlign: 'left' }}>Material Identifier</th>
                         <th style={{ padding: '8px 10px', textAlign: 'left' }}>Standard</th>
                         <th style={{ padding: '8px 10px', textAlign: 'right' }}>Received Qty</th>
@@ -355,7 +355,7 @@ export default function ProjectStockRegisterModal({
                     </thead>
                     <tbody>
                       {inwardItems.map((item, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid #1e293b' }}>
+                        <tr key={idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                           <td style={{ padding: '8px 10px' }}>
                             <select
                               className="casting-input"
@@ -382,7 +382,7 @@ export default function ProjectStockRegisterModal({
                                 updated[idx].canonicalTargetUnit = unit;
                                 setInwardItems(updated);
                               }}
-                              style={{ width: '100%', fontSize: '0.775rem', background: '#1e293b' }}
+                              style={{ width: '100%', fontSize: '0.775rem' }}
                             >
                               <option value="OPC_53">OPC 53 Grade Cement</option>
                               <option value="PPC">Portland Pozzolana Cement</option>
@@ -393,7 +393,7 @@ export default function ProjectStockRegisterModal({
                               <option value="ADMIXTURE_PCE">PCE Superplasticizer</option>
                             </select>
                           </td>
-                          <td style={{ padding: '8px 10px', color: '#94a3b8' }}>
+                          <td style={{ padding: '8px 10px', color: 'var(--text-secondary, #94a3b8)' }}>
                             {item.specificationStandard}
                           </td>
                           <td style={{ padding: '8px 10px', textAlign: 'right' }}>
@@ -405,7 +405,7 @@ export default function ProjectStockRegisterModal({
                               className="casting-input"
                               value={item.receivedQuantity}
                               onChange={(e) => handleUpdateInwardLine(idx, 'receivedQuantity', e.target.value)}
-                              style={{ width: '90px', textAlign: 'right', background: '#1e293b', fontSize: '0.8rem' }}
+                              style={{ width: '90px', textAlign: 'right', fontSize: '0.8rem' }}
                             />
                           </td>
                           <td style={{ padding: '8px 10px' }}>
@@ -413,7 +413,7 @@ export default function ProjectStockRegisterModal({
                               className="casting-input"
                               value={item.receivedUnit}
                               onChange={(e) => handleUpdateInwardLine(idx, 'receivedUnit', e.target.value)}
-                              style={{ width: '130px', fontSize: '0.775rem', background: '#1e293b' }}
+                              style={{ width: '130px', fontSize: '0.775rem' }}
                             >
                               <option value="METRIC_TONNE">METRIC TONNE (MT)</option>
                               <option value="BAGS_50KG">BAGS (50 KG)</option>
@@ -429,7 +429,7 @@ export default function ProjectStockRegisterModal({
                               value={item.batchNumber}
                               onChange={(e) => handleUpdateInwardLine(idx, 'batchNumber', e.target.value)}
                               placeholder="Batch / Mill #"
-                              style={{ width: '110px', background: '#1e293b', fontSize: '0.8rem' }}
+                              style={{ width: '110px', fontSize: '0.8rem' }}
                             />
                           </td>
                           <td style={{ padding: '8px 10px', textAlign: 'center' }}>
@@ -481,10 +481,10 @@ export default function ProjectStockRegisterModal({
             ) : ledgerEntries.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>No stock transactions recorded yet.</div>
             ) : (
-              <div className="casting-table-wrapper" style={{ background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+              <div className="casting-table-wrapper" style={{ background: 'var(--main-bg, #0f172a)', borderRadius: '8px', border: '1px solid var(--card-border, #334155)' }}>
                 <table className="casting-table" style={{ width: '100%', fontSize: '0.8rem' }}>
                   <thead>
-                    <tr style={{ background: '#1e293b' }}>
+                    <tr style={{ background: 'var(--card-bg, #1e293b)' }}>
                       <th style={{ padding: '8px 12px', textAlign: 'left' }}>Timestamp</th>
                       <th style={{ padding: '8px 12px', textAlign: 'left' }}>Type</th>
                       <th style={{ padding: '8px 12px', textAlign: 'left' }}>Material</th>
@@ -496,8 +496,8 @@ export default function ProjectStockRegisterModal({
                     {ledgerEntries.map((entry, idx) => {
                       const isInward = entry.transactionType === 'STOCK_INWARD' || entry.transactionType === 'CASTING_REVERSAL';
                       return (
-                        <tr key={entry._id || idx} style={{ borderBottom: '1px solid #1e293b' }}>
-                          <td style={{ padding: '8px 12px', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                        <tr key={entry._id || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
+                          <td style={{ padding: '8px 12px', color: 'var(--text-secondary, #94a3b8)', whiteSpace: 'nowrap' }}>
                             {new Date(entry.createdAt).toLocaleString()}
                           </td>
                           <td style={{ padding: '8px 12px' }}>

@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, Calendar, Clock, CheckCircle2, AlertTriangle, Layers, Trash2, Edit3, ChevronRight } from 'lucide-react';
+import { 
+  Plus, Calendar, Clock, CheckCircle2, AlertTriangle, Layers, 
+  Trash2, Edit3, ChevronRight, Search, PackageCheck, FileSpreadsheet, 
+  FlaskConical, ShieldCheck, Filter
+} from 'lucide-react';
 import { castingApi } from '../castingApi';
 
 export default function CastingEventList({
@@ -15,11 +19,20 @@ export default function CastingEventList({
   onOpenStockRegister
 }) {
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [selectedEventDetails, setSelectedEventDetails] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredEvents = events.filter(e => {
-    if (statusFilter === 'ALL') return true;
-    return (e.status || 'PLANNED').toUpperCase() === statusFilter;
+    if (statusFilter !== 'ALL' && (e.status || 'PLANNED').toUpperCase() !== statusFilter) {
+      return false;
+    }
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const matchNum = e.eventNumber?.toLowerCase().includes(term);
+      const matchTitle = e.title?.toLowerCase().includes(term);
+      const matchType = e.activityType?.toLowerCase().includes(term);
+      if (!matchNum && !matchTitle && !matchType) return false;
+    }
+    return true;
   });
 
   const handleCancelEvent = async (event) => {
@@ -43,10 +56,21 @@ export default function CastingEventList({
         </div>
 
         <div className="content-pane-actions">
+          {/* Search Box */}
+          <div className="casting-search-box">
+            <Search size={14} className="casting-search-icon" />
+            <input
+              type="text"
+              className="casting-search-input"
+              placeholder="Search event # or title..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
           {/* Status Filter */}
           <select
-            className="casting-select"
-            style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
+            className="casting-select casting-filter-select"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -57,18 +81,17 @@ export default function CastingEventList({
 
           {selectedProject && onOpenStockRegister && (
             <button
-              className="btn-secondary-dark"
-              style={{ padding: '0.45rem 0.75rem', fontSize: '0.8rem', background: '#0284c7', borderColor: '#0369a1', color: '#fff' }}
+              className="casting-btn casting-btn-secondary"
               onClick={onOpenStockRegister}
               title="Open Project Material Stock Register"
             >
-              📦 Material Stock Register
+              <PackageCheck size={14} /> Material Stock Register
             </button>
           )}
 
           {selectedProject && (
-            <button className="btn-primary-teal" onClick={onOpenCreateModal}>
-              <Plus size={16} /> + Schedule Pour
+            <button className="casting-btn casting-btn-primary" onClick={onOpenCreateModal}>
+              <Plus size={15} /> Schedule Pour
             </button>
           )}
         </div>
@@ -78,12 +101,12 @@ export default function CastingEventList({
       {filteredEvents.length === 0 ? (
         <div className="casting-empty-state">
           <Calendar size={42} className="casting-empty-icon" />
-          <h4 style={{ margin: 0, color: '#f8fafc' }}>No Casting Events Scheduled</h4>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>
+          <h4>No Casting Events Scheduled</h4>
+          <p>
             Click '+ Schedule Pour' above to create planned casting events with multi-member segments.
           </p>
           {selectedProject && (
-            <button className="btn-primary-teal" onClick={onOpenCreateModal} style={{ marginTop: '0.5rem' }}>
+            <button className="casting-btn casting-btn-primary" onClick={onOpenCreateModal} style={{ marginTop: '0.75rem' }}>
               <Plus size={15} /> Schedule Pour
             </button>
           )}
@@ -110,95 +133,92 @@ export default function CastingEventList({
 
                 return (
                   <tr key={e.id || e._id}>
-                    <td style={{ fontWeight: 700, color: '#2dd4bf', fontFamily: 'monospace' }}>
+                    <td className="casting-event-code">
                       {e.eventNumber}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, color: '#f8fafc' }}>
+                      <div className="casting-event-title">
                         {e.title}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+                      <div className="casting-event-meta">
                         {e.activityType?.replace('_', ' ')} • {segmentCount} member segment{segmentCount > 1 ? 's' : ''}
                       </div>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#cbd5e1' }}>
-                        <Calendar size={13} className="text-teal-400" />
-                        {e.plannedDate}
+                      <div className="casting-date-cell">
+                        <Calendar size={13} className="casting-calendar-icon" />
+                        <span>{e.plannedDate}</span>
                       </div>
                       {(e.plannedStartTime || e.plannedEndTime) && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: '#64748b' }}>
+                        <div className="casting-time-sub">
                           <Clock size={11} /> {e.plannedStartTime || '--:--'} - {e.plannedEndTime || '--:--'}
                         </div>
                       )}
                     </td>
                     <td>
-                      <span className="volume-badge" style={{ color: '#f8fafc' }}>
+                      <span className="volume-badge">
                         {(e.plannedTotalVolumeM3 || 0).toFixed(3)} m³
                       </span>
                     </td>
                     <td>
                       {e.actualPourDate ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#34d399' }}>
+                        <div className="casting-poured-date">
                           <CheckCircle2 size={13} />
-                          {e.actualPourDate}
+                          <span>{e.actualPourDate}</span>
                         </div>
                       ) : (
-                        <span style={{ color: '#64748b', fontSize: '0.8rem' }}>Not recorded</span>
+                        <span className="casting-text-muted">Not recorded</span>
                       )}
                     </td>
                     <td>
-                      <span className="volume-badge" style={{ color: (e.actualTotalVolumeM3 || 0) > 0 ? '#34d399' : '#64748b' }}>
+                      <span className={`volume-badge ${(e.actualTotalVolumeM3 || 0) > 0 ? 'poured' : 'empty'}`}>
                         {(e.actualTotalVolumeM3 || 0).toFixed(3)} m³
                       </span>
                     </td>
                     <td>
                       <span className={`status-tag ${isPoured ? 'poured' : 'planned'}`}>
+                        <span className="status-dot"></span>
                         {isPoured ? 'Poured' : 'Planned'}
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      <div className="casting-row-actions">
                         <button
-                          className="btn-secondary-dark"
-                          style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', background: '#3b82f6', borderColor: '#2563eb', color: '#fff' }}
+                          className="casting-action-btn mrs"
                           onClick={() => onViewMRS && onViewMRS(e)}
-                          title="View Material Requirement Sheet"
+                          title="View Material Requirement Sheet (MRS)"
                         >
-                          📦 Material Sheet (MRS)
+                          <FileSpreadsheet size={13} /> Material Sheet
                         </button>
 
                         {!isPoured && (
                           <button
-                            className="btn-secondary-dark"
-                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                            className="casting-action-btn recipes"
                             onClick={() => onAssignRecipes && onAssignRecipes(e)}
                             title="Assign Mix Recipes to Segments"
                           >
-                            🧪 Mix Recipes
+                            <FlaskConical size={13} /> Mix Recipes
                           </button>
                         )}
 
                         <button
-                          className="btn-primary-teal"
-                          style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                          className="casting-action-btn actuals"
                           onClick={() => onRecordActuals(e)}
                           title="Record Actual Pour & Material Consumption"
                         >
-                          <CheckCircle2 size={13} /> {isPoured ? 'Actuals & Variance' : 'Record Actuals'}
+                          <CheckCircle2 size={13} /> {isPoured ? 'Actuals' : 'Record Actuals'}
                         </button>
 
                         <button
-                          className="btn-secondary-dark"
-                          style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', background: '#10b981', borderColor: '#059669', color: '#fff' }}
+                          className="casting-action-btn review"
                           onClick={() => onReviewConsumption && onReviewConsumption(e)}
                           title="Maker-Checker Review & Atomic Stock Posting"
                         >
-                          🛡️ Review & Post
+                          <ShieldCheck size={13} /> Review & Post
                         </button>
 
                         <button
-                          className="btn-icon-danger"
+                          className="casting-action-btn-danger"
                           onClick={() => handleCancelEvent(e)}
                           title="Cancel Event"
                         >

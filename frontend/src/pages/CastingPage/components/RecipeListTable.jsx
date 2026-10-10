@@ -18,7 +18,8 @@ import {
   ChevronRight,
   Eye,
   SlidersHorizontal,
-  FileSpreadsheet
+  FileSpreadsheet,
+  X
 } from 'lucide-react';
 
 export default function RecipeListTable({
@@ -198,7 +199,9 @@ export default function RecipeListTable({
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             {searchTerm && (
-              <button className="search-clear-btn" onClick={() => setSearchTerm('')}>✕</button>
+              <button className="search-clear-btn" onClick={() => setSearchTerm('')} title="Clear search">
+                <X size={14} />
+              </button>
             )}
           </div>
 
@@ -555,7 +558,15 @@ export default function RecipeListTable({
                       </td>
                       <td>
                         <span className="recipe-table-type">
-                          {activeVer?.mixType === 'RMC_PROCUREMENT' ? '🚚 RMC' : '🏗️ Site Batch'}
+                          {activeVer?.mixType === 'RMC_PROCUREMENT' ? (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <Truck size={12} /> RMC
+                            </span>
+                          ) : (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <Building2 size={12} /> Site Batch
+                            </span>
+                          )}
                         </span>
                       </td>
                       <td>

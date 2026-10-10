@@ -13,6 +13,8 @@ import {
 import { createCastingRecipeRouter } from './casting.recipe.routes';
 import { createCastingConsumptionRouter } from './casting.consumption.routes';
 import { createCastingStockRouter } from './casting.stock.routes';
+import { createCastingQualityRouter } from './casting.quality.routes';
+import { createCastingTimelineRouter } from './casting.timeline.routes';
 import {
   calculateSegmentMaterials,
   calculateGradeSubtotals,
@@ -51,6 +53,12 @@ export function createCastingRouter(
 
   // Mount Project Stock & Ledger Router (Phase 3)
   router.use('/', createCastingStockRouter(getDb, getClient, authMiddleware, logAudit));
+
+  // Mount Quality Management Router (Phase 4: Curing, Cubes, Track Sheet)
+  router.use('/', createCastingQualityRouter(getDb, getClient, authMiddleware, logAudit));
+
+  // Mount Visual Planning & Casting Timeline Router (Phase 5)
+  router.use('/', createCastingTimelineRouter(getDb, authMiddleware, logAudit));
 
   // Helper to resolve companyId from authenticated user
   const resolveCompanyId = async (req: any, db: any): Promise<string> => {

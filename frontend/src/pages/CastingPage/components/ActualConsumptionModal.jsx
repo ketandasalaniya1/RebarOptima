@@ -263,15 +263,15 @@ export default function ActualConsumptionModal({
           ) : (
             <>
               {/* Execution Metadata Bar */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '10px', marginBottom: '1.5rem', border: '1px solid #334155' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', background: 'var(--card-bg, #1e293b)', padding: '1.25rem', borderRadius: '10px', marginBottom: '1.5rem', border: '1px solid var(--card-border, #334155)' }}>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Actual Pour Date</label>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)', display: 'block', marginBottom: '4px' }}>Actual Pour Date</label>
                   <input
                     type="date"
                     className="casting-input"
                     value={actualPourDate}
                     onChange={(e) => setActualPourDate(e.target.value)}
-                    style={{ width: '100%', background: '#0f172a' }}
+                    style={{ width: '100%' }}
                   />
                 </div>
                 <div>
@@ -318,10 +318,10 @@ export default function ActualConsumptionModal({
                   </div>
                 </div>
 
-                <div className="casting-table-wrapper" style={{ background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+                <div className="casting-table-wrapper" style={{ background: 'var(--main-bg, #0f172a)', borderRadius: '8px', border: '1px solid var(--card-border, #334155)' }}>
                   <table className="casting-table" style={{ width: '100%', fontSize: '0.85rem' }}>
                     <thead>
-                      <tr style={{ background: '#1e293b' }}>
+                      <tr style={{ background: 'var(--card-bg, #1e293b)' }}>
                         <th style={{ padding: '8px 12px', textAlign: 'left' }}>Segment Name</th>
                         <th style={{ padding: '8px 12px', textAlign: 'left' }}>Grade / Recipe</th>
                         <th style={{ padding: '8px 12px', textAlign: 'right' }}>Planned (m³)</th>
@@ -333,10 +333,10 @@ export default function ActualConsumptionModal({
                       {segmentsActual.map((seg, idx) => {
                         const sDiff = Math.round(((seg.actualVolumeM3 || 0) - (seg.plannedVolumeM3 || 0)) * 1000) / 1000;
                         return (
-                          <tr key={seg.segmentId || idx} style={{ borderBottom: '1px solid #1e293b' }}>
-                            <td style={{ padding: '8px 12px', fontWeight: 500, color: '#f8fafc' }}>{seg.segmentName}</td>
-                            <td style={{ padding: '8px 12px', color: '#94a3b8' }}>{seg.grade} ({seg.recipeCode})</td>
-                            <td style={{ padding: '8px 12px', textAlign: 'right', color: '#94a3b8' }}>{(seg.plannedVolumeM3 || 0).toFixed(3)}</td>
+                          <tr key={seg.segmentId || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
+                            <td style={{ padding: '8px 12px', fontWeight: 500, color: 'var(--text-primary, #f8fafc)' }}>{seg.segmentName}</td>
+                            <td style={{ padding: '8px 12px', color: 'var(--text-secondary, #94a3b8)' }}>{seg.grade} ({seg.recipeCode})</td>
+                            <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary, #94a3b8)' }}>{(seg.plannedVolumeM3 || 0).toFixed(3)}</td>
                             <td style={{ padding: '8px 12px', textAlign: 'right' }}>
                               <input
                                 type="number"
@@ -345,10 +345,10 @@ export default function ActualConsumptionModal({
                                 className="casting-input"
                                 value={seg.actualVolumeM3}
                                 onChange={(e) => handleUpdateSegmentActual(idx, e.target.value)}
-                                style={{ width: '100px', textAlign: 'right', padding: '4px 8px', background: '#1e293b' }}
+                                style={{ width: '100px', textAlign: 'right', padding: '4px 8px' }}
                               />
                             </td>
-                            <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: sDiff > 0 ? '#fb923c' : (sDiff < 0 ? '#4ade80' : '#94a3b8') }}>
+                            <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: sDiff > 0 ? '#fb923c' : (sDiff < 0 ? '#4ade80' : 'var(--text-secondary, #94a3b8)') }}>
                               {sDiff >= 0 ? `+${sDiff.toFixed(3)}` : sDiff.toFixed(3)} m³
                             </td>
                           </tr>
@@ -370,10 +370,10 @@ export default function ActualConsumptionModal({
                   </span>
                 </div>
 
-                <div className="casting-table-wrapper" style={{ background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+                <div className="casting-table-wrapper" style={{ background: 'var(--main-bg, #0f172a)', borderRadius: '8px', border: '1px solid var(--card-border, #334155)' }}>
                   <table className="casting-table" style={{ width: '100%', fontSize: '0.825rem' }}>
                     <thead>
-                      <tr style={{ background: '#1e293b' }}>
+                      <tr style={{ background: 'var(--card-bg, #1e293b)' }}>
                         <th style={{ padding: '8px 12px', textAlign: 'left' }}>Material / Category</th>
                         <th style={{ padding: '8px 12px', textAlign: 'left' }}>Batch / Slip Ref</th>
                         <th style={{ padding: '8px 12px', textAlign: 'right' }}>Planned (MRS)</th>
@@ -383,10 +383,10 @@ export default function ActualConsumptionModal({
                     </thead>
                     <tbody>
                       {materialsConsumed.map((mat, idx) => (
-                        <tr key={mat.materialIdentifier || idx} style={{ borderBottom: '1px solid #1e293b' }}>
+                        <tr key={mat.materialIdentifier || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                           <td style={{ padding: '8px 12px' }}>
-                            <div style={{ fontWeight: 600, color: '#f8fafc' }}>{mat.name}</div>
-                            <div style={{ fontSize: '0.725rem', color: '#94a3b8' }}>{mat.category} | {mat.materialIdentifier}</div>
+                            <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{mat.name}</div>
+                            <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, #94a3b8)' }}>{mat.category} | {mat.materialIdentifier}</div>
                           </td>
                           <td style={{ padding: '8px 12px' }}>
                             <input
@@ -395,10 +395,10 @@ export default function ActualConsumptionModal({
                               placeholder="Batch # / Slip ref"
                               value={mat.batchNumber || ''}
                               onChange={(e) => handleUpdateMaterialMeta(idx, 'batchNumber', e.target.value)}
-                              style={{ width: '130px', padding: '4px 8px', fontSize: '0.775rem', background: '#1e293b' }}
+                              style={{ width: '130px', padding: '4px 8px', fontSize: '0.775rem' }}
                             />
                           </td>
-                          <td style={{ padding: '8px 12px', textAlign: 'right', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary, #94a3b8)', whiteSpace: 'nowrap' }}>
                             {Number(mat.plannedQuantity).toFixed(2)} {mat.unit}
                           </td>
                           <td style={{ padding: '8px 12px', textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -410,9 +410,9 @@ export default function ActualConsumptionModal({
                                 className="casting-input"
                                 value={mat.actualQuantity}
                                 onChange={(e) => handleUpdateMaterialActual(idx, e.target.value)}
-                                style={{ width: '100px', textAlign: 'right', padding: '4px 8px', background: '#1e293b' }}
+                                style={{ width: '100px', textAlign: 'right', padding: '4px 8px' }}
                               />
-                              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{mat.unit}</span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>{mat.unit}</span>
                             </div>
                           </td>
                           <td style={{ padding: '8px 12px', textAlign: 'center' }}>

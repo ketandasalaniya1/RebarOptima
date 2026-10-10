@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Boxes, Building, Layers, Calendar, Plus, RefreshCw, CheckCircle2, FlaskConical, PackageCheck } from 'lucide-react';
+import { Boxes, Building, Layers, Calendar, Plus, RefreshCw, CheckCircle2, FlaskConical, PackageCheck, Droplets, FileSpreadsheet, CalendarDays } from 'lucide-react';
 import { castingApi } from './castingApi';
 import ProjectHierarchyManager from './components/ProjectHierarchyManager';
 import MemberRegisterTable from './components/MemberRegisterTable';
@@ -16,10 +16,14 @@ import RecipeApprovalModal from './components/RecipeApprovalModal';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import SegmentRecipeAssignModal from './components/SegmentRecipeAssignModal';
 import MaterialRequirementSheetModal from './components/MaterialRequirementSheetModal';
+import CuringManagementView from './components/CuringManagementView';
+import CubeTestingView from './components/CubeTestingView';
+import TrackSheetView from './components/TrackSheetView';
+import CastingTimelineView from './components/CastingTimelineView';
 import './CastingPage.css';
 
 export default function CastingPage() {
-  const [activeTab, setActiveTab] = useState('structural'); // 'structural' | 'events' | 'recipes'
+  const [activeTab, setActiveTab] = useState('structural'); // 'structural' | 'events' | 'timeline' | 'recipes' | 'curing' | 'cubes' | 'tracksheet'
 
   // Hierarchy Data States
   const [projects, setProjects] = useState([]);
@@ -221,29 +225,32 @@ export default function CastingPage() {
   return (
     <div className="casting-container">
       {/* Module Header */}
-      <div className="casting-header">
+      <div className="casting-header-row">
         <div className="casting-header-left">
           <div className="casting-header-icon">
-            <Boxes size={24} />
+            <Boxes size={26} />
           </div>
           <div>
-            <h1 className="casting-title">Casting Management</h1>
+            <div className="casting-title-with-badge">
+              <h1 className="casting-main-title">Casting Management</h1>
+              <span className="casting-badge-accent">Phases 1–5 Integrated</span>
+            </div>
             <p className="casting-subtitle">
-              Mix Designs, Material Planning (MRS), Structural Register & Multi-Pour Tracking (Phase 1 & 2)
+              Structural Register, Pour Execution, Visual Flowchart & Calendar, Mix Designs, Curing & IS 456 Cube Compliance
             </p>
           </div>
         </div>
 
         <div className="casting-header-right">
           <button
-            className="btn-secondary-dark"
+            className="casting-btn casting-btn-secondary"
             onClick={async () => {
               await handleRefreshHierarchy();
               await handleRefreshRecipes();
             }}
             title="Refresh Casting Data"
           >
-            <RefreshCw size={15} /> Refresh
+            <RefreshCw size={15} /> Refresh Data
           </button>
         </div>
       </div>
@@ -251,74 +258,112 @@ export default function CastingPage() {
       {/* Quick Stats Grid */}
       <div className="casting-stats-grid">
         <div className="casting-stat-card">
-          <div className="casting-stat-icon teal">
-            <Building size={20} />
-          </div>
-          <div className="casting-stat-info">
+          <div className="casting-stat-top">
             <span className="casting-stat-label">Casting Projects</span>
-            <span className="casting-stat-val">{projects.length}</span>
+            <div className="casting-stat-icon teal">
+              <Building size={18} />
+            </div>
           </div>
+          <div className="casting-stat-val">{projects.length}</div>
+          <div className="casting-stat-sub">Active tenant sites</div>
         </div>
 
         <div className="casting-stat-card">
-          <div className="casting-stat-icon blue">
-            <Layers size={20} />
-          </div>
-          <div className="casting-stat-info">
+          <div className="casting-stat-top">
             <span className="casting-stat-label">Active Project Members</span>
-            <span className="casting-stat-val">{totalProjectMembers}</span>
+            <div className="casting-stat-icon blue">
+              <Layers size={18} />
+            </div>
           </div>
+          <div className="casting-stat-val">{totalProjectMembers}</div>
+          <div className="casting-stat-sub">Structural elements mapped</div>
         </div>
 
         <div className="casting-stat-card">
-          <div className="casting-stat-icon purple">
-            <FlaskConical size={20} />
-          </div>
-          <div className="casting-stat-info">
+          <div className="casting-stat-top">
             <span className="casting-stat-label">Mix Design Recipes</span>
-            <span className="casting-stat-val">{recipes.length}</span>
+            <div className="casting-stat-icon purple">
+              <FlaskConical size={18} />
+            </div>
           </div>
+          <div className="casting-stat-val">{recipes.length}</div>
+          <div className="casting-stat-sub">IS compliant batch mixes</div>
         </div>
 
         <div className="casting-stat-card">
-          <div className="casting-stat-icon amber">
-            <CheckCircle2 size={20} />
-          </div>
-          <div className="casting-stat-info">
+          <div className="casting-stat-top">
             <span className="casting-stat-label">Total Planned Volume</span>
-            <span className="casting-stat-val">{totalPlannedVolume.toFixed(3)} m³</span>
+            <div className="casting-stat-icon amber">
+              <CheckCircle2 size={18} />
+            </div>
           </div>
+          <div className="casting-stat-val">{totalPlannedVolume.toFixed(2)} <span className="casting-stat-unit">m³</span></div>
+          <div className="casting-stat-sub">Poured: {totalPouredVolume.toFixed(2)} m³</div>
         </div>
       </div>
 
-      {/* Tabs Navigation Bar */}
-      <div className="casting-tabs-bar">
-        <button
-          className={`casting-tab-btn ${activeTab === 'structural' ? 'active' : ''}`}
-          onClick={() => setActiveTab('structural')}
-        >
-          <Layers size={16} />
-          <span>Structural Register</span>
-          <span className="casting-tab-count">{members.length}</span>
-        </button>
+      {/* Tabs Navigation Bar (Project Theme Encapsulated Pill Bar) */}
+      <div className="casting-nav-tabs-wrapper">
+        <div className="casting-nav-tabs">
+          <button
+            className={`casting-nav-tab ${activeTab === 'structural' ? 'active' : ''}`}
+            onClick={() => setActiveTab('structural')}
+          >
+            <Layers size={16} />
+            <span>Structural Register</span>
+            <span className="casting-tab-count">{members.length}</span>
+          </button>
 
-        <button
-          className={`casting-tab-btn ${activeTab === 'events' ? 'active' : ''}`}
-          onClick={() => setActiveTab('events')}
-        >
-          <Calendar size={16} />
-          <span>Casting Events & Pour Log</span>
-          <span className="casting-tab-count">{events.length}</span>
-        </button>
+          <button
+            className={`casting-nav-tab ${activeTab === 'events' ? 'active' : ''}`}
+            onClick={() => setActiveTab('events')}
+          >
+            <Calendar size={16} />
+            <span>Casting Events & Pour Log</span>
+            <span className="casting-tab-count">{events.length}</span>
+          </button>
 
-        <button
-          className={`casting-tab-btn ${activeTab === 'recipes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('recipes')}
-        >
-          <FlaskConical size={16} />
-          <span>Mix Design Recipes</span>
-          <span className="casting-tab-count">{recipes.length}</span>
-        </button>
+          <button
+            className={`casting-nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
+            onClick={() => setActiveTab('timeline')}
+          >
+            <CalendarDays size={16} />
+            <span>Timeline & Calendar</span>
+          </button>
+
+          <button
+            className={`casting-nav-tab ${activeTab === 'recipes' ? 'active' : ''}`}
+            onClick={() => setActiveTab('recipes')}
+          >
+            <FlaskConical size={16} />
+            <span>Mix Design Recipes</span>
+            <span className="casting-tab-count">{recipes.length}</span>
+          </button>
+
+          <button
+            className={`casting-nav-tab ${activeTab === 'curing' ? 'active' : ''}`}
+            onClick={() => setActiveTab('curing')}
+          >
+            <Droplets size={16} />
+            <span>Curing Management</span>
+          </button>
+
+          <button
+            className={`casting-nav-tab ${activeTab === 'cubes' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cubes')}
+          >
+            <FlaskConical size={16} />
+            <span>Cube Strength Testing</span>
+          </button>
+
+          <button
+            className={`casting-nav-tab ${activeTab === 'tracksheet' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tracksheet')}
+          >
+            <FileSpreadsheet size={16} />
+            <span>Slab Track Sheet</span>
+          </button>
+        </div>
       </div>
 
       {/* Active Tab View */}
@@ -377,6 +422,15 @@ export default function CastingPage() {
         />
       )}
 
+      {activeTab === 'timeline' && (
+        <CastingTimelineView
+          selectedProject={selectedProject}
+          blocks={blocks}
+          levels={levels}
+          members={members}
+        />
+      )}
+
       {activeTab === 'recipes' && (
         <RecipeListTable
           recipes={recipes}
@@ -399,6 +453,28 @@ export default function CastingPage() {
               alert(err.message || 'Failed to fork new version');
             }
           }}
+        />
+      )}
+
+      {activeTab === 'curing' && (
+        <CuringManagementView
+          selectedProject={selectedProject}
+          events={events}
+        />
+      )}
+
+      {activeTab === 'cubes' && (
+        <CubeTestingView
+          selectedProject={selectedProject}
+          events={events}
+        />
+      )}
+
+      {activeTab === 'tracksheet' && (
+        <TrackSheetView
+          selectedProject={selectedProject}
+          blocks={blocks}
+          levels={levels}
         />
       )}
 

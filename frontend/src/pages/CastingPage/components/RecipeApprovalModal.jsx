@@ -11,7 +11,9 @@ import {
   Clock,
   User,
   Calendar,
-  Check
+  Check,
+  X,
+  RotateCcw
 } from 'lucide-react';
 
 export default function RecipeApprovalModal({
@@ -127,7 +129,9 @@ export default function RecipeApprovalModal({
               </div>
             </div>
           </div>
-          <button className="casting-modal-close" onClick={onClose}>✕</button>
+          <button className="casting-modal-close" onClick={onClose} title="Close modal">
+            <X size={18} />
+          </button>
         </div>
 
         {errorMsg && (
@@ -273,12 +277,23 @@ export default function RecipeApprovalModal({
           <button
             type="button"
             className="btn-secondary-dark"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
             onClick={() => {
               setIsRejectMode(!isRejectMode);
               setErrorMsg('');
             }}
           >
-            {isRejectMode ? '↩️ Switch to Approval Mode' : '❌ Switch to Rejection Mode'}
+            {isRejectMode ? (
+              <>
+                <RotateCcw size={14} />
+                <span>Switch to Approval Mode</span>
+              </>
+            ) : (
+              <>
+                <XCircle size={14} />
+                <span>Switch to Rejection Mode</span>
+              </>
+            )}
           </button>
 
           <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -295,23 +310,23 @@ export default function RecipeApprovalModal({
               <button
                 type="button"
                 className="btn-primary-teal"
-                style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
                 onClick={handleApprove}
                 disabled={actionLoading}
               >
                 <ShieldCheck size={15} />
-                {actionLoading ? 'Approving...' : '✅ Approve Mix Design'}
+                <span>{actionLoading ? 'Approving...' : 'Approve Mix Design'}</span>
               </button>
             ) : (
               <button
                 type="button"
                 className="btn-icon-danger"
-                style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem', fontWeight: 600 }}
+                style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
                 onClick={handleReject}
                 disabled={actionLoading || !rejectReason.trim()}
               >
                 <XCircle size={15} />
-                {actionLoading ? 'Rejecting...' : '🚫 Confirm Rejection'}
+                <span>{actionLoading ? 'Rejecting...' : 'Confirm Rejection'}</span>
               </button>
             )}
           </div>

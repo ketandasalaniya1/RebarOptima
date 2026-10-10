@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   Info,
   ChevronRight,
-  TrendingDown
+  TrendingDown,
+  X
 } from 'lucide-react';
 
 export default function RecipeDetailModal({
@@ -175,7 +176,9 @@ export default function RecipeDetailModal({
             <button className="btn-secondary-dark" onClick={handlePrint} title="Print Mix Design Certificate">
               <Printer size={15} /> Print Spec
             </button>
-            <button className="casting-modal-close" onClick={onClose}>✕</button>
+            <button className="casting-modal-close" onClick={onClose} title="Close modal">
+              <X size={18} />
+            </button>
           </div>
         </div>
 
@@ -516,8 +519,8 @@ export default function RecipeDetailModal({
                   </div>
                   <p className="compliance-note">
                     {isWcCompliant
-                      ? '✅ w/c ratio satisfies durability requirements for severe/moderate exposure.'
-                      : '⚠️ w/c ratio exceeds maximum permissible limit. Risk of honeycombing and reduced strength.'}
+                      ? 'w/c ratio satisfies durability requirements for severe/moderate exposure.'
+                      : 'w/c ratio exceeds maximum permissible limit. Risk of honeycombing and reduced strength.'}
                   </p>
                 </div>
               </div>
@@ -543,8 +546,8 @@ export default function RecipeDetailModal({
                   </div>
                   <p className="compliance-note">
                     {isMinCementCompliant
-                      ? '✅ Cement content satisfies structural durability threshold.'
-                      : '⚠️ Cement content falls below mandatory minimum for this grade.'}
+                      ? 'Cement content satisfies structural durability threshold.'
+                      : 'Cement content falls below mandatory minimum for this grade.'}
                   </p>
                 </div>
               </div>
@@ -570,8 +573,8 @@ export default function RecipeDetailModal({
                   </div>
                   <p className="compliance-note">
                     {isMaxBinderCompliant
-                      ? '✅ Cementitious content is within safe thermal shrinkage & hydration limit.'
-                      : '⚠️ Binder exceeds 450 kg/m³. Risk of excessive heat of hydration and thermal cracking.'}
+                      ? 'Cementitious content is within safe thermal shrinkage & hydration limit.'
+                      : 'Binder exceeds 450 kg/m³. Risk of excessive heat of hydration and thermal cracking.'}
                   </p>
                 </div>
               </div>

@@ -95,7 +95,42 @@ export const castingApi = {
     if (params.page) query.set('page', params.page);
     const qs = query.toString();
     return apiRequest(`/casting/projects/${projectId}/stock/ledger${qs ? `?${qs}` : ''}`);
-  }
+  },
+
+  // Phase 4: Curing Management
+  createCuringSchedule: (data) => apiRequest('/casting/curing/schedules', { method: 'POST', body: data }),
+  getCuringSchedules: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/casting/curing/schedules${qs ? `?${qs}` : ''}`);
+  },
+  approveCuringSchedule: (id, remarks = '') => apiRequest(`/casting/curing/schedules/${id}/approve`, { method: 'POST', body: { remarks } }),
+  recordCuringLog: (data) => apiRequest('/casting/curing/logs', { method: 'POST', body: data }),
+  getCuringLogs: (curingScheduleId) => apiRequest(`/casting/curing/logs?curingScheduleId=${curingScheduleId}`),
+  compensateCuringLog: (id, data) => apiRequest(`/casting/curing/logs/${id}/compensate`, { method: 'POST', body: data }),
+
+  // Phase 4: Concrete Cube Testing & Compliance
+  registerCubeSample: (data) => apiRequest('/casting/cubes/samples', { method: 'POST', body: data }),
+  getCubeSamples: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/casting/cubes/samples${qs ? `?${qs}` : ''}`);
+  },
+  runCubeEvaluation: (data) => apiRequest('/casting/cubes/evaluations/run', { method: 'POST', body: data }),
+  getCubeEvaluations: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/casting/cubes/evaluations${qs ? `?${qs}` : ''}`);
+  },
+  approveCubeEvaluation: (id, data) => apiRequest(`/casting/cubes/evaluations/${id}/approve`, { method: 'POST', body: data }),
+
+  // Phase 4: Slab Casting Track Sheet
+  getTrackSheet: (eventId) => apiRequest(`/casting/track-sheet/${eventId}`),
+  signoffTrackSheet: (eventId, data) => apiRequest(`/casting/track-sheet/${eventId}/signoff`, { method: 'POST', body: data }),
+
+  // Phase 5: Casting Timeline & Visual Planning
+  getTimelineEvents: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/casting/timeline/events${qs ? `?${qs}` : ''}`);
+  },
+  getTimelineEventDetails: (id) => apiRequest(`/casting/timeline/events/${id}`)
 };
 
 

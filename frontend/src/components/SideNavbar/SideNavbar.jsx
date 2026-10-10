@@ -90,6 +90,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       ]
     },
     {
+      id: 'casting',
+      label: 'Casting Management',
+      icon: <Boxes size={18} />,
+      moduleKey: 'casting'
+    },
+    {
       id: 'ledger',
       label: 'Ledger & Procurement',
       icon: <BookOpen size={18} />,

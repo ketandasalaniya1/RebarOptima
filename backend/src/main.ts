@@ -8,6 +8,8 @@ import path from 'path';
 import dns from 'dns';
 import { solve1DCSP } from './batches/optimizer.engine';
 import { createBBSRouter } from './bbs/bbs.routes';
+import { createCastingRouter } from './casting/casting.routes';
+import { verifyMultiDocumentTransactionRollback } from './casting/casting.inventory.service';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
@@ -167,6 +169,12 @@ async function connectDB(): Promise<Db> {
       db = connectedDb;
       console.log('✅ Connected to MongoDB Atlas');
       try {
+        await verifyMultiDocumentTransactionRollback(client, connectedDb);
+        console.log('✅ Multi-Document Transaction Rollback Probe Verified');
+      } catch (probeErr: any) {
+        console.warn('⚠️ Transaction Probe Warning:', probeErr.message);
+      }
+      try {
         await seedDefaults(connectedDb);
         console.log('✅ MongoDB Atlas seeded/synced successfully!');
       } catch (err) {
@@ -244,6 +252,10 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
   roles: {
     displayName: 'Roles & Permissions',
     features: { view: 'View Roles', create: 'Create Roles', edit: 'Edit Roles', delete: 'Delete Roles' }
+  },
+  casting: {
+    displayName: 'Casting Management',
+    features: { view: 'View Casting', create: 'Create Casting Records', edit: 'Edit Casting Records', delete: 'Delete Casting Records' }
   }
 };
 
@@ -279,7 +291,8 @@ const DEFAULT_SYSTEM_ROLES = [
       activityLogs: { view: true, export: true },
       settings: { view: true, edit: true },
       users: { view: true },
-      roles: { view: true }
+      roles: { view: true },
+      casting: { view: true, create: true, edit: true, delete: true }
     },
     dataScope: 'organization'
   },
@@ -296,7 +309,8 @@ const DEFAULT_SYSTEM_ROLES = [
       activityLogs: { view: true, export: false },
       settings: { view: true, edit: false },
       users: { view: false },
-      roles: { view: false }
+      roles: { view: false },
+      casting: { view: true, create: true, edit: true, delete: false }
     },
     dataScope: 'project'
   },
@@ -313,7 +327,8 @@ const DEFAULT_SYSTEM_ROLES = [
       activityLogs: { view: false, export: false },
       settings: { view: true, edit: false },
       users: { view: false },
-      roles: { view: false }
+      roles: { view: false },
+      casting: { view: true, create: true, edit: false, delete: false }
     },
     dataScope: 'project'
   },
@@ -330,7 +345,8 @@ const DEFAULT_SYSTEM_ROLES = [
       activityLogs: { view: false, export: false },
       settings: { view: false, edit: false },
       users: { view: false },
-      roles: { view: false }
+      roles: { view: false },
+      casting: { view: true, create: false, edit: false, delete: false }
     },
     dataScope: 'project'
   },
@@ -409,7 +425,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'FREE',
     displayName: 'Free',
     description: 'Basic access for small teams getting started',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true },
     features: {},
     limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
     isActive: true
@@ -418,7 +434,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'BASIC',
     displayName: 'Basic',
     description: 'Essential features for growing construction firms',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true },
     features: {},
     limits: { maxUsers: 10, maxProjects: 5, maxStorageMB: 500 },
     isActive: true
@@ -427,7 +443,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'PRO',
     displayName: 'Professional',
     description: 'Full-featured plan for professional construction management',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true },
     features: {},
     limits: { maxUsers: 50, maxProjects: 25, maxStorageMB: 5000 },
     isActive: true
@@ -436,7 +452,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'ENTERPRISE',
     displayName: 'Enterprise',
     description: 'Unlimited access with priority support for large organizations',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true },
     features: {},
     limits: { maxUsers: null, maxProjects: null, maxStorageMB: null },
     isActive: true
@@ -478,6 +494,9 @@ function authMiddleware(req: any, res: any, next: any) {
 
 // Mount BBS Isolated Module Routes
 app.use('/api/bbs', createBBSRouter(() => db, authMiddleware));
+
+// Mount Casting Management Isolated Module Routes
+app.use('/api/casting', createCastingRouter(() => db, () => client, authMiddleware, logAudit));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {
@@ -2998,3 +3017,4 @@ async function startServer() {
 }
 
 startServer();
+// Casting Management Phase 1 Initialized

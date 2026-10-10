@@ -3005,13 +3005,7 @@ async function startServer() {
   } catch (err) {
     console.error('⚠️  Database connection error:', err);
   }
-  
-  try {
-    app.use('/api/bbs', createBBSRouter(() => db, authMiddleware));
-    console.log('✅ BBS Router mounted successfully.');
-  } catch (err) {
-    console.error('⚠️ BBS initialization failed:', err);
-  }
+
 
   app.listen(PORT, () => console.log(`🚀 Express server listening on port ${PORT}`));
 }

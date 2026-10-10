@@ -59,35 +59,8 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     {
       id: 'bbs',
       label: 'BBS',
-      icon: <Grid3X3 size={18} />,
-      isGroup: true,
-      groupKey: 'bbs',
-      children: [
-        {
-          id: 'bbs-projects',
-          label: 'Projects',
-          icon: <Ruler size={17} />,
-          moduleKey: 'bbs'
-        },
-        {
-          id: 'bbs-dashboard',
-          label: 'BBS Matrix',
-          icon: <Grid3X3 size={17} />,
-          moduleKey: 'bbs'
-        },
-        {
-          id: 'bbs-shapes',
-          label: 'Shape Library',
-          icon: <Layers size={17} />,
-          moduleKey: 'bbs'
-        },
-        {
-          id: 'bbs-reports',
-          label: 'Reports & MTO',
-          icon: <ClipboardList size={17} />,
-          moduleKey: 'bbs'
-        }
-      ]
+      icon: <Building2 size={18} />,
+      moduleKey: 'bbs'
     },
     {
       id: 'casting',

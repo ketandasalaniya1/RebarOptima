@@ -68,10 +68,7 @@ export default function LedgerPage() {
   };
 
   // Order Requests State
-  const [requests, setRequests] = useState([
-    { id: 1, date: '2026-07-12 10:30', site: 'Sector-62 Site', requester: 'Amit Sharma (Engineer)', diameter: 12, quantity: 150, status: 'Pending', approver: '', approvedQuantity: 150 },
-    { id: 2, date: '2026-07-14 09:15', site: 'Noida Site', requester: 'Amit Sharma (Engineer)', diameter: 16, quantity: 80, status: 'Approved', approver: 'Ketan (Owner)', approvedQuantity: 75 }
-  ]);
+  const [requests, setRequests] = useState([]);
 
   const [requestForm, setRequestForm] = useState({
     diameter: 12,

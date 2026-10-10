@@ -9,6 +9,7 @@ import SignUpPage from './pages/SignUpPage/SignUpPage';
 import OverviewPage from './pages/OverviewPage/OverviewPage';
 import InventoryPage from './pages/InventoryPage/InventoryPage';
 import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage';
+import BBSPage from './pages/BBSPage/BBSPage';
 import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
@@ -217,6 +218,9 @@ function App() {
                   dispatch(setView('inputs'));
                 }}
               />
+            )}
+            {view === 'bbs' && (
+              <BBSPage />
             )}
             {view === 'ledger' && (
               <LedgerPage />

@@ -30,7 +30,7 @@ export default function SubscribePage() {
               displayName: 'Starter Plan',
               description: 'Essential rebar optimization for growing contractor firms',
               limits: { maxStorageMB: 100, maxUsers: 5 },
-              modules: { inventory: true, batches: true, bbs: true, ledger: true }
+              modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false }
             },
             {
               id: 'pro',
@@ -38,7 +38,7 @@ export default function SubscribePage() {
               displayName: 'Professional Plan',
               description: 'Advanced features & higher capacity for multi-project enterprises',
               limits: { maxStorageMB: 500, maxUsers: 25 },
-              modules: { inventory: true, batches: true, bbs: true, ledger: true, activityLogs: true, roles: true }
+              modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true }
             },
             {
               id: 'enterprise',
@@ -46,7 +46,7 @@ export default function SubscribePage() {
               displayName: 'Enterprise Edition',
               description: 'Unlimited capacity, dedicated support, and custom platform control',
               limits: { maxStorageMB: 5000, maxUsers: 100 },
-              modules: { inventory: true, batches: true, bbs: true, ledger: true, activityLogs: true, roles: true, users: true }
+              modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true }
             }
           ]);
         }
@@ -59,7 +59,7 @@ export default function SubscribePage() {
             displayName: 'Professional Plan',
             description: 'Advanced optimization & high capacity for construction firms',
             limits: { maxStorageMB: 500, maxUsers: 25 },
-            modules: { inventory: true, batches: true, bbs: true, ledger: true }
+            modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true }
           }
         ]);
       })
@@ -166,7 +166,7 @@ export default function SubscribePage() {
                     </div>
                     <div className="subscribe-feature-item">
                       <Check size={16} style={{ color: '#10b981' }} />
-                      <span>BBS & Bar Bending Schedule Import</span>
+                      <span>Real-time Scrap & Reusable Remnant Tracking</span>
                     </div>
                     <div className={`subscribe-feature-item ${pkg.modules?.activityLogs === false ? 'disabled' : ''}`}>
                       {pkg.modules?.activityLogs !== false ? (

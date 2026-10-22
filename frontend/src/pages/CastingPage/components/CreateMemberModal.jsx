@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Calculator, Edit2, Zap, AlertCircle } from 'lucide-react';
 import { castingApi } from '../castingApi';
 
+const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
+
 export default function CreateMemberModal({
   isOpen,
   onClose,
@@ -15,6 +17,7 @@ export default function CreateMemberModal({
 
   const [mode, setMode] = useState('single'); // 'single' | 'batch'
   const [memberType, setMemberType] = useState('Slab');
+  const [concreteGrade, setConcreteGrade] = useState('M25');
   const [displayId, setDisplayId] = useState('');
   const [description, setDescription] = useState('');
   const [volumeEntryMethod, setVolumeEntryMethod] = useState('DIMENSIONAL_CALC'); // 'DIMENSIONAL_CALC' | 'DIRECT_ENGINEER_ENTRY'
@@ -77,6 +80,7 @@ export default function CreateMemberModal({
           projectId,
           blockId,
           memberType,
+          concreteGrade,
           displayId: displayId.trim().toUpperCase(),
           description: description.trim(),
           volumeEntryMethod
@@ -113,6 +117,7 @@ export default function CreateMemberModal({
           projectId,
           blockId,
           memberType,
+          concreteGrade,
           displayIds,
           description: description.trim(),
           volumeEntryMethod
@@ -174,7 +179,7 @@ export default function CreateMemberModal({
             onClick={() => setMode('batch')}
             style={{ padding: '0.5rem 1rem', fontSize: '0.825rem' }}
           >
-            <Zap size={13} /> Batch Series Generator
+            <Zap size={13} /> Batch Series
           </button>
         </div>
 
@@ -187,8 +192,8 @@ export default function CreateMemberModal({
               </div>
             )}
 
-            {/* Member Type & ID / Range */}
-            <div className="form-grid-2">
+            {/* Member Type, Concrete Grade & ID / Range */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
               <div className="form-group">
                 <label className="form-label">Member Element Type *</label>
                 <select
@@ -204,6 +209,19 @@ export default function CreateMemberModal({
                 >
                   {memberTypes.map(t => (
                     <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Design Concrete Grade *</label>
+                <select
+                  className="casting-select"
+                  value={concreteGrade}
+                  onChange={(e) => setConcreteGrade(e.target.value)}
+                >
+                  {CONCRETE_GRADES.map(g => (
+                    <option key={g} value={g}>{g}</option>
                   ))}
                 </select>
               </div>

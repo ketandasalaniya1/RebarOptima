@@ -137,8 +137,8 @@ export default function ProjectHierarchyManager({
     <div className="hierarchy-pane">
       <div className="hierarchy-pane-header">
         <span className="hierarchy-pane-title">
-          <Building size={18} className="casting-accent-icon" />
-          Project & Hierarchy
+          <Building size={17} className="casting-accent-icon" />
+          Structure Hierarchy
         </span>
         <button
           className="casting-btn casting-btn-secondary casting-btn-sm"
@@ -148,7 +148,7 @@ export default function ProjectHierarchyManager({
           }}
           title="Create New Project"
         >
-          <FolderPlus size={14} /> + New Project
+          <FolderPlus size={13} /> New Project
         </button>
       </div>
 
@@ -175,7 +175,7 @@ export default function ProjectHierarchyManager({
       {/* Blocks & Levels Tree */}
       <div className="tree-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-          <span className="project-select-lbl">Blocks & Floors</span>
+          <span className="project-select-lbl">Blocks & Levels</span>
           {selectedProject && (
             <button
               className="casting-btn casting-btn-secondary casting-btn-xs"
@@ -260,7 +260,7 @@ export default function ProjectHierarchyManager({
                             </span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                               <span style={{ fontSize: '0.7rem', color: isLvlSelected ? '#2dd4bf' : '#64748b' }}>
-                                {level.memberCount || 0} mbrs
+                                {level.memberCount || 0} elements
                               </span>
                               <button
                                 className="btn-icon-danger"

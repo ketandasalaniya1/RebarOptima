@@ -27,6 +27,8 @@ const MEMBER_TYPE_OPTIONS = [
   'Special Requirement'
 ];
 
+const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
+
 const DEFAULT_PREFIX_MAP = {
   'Column': 'C',
   'Beam': 'B',
@@ -80,12 +82,13 @@ export default function BBSPage() {
   const [blockForm, setBlockForm] = useState({ name: '', code: '', description: '' });
   const [levelForm, setLevelForm] = useState({ name: '', code: '', description: '' });
   const [memberModalTab, setMemberModalTab] = useState('single'); // 'single' | 'series'
-  const [memberForm, setMemberForm] = useState({ memberType: 'Column', displayId: '', description: '', completionPercentage: 0 });
+  const [memberForm, setMemberForm] = useState({ memberType: 'Column', displayId: '', concrete_grade: 'M25', description: '', completionPercentage: 0 });
   const [seriesForm, setSeriesForm] = useState({
     memberType: 'Column',
     prefix: DEFAULT_PREFIX_MAP['Column'] || 'C',
     startNum: '',
     endNum: '',
+    concrete_grade: 'M25',
     description: '',
     completionPercentage: 0
   });
@@ -475,6 +478,7 @@ export default function BBSPage() {
       setMemberForm({
         memberType: member.memberType || 'Column',
         displayId: member.displayId || '',
+        concrete_grade: member.concrete_grade || member.concreteGrade || 'M25',
         description: member.description || '',
         completionPercentage: member.completionPercentage || 0
       });
@@ -483,6 +487,7 @@ export default function BBSPage() {
       setMemberForm({
         memberType: 'Column',
         displayId: '',
+        concrete_grade: 'M25',
         description: '',
         completionPercentage: 0
       });
@@ -491,6 +496,7 @@ export default function BBSPage() {
         prefix: DEFAULT_PREFIX_MAP['Column'] || 'C',
         startNum: '',
         endNum: '',
+        concrete_grade: 'M25',
         description: '',
         completionPercentage: 0
       });
@@ -560,6 +566,7 @@ export default function BBSPage() {
         blockId: selectedBlockId,
         memberType: seriesForm.memberType,
         displayIds: marks,
+        concrete_grade: seriesForm.concrete_grade || 'M25',
         description: seriesForm.description,
         completionPercentage: seriesForm.completionPercentage
       });
@@ -803,15 +810,9 @@ export default function BBSPage() {
 
         {/* Header */}
         <div className="bbs-header-row">
-          <div>
-            <div className="bbs-title-with-badge">
-              <Building2 className="bbs-main-icon" size={28} />
-              <h1 className="bbs-main-title">Bar Bending Schedule (BBS)</h1>
-              <span className="bbs-badge bbs-badge-accent">Phase 1 & 2A Foundation</span>
-            </div>
-            <p className="bbs-subtitle">
-              Manage multi-tier construction hierarchy (Project → Block → Level → Structural Members) with automated BBS completion tracking and Parametric Shape CAD.
-            </p>
+          <div className="bbs-title-with-badge">
+            <Building2 className="bbs-main-icon" size={28} />
+            <h1 className="bbs-main-title">Bar Bending Schedule (BBS)</h1>
           </div>
           <button className="bbs-btn bbs-btn-primary" onClick={() => openProjectModal('create')}>
             <Plus size={18} />
@@ -1353,6 +1354,7 @@ export default function BBSPage() {
                     <tr>
                       <th>Display ID / Mark</th>
                       <th>Structural Type</th>
+                      <th>Concrete Grade</th>
                       <th>Description / Notes</th>
                       <th>Backend Unique ID</th>
                       <th>BBS Status</th>
@@ -1372,6 +1374,11 @@ export default function BBSPage() {
                           </td>
                           <td>
                             <span className="bbs-type-badge">{member.memberType}</span>
+                          </td>
+                          <td>
+                            <span className="bbs-badge bbs-badge-accent" style={{ fontWeight: 600 }}>
+                              {member.concrete_grade || member.concreteGrade || 'M25'}
+                            </span>
                           </td>
                           <td>
                             <span className="bbs-desc-cell">{member.description || '—'}</span>
@@ -1572,17 +1579,32 @@ export default function BBSPage() {
             {modalMode === 'create' && memberModalTab === 'series' ? (
               <form onSubmit={handleSaveSeriesMembers}>
                 <div className="bbs-modal-body">
-                  <div className="bbs-form-group">
-                    <label>Structural Category <span className="bbs-required">*</span></label>
-                    <select 
-                      value={seriesForm.memberType} 
-                      onChange={e => handleSeriesMemberTypeChange(e.target.value)}
-                      required
-                    >
-                      {MEMBER_TYPE_OPTIONS.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="bbs-form-group">
+                      <label>Structural Category <span className="bbs-required">*</span></label>
+                      <select 
+                        value={seriesForm.memberType} 
+                        onChange={e => handleSeriesMemberTypeChange(e.target.value)}
+                        required
+                      >
+                        {MEMBER_TYPE_OPTIONS.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="bbs-form-group">
+                      <label>Design Concrete Grade <span className="bbs-required">*</span></label>
+                      <select 
+                        value={seriesForm.concrete_grade} 
+                        onChange={e => setSeriesForm({ ...seriesForm, concrete_grade: e.target.value })}
+                        required
+                      >
+                        {CONCRETE_GRADES.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <div className="bbs-form-row-3">
@@ -1686,17 +1708,32 @@ export default function BBSPage() {
             ) : (
               <form onSubmit={handleSaveMember}>
                 <div className="bbs-modal-body">
-                  <div className="bbs-form-group">
-                    <label>Structural Category <span className="bbs-required">*</span></label>
-                    <select 
-                      value={memberForm.memberType} 
-                      onChange={e => setMemberForm({ ...memberForm, memberType: e.target.value })}
-                      required
-                    >
-                      {MEMBER_TYPE_OPTIONS.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="bbs-form-group">
+                      <label>Structural Category <span className="bbs-required">*</span></label>
+                      <select 
+                        value={memberForm.memberType} 
+                        onChange={e => setMemberForm({ ...memberForm, memberType: e.target.value })}
+                        required
+                      >
+                        {MEMBER_TYPE_OPTIONS.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="bbs-form-group">
+                      <label>Design Concrete Grade <span className="bbs-required">*</span></label>
+                      <select 
+                        value={memberForm.concrete_grade} 
+                        onChange={e => setMemberForm({ ...memberForm, concrete_grade: e.target.value })}
+                        required
+                      >
+                        {CONCRETE_GRADES.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div className="bbs-form-group">
                     <label>Member Display ID / Mark <span className="bbs-required">*</span></label>

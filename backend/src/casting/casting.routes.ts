@@ -752,6 +752,7 @@ export function createCastingRouter(
         blockId,
         memberType,
         displayId,
+        concreteGrade,
         description,
         volumeEntryMethod,
         dimensions,
@@ -828,6 +829,7 @@ export function createCastingRouter(
         levelId,
         memberType,
         displayId: mark,
+        concreteGrade: concreteGrade ? String(concreteGrade).trim() : 'M25',
         description: description ? description.trim() : '',
         volumeEntryMethod: volumeEntryMethod === 'DIRECT_ENGINEER_ENTRY' ? 'DIRECT_ENGINEER_ENTRY' : 'DIMENSIONAL_CALC',
         dimensions: finalDimensions,
@@ -860,6 +862,7 @@ export function createCastingRouter(
         blockId,
         memberType,
         displayIds,
+        concreteGrade,
         description,
         volumeEntryMethod,
         dimensions,
@@ -938,6 +941,7 @@ export function createCastingRouter(
             levelId,
             memberType,
             displayId: mark,
+            concreteGrade: concreteGrade ? String(concreteGrade).trim() : 'M25',
             description: description ? description.trim() : '',
             volumeEntryMethod: volumeEntryMethod === 'DIRECT_ENGINEER_ENTRY' ? 'DIRECT_ENGINEER_ENTRY' : 'DIMENSIONAL_CALC',
             dimensions: finalDimensions,
@@ -984,6 +988,7 @@ export function createCastingRouter(
       const {
         memberType,
         displayId,
+        concreteGrade,
         description,
         volumeEntryMethod,
         dimensions,
@@ -1004,6 +1009,7 @@ export function createCastingRouter(
         updateData.memberType = memberType;
       }
       if (displayId !== undefined) updateData.displayId = displayId.trim().toUpperCase();
+      if (concreteGrade !== undefined) updateData.concreteGrade = String(concreteGrade).trim();
       if (description !== undefined) updateData.description = description.trim();
       if (status !== undefined) updateData.status = status;
 

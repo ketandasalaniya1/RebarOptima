@@ -262,9 +262,9 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
       <div className="view-subbar">
         <div className="view-subbar-left">
           <div className="view-badge purple">
-            <FlaskConical size={16} /> IS 456:2000 Cl 15 & Amd 4 Table 11
+            <FlaskConical size={16} /> Cube Compliance
           </div>
-          <span className="view-subbar-title">Concrete Cube Compressive Strength Register</span>
+          <span className="view-subbar-title">Compressive Strength Register</span>
         </div>
         <div className="view-subbar-actions">
           <button 
@@ -442,8 +442,8 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
         {/* Section 2: IS 456 Table 11 Compliance Evaluations & Engineering Reviews */}
         <div className="cube-section mt-4">
           <div className="section-header">
-            <h4>IS 456:2000 Amd 4 Table 11 Compliance & Qualified Engineer Sign-offs</h4>
-            <span className="section-tag">Formal Governance Stage-Gate</span>
+            <h4>Compliance Evaluations & Engineering Reviews</h4>
+            <span className="section-tag">Quality Sign-offs</span>
           </div>
 
           {evaluations.length === 0 ? (
@@ -849,7 +849,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
         <div className="modal-backdrop">
           <div className="modal-content medium">
             <div className="modal-header">
-              <h3>Qualified Engineer Stage-Gate Sign-off (IS 456 Cl 16)</h3>
+              <h3>Engineer Compliance Sign-off (IS 456 Cl 16)</h3>
               <button className="btn-close" onClick={() => setShowReviewModal(false)}>×</button>
             </div>
             <form onSubmit={handleEngineerReviewSubmit}>

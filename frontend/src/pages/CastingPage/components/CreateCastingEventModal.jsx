@@ -148,9 +148,9 @@ export default function CreateCastingEventModal({
       <div className="casting-modal large">
         <div className="casting-modal-header">
           <div>
-            <h3 className="casting-modal-title">Schedule New Casting Event</h3>
+            <h3 className="casting-modal-title">Schedule Casting Event</h3>
             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-              Multi-Member & Multi-Block Planned Pour Register
+              Configure planned date, time window, and target structural members
             </span>
           </div>
           <button className="casting-modal-close" onClick={onClose}>

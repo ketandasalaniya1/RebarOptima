@@ -165,9 +165,9 @@ export default function CuringManagementView({
     <div className="content-pane">
       <div className="content-pane-header">
         <div className="content-pane-title-wrap">
-          <h2 className="content-pane-title">Curing Management & Environmental Regimes</h2>
+          <h2 className="content-pane-title">Curing Management</h2>
           <span className="content-pane-subtitle">
-            IS 456 Clause 13.5.1 Curing Schedules, Inspection Sessions & Non-Destructive Audit Log
+            Curing schedules, daily hydration inspections, and compliance tracking
           </span>
         </div>
 

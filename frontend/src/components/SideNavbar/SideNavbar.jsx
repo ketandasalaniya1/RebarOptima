@@ -7,10 +7,16 @@ import './SideNavbar.css';
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSteelOpen, setIsSteelOpen] = useState(false);
-  const [isBbsOpen, setIsBbsOpen] = useState(false);
+  const [isSteelOpen, setIsSteelOpen] = useState(() => ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView));
+  const [isBbsOpen, setIsBbsOpen] = useState(() => (currentView || '').startsWith('bbs-'));
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
+
+  useEffect(() => {
+    if (['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView)) {
+      setIsSteelOpen(true);
+    }
+  }, [currentView]);
 
   const checkPermission = (moduleKey) => {
     if (!moduleKey) return true;
@@ -43,6 +49,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           moduleKey: 'inventory'
         },
         {
+          id: 'ledger',
+          label: 'Ledger & Procurement',
+          icon: <BookOpen size={17} />,
+          moduleKey: 'ledger'
+        },
+        {
           id: 'inputs',
           label: 'Run Optimizer',
           icon: <PlusSquare size={17} />,
@@ -67,12 +79,6 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       label: 'Casting Management',
       icon: <Boxes size={18} />,
       moduleKey: 'casting'
-    },
-    {
-      id: 'ledger',
-      label: 'Ledger & Procurement',
-      icon: <BookOpen size={18} />,
-      moduleKey: 'ledger'
     },
     {
       id: 'settings',
@@ -111,8 +117,8 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     return item;
   }).filter(Boolean);
 
-  const isSteelActive = ['inventory', 'inputs', 'results', 'history'].includes(currentView);
-  const isBbsActive = currentView.startsWith('bbs-');
+  const isSteelActive = ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView);
+  const isBbsActive = (currentView || '').startsWith('bbs-');
 
   const getGroupOpen = (item) => {
     if (item.groupKey === 'bbs') return isBbsOpen;

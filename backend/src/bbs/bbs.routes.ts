@@ -508,7 +508,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
       const levelId = req.params.levelId;
-      const { projectId, blockId, memberType, displayId, description, completionPercentage } = req.body;
+      const { projectId, blockId, memberType, displayId, concrete_grade, concreteGrade, description, completionPercentage } = req.body;
 
       if (!memberType || !BBS_MEMBER_TYPES.includes(memberType)) {
         return res.status(400).json({ message: `Valid memberType is required (${BBS_MEMBER_TYPES.join(', ')})` });
@@ -539,6 +539,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
         companyId,
         memberType,
         displayId: displayId.trim().toUpperCase(),
+        concrete_grade: String(concrete_grade || concreteGrade || 'M25').trim(),
         description: description ? description.trim() : '',
         completionPercentage: completionPercentage !== undefined ? Number(completionPercentage) : 0,
         createdAt: now,
@@ -559,7 +560,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
       const levelId = req.params.levelId;
-      const { projectId, blockId, memberType, displayIds, description, completionPercentage } = req.body;
+      const { projectId, blockId, memberType, displayIds, concrete_grade, concreteGrade, description, completionPercentage } = req.body;
 
       if (!memberType || !BBS_MEMBER_TYPES.includes(memberType)) {
         return res.status(400).json({ message: `Valid memberType is required (${BBS_MEMBER_TYPES.join(', ')})` });
@@ -591,6 +592,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
           companyId,
           memberType,
           displayId: String(mark).trim().toUpperCase(),
+          concrete_grade: String(concrete_grade || concreteGrade || 'M25').trim(),
           description: description ? description.trim() : '',
           completionPercentage: completionPercentage !== undefined ? Number(completionPercentage) : 0,
           createdAt: now,
@@ -618,7 +620,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
     try {
       const db = getDb();
       const id = req.params.id;
-      const { memberType, displayId, description, completionPercentage } = req.body;
+      const { memberType, displayId, concrete_grade, concreteGrade, description, completionPercentage } = req.body;
 
       const updateData: any = { updatedAt: new Date() };
       if (memberType !== undefined) {
@@ -628,6 +630,9 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
         updateData.memberType = memberType;
       }
       if (displayId !== undefined) updateData.displayId = displayId.trim().toUpperCase();
+      if (concrete_grade !== undefined || concreteGrade !== undefined) {
+        updateData.concrete_grade = String(concrete_grade || concreteGrade).trim();
+      }
       if (description !== undefined) updateData.description = description.trim();
       if (completionPercentage !== undefined) updateData.completionPercentage = Number(completionPercentage);
 

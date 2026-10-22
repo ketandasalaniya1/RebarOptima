@@ -228,15 +228,14 @@ export default function CastingPage() {
       <div className="casting-header-row">
         <div className="casting-header-left">
           <div className="casting-header-icon">
-            <Boxes size={26} />
+            <Boxes size={24} />
           </div>
           <div>
             <div className="casting-title-with-badge">
               <h1 className="casting-main-title">Casting Management</h1>
-              <span className="casting-badge-accent">Phases 1–5 Integrated</span>
             </div>
             <p className="casting-subtitle">
-              Structural Register, Pour Execution, Visual Flowchart & Calendar, Mix Designs, Curing & IS 456 Cube Compliance
+              Structural members register, mix designs, pour execution logs, and quality compliance.
             </p>
           </div>
         </div>
@@ -250,7 +249,7 @@ export default function CastingPage() {
             }}
             title="Refresh Casting Data"
           >
-            <RefreshCw size={15} /> Refresh Data
+            <RefreshCw size={14} /> Refresh Data
           </button>
         </div>
       </div>
@@ -261,40 +260,40 @@ export default function CastingPage() {
           <div className="casting-stat-top">
             <span className="casting-stat-label">Casting Projects</span>
             <div className="casting-stat-icon teal">
-              <Building size={18} />
+              <Building size={17} />
             </div>
           </div>
           <div className="casting-stat-val">{projects.length}</div>
-          <div className="casting-stat-sub">Active tenant sites</div>
+          <div className="casting-stat-sub">Active Projects</div>
         </div>
 
         <div className="casting-stat-card">
           <div className="casting-stat-top">
-            <span className="casting-stat-label">Active Project Members</span>
+            <span className="casting-stat-label">Project Elements</span>
             <div className="casting-stat-icon blue">
-              <Layers size={18} />
+              <Layers size={17} />
             </div>
           </div>
           <div className="casting-stat-val">{totalProjectMembers}</div>
-          <div className="casting-stat-sub">Structural elements mapped</div>
+          <div className="casting-stat-sub">Registered Elements</div>
         </div>
 
         <div className="casting-stat-card">
           <div className="casting-stat-top">
-            <span className="casting-stat-label">Mix Design Recipes</span>
+            <span className="casting-stat-label">Mix Designs</span>
             <div className="casting-stat-icon purple">
-              <FlaskConical size={18} />
+              <FlaskConical size={17} />
             </div>
           </div>
           <div className="casting-stat-val">{recipes.length}</div>
-          <div className="casting-stat-sub">IS compliant batch mixes</div>
+          <div className="casting-stat-sub">Available Mix Recipes</div>
         </div>
 
         <div className="casting-stat-card">
           <div className="casting-stat-top">
-            <span className="casting-stat-label">Total Planned Volume</span>
+            <span className="casting-stat-label">Planned Volume</span>
             <div className="casting-stat-icon amber">
-              <CheckCircle2 size={18} />
+              <CheckCircle2 size={17} />
             </div>
           </div>
           <div className="casting-stat-val">{totalPlannedVolume.toFixed(2)} <span className="casting-stat-unit">m³</span></div>
@@ -302,14 +301,14 @@ export default function CastingPage() {
         </div>
       </div>
 
-      {/* Tabs Navigation Bar (Project Theme Encapsulated Pill Bar) */}
+      {/* Tabs Navigation Bar */}
       <div className="casting-nav-tabs-wrapper">
         <div className="casting-nav-tabs">
           <button
             className={`casting-nav-tab ${activeTab === 'structural' ? 'active' : ''}`}
             onClick={() => setActiveTab('structural')}
           >
-            <Layers size={16} />
+            <Layers size={15} />
             <span>Structural Register</span>
             <span className="casting-tab-count">{members.length}</span>
           </button>
@@ -318,8 +317,8 @@ export default function CastingPage() {
             className={`casting-nav-tab ${activeTab === 'events' ? 'active' : ''}`}
             onClick={() => setActiveTab('events')}
           >
-            <Calendar size={16} />
-            <span>Casting Events & Pour Log</span>
+            <Calendar size={15} />
+            <span>Pour Events</span>
             <span className="casting-tab-count">{events.length}</span>
           </button>
 
@@ -327,16 +326,16 @@ export default function CastingPage() {
             className={`casting-nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
             onClick={() => setActiveTab('timeline')}
           >
-            <CalendarDays size={16} />
-            <span>Timeline & Calendar</span>
+            <CalendarDays size={15} />
+            <span>Timeline & Schedule</span>
           </button>
 
           <button
             className={`casting-nav-tab ${activeTab === 'recipes' ? 'active' : ''}`}
             onClick={() => setActiveTab('recipes')}
           >
-            <FlaskConical size={16} />
-            <span>Mix Design Recipes</span>
+            <FlaskConical size={15} />
+            <span>Mix Designs</span>
             <span className="casting-tab-count">{recipes.length}</span>
           </button>
 
@@ -344,7 +343,7 @@ export default function CastingPage() {
             className={`casting-nav-tab ${activeTab === 'curing' ? 'active' : ''}`}
             onClick={() => setActiveTab('curing')}
           >
-            <Droplets size={16} />
+            <Droplets size={15} />
             <span>Curing Management</span>
           </button>
 
@@ -352,16 +351,16 @@ export default function CastingPage() {
             className={`casting-nav-tab ${activeTab === 'cubes' ? 'active' : ''}`}
             onClick={() => setActiveTab('cubes')}
           >
-            <FlaskConical size={16} />
-            <span>Cube Strength Testing</span>
+            <FlaskConical size={15} />
+            <span>Cube Testing</span>
           </button>
 
           <button
             className={`casting-nav-tab ${activeTab === 'tracksheet' ? 'active' : ''}`}
             onClick={() => setActiveTab('tracksheet')}
           >
-            <FileSpreadsheet size={16} />
-            <span>Slab Track Sheet</span>
+            <FileSpreadsheet size={15} />
+            <span>Track Sheet</span>
           </button>
         </div>
       </div>

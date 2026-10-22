@@ -413,8 +413,52 @@ export function createCastingRecipeRouter(getDb: () => any, authMiddleware: any,
       const targetVer = recipe.versions[targetVerIndex];
 
       // Maker-Checker Rule Enforcement
-      if (targetVer.submittedBy?.userId && String(targetVer.submittedBy.userId) === String(userId)) {
-        // Enforce maker-checker: author cannot approve their own recipe
+      // Admins and owners are permitted to both create and approve recipes
+      const userRole = String(req.user?.role || '').toLowerCase();
+      let isAdmin =
+        userRole === 'admin' ||
+        userRole === 'owner' ||
+        userRole === 'super_admin' ||
+        req.user?.accountType === 'developer';
+
+      if (!isAdmin && userId && userId !== 'system') {
+        try {
+          const userDoc = await db.collection('users').findOne({
+            $or: [
+              ...(ObjectId.isValid(userId) && String(userId).length === 24 ? [{ _id: new ObjectId(userId) }] : []),
+              { _id: String(userId) },
+              ...(req.user?.email ? [{ email: String(req.user.email).toLowerCase().trim() }] : [])
+            ]
+          });
+
+          if (userDoc) {
+            const dbRole = String(userDoc.role || '').toLowerCase();
+            if (dbRole === 'admin' || dbRole === 'owner' || dbRole === 'super_admin') {
+              isAdmin = true;
+            } else if (userDoc.roleId) {
+              const roleDoc = await db.collection('roles').findOne({
+                $or: [
+                  ...(ObjectId.isValid(userDoc.roleId) && String(userDoc.roleId).length === 24 ? [{ _id: new ObjectId(userDoc.roleId) }] : []),
+                  { _id: String(userDoc.roleId) }
+                ]
+              });
+              const rName = String(roleDoc?.name || '').toLowerCase();
+              if (rName === 'admin' || rName === 'owner') {
+                isAdmin = true;
+              }
+            }
+          }
+        } catch {
+          // Ignore lookup error
+        }
+      }
+
+      const isAuthor =
+        (targetVer.submittedBy?.userId && String(targetVer.submittedBy.userId) === String(userId)) ||
+        (Boolean(targetVer.submittedBy?.name) && Boolean(req.user?.email) && targetVer.submittedBy?.name === req.user.email);
+
+      if (!isAdmin && isAuthor) {
+        // Enforce maker-checker: author cannot approve their own recipe unless they have Admin privileges
         return res.status(403).json({
           success: false,
           message: 'Maker-Checker Violation: You cannot approve a recipe version that you created or submitted.'

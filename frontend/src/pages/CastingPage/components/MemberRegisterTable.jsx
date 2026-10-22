@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Edit3, Layers, Calculator, Info, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { castingApi } from '../castingApi';
 
+const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
+
 export default function MemberRegisterTable({
   members,
   selectedProject,
@@ -12,6 +14,7 @@ export default function MemberRegisterTable({
 }) {
   const [editingMember, setEditingMember] = useState(null);
   const [editDisplayId, setEditDisplayId] = useState('');
+  const [editConcreteGrade, setEditConcreteGrade] = useState('M25');
   const [editTotalVol, setEditTotalVol] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -29,6 +32,7 @@ export default function MemberRegisterTable({
   const handleStartEdit = (m) => {
     setEditingMember(m);
     setEditDisplayId(m.displayId || '');
+    setEditConcreteGrade(m.concreteGrade || 'M25');
     setEditTotalVol(m.totalRequiredVolumeM3 || '');
     setEditDescription(m.description || '');
   };
@@ -40,6 +44,7 @@ export default function MemberRegisterTable({
     try {
       await castingApi.updateMember(editingMember.id || editingMember._id, {
         displayId: editDisplayId.trim().toUpperCase(),
+        concreteGrade: editConcreteGrade,
         totalRequiredVolumeM3: parseFloat(editTotalVol),
         description: editDescription.trim()
       });
@@ -71,7 +76,7 @@ export default function MemberRegisterTable({
         <div className="content-pane-actions">
           {selectedLevel && (
             <button className="casting-btn casting-btn-primary" onClick={onOpenCreateModal}>
-              <Plus size={15} /> Add Members
+              <Plus size={14} /> Add Member
             </button>
           )}
         </div>
@@ -109,7 +114,7 @@ export default function MemberRegisterTable({
           <Layers size={42} className="casting-empty-icon" />
           <h4>No Structural Members Registered</h4>
           <p>
-            Click '+ Add Members' above to register single elements or generate batch series.
+            Click '+ Add Member' above to register structural elements or generate batch series.
           </p>
           <button className="casting-btn casting-btn-primary" onClick={onOpenCreateModal} style={{ marginTop: '0.75rem' }}>
             <Plus size={15} /> Add Member
@@ -122,6 +127,7 @@ export default function MemberRegisterTable({
               <tr>
                 <th>Mark / ID</th>
                 <th>Type</th>
+                <th>Grade</th>
                 <th>Dimensions / Basis</th>
                 <th>Target Vol</th>
                 <th>Poured Vol</th>
@@ -143,6 +149,11 @@ export default function MemberRegisterTable({
                     <td>
                       <span className="member-type-tag">
                         {m.memberType}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="casting-badge casting-badge-info" style={{ fontWeight: 600, padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem' }}>
+                        {m.concreteGrade || 'M25'}
                       </span>
                     </td>
                     <td>
@@ -220,15 +231,29 @@ export default function MemberRegisterTable({
             </div>
             <form onSubmit={handleSaveEdit}>
               <div className="casting-modal-body">
-                <div className="form-group">
-                  <label className="form-label">Display Mark ID *</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={editDisplayId}
-                    onChange={(e) => setEditDisplayId(e.target.value)}
-                    required
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-group">
+                    <label className="form-label">Display Mark ID *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editDisplayId}
+                      onChange={(e) => setEditDisplayId(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Design Concrete Grade *</label>
+                    <select
+                      className="casting-select"
+                      value={editConcreteGrade}
+                      onChange={(e) => setEditConcreteGrade(e.target.value)}
+                    >
+                      {CONCRETE_GRADES.map(g => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Target Concrete Volume (m³) *</label>

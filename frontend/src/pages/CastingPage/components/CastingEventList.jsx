@@ -212,7 +212,7 @@ export default function CastingEventList({
                         <button
                           className="casting-action-btn review"
                           onClick={() => onReviewConsumption && onReviewConsumption(e)}
-                          title="Maker-Checker Review & Atomic Stock Posting"
+                          title="Review & Post Stock"
                         >
                           <ShieldCheck size={13} /> Review & Post
                         </button>

@@ -136,7 +136,7 @@ export default function ConsumptionApprovalModal({
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <ShieldCheck size={20} color="#38bdf8" />
-              <h3 className="casting-modal-title" style={{ margin: 0 }}>Maker-Checker Consumption Review & Inventory Posting</h3>
+              <h3 className="casting-modal-title" style={{ margin: 0 }}>Consumption Review & Inventory Posting</h3>
             </div>
             <span style={{ fontSize: '0.825rem', color: '#94a3b8', display: 'block', marginTop: '0.25rem' }}>
               Event: <strong style={{ color: '#f8fafc' }}>{event.eventNumber}</strong> — {event.title}

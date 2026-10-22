@@ -283,9 +283,9 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
       <div className="timeline-header-bar">
         <div className="timeline-header-left">
           <div className="view-badge teal">
-            <CalendarDays size={16} /> Phase 5 Visual Planning
+            <CalendarDays size={15} /> Visual Schedule
           </div>
-          <h3 className="timeline-title">Casting Timeline & Visual Schedule</h3>
+          <h3 className="timeline-title">Casting Timeline & Schedule</h3>
         </div>
 
         <div className="timeline-header-actions">
@@ -865,11 +865,11 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
                     </div>
                   )}
 
-                  {/* TAB 3: CONTEXTUAL QUALITY (PHASE 4) */}
+                  {/* TAB 3: CONTEXTUAL QUALITY */}
                   {drawerActiveTab === 'quality' && (
                     <div className="drawer-tab-pane">
                       <div className="section-header">
-                        <h4>Phase 4 Curing Management</h4>
+                        <h4>Curing Management</h4>
                       </div>
                       {eventDetails.contextualDetails?.curingSchedule ? (
                         <div className="card-box p-3 mb-3">
@@ -891,7 +891,7 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
                       )}
 
                       <div className="section-header mt-4">
-                        <h4>Phase 4 Concrete Cube Strength Results (IS 456)</h4>
+                        <h4>Concrete Cube Strength Results (IS 456)</h4>
                       </div>
                       {eventDetails.contextualDetails?.cubeSamples?.length > 0 ? (
                         <table className="quality-table">
@@ -926,7 +926,7 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
                     </div>
                   )}
 
-                  {/* TAB 4: MIX RECIPE & CONSUMPTION (PHASE 2 & 3) */}
+                  {/* TAB 4: MIX RECIPE & CONSUMPTION */}
                   {drawerActiveTab === 'consumption' && (
                     <div className="drawer-tab-pane">
                       <div className="section-header">
@@ -947,7 +947,7 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
                       )}
 
                       <div className="section-header mt-4">
-                        <h4>Phase 3 Material Consumption Status</h4>
+                        <h4>Material Consumption Status</h4>
                       </div>
                       {eventDetails.contextualDetails?.consumptionRecord ? (
                         <div className="card-box p-3">

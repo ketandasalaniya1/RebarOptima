@@ -53,7 +53,7 @@ async function runAcceptanceTests() {
       sub: 'usr_site_eng_1',
       email: 'site_eng@companyA.com',
       name: 'Site Engineer Bob',
-      role: 'ADMIN',
+      role: 'SITE_ENGINEER',
       companyId: companyA,
       accountType: 'user'
     }, ACCESS_SECRET, { expiresIn: '1h' });

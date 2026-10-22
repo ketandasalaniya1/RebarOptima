@@ -102,6 +102,7 @@ export interface ICastingMember {
   levelId: string;
   memberType: CastingMemberType;
   displayId: string;
+  concreteGrade?: string;
   description?: string;
   volumeEntryMethod: VolumeEntryMethod;
   dimensions?: {

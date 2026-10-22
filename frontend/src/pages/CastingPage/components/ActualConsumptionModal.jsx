@@ -206,7 +206,7 @@ export default function ActualConsumptionModal({
 
       if (submitAfter && recId) {
         await castingApi.submitConsumption(eventId, recId);
-        setSuccessMsg('Actual consumption submitted successfully for Maker-Checker approval!');
+        setSuccessMsg('Actual consumption submitted successfully for review and posting!');
       } else {
         setSuccessMsg('Actual consumption draft saved successfully.');
       }

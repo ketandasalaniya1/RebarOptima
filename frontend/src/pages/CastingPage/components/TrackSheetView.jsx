@@ -114,9 +114,9 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
       <div className="view-subbar">
         <div className="view-subbar-left">
           <div className="view-badge amber">
-            <FileSpreadsheet size={16} /> Slab Casting Track Sheet & Quality Gate
+            <FileSpreadsheet size={16} /> Track Sheet
           </div>
-          <span className="view-subbar-title">Structural Segment Progress & Verification Matrix</span>
+          <span className="view-subbar-title">Slab Progress & Quality Sign-offs</span>
         </div>
         <div className="view-subbar-actions">
           <button 
@@ -134,7 +134,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
             }}
             disabled={!trackSheetData || entries.length === 0}
           >
-            <CheckSquare size={14} /> Stage-Gate Quality Sign-Off
+            <CheckSquare size={14} /> Quality Sign-Off
           </button>
         </div>
       </div>
@@ -270,7 +270,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
                       <td>
                         {isPoured && curingDone && cubePass ? (
                           <span className="status-badge success">
-                            <CheckCircle2 size={12} /> CLEAR FOR STAGE-GATE
+                            <CheckCircle2 size={12} /> APPROVED FOR SIGN-OFF
                           </span>
                         ) : isPoured ? (
                           <span className="status-badge warning">
@@ -294,7 +294,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
         {signoffs.length > 0 && (
           <div className="cube-section mt-4">
             <div className="section-header">
-              <h4>Formal Quality Stage-Gate Clearance Sign-offs for Level</h4>
+              <h4>Quality Clearance Sign-offs for Level</h4>
               <span className="section-tag">Audit Trail Recorded</span>
             </div>
             <div className="table-responsive">
@@ -355,7 +355,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
         <div className="modal-backdrop">
           <div className="modal-content medium">
             <div className="modal-header">
-              <h3>Execute Level Quality Stage-Gate Sign-off</h3>
+              <h3>Level Quality Sign-off</h3>
               <button className="btn-close" onClick={() => setShowSignoffModal(false)}>×</button>
             </div>
             <form onSubmit={handleSignoffSubmit}>

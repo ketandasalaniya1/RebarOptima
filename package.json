@@ -17,6 +17,9 @@
     "@vercel/analytics": "^2.0.1",
     "lucide-react": "^1.25.0"
   },
+  "overrides": {
+    "@mlightcad/mtext-renderer": "0.13.4"
+  },
   "allowScripts": {
     "lucide-react@1.25.0": true
   }

@@ -1,0 +1,790 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   REBAROPTIMA — STANDALONE ENTERPRISE DRAWING & FILE MANAGEMENT STYLES
+   Visual Architecture matching Screenshot 1 (SiteSetu), Screenshot 2 (Aconex),
+   Screenshot 3 & 4 (Cadigence), and Screenshot 5 (Executive Panels)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.drawings-module-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-primary, #0b1120);
+  color: var(--text-primary, #f8fafc);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* ── Top Header Navigation Bar ────────────────────────────────────────── */
+.drawings-top-header {
+  height: 64px;
+  background: var(--card-bg, #111a2e);
+  border-bottom: 1px solid var(--card-border, #1e293b);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.drawings-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.drawings-module-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary, #f8fafc);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drawings-badge-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  text-transform: uppercase;
+}
+
+.drawings-header-search {
+  position: relative;
+  width: 320px;
+}
+
+.drawings-header-search input {
+  width: 100%;
+  background: var(--input-bg, #0b1120);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem 0.45rem 2.2rem;
+  font-size: 0.82rem;
+  color: var(--text-primary, #f8fafc);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.drawings-header-search input:focus {
+  border-color: #38bdf8;
+}
+
+.drawings-header-search .search-icon {
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+}
+
+.drawings-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ── Screen Navigation Tabs Bar ───────────────────────────────────────── */
+.drawings-nav-tabs-bar {
+  background: var(--card-bg, #111a2e);
+  border-bottom: 1px solid var(--card-border, #1e293b);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 1.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.drawings-tab-btn {
+  background: transparent;
+  border: none;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.drawings-tab-btn:hover {
+  color: var(--text-primary, #f8fafc);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.drawings-tab-btn.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.drawings-tab-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+}
+
+.drawings-tab-btn.active .drawings-tab-badge {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+/* ── Content Viewport ─────────────────────────────────────────────────── */
+.drawings-viewport {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1680px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ── Dashboard KPI Metric Grid ────────────────────────────────────────── */
+.drawings-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1400px) {
+  .drawings-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .drawings-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.drawings-kpi-card {
+  background: var(--card-bg, #111a2e);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 8px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.drawings-kpi-card:hover {
+  border-color: #334155;
+  transform: translateY(-2px);
+}
+
+.drawings-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-label, #64748b);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawings-kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  letter-spacing: -0.02em;
+}
+
+.drawings-kpi-sub {
+  font-size: 0.74rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.drawings-kpi-card.approved .drawings-kpi-value { color: #10b981; }
+.drawings-kpi-card.review .drawings-kpi-value { color: #38bdf8; }
+.drawings-kpi-card.pending .drawings-kpi-value { color: #f59e0b; }
+.drawings-kpi-card.superseded .drawings-kpi-value { color: #a855f7; }
+
+/* ── Dashboard Middle Split (Donut Chart + Activity) ─────────────────── */
+.drawings-dashboard-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .drawings-dashboard-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.drawings-card-box {
+  background: var(--card-bg, #111a2e);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawings-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--card-border, #1e293b);
+}
+
+.drawings-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* ── Status Badges ────────────────────────────────────────────────────── */
+.dw-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.dw-status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dw-status-approved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.dw-status-approved::before { background: #10b981; }
+
+.dw-status-under-review {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+.dw-status-under-review::before { background: #38bdf8; }
+
+.dw-status-pending-approval {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.dw-status-pending-approval::before { background: #f59e0b; }
+
+.dw-status-changes-requested {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.dw-status-changes-requested::before { background: #ef4444; }
+
+.dw-status-draft {
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+.dw-status-draft::before { background: #94a3b8; }
+
+.dw-status-superseded {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+.dw-status-superseded::before { background: #a855f7; }
+
+/* ── Revision Badges ─────────────────────────────────────────────────── */
+.dw-rev-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.dw-rev-badge.superseded {
+  background: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+/* ── Data Tables ──────────────────────────────────────────────────────── */
+.drawings-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 8px;
+  background: var(--card-bg, #111a2e);
+}
+
+.drawings-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+}
+
+.drawings-table th {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-label, #64748b);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border, #1e293b);
+}
+
+.drawings-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--text-primary, #f8fafc);
+  vertical-align: middle;
+}
+
+.drawings-table tbody tr {
+  transition: background-color 0.12s ease;
+  cursor: pointer;
+}
+
+.drawings-table tbody tr:hover {
+  background-color: rgba(56, 189, 248, 0.03);
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.dw-btn-primary {
+  background: #0284c7;
+  color: #ffffff;
+  border: 1px solid #0369a1;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+}
+
+.dw-btn-primary:hover {
+  background: #0369a1;
+}
+
+.dw-btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary, #f8fafc);
+  border: 1px solid var(--card-border, #1e293b);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+}
+
+.dw-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #334155;
+}
+
+/* ── Drawing Details Canvas Viewer (Screenshot 4 & 5 Panel 4) ─────────── */
+.drawings-details-workspace {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.25rem;
+  height: calc(100vh - 170px);
+}
+
+@media (max-width: 1200px) {
+  .drawings-details-workspace {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.drawings-canvas-card {
+  background: #090d16;
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawings-canvas-toolbar {
+  height: 48px;
+  background: #111a2e;
+  border-bottom: 1px solid var(--card-border, #1e293b);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.drawings-canvas-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #050811;
+  background-image: radial-gradient(#1e293b 1px, transparent 1px);
+  background-size: 24px 24px;
+  user-select: none;
+}
+
+.drawings-svg-container {
+  transition: transform 0.1s ease-out;
+  cursor: grab;
+}
+
+.drawings-svg-container:active {
+  cursor: grabbing;
+}
+
+/* ── Metadata Drawer / Tabs (Screenshot 5 Panel 4 Right) ──────────────── */
+.drawings-meta-panel {
+  background: var(--card-bg, #111a2e);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawings-meta-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--card-border, #1e293b);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.drawings-meta-tab-btn {
+  flex: 1;
+  padding: 0.75rem 0.25rem;
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+}
+
+.drawings-meta-tab-btn.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.drawings-meta-content {
+  flex: 1;
+  padding: 1.15rem;
+  overflow-y: auto;
+}
+
+.drawings-detail-group {
+  margin-bottom: 1rem;
+}
+
+.drawings-detail-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-label, #64748b);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.25rem;
+}
+
+.drawings-detail-value {
+  font-size: 0.85rem;
+  color: var(--text-primary, #f8fafc);
+  font-weight: 500;
+}
+
+/* ── Revision History Timeline (Screenshot 3 & Screenshot 5 Panel 5) ───── */
+.dw-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.dw-timeline::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: #1e293b;
+}
+
+.dw-timeline-item {
+  position: relative;
+  background: var(--card-bg, #111a2e);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 8px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.dw-timeline-node {
+  position: absolute;
+  left: -2rem;
+  top: 1.25rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0284c7;
+  border: 3px solid #0b1120;
+  transform: translateX(-1px);
+}
+
+.dw-timeline-node.superseded {
+  background: #64748b;
+}
+
+/* ── Formal Review & Approval Stepper (Screenshot 5 Panel 6) ──────────── */
+.dw-workflow-stepper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin: 1.5rem 0 2rem 0;
+  padding: 0 1rem;
+}
+
+.dw-workflow-stepper::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 2.5rem;
+  right: 2.5rem;
+  height: 2px;
+  background: #1e293b;
+  z-index: 1;
+}
+
+.dw-step-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.dw-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #111a2e;
+  border: 2px solid #334155;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.dw-step-item.active .dw-step-circle {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.dw-step-item.completed .dw-step-circle {
+  background: #10b981;
+  border-color: #34d399;
+  color: #ffffff;
+}
+
+.dw-step-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.dw-step-item.active .dw-step-label {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* ── Modals / Dialogs (Screenshot 5 Panel 7) ──────────────────────────── */
+.dw-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 1.5rem;
+}
+
+.dw-modal-card {
+  background: var(--card-bg, #111a2e);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.dw-modal-card.large {
+  max-width: 860px;
+}
+
+.dw-modal-header {
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid var(--card-border, #1e293b);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dw-modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+}
+
+.dw-modal-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dw-modal-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--card-border, #1e293b);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* ── Form Inputs ──────────────────────────────────────────────────────── */
+.dw-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dw-form-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.dw-form-input, .dw-form-select, .dw-form-textarea {
+  background: var(--input-bg, #0b1120);
+  border: 1px solid var(--card-border, #1e293b);
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  color: var(--text-primary, #f8fafc);
+  font-size: 0.82rem;
+  outline: none;
+}
+
+.dw-form-input:focus, .dw-form-select:focus, .dw-form-textarea:focus {
+  border-color: #38bdf8;
+}
+
+/* ── File Upload Dropzone & Cards ────────────────────────────────────── */
+.dw-file-dropzone {
+  border: 2px dashed rgba(56, 189, 248, 0.35);
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.dw-file-dropzone:hover,
+.dw-file-dropzone.active {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.dw-file-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  gap: 0.75rem;
+}
+
+.dw-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  overflow: hidden;
+}
+
+.dw-file-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}

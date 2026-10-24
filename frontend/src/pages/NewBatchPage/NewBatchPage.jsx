@@ -81,6 +81,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
   const [error, setError] = useState(null)
   const [optimizing, setOptimizing] = useState(false)
   const [isStockExpanded, setIsStockExpanded] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [recentBatches, setRecentBatches] = useState([])
   
   const [kerf, setKerf] = useState(settingsState.defaultKerf)
@@ -256,25 +257,61 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
         <div className="optimizer-page">
           {/* Batch Details Card */}
           <section className="card batch-name-card">
-            <div className="section-header" style={{ marginBottom: '12px', paddingBottom: '8px' }}>
+            <div className="section-header">
               <div className="title-with-toggle">
                 <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Tag size={16} color="var(--accent)" /> Batch Identification
+                  <Tag size={16} color="var(--accent)" /> Batch Identification & Parameters
                 </h2>
-                <span className="section-title-hint">(Give a unique reference name for this optimization run)</span>
               </div>
+              <button
+                type="button"
+                className="toggle-stock-btn"
+                onClick={() => setShowSettings(!showSettings)}
+                style={{ fontSize: '12px', padding: '5px 12px' }}
+                title="Configure kerf cut loss and trim margin"
+              >
+                <Settings size={13} />
+                <span>Cutting Margins (Kerf: {kerf}mm, Trim: {trimMargin}mm)</span>
+              </button>
             </div>
             <div className="batch-name-input-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label className="adv-lbl" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name</label>
+              <label className="adv-lbl" style={{ fontSize: '12.5px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name / Job Reference</label>
               <input
                 type="text"
                 className="form-input"
                 value={batchName}
                 onChange={(e) => setBatchName(e.target.value)}
                 placeholder="e.g. Slab A - Ground Floor"
-                style={{ fontSize: '14px', fontWeight: '500' }}
               />
             </div>
+            {showSettings && (
+              <div className="cutting-params-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--card-border)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Kerf / Blade Cut Loss (mm)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={kerf}
+                    onChange={(e) => setKerf(Math.max(0, Number(e.target.value)))}
+                    min="0"
+                    placeholder="e.g. 5"
+                  />
+                  <span style={{ fontSize: '11px', color: 'var(--text-label)' }}>Deducted from stock for every saw cut.</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>End Trim Margin (mm)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={trimMargin}
+                    onChange={(e) => setTrimMargin(Math.max(0, Number(e.target.value)))}
+                    min="0"
+                    placeholder="e.g. 25"
+                  />
+                  <span style={{ fontSize: '11px', color: 'var(--text-label)' }}>Discarded from stock ends (damaged/clamped ends).</span>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Collapsible Manual Stock Override section */}
@@ -282,8 +319,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
 
             <div className="section-header">
               <div className="title-with-toggle">
-                <h2 className="section-title">Manual Stock Override</h2>
-                <span className="section-title-hint">(Add outside stock or simulation parameters manually)</span>
+                <h2 className="section-title">Manual Stock Inventory Override</h2>
               </div>
               <div className="header-actions">
                 <button 
@@ -291,14 +327,14 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                   onClick={() => setIsStockExpanded(!isStockExpanded)}
                 >
                   {isStockExpanded ? (
-                    <>Collapse Inputs <ChevronUp size={16} /></>
+                    <>Hide Override Stock <ChevronUp size={15} /></>
                   ) : (
-                    <>Expand Inputs <ChevronDown size={16} /></>
+                    <>Show Stock Inputs <ChevronDown size={15} /></>
                   )}
                 </button>
                 {isStockExpanded && (
                   <button className="add-row-btn" onClick={() => stock.addRow()}>
-                    <Plus size={14} /> Add Row
+                    <Plus size={14} /> Add Stock Row
                   </button>
                 )}
               </div>
@@ -311,8 +347,8 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                     <tr>
                       <th className="col-num">#</th>
                       <th>Diameter (mm)</th>
-                      <th>Length (mm)</th>
-                      <th>Quantity</th>
+                      <th>Available Length (mm)</th>
+                      <th>Stock Quantity</th>
                       <th className="col-actions">Actions</th>
                     </tr>
                   </thead>
@@ -352,7 +388,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                           />
                         </td>
                         <td className="col-actions">
-                          <button className="delete-btn" onClick={() => stock.deleteRow(row.id)}>
+                          <button className="delete-btn" onClick={() => stock.deleteRow(row.id)} title="Delete row">
                             <X size={14} />
                           </button>
                         </td>
@@ -362,8 +398,8 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                 </table>
               </div>
             ) : (
-              <div className="stock-collapsed-hint">
-                Standard stocks are pre-loaded from live database counts. (Click Expand to add custom/manual stock simulated values)
+              <div className="stock-collapsed-hint" style={{ fontSize: '12.5px', color: 'var(--text-secondary)', padding: '4px 0' }}>
+                Stock bars and reusable remnants are automatically loaded from your live database inventory. (Click "Show Stock Inputs" to simulate custom outside stock lengths).
               </div>
             )}
           </section>
@@ -371,10 +407,15 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
           {/* Required Parts */}
           <section className="card parts-section-card">
             <div className="section-header">
-              <h2 className="section-title">Required Parts</h2>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+                <h2 className="section-title">Required Cut Parts</h2>
+                <span style={{ fontSize: '12px', color: 'var(--text-label)' }}>
+                  ({parts.rows.filter(r => r.length && r.quantity).length} specified)
+                </span>
+              </div>
               <div className="actions-header-row">
                 <button className="import-row-btn" onClick={() => setShowImportModal(true)}>
-                  <Upload size={14} style={{ marginRight: '4px' }} /> Import CSV
+                  <Upload size={14} /> Import CSV
                 </button>
                 <button className="add-row-btn" onClick={() => parts.addRow()}>
                   <Plus size={14} /> Add Row
@@ -384,11 +425,10 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                   disabled={optimizing}
                   onClick={handleRunOptimization}
                 >
-                  {optimizing ? 'OPTIMIZING...' : 'RUN OPTIMIZATION'}
+                  {optimizing ? 'Calculating...' : 'Run Optimization'}
                 </button>
               </div>
             </div>
-
 
             <div className="table-responsive">
               <table className="data-table">
@@ -396,9 +436,9 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                   <tr>
                     <th className="col-num">#</th>
                     <th>Diameter (mm)</th>
-                    <th>Required Length (mm)</th>
-                    <th>Quantity</th>
-                    <th>Label (Optional)</th>
+                    <th>Required Cut Length (mm)</th>
+                    <th>Quantity (pcs)</th>
+                    <th>Member / Part Label (Optional)</th>
                     <th className="col-actions">Actions</th>
                   </tr>
                 </thead>
@@ -442,12 +482,12 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                           type="text"
                           value={row.label}
                           onChange={(e) => parts.updateRow(row.id, 'label', e.target.value)}
-                          placeholder="e.g. Beams-A"
+                          placeholder="e.g. Beam-B1"
                           onKeyDown={(e) => parts.handleLastFieldKeyDown(e, i === parts.rows.length - 1)}
                         />
                       </td>
                       <td className="col-actions">
-                        <button className="delete-btn" onClick={() => parts.deleteRow(row.id)}>
+                        <button className="delete-btn" onClick={() => parts.deleteRow(row.id)} title="Delete row">
                           <X size={14} />
                         </button>
                       </td>
@@ -455,6 +495,10 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', fontSize: '11.5px', color: 'var(--text-label)' }}>
+              <span>Keyboard tip: Press <kbd style={{ padding: '1px 5px', background: 'var(--main-bg)', border: '1px solid var(--card-border)', borderRadius: '3px', fontSize: '11px', fontFamily: 'inherit' }}>Tab</kbd> or <kbd style={{ padding: '1px 5px', background: 'var(--main-bg)', border: '1px solid var(--card-border)', borderRadius: '3px', fontSize: '11px', fontFamily: 'inherit' }}>Enter</kbd> in the label input to instantly append a new cut row.</span>
             </div>
           </section>
 
@@ -472,7 +516,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
               disabled={optimizing}
               onClick={handleRunOptimization}
             >
-              {optimizing ? 'OPTIMIZING ON SERVER...' : 'RUN OPTIMIZATION'}
+              {optimizing ? 'Calculating Cutting Plan...' : 'Calculate Cutting Plan'}
             </button>
           </div>
         </div>

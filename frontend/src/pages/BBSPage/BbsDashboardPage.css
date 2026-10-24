@@ -59,7 +59,7 @@
   padding: 0.55rem 1rem;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
   font-size: 0.82rem;
   font-weight: 500;
@@ -95,7 +95,7 @@
 .bbs-kpi-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1.25rem 1.5rem;
   position: relative;
   overflow: hidden;
@@ -136,6 +136,7 @@
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-kpi-unit {
@@ -172,7 +173,7 @@
 .bbs-matrix-container {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 14px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -215,6 +216,7 @@
   font-size: 0.85rem;
   color: var(--text-primary);
   vertical-align: middle;
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-matrix-level-row td:first-child {

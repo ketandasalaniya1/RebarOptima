@@ -11,6 +11,8 @@ import { createBBSRouter } from './bbs/bbs.routes';
 import { createCastingRouter } from './casting/casting.routes';
 import { verifyMultiDocumentTransactionRollback } from './casting/casting.inventory.service';
 import { createGeneralInventoryRouter } from './general-inventory/general-inventory.routes';
+import { createCrmMasterRouter } from './crm/crm.routes';
+import { createDrawingsMasterRouter } from './drawings/drawings.routes';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
@@ -21,7 +23,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -101,6 +104,14 @@ class InMemoryCollection {
         const key = Object.keys(sortObj)[0];
         const dir = sortObj[key];
         result = [...result].sort((a, b) => (a[key] > b[key] ? dir : -dir));
+        return chain;
+      },
+      limit: (n: number) => {
+        result = result.slice(0, n);
+        return chain;
+      },
+      skip: (n: number) => {
+        result = result.slice(n);
         return chain;
       },
       project: () => chain,
@@ -214,6 +225,45 @@ class InMemoryCollection {
 
   async countDocuments(query: any = {}) {
     return this.data.filter(d => matchesQuery(d, query)).length;
+  }
+
+  async findOneAndUpdate(query: any, update: any, options: any = {}) {
+    let doc = await this.findOne(query);
+    if (!doc && options.upsert) {
+      const newDoc = { ...(update.$setOnInsert || {}), ...(update.$set || {}), _id: new ObjectId() };
+      this.data.push(newDoc);
+      return newDoc;
+    }
+    if (doc) {
+      const target = this.data.find(d => d._id.toString() === doc._id.toString());
+      if (target) {
+        if (update.$set) Object.assign(target, update.$set);
+        if (update.$inc) {
+          for (const [k, v] of Object.entries(update.$inc)) {
+            target[k] = (Number(target[k]) || 0) + Number(v);
+          }
+        }
+        return { ...target };
+      }
+    }
+    return doc;
+  }
+
+  async findOneAndDelete(query: any) {
+    const doc = await this.findOne(query);
+    if (doc) {
+      this.data = this.data.filter(d => d._id.toString() !== doc._id.toString());
+    }
+    return doc;
+  }
+
+  async deleteOne(query: any) {
+    const doc = await this.findOne(query);
+    if (doc) {
+      this.data = this.data.filter(d => d._id.toString() !== doc._id.toString());
+      return { deletedCount: 1 };
+    }
+    return { deletedCount: 0 };
   }
 }
 
@@ -334,6 +384,29 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
   generalInventory: {
     displayName: 'General Inventory',
     features: { view: 'View General Inventory', create: 'Create Entries & Materials', edit: 'Edit Materials & Adjustments', delete: 'Deactivate Materials', export: 'Export Inventory Reports' }
+  },
+  crm: {
+    displayName: 'Real Estate CRM',
+    features: {
+      view: 'View CRM',
+      customers: 'Manage Customers',
+      leads: 'Manage Leads & Pipeline',
+      inventory: 'Manage Projects & Units',
+      bookings: 'Manage Bookings',
+      payments: 'Manage Payments & Receipts',
+      reports: 'View Reports & Analytics',
+      settings: 'Configure CRM Settings'
+    }
+  },
+  drawings: {
+    displayName: 'Drawing & Files',
+    features: {
+      view: 'View Drawings',
+      upload: 'Upload Drawings & Revisions',
+      review: 'Review & Approve',
+      transmittals: 'Manage Transmittals',
+      settings: 'Configure Drawing Settings'
+    }
   }
 };
 
@@ -578,6 +651,12 @@ app.use('/api/casting', createCastingRouter(() => db, () => client, authMiddlewa
 
 // Mount General Inventory Isolated Module Routes
 app.use('/api/general-inventory', createGeneralInventoryRouter(() => db, () => client, authMiddleware, logAudit));
+
+// Mount Real Estate Enterprise CRM Master Routes
+app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit));
+
+// Mount Standalone Enterprise Drawing & File Management Module Routes
+app.use('/api/drawings', createDrawingsMasterRouter(() => db, authMiddleware, logAudit));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {

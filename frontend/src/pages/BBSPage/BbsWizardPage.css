@@ -73,7 +73,7 @@
 .bbs-wizard-section {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1.5rem;
 }
 
@@ -121,7 +121,7 @@
   padding: 0.6rem 0.75rem;
   background: var(--input-bg, var(--bg-primary));
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
   font-size: 0.85rem;
   transition: all 0.2s;
@@ -172,6 +172,7 @@
 .bbs-rebar-table td {
   color: var(--text-primary);
   vertical-align: middle;
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-rebar-table tbody tr:hover {
@@ -242,7 +243,7 @@
 .bbs-summary-panel {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1.5rem;
   position: sticky;
   top: 0;
@@ -278,11 +279,13 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-summary-value.highlight {
   color: var(--accent);
   font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-save-member-btn {
@@ -291,7 +294,7 @@
   background: var(--accent);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;

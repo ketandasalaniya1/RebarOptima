@@ -10,7 +10,7 @@
 
 :root {
   /* Dimensions & defaults */
-  --sidebar-width: 180px;
+  --sidebar-width: 240px;
   --sidebar-text: #94a3b8;
   --sidebar-text-active: #ffffff;
   --main-bg: #f8fafc;
@@ -22,34 +22,51 @@
   --navbar-bg: #ffffff;
   --navbar-border: #e2e8f0;
   --danger: #ef4444;
+  --danger-subtle: rgba(239, 68, 68, 0.08);
+  --success: #10b981;
+  --success-subtle: rgba(16, 185, 129, 0.08);
+  --warning: #f59e0b;
+  --warning-subtle: rgba(245, 158, 11, 0.08);
   --input-border: #cbd5e1;
   --input-bg: #ffffff;
-  --auth-gradient: linear-gradient(to bottom, rgba(248, 250, 252, 0.75), rgba(248, 250, 252, 0.95));
+  --border-color: var(--card-border);
+  --bg-secondary: var(--main-bg);
+  --accent-alpha: var(--accent-subtle);
+  --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --card-shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+  --auth-gradient: linear-gradient(to bottom, rgba(248, 250, 252, 0.85), rgba(248, 250, 252, 0.98));
 
   /* Theme color default mapping: slate-emerald */
   --sidebar-bg: #334155;
   --sidebar-active-border: #059669;
   --accent: #059669;
   --accent-hover: #047857;
+  --accent-subtle: rgba(5, 150, 105, 0.08);
   
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(14px, 1vw + 10px, 16px);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text-primary);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Light / Dark overrides */
 [data-theme="dark"] {
-  --main-bg: #0f172a;
-  --card-bg: #1e293b;
-  --card-border: #334155;
+  --main-bg: #0b1120;
+  --card-bg: #131c31;
+  --card-border: #23314d;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-label: #64748b;
-  --navbar-bg: #1e293b;
-  --navbar-border: #334155;
-  --input-border: #334155;
-  --input-bg: #0f172a;
-  --auth-gradient: linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.95));
+  --navbar-bg: #10172a;
+  --navbar-border: #1e293b;
+  --input-border: #27364f;
+  --input-bg: #0b1120;
+  --card-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.35);
+  --card-shadow-hover: 0 8px 20px -4px rgba(0, 0, 0, 0.45);
+  --auth-gradient: linear-gradient(to bottom, rgba(11, 17, 32, 0.85), rgba(11, 17, 32, 0.98));
 }
 
 /* Universal Autofill Fix for Clean Dark & Light Theme Inputs */
@@ -67,7 +84,7 @@ input:-webkit-autofill:active {
 [data-theme="dark"] input:-webkit-autofill:hover,
 [data-theme="dark"] input:-webkit-autofill:focus,
 [data-theme="dark"] input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #0f172a) inset !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #0b1120) inset !important;
   -webkit-text-fill-color: var(--text-primary, #f8fafc) !important;
   caret-color: var(--text-primary, #f8fafc) !important;
   transition: background-color 5000s ease-in-out 0s !important;
@@ -77,36 +94,41 @@ input:-webkit-autofill:active {
 [data-color-theme="slate-emerald"] {
   --accent: #059669;
   --accent-hover: #047857;
+  --accent-subtle: rgba(5, 150, 105, 0.09);
   --sidebar-bg: #334155;
   --sidebar-active-border: #059669;
 }
 [data-theme="dark"][data-color-theme="slate-emerald"] {
-  --sidebar-bg: #1e293b;
+  --sidebar-bg: #131c31;
+  --accent-subtle: rgba(5, 150, 105, 0.16);
 }
 
 [data-color-theme="steel-blue"] {
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
+  --accent-subtle: rgba(37, 99, 235, 0.09);
   --sidebar-bg: #1e3a8a;
   --sidebar-active-border: #2563eb;
 }
 [data-theme="dark"][data-color-theme="steel-blue"] {
-  --sidebar-bg: #1e293b;
+  --sidebar-bg: #131c31;
+  --accent-subtle: rgba(37, 99, 235, 0.16);
 }
 
 [data-color-theme="classic-purple"] {
   --accent: #7016d2;
   --accent-hover: #591cc2;
+  --accent-subtle: rgba(112, 22, 210, 0.09);
   --sidebar-bg: #1a1259;
   --sidebar-active-border: #7016d2;
-  --main-bg: #f4f3fa;
+  --main-bg: #f5f4fa;
   --text-primary: #1a1259;
   --text-secondary: #5e578c;
   --text-label: #8d86b8;
 }
 [data-theme="dark"][data-color-theme="classic-purple"] {
   --sidebar-bg: #151125;
-  --main-bg: #110e16;
+  --main-bg: #0e0b17;
   --card-bg: #151125;
   --card-border: #282142;
   --text-primary: #ffffff;
@@ -116,13 +138,13 @@ input:-webkit-autofill:active {
   --navbar-border: #282142;
   --input-border: #282142;
   --input-bg: #1d1833;
+  --accent-subtle: rgba(112, 22, 210, 0.18);
 }
 
 body {
   min-height: 100vh;
   background-color: var(--main-bg);
-  background-image: radial-gradient(var(--card-border) 1px, transparent 1px);
-  background-size: 20px 20px;
+  color: var(--text-primary);
 }
 
 #root {
@@ -135,9 +157,21 @@ button {
 }
 
 input,
-select {
+select,
+textarea {
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13.5px;
+}
+
+/* Tabular numbers for accurate data alignment */
+table,
+.tabular-nums,
+input[type="number"],
+.stat-value,
+.metric-val,
+.kpi-val-highlight {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "cv01" 1;
 }
 
 /* ═══════════════════════════════════════════
@@ -156,24 +190,30 @@ input[type="number"] {
 }
 
 /* ═══════════════════════════════════════════
-   SCROLLBAR-FREE SCROLLING (Global & Utility)
-   Allows scrolling via wheel/touch, hides visible scrollbars
+   CLEAN, SUBTLE ACCESSIBLE SCROLLBARS
+   Replaces invisible scrolling with refined, lightweight scrollbars
    ═══════════════════════════════════════════ */
-html,
-body,
-*,
-*::before,
-*::after {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
 }
 
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
 *::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari, Opera */
-  width: 0;
-  height: 0;
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-label);
 }
 
 .no-scrollbar {
@@ -185,6 +225,24 @@ body::-webkit-scrollbar,
   display: none;
   width: 0;
   height: 0;
+}
+
+/* Accessible focus outline */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ═══════════════════════════════════════════

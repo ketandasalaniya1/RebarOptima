@@ -575,16 +575,20 @@
 }
 
 .ledger-table th {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  color: #f8fafc;
-  padding: 14px 12px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+  padding: 12px 10px;
+  border-bottom: 2px solid var(--card-border);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--main-bg);
   text-align: center;
+}
+
+.ledger-table td {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Explicit, balanced column widths for Audit Ledger Table (8 columns) */
@@ -1197,15 +1201,15 @@
 }
 
 .orders-table th {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  color: #f8fafc;
-  padding: 13px 10px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+  padding: 12px 10px;
+  border-bottom: 2px solid var(--card-border);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--main-bg);
   text-align: center;
 }
 
@@ -1257,15 +1261,15 @@
 }
 
 .requests-table th {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  color: #f8fafc;
-  padding: 13px 10px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+  padding: 12px 10px;
+  border-bottom: 2px solid var(--card-border);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--main-bg);
   text-align: center;
 }
 

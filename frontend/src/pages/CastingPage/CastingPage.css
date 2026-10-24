@@ -96,15 +96,14 @@
 }
 
 .casting-stat-card {
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.7) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
   padding: 1.15rem 1.35rem;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -268,15 +267,14 @@
 
 /* ── LEFT HIERARCHY PANE ── */
 .hierarchy-pane {
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.7) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .hierarchy-pane-header {
@@ -312,9 +310,9 @@
 .casting-select {
   width: 100%;
   padding: 0.65rem 0.85rem;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  background: var(--input-bg, var(--main-bg));
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
   color: var(--text-primary);
   font-size: 0.875rem;
   outline: none;
@@ -322,9 +320,9 @@
 }
 
 .casting-select:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
-  background: rgba(15, 23, 42, 0.95);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+  background: var(--card-bg);
 }
 
 /* Tree Component */
@@ -342,15 +340,15 @@
   text-align: center;
   font-size: 0.825rem;
   color: var(--text-secondary);
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--main-bg);
   border-radius: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border: 1px dashed var(--card-border);
 }
 
 .tree-block-card {
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
   overflow: hidden;
   transition: border-color 0.2s ease;
 }
@@ -428,15 +426,14 @@
 
 /* ── RIGHT MAIN CONTENT PANE ── */
 .content-pane {
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.7) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .content-pane-header {
@@ -710,10 +707,10 @@
 /* ── TABLE SYSTEM (ALIGNED WITH LEDGER & BBS) ── */
 .casting-table-container {
   overflow-x: auto;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.55);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .casting-table {
@@ -724,22 +721,23 @@
 }
 
 .casting-table th {
-  background: rgba(15, 23, 42, 0.85);
+  background: var(--main-bg);
   padding: 0.85rem 1rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid var(--card-border);
   white-space: nowrap;
 }
 
 .casting-table td {
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--card-border);
   color: var(--text-primary);
   vertical-align: middle;
+  font-variant-numeric: tabular-nums;
 }
 
 .casting-table tr:last-child td {
@@ -747,11 +745,7 @@
 }
 
 .casting-table tr:hover td {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-[data-theme="light"] .casting-table tr:hover td {
-  background: rgba(0, 0, 0, 0.015);
+  background: var(--main-bg);
 }
 
 .casting-event-code {
@@ -1050,7 +1044,7 @@
 .casting-modal-header,
 .modal-header {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--card-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1100,13 +1094,13 @@
 .casting-modal-footer,
 .modal-footer {
   padding: 1.15rem 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--card-border);
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-  background: rgba(15, 23, 42, 0.75);
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
+  background: var(--main-bg);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .form-group {
@@ -1119,7 +1113,7 @@
 .form-group label {
   font-size: 0.775rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   letter-spacing: 0.02em;
 }
 
@@ -1132,10 +1126,10 @@
 .modal-body textarea {
   width: 100%;
   padding: 0.65rem 0.85rem;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: #f8fafc;
+  background: var(--input-bg, var(--main-bg));
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--text-primary);
   font-size: 0.875rem;
   outline: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1147,9 +1141,9 @@
 .modal-body input:focus,
 .modal-body select:focus,
 .modal-body textarea:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
-  background: rgba(15, 23, 42, 0.95);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+  background: var(--card-bg);
 }
 
 .form-grid-3 {
@@ -1345,17 +1339,17 @@
 .recipe-search-input {
   width: 100%;
   padding: 0.65rem 2rem 0.65rem 2.4rem;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: var(--text-primary, #ffffff);
+  background: var(--input-bg, var(--main-bg));
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--text-primary);
   font-size: 0.85rem;
   outline: none;
   transition: border-color 0.2s;
 }
 
 .recipe-search-input:focus {
-  border-color: #2dd4bf;
+  border-color: var(--accent);
 }
 
 .search-clear-btn {
@@ -1397,9 +1391,9 @@
 
 .recipe-view-toggle {
   display: flex;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
   padding: 2px;
 }
 
@@ -1574,9 +1568,9 @@
 }
 
 .recipe-card {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -1588,10 +1582,10 @@
 }
 
 .recipe-card:hover {
-  background: rgba(15, 23, 42, 0.75);
-  border-color: rgba(20, 184, 166, 0.4);
+  background: var(--card-bg);
+  border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .recipe-card-header {

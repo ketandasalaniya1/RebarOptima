@@ -114,10 +114,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .meta-pill.text-green {
@@ -234,15 +235,16 @@
 .layout-avatar-id {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(112, 22, 210, 0.08) 0%, rgba(112, 22, 210, 0.16) 100%);
-  border: 1px solid rgba(112, 22, 210, 0.2);
+  border-radius: 8px;
+  background: var(--accent-subtle, rgba(16, 185, 129, 0.12));
+  border: 1px solid var(--accent);
   color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
 

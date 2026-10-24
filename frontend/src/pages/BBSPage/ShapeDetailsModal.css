@@ -187,8 +187,8 @@
 }
 
 .shape-header-close:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
+  background: var(--main-bg);
+  color: var(--text-primary);
 }
 
 /* ── MODAL BODY LAYOUT ── */
@@ -210,6 +210,10 @@
   overflow: hidden;
 }
 
+[data-theme="light"] .shape-details-canvas-area {
+  background: radial-gradient(circle at center, #f8fafc 0%, #f1f5f9 100%);
+}
+
 .shape-canvas-controls {
   position: absolute;
   top: 1rem;
@@ -224,6 +228,12 @@
   border-radius: 8px;
   border: 1px solid rgba(51, 65, 85, 0.6);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .shape-canvas-controls {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .shape-canvas-btn {
@@ -242,8 +252,8 @@
 }
 
 .shape-canvas-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
+  background: var(--card-border);
+  color: var(--text-primary);
 }
 
 .shape-canvas-btn.active {
@@ -303,7 +313,7 @@
 }
 
 .shape-details-tab:hover {
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .shape-details-tab.active {
@@ -502,9 +512,9 @@
 
 .shape-param-input {
   width: 110px;
-  background: #030712;
-  border: 1px solid #334155;
-  color: #f8fafc;
+  background: var(--input-bg, var(--main-bg));
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
   padding: 0.45rem 0.75rem;
   border-radius: 6px;
   font-size: 0.88rem;
@@ -514,9 +524,9 @@
 }
 
 .shape-param-input:focus {
-  border-color: #38bdf8;
+  border-color: var(--accent);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
 }
 
 /* ── CALCULATION ENGINE TAB ── */
@@ -529,10 +539,10 @@
 .cad-rule-select {
   width: 100%;
   padding: 0.6rem 0.9rem;
-  background: #030712;
-  border: 1px solid #334155;
-  color: #f8fafc;
-  border-radius: 8px;
+  background: var(--input-bg, var(--main-bg));
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  border-radius: 6px;
   font-size: 0.85rem;
   cursor: pointer;
 }
@@ -602,7 +612,7 @@
 .shape-val-title {
   font-size: 0.86rem;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .shape-val-sub {
@@ -754,15 +764,15 @@
 }
 
 .shape-btn-secondary {
-  background: #1e293b;
-  color: #cbd5e1;
-  border-color: #334155;
+  background: var(--main-bg);
+  color: var(--text-secondary);
+  border-color: var(--card-border);
 }
 
 .shape-btn-secondary:hover {
-  background: #334155;
-  color: #f8fafc;
-  border-color: #475569;
+  background: var(--card-border);
+  color: var(--text-primary);
+  border-color: var(--card-border);
 }
 
 .shape-btn-danger {

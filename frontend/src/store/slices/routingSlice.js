@@ -23,6 +23,7 @@ const getInitialView = () => {
     if (path === '/results') return 'results';
     if (path === '/bbs') return 'bbs';
     if (path === '/casting') return 'casting';
+    if (path === '/general-inventory') return 'general-inventory';
     if (path === '/ledger') return 'ledger';
     if (path === '/settings') return 'settings';
     if (path === '/profile') return 'profile';
@@ -65,6 +66,7 @@ const routingSlice = createSlice({
       else if (newView === 'bbs-wizard') targetPath = '/bbs/wizard';
       else if (newView === 'bbs-shapes') targetPath = '/bbs/shapes';
       else if (newView === 'bbs-reports') targetPath = '/bbs/reports';
+      else if (newView === 'general-inventory') targetPath = '/general-inventory';
       else if (newView !== 'overview') targetPath = `/${newView}`;
 
       if (window.location.pathname !== targetPath) {

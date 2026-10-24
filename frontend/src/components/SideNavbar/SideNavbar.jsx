@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -79,6 +79,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       label: 'Casting Management',
       icon: <Boxes size={18} />,
       moduleKey: 'casting'
+    },
+    {
+      id: 'general-inventory',
+      label: 'Inventory',
+      icon: <Warehouse size={18} />,
+      moduleKey: 'generalInventory'
     },
     {
       id: 'settings',

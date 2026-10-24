@@ -10,6 +10,7 @@ import { solve1DCSP } from './batches/optimizer.engine';
 import { createBBSRouter } from './bbs/bbs.routes';
 import { createCastingRouter } from './casting/casting.routes';
 import { verifyMultiDocumentTransactionRollback } from './casting/casting.inventory.service';
+import { createGeneralInventoryRouter } from './general-inventory/general-inventory.routes';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
@@ -58,6 +59,17 @@ function matchesQuery(doc: any, query: any): boolean {
         if (String(docVal) === String(val.$ne)) return false;
       } else if ('$exists' in val) {
         if ((docVal !== undefined) !== val.$exists) return false;
+      } else if ('$gte' in val) {
+        if (docVal === undefined || Number(docVal) < Number(val.$gte)) return false;
+      } else if ('$lte' in val) {
+        if (docVal === undefined || Number(docVal) > Number(val.$lte)) return false;
+      } else if ('$gt' in val) {
+        if (docVal === undefined || Number(docVal) <= Number(val.$gt)) return false;
+      } else if ('$lt' in val) {
+        if (docVal === undefined || Number(docVal) >= Number(val.$lt)) return false;
+      } else if ('$regex' in val) {
+        const regex = new RegExp(String(val.$regex), String((val as any).$options || ''));
+        if (!regex.test(String(docVal || ''))) return false;
       }
     } else if (docVal !== undefined && val !== undefined) {
       if (String(docVal) !== String(val)) return false;
@@ -113,23 +125,85 @@ class InMemoryCollection {
     return { insertedIds, acknowledged: true };
   }
 
-  async updateOne(query: any, update: any) {
-    const doc = await this.findOne(query);
+  async updateOne(query: any, update: any, options: any = {}) {
+    let doc = await this.findOne(query);
+    if (!doc && options.upsert) {
+      const newDoc: any = { _id: query._id || new ObjectId() };
+      for (const [k, v] of Object.entries(query)) {
+        if (typeof v !== 'object' || v instanceof ObjectId) newDoc[k] = v;
+      }
+      this.data.push(newDoc);
+      doc = newDoc;
+    }
     if (doc) {
       const target = this.data.find(d => d._id.toString() === doc._id.toString());
-      if (target && update.$set) {
-        Object.assign(target, update.$set);
+      if (target) {
+        if (update.$inc) {
+          for (const [k, incVal] of Object.entries(update.$inc)) {
+            target[k] = (Number(target[k]) || 0) + Number(incVal);
+          }
+        }
+        if (update.$set) {
+          Object.assign(target, update.$set);
+        }
+        return { modifiedCount: 1, upsertedId: doc._id };
       }
     }
     return { modifiedCount: doc ? 1 : 0 };
   }
 
+  async findOneAndUpdate(query: any, update: any, options: any = {}) {
+    let doc = await this.findOne(query);
+    let isNew = false;
+    if (!doc && options.upsert) {
+      const newDoc: any = { _id: query._id || new ObjectId() };
+      for (const [k, v] of Object.entries(query)) {
+        if (typeof v !== 'object' || v instanceof ObjectId) newDoc[k] = v;
+      }
+      this.data.push(newDoc);
+      doc = newDoc;
+      isNew = true;
+    }
+    if (doc) {
+      const target = this.data.find(d => d._id.toString() === doc._id.toString());
+      if (target) {
+        if (update.$inc) {
+          for (const [k, incVal] of Object.entries(update.$inc)) {
+            target[k] = (Number(target[k]) || 0) + Number(incVal);
+          }
+        }
+        if (update.$set) {
+          Object.assign(target, update.$set);
+        }
+        if (update.$setOnInsert && isNew) {
+          Object.assign(target, update.$setOnInsert);
+        }
+        return { ...target, value: { ...target } };
+      }
+    }
+    return null;
+  }
+
   async updateMany(query: any, update: any) {
     const docs = this.data.filter(d => matchesQuery(d, query));
     for (const d of docs) {
+      if (update.$inc) {
+        for (const [k, incVal] of Object.entries(update.$inc)) {
+          d[k] = (Number(d[k]) || 0) + Number(incVal);
+        }
+      }
       if (update.$set) Object.assign(d, update.$set);
     }
     return { modifiedCount: docs.length };
+  }
+
+  async deleteOne(query: any) {
+    const doc = await this.findOne(query);
+    if (doc) {
+      this.data = this.data.filter(d => d._id.toString() !== doc._id.toString());
+      return { deletedCount: 1 };
+    }
+    return { deletedCount: 0 };
   }
 
   async deleteMany(query: any) {
@@ -256,6 +330,10 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
   casting: {
     displayName: 'Casting Management',
     features: { view: 'View Casting', create: 'Create Casting Records', edit: 'Edit Casting Records', delete: 'Delete Casting Records' }
+  },
+  generalInventory: {
+    displayName: 'General Inventory',
+    features: { view: 'View General Inventory', create: 'Create Entries & Materials', edit: 'Edit Materials & Adjustments', delete: 'Deactivate Materials', export: 'Export Inventory Reports' }
   }
 };
 
@@ -425,7 +503,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'FREE',
     displayName: 'Free',
     description: 'Basic access for small teams getting started',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true },
     features: {},
     limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
     isActive: true
@@ -434,7 +512,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'BASIC',
     displayName: 'Basic',
     description: 'Essential features for growing construction firms',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true },
     features: {},
     limits: { maxUsers: 10, maxProjects: 5, maxStorageMB: 500 },
     isActive: true
@@ -443,7 +521,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'PRO',
     displayName: 'Professional',
     description: 'Full-featured plan for professional construction management',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true },
     features: {},
     limits: { maxUsers: 50, maxProjects: 25, maxStorageMB: 5000 },
     isActive: true
@@ -452,7 +530,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'ENTERPRISE',
     displayName: 'Enterprise',
     description: 'Unlimited access with priority support for large organizations',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true },
     features: {},
     limits: { maxUsers: null, maxProjects: null, maxStorageMB: null },
     isActive: true
@@ -497,6 +575,9 @@ app.use('/api/bbs', createBBSRouter(() => db, authMiddleware));
 
 // Mount Casting Management Isolated Module Routes
 app.use('/api/casting', createCastingRouter(() => db, () => client, authMiddleware, logAudit));
+
+// Mount General Inventory Isolated Module Routes
+app.use('/api/general-inventory', createGeneralInventoryRouter(() => db, () => client, authMiddleware, logAudit));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {

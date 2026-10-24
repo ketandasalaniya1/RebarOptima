@@ -322,3 +322,87 @@ export const bbsApi = {
   getTemplates: () => apiRequest('/bbs/templates'),
   createTemplate: (dto) => apiRequest('/bbs/templates', { method: 'POST', body: dto }),
 };
+
+export const generalInventoryApi = {
+  // Projects & Stores
+  getProjects: () => apiRequest('/general-inventory/projects'),
+  createProject: (data) => apiRequest('/general-inventory/projects', { method: 'POST', body: data }),
+  getStores: (projectId) => apiRequest(`/general-inventory/projects/${projectId}/stores`),
+  createStore: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/stores`, { method: 'POST', body: data }),
+
+  // Materials
+  getMaterials: (projectId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/materials${qs ? `?${qs}` : ''}`);
+  },
+  createMaterial: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/materials`, { method: 'POST', body: data }),
+  updateMaterial: (projectId, materialId, data) => apiRequest(`/general-inventory/projects/${projectId}/materials/${materialId}`, { method: 'PUT', body: data }),
+  deleteMaterial: (projectId, materialId) => apiRequest(`/general-inventory/projects/${projectId}/materials/${materialId}`, { method: 'DELETE' }),
+
+  // Stock & Opening Balance
+  getStock: (projectId, storeId) => {
+    const qs = storeId ? `?storeId=${storeId}` : '';
+    return apiRequest(`/general-inventory/projects/${projectId}/stock${qs}`);
+  },
+  setOpeningBalance: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/stock/opening-balance`, { method: 'POST', body: data }),
+
+  // Inward Entries
+  getInwardEntries: (projectId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/inward${qs ? `?${qs}` : ''}`);
+  },
+  getInwardEntry: (projectId, id) => apiRequest(`/general-inventory/projects/${projectId}/inward/${id}`),
+  createInwardEntry: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/inward`, { method: 'POST', body: data }),
+
+  // Outward Issues
+  getOutwardEntries: (projectId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/outward${qs ? `?${qs}` : ''}`);
+  },
+  getOutwardEntry: (projectId, id) => apiRequest(`/general-inventory/projects/${projectId}/outward/${id}`),
+  getEligibleReturnable: (projectId, storeId) => {
+    const qs = storeId ? `?storeId=${storeId}` : '';
+    return apiRequest(`/general-inventory/projects/${projectId}/outward/returnable/eligible${qs}`);
+  },
+  createOutwardEntry: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/outward`, { method: 'POST', body: data }),
+
+  // Material Returns
+  getReturns: (projectId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/returns${qs ? `?${qs}` : ''}`);
+  },
+  createReturn: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/returns`, { method: 'POST', body: data }),
+
+  // Store Transfers
+  getTransfers: (projectId) => apiRequest(`/general-inventory/projects/${projectId}/transfers`),
+  createTransfer: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/transfers`, { method: 'POST', body: data }),
+
+  // Physical Verification & Adjustments
+  getVerifications: (projectId, storeId) => {
+    const qs = storeId ? `?storeId=${storeId}` : '';
+    return apiRequest(`/general-inventory/projects/${projectId}/verifications${qs}`);
+  },
+  createVerification: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/verifications`, { method: 'POST', body: data }),
+  getAdjustments: (projectId, storeId) => {
+    const qs = storeId ? `?storeId=${storeId}` : '';
+    return apiRequest(`/general-inventory/projects/${projectId}/adjustments${qs}`);
+  },
+  createAdjustment: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/adjustments`, { method: 'POST', body: data }),
+
+  // Incidents
+  getIncidents: (projectId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/incidents${qs ? `?${qs}` : ''}`);
+  },
+  reportIncident: (projectId, data) => apiRequest(`/general-inventory/projects/${projectId}/incidents`, { method: 'POST', body: data }),
+
+  // Ledger & Reports
+  getLedger: (projectId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/ledger${qs ? `?${qs}` : ''}`);
+  },
+  getReport: (projectId, reportType, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/general-inventory/projects/${projectId}/reports/${reportType}${qs ? `?${qs}` : ''}`);
+  }
+};

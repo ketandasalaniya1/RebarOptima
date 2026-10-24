@@ -1,0 +1,778 @@
+/* ==========================================================================
+   GENERAL INVENTORY MODULE - MODERN RESPONSIVE STYLES
+   ========================================================================== */
+
+.gi-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Top Header & Context Bar ── */
+.gi-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gi-title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.gi-title-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(5, 150, 105, 0.12);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gi-title-area h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.gi-title-area p {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+}
+
+.gi-context-selectors {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.gi-select-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+}
+
+.gi-select-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gi-select-group select {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.gi-btn-sm {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.775rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gi-btn-sm:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+/* ── KPI Summary Cards ── */
+.gi-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.gi-kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.gi-kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gi-kpi-icon.primary {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+.gi-kpi-icon.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.gi-kpi-icon.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.gi-kpi-icon.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.gi-kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.gi-kpi-label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.gi-kpi-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* ── Navigation Tabs ── */
+.gi-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--card-border);
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.gi-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.gi-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.gi-tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.gi-tab-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* ── Tab Content Workspace ── */
+.gi-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Action Toolbar & Search ── */
+.gi-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.gi-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.gi-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.gi-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 240px;
+  max-width: 320px;
+  width: 100%;
+}
+
+.gi-search-box svg {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-label);
+}
+
+.gi-search-box input {
+  width: 100%;
+  padding: 0.45rem 0.75rem 0.45rem 2.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.gi-filter-select {
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.gi-btn-primary {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.gi-btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.gi-btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+}
+
+.gi-btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ── Modern Tables ── */
+.gi-table-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.gi-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.gi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.gi-table th {
+  background: var(--main-bg);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--card-border);
+  white-space: nowrap;
+}
+
+.gi-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.gi-table tr:last-child td {
+  border-bottom: none;
+}
+
+.gi-table tr:hover td {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+/* ── Status Badges ── */
+.gi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.gi-badge.normal {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.gi-badge.low {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.gi-badge.out {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.gi-badge.returnable {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+}
+
+.gi-badge.non-returnable {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-secondary);
+}
+
+.gi-badge.overdue {
+  background: rgba(220, 38, 38, 0.2);
+  color: #b91c1c;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+/* ── Overdue Warning Banner ── */
+.gi-alert-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 10px;
+  padding: 0.85rem 1.25rem;
+  color: #b45309;
+}
+
+.gi-alert-banner.danger {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #b91c1c;
+}
+
+.gi-alert-content {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ── Modals & Drawers ── */
+.gi-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.gi-modal {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: modalIn 0.2s ease-out;
+}
+
+.gi-modal.lg {
+  max-width: 900px;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gi-modal-header {
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gi-modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.gi-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.gi-modal-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+.gi-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gi-modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: var(--main-bg);
+}
+
+/* ── Form Controls ── */
+.gi-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.gi-form-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.gi-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gi-form-group.full-width {
+  grid-column: span 2;
+}
+
+.gi-form-group label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.gi-form-group input,
+.gi-form-group select,
+.gi-form-group textarea {
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.gi-form-group input:focus,
+.gi-form-group select:focus,
+.gi-form-group textarea:focus {
+  border-color: var(--accent);
+}
+
+.gi-form-hint {
+  font-size: 0.725rem;
+  color: var(--text-label);
+}
+
+/* ── Line Items Inward Table in Modal ── */
+.gi-items-editor {
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.gi-items-editor table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gi-items-editor th {
+  background: var(--main-bg);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.gi-items-editor td {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.gi-items-editor input,
+.gi-items-editor select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.825rem;
+}
+
+/* ── Print Views / Slip View ── */
+.gi-slip-container {
+  background: #ffffff;
+  color: #0f172a;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gi-slip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 1rem;
+}
+
+.gi-slip-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.gi-slip-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.gi-slip-table th,
+.gi-slip-table td {
+  border: 1px solid #cbd5e1;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+.gi-slip-table th {
+  background: #f1f5f9;
+  font-weight: 700;
+}
+
+.gi-slip-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+}
+
+.gi-sign-box {
+  width: 200px;
+  border-top: 1px solid #94a3b8;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding-top: 0.35rem;
+  color: #475569;
+}
+
+/* ── Empty State ── */
+.gi-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  background: var(--card-bg);
+  border: 1px dashed var(--card-border);
+  border-radius: 12px;
+}
+
+.gi-empty-state svg {
+  color: var(--text-label);
+  margin-bottom: 0.75rem;
+}
+
+.gi-empty-state h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.gi-empty-state p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  max-width: 440px;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Print Styles ── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .gi-slip-container, .gi-slip-container * {
+    visibility: visible;
+  }
+  .gi-slip-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    padding: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ── Responsive Adaptations ── */
+@media (max-width: 768px) {
+  .gi-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .gi-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .gi-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .gi-form-group.full-width {
+    grid-column: span 1;
+  }
+  .gi-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .gi-toolbar-left, .gi-toolbar-right {
+    width: 100%;
+  }
+  .gi-search-box {
+    max-width: 100%;
+  }
+}

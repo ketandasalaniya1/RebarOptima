@@ -83,21 +83,21 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
 
               <div className="features-list">
                 <div className="feature-item">
-                  <div className="feature-icon"><Map size={20} color="#a468eb" /></div>
+                  <div className="feature-icon"><Map size={20} color="var(--accent)" /></div>
                   <div className="feature-text">
                     <h3>Track Projects</h3>
                     <p>Stay updated on all site activities</p>
                   </div>
                 </div>
                 <div className="feature-item">
-                  <div className="feature-icon"><ClipboardList size={20} color="#a468eb" /></div>
+                  <div className="feature-icon"><ClipboardList size={20} color="var(--accent)" /></div>
                   <div className="feature-text">
                     <h3>Manage Tasks</h3>
                     <p>Assign and monitor tasks efficiently</p>
                   </div>
                 </div>
                 <div className="feature-item">
-                  <div className="feature-icon"><TrendingUp size={20} color="#a468eb" /></div>
+                  <div className="feature-icon"><TrendingUp size={20} color="var(--accent)" /></div>
                   <div className="feature-text">
                     <h3>Build Better</h3>
                     <p>Make smarter decisions every day</p>

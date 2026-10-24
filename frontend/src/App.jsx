@@ -11,7 +11,12 @@ import InventoryPage from './pages/InventoryPage/InventoryPage';
 import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage';
 import BBSPage from './pages/BBSPage/BBSPage';
 import CastingPage from './pages/CastingPage/CastingPage';
+<<<<<<< Updated upstream
 import GeneralInventoryPage from './pages/GeneralInventoryPage/GeneralInventoryPage';
+=======
+import CrmPage from './pages/CrmPage/CrmPage';
+import DrawingsPage from './pages/DrawingsPage/DrawingsPage';
+>>>>>>> Stashed changes
 import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
@@ -227,8 +232,16 @@ function App() {
             {view === 'casting' && (
               <CastingPage />
             )}
+<<<<<<< Updated upstream
             {view === 'general-inventory' && (
               <GeneralInventoryPage />
+=======
+            {view === 'crm' && (
+              <CrmPage />
+            )}
+            {view === 'drawings' && (
+              <DrawingsPage />
+>>>>>>> Stashed changes
             )}
             {view === 'ledger' && (
               <LedgerPage />

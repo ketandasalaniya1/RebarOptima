@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+<<<<<<< Updated upstream
 import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse } from 'lucide-react';
+=======
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Layers2 } from 'lucide-react';
+>>>>>>> Stashed changes
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -81,10 +85,23 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       moduleKey: 'casting'
     },
     {
+<<<<<<< Updated upstream
       id: 'general-inventory',
       label: 'Inventory',
       icon: <Warehouse size={18} />,
       moduleKey: 'generalInventory'
+=======
+      id: 'crm',
+      label: 'Real Estate CRM',
+      icon: <Building2 size={18} />,
+      moduleKey: 'crm'
+    },
+    {
+      id: 'drawings',
+      label: 'Drawing & Files',
+      icon: <Layers2 size={18} />,
+      moduleKey: 'drawings'
+>>>>>>> Stashed changes
     },
     {
       id: 'settings',

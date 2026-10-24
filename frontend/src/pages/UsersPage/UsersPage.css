@@ -24,11 +24,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 18px;
+  padding: 9px 16px;
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -78,7 +78,7 @@
 .users-form-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   margin-bottom: 24px;
   max-width: 800px;
@@ -125,7 +125,7 @@
   padding: 9px 12px;
   background: var(--input-bg);
   border: 1px solid var(--input-border);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
   font-size: 14px;
   outline: none;
@@ -156,11 +156,11 @@
   border-top: 1px solid var(--card-border);
 }
 .users-cancel-btn {
-  padding: 9px 18px;
+  padding: 8px 16px;
   background: none;
   border: 1px solid var(--card-border);
   color: var(--text-secondary);
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
 }
@@ -169,11 +169,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 18px;
+  padding: 8px 16px;
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -184,7 +184,7 @@
 .users-list-container {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
 }
 .users-toolbar {
@@ -244,6 +244,7 @@
   padding: 14px 20px;
   border-bottom: 1px solid var(--card-border);
   vertical-align: middle;
+  font-variant-numeric: tabular-nums;
 }
 .users-table tbody tr:hover { background: rgba(0,0,0,0.01); }
 [data-theme="dark"] .users-table tbody tr:hover { background: rgba(255,255,255,0.02); }

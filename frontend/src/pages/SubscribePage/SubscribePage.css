@@ -1,8 +1,8 @@
 .subscribe-page-container {
   min-height: 100vh;
   width: 100%;
-  background: var(--bg-dark, #0b0f19);
-  color: var(--text-main, #f3f4f6);
+  background: var(--main-bg);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,7 +19,7 @@
   align-items: center;
   margin-bottom: 36px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-bottom: 1px solid var(--card-border);
 }
 
 .subscribe-brand {
@@ -31,23 +31,21 @@
 .subscribe-logo-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-radius: 10px;
+  background: var(--accent);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 14px var(--accent-subtle);
 }
 
 .subscribe-title {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #ffffff, #9ca3af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 .subscribe-logout-btn {
@@ -58,7 +56,7 @@
   background: rgba(239, 68, 68, 0.12);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.25);
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -75,7 +73,7 @@
   width: 100%;
   max-width: 1100px;
   padding: 20px 24px;
-  border-radius: 12px;
+  border-radius: 8px;
   margin-bottom: 40px;
   display: flex;
   align-items: flex-start;
@@ -123,12 +121,13 @@
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .subscribe-section-subtitle {
   text-align: center;
   font-size: 15px;
-  color: var(--text-secondary, #9ca3af);
+  color: var(--text-secondary);
   margin-bottom: 40px;
 }
 
@@ -139,53 +138,52 @@
 }
 
 .subscribe-plan-card {
-  background: var(--card-bg, rgba(17, 24, 39, 0.7));
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
   padding: 32px 28px;
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .subscribe-plan-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(16, 185, 129, 0.4);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .subscribe-plan-card.featured {
-  border-color: #10b981;
-  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 24, 39, 0.8) 100%);
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px var(--accent-subtle);
 }
 
 .subscribe-popular-tag {
   position: absolute;
   top: -12px;
   right: 24px;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: var(--accent);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: 4px;
 }
 
 .subscribe-plan-name {
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .subscribe-plan-desc {
   font-size: 13px;
-  color: #9ca3af;
+  color: var(--text-secondary);
   margin-bottom: 24px;
   min-height: 38px;
   line-height: 1.4;

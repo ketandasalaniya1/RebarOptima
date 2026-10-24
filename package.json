@@ -14,8 +14,12 @@
     "start:backend": "npm run start:dev --workspace=backend"
   },
   "dependencies": {
+    "@mlightcad/mtext-parser": "^1.5.5",
+    "@mlightcad/mtext-renderer": "^0.13.6",
+    "@velipso/polybool": "^2.0.11",
     "@vercel/analytics": "^2.0.1",
-    "lucide-react": "^1.25.0"
+    "lucide-react": "^1.25.0",
+    "three": "^0.172.0"
   },
   "allowScripts": {
     "lucide-react@1.25.0": true

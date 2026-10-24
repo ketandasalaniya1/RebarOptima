@@ -221,7 +221,7 @@ export default function OverviewPage({ onNavigate }) {
                 </div>
                 <div className="kpi-sub-divider"></div>
                 <div className="kpi-sub-item">
-                  <span className="kpi-sub-label">Remanants :</span>
+                  <span className="kpi-sub-label">Remnants :</span>
                   <div className="kpi-sub-val-wrapper">
                     <span className="kpi-val-highlight text-indigo">{formatKg(liveRemnantsKg)}</span>
                     <span className="kpi-unit">Kg</span>
@@ -370,7 +370,7 @@ export default function OverviewPage({ onNavigate }) {
                   <span className="legend-dot std-dot"></span> Standard
                 </span>
                 <span className="dia-legend-item">
-                  <span className="legend-dot rem-dot"></span> Remanants
+                  <span className="legend-dot rem-dot"></span> Remnants
                 </span>
               </div>
             </div>

@@ -58,7 +58,7 @@
   padding: 0.6rem 1rem;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
@@ -94,7 +94,7 @@
 .bbs-mto-summary-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1.25rem 1.5rem;
 }
 
@@ -111,6 +111,7 @@
   font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-mto-summary-card .unit {
@@ -124,7 +125,7 @@
 .bbs-mto-section {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1.5rem;
   overflow-x: auto;
 }
@@ -146,7 +147,7 @@
 
 .bbs-mto-table th {
   padding: 0.75rem 1rem;
-  background: var(--bg-primary);
+  background: var(--main-bg);
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
@@ -165,10 +166,12 @@
   border-bottom: 1px solid var(--border-color);
   font-size: 0.85rem;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-mto-table td.right {
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .bbs-mto-table tr:hover td {

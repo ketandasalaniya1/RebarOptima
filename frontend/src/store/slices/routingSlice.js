@@ -25,6 +25,7 @@ const getInitialView = () => {
     if (path === '/casting') return 'casting';
     if (path === '/general-inventory') return 'general-inventory';
     if (path === '/ledger') return 'ledger';
+    if (path === '/project-management') return 'project-management';
     if (path === '/settings') return 'settings';
     if (path === '/profile') return 'profile';
     if (path === '/developer' || path === '/superadmin') return 'superadmin';

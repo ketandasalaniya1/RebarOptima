@@ -193,9 +193,10 @@ export default function SuperadminDashboard() {
     settings: 'Firm Configuration', 
     users: 'Multi-User Management', 
     roles: 'Custom Roles & Permissions',
-    // Future Scope
+    // Enterprise Modules
+    projectManagement: 'Project & Task Management',
     attendance: 'Attendance (Future)',
-    generalInventory: 'General Materials Inventory (Future)',
+    generalInventory: 'General Materials Inventory',
     tasks: 'Task Management (Future)',
     sales: 'Sales Department (Future)'
   };

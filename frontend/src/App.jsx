@@ -22,6 +22,7 @@ import ActivityLogsPage from './pages/ActivityLogsPage/ActivityLogsPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
+import ProjectManagementPage from './pages/ProjectManagementPage/ProjectManagementPage';
 import SubscribePage from './pages/SubscribePage/SubscribePage';
 import BbsProjectsPage from './pages/BBSPage/BbsProjectsPage';
 import BbsDashboardPage from './pages/BBSPage/BbsDashboardPage';
@@ -234,6 +235,9 @@ function App() {
             )}
             {view === 'crm' && (
               <CrmPage />
+            )}
+            {view === 'project-management' && (
+              <ProjectManagementPage />
             )}
             {view === 'drawings' && (
               <DrawingsPage />

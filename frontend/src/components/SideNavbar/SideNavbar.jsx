@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse, Layers2 } from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse, Layers2, CalendarRange } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './SideNavbar.css';
@@ -91,6 +91,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       label: 'Real Estate CRM',
       icon: <Building2 size={18} />,
       moduleKey: 'crm'
+    },
+    {
+      id: 'project-management',
+      label: 'Projects & Tasks',
+      icon: <CalendarRange size={18} />,
+      moduleKey: 'projectManagement'
     },
     {
       id: 'drawings',

@@ -13,6 +13,7 @@ import { verifyMultiDocumentTransactionRollback } from './casting/casting.invent
 import { createGeneralInventoryRouter } from './general-inventory/general-inventory.routes';
 import { createCrmMasterRouter } from './crm/crm.routes';
 import { createDrawingsMasterRouter } from './drawings/drawings.routes';
+import { createPmMasterRouter } from './pm/pm.routes';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
@@ -376,6 +377,19 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
       transmittals: 'Manage Transmittals',
       settings: 'Configure Drawing Settings'
     }
+  },
+  projectManagement: {
+    displayName: 'Project & Task Management',
+    features: {
+      view: 'View Projects & Tasks',
+      create: 'Create Projects & Tasks',
+      edit: 'Edit Schedule & Dependencies',
+      reschedule: 'Approve Delay & Rescheduling',
+      progress: 'Submit Daily Progress Reports',
+      quality: 'Conduct Inspections & Quality',
+      cost: 'View & Edit Project Costs',
+      settings: 'Configure Calendars & Settings'
+    }
   }
 };
 
@@ -545,7 +559,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'FREE',
     displayName: 'Free',
     description: 'Basic access for small teams getting started',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
     features: {},
     limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
     isActive: true
@@ -554,7 +568,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'BASIC',
     displayName: 'Basic',
     description: 'Essential features for growing construction firms',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
     features: {},
     limits: { maxUsers: 10, maxProjects: 5, maxStorageMB: 500 },
     isActive: true
@@ -563,7 +577,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'PRO',
     displayName: 'Professional',
     description: 'Full-featured plan for professional construction management',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
     features: {},
     limits: { maxUsers: 50, maxProjects: 25, maxStorageMB: 5000 },
     isActive: true
@@ -572,7 +586,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'ENTERPRISE',
     displayName: 'Enterprise',
     description: 'Unlimited access with priority support for large organizations',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
     features: {},
     limits: { maxUsers: null, maxProjects: null, maxStorageMB: null },
     isActive: true
@@ -626,6 +640,9 @@ app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit));
 
 // Mount Standalone Enterprise Drawing & File Management Module Routes
 app.use('/api/drawings', createDrawingsMasterRouter(() => db, authMiddleware, logAudit));
+
+// Mount Enterprise Project & Task Management Master Routes
+app.use('/api/pm', createPmMasterRouter(() => db, authMiddleware, logAudit));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {

@@ -227,43 +227,12 @@ class InMemoryCollection {
     return this.data.filter(d => matchesQuery(d, query)).length;
   }
 
-  async findOneAndUpdate(query: any, update: any, options: any = {}) {
-    let doc = await this.findOne(query);
-    if (!doc && options.upsert) {
-      const newDoc = { ...(update.$setOnInsert || {}), ...(update.$set || {}), _id: new ObjectId() };
-      this.data.push(newDoc);
-      return newDoc;
-    }
-    if (doc) {
-      const target = this.data.find(d => d._id.toString() === doc._id.toString());
-      if (target) {
-        if (update.$set) Object.assign(target, update.$set);
-        if (update.$inc) {
-          for (const [k, v] of Object.entries(update.$inc)) {
-            target[k] = (Number(target[k]) || 0) + Number(v);
-          }
-        }
-        return { ...target };
-      }
-    }
-    return doc;
-  }
-
   async findOneAndDelete(query: any) {
     const doc = await this.findOne(query);
     if (doc) {
       this.data = this.data.filter(d => d._id.toString() !== doc._id.toString());
     }
     return doc;
-  }
-
-  async deleteOne(query: any) {
-    const doc = await this.findOne(query);
-    if (doc) {
-      this.data = this.data.filter(d => d._id.toString() !== doc._id.toString());
-      return { deletedCount: 1 };
-    }
-    return { deletedCount: 0 };
   }
 }
 

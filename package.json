@@ -8,10 +8,14 @@
   "scripts": {
     "dev": "npm run dev --workspace=frontend",
     "dev:backend": "npm run start:dev --workspace=backend",
-    "build": "npm run build --workspace=frontend",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "start": "node backend/dist/main.js",
+    "start:backend": "node backend/dist/main.js",
+    "start:prod": "node backend/dist/main.js",
     "lint": "npm run lint --workspace=frontend",
-    "test:backend": "npm run test --workspace=backend",
-    "start:backend": "npm run start:dev --workspace=backend"
+    "test:backend": "npm run test --workspace=backend"
   },
   "dependencies": {
     "@mlightcad/mtext-parser": "^1.5.5",

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { batchesApi } from '../../utils/api'
+import { useActiveProject } from '../../hooks/useActiveProject'
 import html2pdf from 'html2pdf.js'
 import {
   Calendar,
@@ -20,6 +21,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import { PageHeader, EmptyState } from '../../components/ui'
 import './BatchHistoryPage.css'
 
 const getTextStyle = (hex) => {
@@ -60,20 +62,26 @@ export default function BatchHistoryPage({ onEditBatch }) {
     }, 120)
   }
 
+  const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
+
   useEffect(() => {
+    if (!projectId) return
+    const epochAtStart = projectEpoch
     async function loadHistory() {
       try {
         setLoading(true)
-        const data = await batchesApi.getHistory()
+        const data = await batchesApi.getHistory(projectId)
+        if (isStale(epochAtStart)) return
         setHistory(data)
       } catch (err) {
+        if (isStale(epochAtStart)) return
         setError(err.message || 'Failed to load batch history.')
       } finally {
-        setLoading(false)
+        if (!isStale(epochAtStart)) setLoading(false)
       }
     }
     loadHistory()
-  }, [])
+  }, [projectId, projectEpoch])
 
   const toggleExpand = (id) => {
     setExpandedBatchId(prev => (prev === id ? null : id))
@@ -182,10 +190,11 @@ export default function BatchHistoryPage({ onEditBatch }) {
 
   return (
     <div className="history-page">
-      <div className="history-header">
-        <h1 className="history-title">Batch History</h1>
-        <p className="history-subtitle">View and audit all previously committed cutting stock optimizations.</p>
-      </div>
+      <PageHeader
+        title="Batch History"
+        subtitle="View and audit all previously committed cutting stock optimizations."
+        projectName={selectedProject?.name}
+      />
 
       {error && (
         <div className="alert alert-error">
@@ -200,11 +209,11 @@ export default function BatchHistoryPage({ onEditBatch }) {
       )}
 
       {history.length === 0 ? (
-        <div className="card empty-history-card">
-          <Layers size={40} color="var(--text-label)" />
-          <h3>No History Found</h3>
-          <p>You haven't saved or committed any optimization batches yet.</p>
-        </div>
+        <EmptyState
+          icon={<Layers size={24} />}
+          title="No History Found"
+          description="You haven't saved or committed any optimization batches yet."
+        />
       ) : (
         <div className="history-list">
           {history.map((batch) => {

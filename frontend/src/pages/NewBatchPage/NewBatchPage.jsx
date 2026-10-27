@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import './NewBatchPage.css'
 import { inventoryApi, batchesApi } from '../../utils/api'
+import { useActiveProject } from '../../hooks/useActiveProject'
+import { PageHeader } from '../../components/ui'
 import {
   X,
   AlertCircle,
@@ -132,14 +134,19 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
   }, [editParams])
 
 
-  // Load stock items and remnants, plus batches history dynamically from DB on mount
+  const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
+
+  // Load stock items and remnants, plus batches history for active project
   useEffect(() => {
+    if (!projectId) return
+    const epochAtStart = projectEpoch
     async function loadStockAndBatches() {
       try {
         const [stockData, batchesData] = await Promise.all([
-          inventoryApi.getInventory(),
-          batchesApi.getHistory()
+          inventoryApi.getInventory(projectId),
+          batchesApi.getHistory(projectId)
         ])
+        if (isStale(epochAtStart)) return
         
         const combined = []
         let index = 1
@@ -182,7 +189,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     }
     loadStockAndBatches()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [projectId, projectEpoch])
 
   // CSV Import Modal states
   const [showImportModal, setShowImportModal] = useState(false)
@@ -252,6 +259,11 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
 
   return (
     <div className="optimizer-container-grid">
+      <PageHeader
+        title="Run Optimization"
+        subtitle="Define stock, cut parts, and batch parameters for cutting optimization."
+        projectName={selectedProject?.name}
+      />
       {/* Left Column: Optimization input form */}
       <div className="optimizer-left-main">
         <div className="optimizer-page">

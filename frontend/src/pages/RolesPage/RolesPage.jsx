@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Shield, Plus, Edit3, Trash2, Users, ChevronDown, ChevronRight, Save, X, ToggleLeft, ToggleRight, AlertTriangle } from 'lucide-react';
+import { Plus, Edit3, Trash2, Users, ChevronDown, ChevronRight, Save, X, ToggleLeft, ToggleRight, AlertTriangle } from 'lucide-react';
 import { rolesApi, permissionsApi } from '../../utils/api';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { PageHeader, Button } from '../../components/ui';
 import './RolesPage.css';
 
 const MODULE_LABELS = {
@@ -156,20 +157,17 @@ export default function RolesPermissionsPage() {
 
   return (
     <div className="roles-page">
-      <div className="roles-header">
-        <div className="roles-title-section">
-          <Shield size={22} className="roles-title-icon" />
-          <div>
-            <h2>Roles & Permissions</h2>
-            <p>Manage access control for your organization</p>
-          </div>
-        </div>
-        {!showForm && (
-          <button className="roles-create-btn" onClick={openCreateForm}>
-            <Plus size={16} /> Create Custom Role
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title="Roles & Permissions"
+        subtitle="Manage access control for your organization"
+        actions={
+          !showForm ? (
+            <Button variant="primary" onClick={openCreateForm}>
+              <Plus size={16} /> Create Custom Role
+            </Button>
+          ) : null
+        }
+      />
 
       {error && <div className="roles-error"><AlertTriangle size={14} /> {error}</div>}
       {success && <div className="roles-success">{success}</div>}

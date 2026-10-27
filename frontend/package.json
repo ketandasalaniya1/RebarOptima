@@ -28,6 +28,7 @@
     "@vueuse/core": "^11.1.0",
     "element-plus": "^2.14.7",
     "html2pdf.js": "^0.10.2",
+    "leaflet": "^1.9.4",
     "lodash-es": "4.17.21",
     "lucide-react": "^1.23.0",
     "pdfjs-dist": "^6.4.299",

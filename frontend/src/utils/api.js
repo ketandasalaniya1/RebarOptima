@@ -14,6 +14,17 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
+/** Active project id for X-Project-Id; set by App / project gate (hint only until validated). */
+let activeProjectIdForApi = null;
+
+export function setActiveProjectHeader(projectId) {
+  activeProjectIdForApi = projectId ? String(projectId) : null;
+}
+
+export function getActiveProjectHeader() {
+  return activeProjectIdForApi;
+}
+
 export async function apiRequest(endpoint, options = {}) {
   const token = sessionStorage.getItem('accessToken');
   
@@ -24,6 +35,17 @@ export async function apiRequest(endpoint, options = {}) {
   
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const skipProjectHeader = options.skipProjectHeader === true || endpoint.startsWith('/projects') || endpoint.startsWith('/auth/');
+  // Prefer in-memory id; fall back to localStorage so fetches after project switch
+  // don't race App's useEffect that syncs the header.
+  const projectHeader =
+    headers['X-Project-Id'] ||
+    activeProjectIdForApi ||
+    (typeof localStorage !== 'undefined' ? localStorage.getItem('rebar_active_project_id') : null);
+  if (!skipProjectHeader && projectHeader) {
+    headers['X-Project-Id'] = String(projectHeader);
   }
   
   const config = {
@@ -104,16 +126,16 @@ export const authApi = {
 };
 
 export const inventoryApi = {
-  getInventory: () => 
-    apiRequest('/inventory'),
+  getInventory: (projectId) => 
+    apiRequest(projectId ? `/inventory?projectId=${projectId}` : '/inventory'),
   inward: (dto) => 
     apiRequest('/inventory/inward', { method: 'POST', body: dto }),
   getScrapRules: () => 
     apiRequest('/inventory/scrap-rules'),
   updateScrapRules: (rules) => 
     apiRequest('/inventory/scrap-rules', { method: 'POST', body: { rules } }),
-  getLedger: () => 
-    apiRequest('/inventory/ledger'),
+  getLedger: (projectId) => 
+    apiRequest(projectId ? `/inventory/ledger?projectId=${encodeURIComponent(projectId)}` : '/inventory/ledger'),
   deleteStockItem: (id) =>
     apiRequest(`/inventory/${id}`, { method: 'DELETE' }),
   updateStockItem: (id, quantity) =>
@@ -133,16 +155,26 @@ export const batchesApi = {
     apiRequest('/batches/optimize', { method: 'POST', body: payload }),
   commitBatch: (batchData) => 
     apiRequest('/batches', { method: 'POST', body: batchData }),
-  getHistory: () => 
-    apiRequest('/batches'),
-  getStats: () => 
-    apiRequest('/batches/stats'),
-  getScrapRecords: () =>
-    apiRequest('/batches/scrap-records'),
+  getHistory: (projectId) => 
+    apiRequest(projectId ? `/batches?projectId=${projectId}` : '/batches'),
+  getStats: (projectId) =>
+    apiRequest(projectId ? `/batches/stats?projectId=${encodeURIComponent(projectId)}` : '/batches/stats'),
+  getScrapRecords: (projectId) =>
+    apiRequest(projectId ? `/batches/scrap-records?projectId=${encodeURIComponent(projectId)}` : '/batches/scrap-records'),
   updateBatch: (id, batchName) =>
     apiRequest(`/batches/${id}`, { method: 'PUT', body: { batchName } }),
   deleteBatch: (id, restoreStock = false) =>
     apiRequest(`/batches/${id}?restoreStock=${restoreStock}`, { method: 'DELETE' }),
+};
+
+export const projectsApi = {
+  getAll: (status) => apiRequest(`/projects${status ? `?status=${status}` : ''}`),
+  getById: (id) => apiRequest(`/projects/${id}`),
+  create: (data) => apiRequest('/projects', { method: 'POST', body: data }),
+  update: (id, data) => apiRequest(`/projects/${id}`, { method: 'PUT', body: data }),
+  updateStatus: (id, status) => apiRequest(`/projects/${id}/status`, { method: 'PUT', body: { status } }),
+  updateGeofences: (id, geofences) => apiRequest(`/projects/${id}/geofences`, { method: 'PUT', body: { geofences } }),
+  assignPartnerAdmins: (id, partnerAdminIds) => apiRequest(`/projects/${id}/assign-partner`, { method: 'POST', body: { partnerAdminIds } }),
 };
 
 // Developer API
@@ -243,6 +275,7 @@ export const activityLogsApi = {
     if (params.search) queryParts.push(`search=${encodeURIComponent(params.search)}`);
     if (params.page) queryParts.push(`page=${encodeURIComponent(params.page)}`);
     if (params.limit) queryParts.push(`limit=${encodeURIComponent(params.limit)}`);
+    if (params.projectId) queryParts.push(`projectId=${encodeURIComponent(params.projectId)}`);
     const query = queryParts.length ? `?${queryParts.join('&')}` : '';
     return apiRequest(`/activity-logs${query}`);
   },
@@ -406,3 +439,21 @@ export const generalInventoryApi = {
     return apiRequest(`/general-inventory/projects/${projectId}/reports/${reportType}${qs ? `?${qs}` : ''}`);
   }
 };
+
+export const pettyCashApi = {
+  getSites: () => apiRequest('/petty-cash/sites'),
+  createSite: (data) => apiRequest('/petty-cash/sites', { method: 'POST', body: data }),
+  getPersons: () => apiRequest('/petty-cash/persons'),
+  createPerson: (data) => apiRequest('/petty-cash/persons', { method: 'POST', body: data }),
+  deletePerson: (id) => apiRequest(`/petty-cash/persons/${id}`, { method: 'DELETE' }),
+  getCategories: () => apiRequest('/petty-cash/categories'),
+  createCategory: (data) => apiRequest('/petty-cash/categories', { method: 'POST', body: data }),
+  deleteCategory: (id) => apiRequest(`/petty-cash/categories/${id}`, { method: 'DELETE' }),
+  getTransactions: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/petty-cash/transactions${qs ? `?${qs}` : ''}`);
+  },
+  createTransaction: (data) => apiRequest('/petty-cash/transactions', { method: 'POST', body: data }),
+  deleteTransaction: (id) => apiRequest(`/petty-cash/transactions/${id}`, { method: 'DELETE' })
+};
+

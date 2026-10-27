@@ -11,6 +11,8 @@ import {
   setBlocks, setLevels, setLoading, setError,
 } from '../../store/slices/bbsSlice';
 import { setView } from '../../store/slices/routingSlice';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { openCreateModal } from '../../store/slices/projectSlice';
 import './BbsProjectsPage.css';
 
 const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
@@ -19,10 +21,9 @@ const STEEL_GRADES = ['Fe250', 'Fe415', 'Fe500', 'Fe500D', 'Fe550'];
 export default function BbsProjectsPage() {
   const dispatch = useDispatch();
   const { projects, activeProject, blocks, levels, loading } = useSelector(s => s.bbs);
+  const { projectId: orgProjectId, selectedProject: orgProject, projectEpoch } = useActiveProject();
 
   // Local UI states
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
   const [addingBlock, setAddingBlock] = useState(false);
   const [addingLevel, setAddingLevel] = useState(false);
   const [newBlockName, setNewBlockName] = useState('');
@@ -47,16 +48,18 @@ export default function BbsProjectsPage() {
     covers: { footing: 50, column: 40, beam: 25, slab: 20 },
   });
 
-  // Load projects on mount
+  // Load projects and bind to global org project
   useEffect(() => {
     loadProjects();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgProjectId, projectEpoch]);
 
   // When active project changes, load blocks/levels and sync defaults
   useEffect(() => {
     if (activeProject) {
-      loadBlocks(activeProject._id);
-      loadLevels(activeProject._id);
+      const pid = activeProject._id || activeProject.id;
+      loadBlocks(pid);
+      loadLevels(pid);
       setDefaults({
         concreteGrades: activeProject.defaultConcreteGrades || { footing: 'M25', column: 'M25', beam: 'M25', slab: 'M25' },
         steelGrade: activeProject.defaultSteelGrade || 'Fe500',
@@ -64,13 +67,22 @@ export default function BbsProjectsPage() {
       });
       setActiveBlockId(null);
     }
-  }, [activeProject?._id]);
+  }, [activeProject?._id, activeProject?.id]);
 
   const loadProjects = async () => {
     try {
       dispatch(setLoading(true));
       const data = await bbsApi.getProjects();
       dispatch(setProjects(data));
+      const match =
+        (data || []).find((p) => String(p._id || p.id) === String(orgProjectId)) ||
+        orgProject ||
+        null;
+      if (match) {
+        dispatch(setActiveProject(match));
+      } else {
+        dispatch(clearActiveProject());
+      }
     } catch (err) {
       dispatch(setError(err.message));
     }
@@ -94,18 +106,9 @@ export default function BbsProjectsPage() {
     }
   };
 
-  // ── Project CRUD ──────────────────────────
-  const handleCreateProject = async () => {
-    if (!newProjectName.trim()) return;
-    try {
-      await bbsApi.createProject({ name: newProjectName.trim() });
-      setNewProjectName('');
-      setShowCreateForm(false);
-      loadProjects();
-    } catch (err) {
-      alert(`Error creating project: ${err.message}`);
-      dispatch(setError(err.message));
-    }
+  // ── Project CRUD — create via global Company Projects ──────────────────────────
+  const handleCreateProject = () => {
+    dispatch(openCreateModal());
   };
 
   const handleEditProject = (e, projectId) => {
@@ -320,29 +323,11 @@ export default function BbsProjectsPage() {
           </div>
         ))}
 
-        {/* Create New Card */}
-        {!showCreateForm ? (
-          <div className="bbs-new-project-card" onClick={() => setShowCreateForm(true)}>
-            <Plus size={28} />
-            <span>Create New Project</span>
-          </div>
-        ) : (
-          <div className="bbs-create-project-form">
-            <div className="bbs-form-group">
-              <label>Project Name</label>
-              <input
-                type="text"
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleCreateProject()}
-                placeholder="e.g. Skyline Towers — Phase 1"
-                autoFocus
-              />
-            </div>
-            <button className="bbs-create-btn" onClick={handleCreateProject}>Create</button>
-            <button className="bbs-cancel-btn" onClick={() => { setShowCreateForm(false); setNewProjectName(''); }}>Cancel</button>
-          </div>
-        )}
+        {/* Create via global Company Projects */}
+        <div className="bbs-new-project-card" onClick={handleCreateProject}>
+          <Plus size={28} />
+          <span>Create Company Project</span>
+        </div>
       </div>
 
       {/* ── Configurator Panel (visible when project is selected) ── */}

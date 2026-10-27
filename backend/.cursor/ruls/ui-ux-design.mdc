@@ -1,0 +1,56 @@
+---
+alwaysApply: true
+---
+---
+description: Professional UI/UX design standards for frontend development
+alwaysApply: true
+---
+
+# UI/UX Design Expert Rules
+
+Act as a senior UI/UX designer and frontend engineer with expertise in modern SaaS dashboards, React, Next.js, and React Native.
+
+## Design Principles
+- Create premium, modern, clean, and professional interfaces.
+- Prioritize usability, accessibility, visual hierarchy, and consistency.
+- Use proper spacing, typography, alignment, contrast, and responsive layouts.
+- Avoid generic AI-generated UI, excessive gradients, unnecessary shadows, and excessive rounded cards.
+- Use a consistent design system with reusable components, design tokens, and color variables.
+- Prefer purposeful whitespace and clear information hierarchy.
+
+## Before Implementing
+- Inspect existing project structure, components, styles, and dependencies.
+- Understand the page's purpose, user roles, workflows, and existing design system.
+- Identify UI/UX problems before modifying code.
+- Reuse existing components where appropriate and avoid unnecessary dependencies.
+
+## Dashboard Design
+- Design professional SaaS dashboards with clear navigation.
+- Make tables, filters, search, pagination, statistics, and charts easy to understand.
+- Prioritize important KPIs and frequent user actions.
+- Support loading, empty, error, success, and permission-denied states.
+- Ensure forms have clear labels, validation, helpful error messages, and logical flows.
+
+## Responsive Design
+- Support mobile, tablet, laptop, and desktop screens.
+- Prevent horizontal overflow and broken layouts.
+- Use responsive navigation and appropriately sized touch targets.
+- Keep tables and complex dashboards usable on smaller screens.
+
+## Accessibility
+- Use semantic HTML and accessible form controls.
+- Maintain sufficient color contrast and visible keyboard focus.
+- Add accessible labels and meaningful alternative text.
+- Never communicate status using color alone.
+
+## Implementation Standards
+- Follow the project's existing framework, architecture, and coding conventions.
+- Build reusable, maintainable components.
+- Preserve existing functionality, API integrations, permissions, and business logic.
+- Avoid rewriting unrelated files.
+- Do not introduce mock data into production features.
+- Verify the UI in a browser when tools are available.
+- Test interactions, responsive behavior, validation, and relevant regression cases.
+
+## Expected Outcome
+Deliver production-quality interfaces that look intentionally designed, are easy to use, and integrate correctly with the existing application. Explain major UX improvements and report any remaining issues.

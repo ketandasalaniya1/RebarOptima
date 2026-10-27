@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  Warehouse,
   Plus,
   Search,
   Filter,
@@ -32,6 +31,8 @@ import {
   Tag
 } from 'lucide-react';
 import { generalInventoryApi } from '../../utils/api';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader } from '../../components/ui';
 import './GeneralInventoryPage.css';
 
 const DEFAULT_CATEGORIES = [
@@ -63,12 +64,20 @@ const COMMON_UOMS = [
 
 export default function GeneralInventoryPage() {
   const user = useSelector((state) => state.auth.user);
+  const { projectId: activeProjectId, projectEpoch, selectedProject: orgSelectedProject } = useActiveProject();
 
   // Active Context
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [stores, setStores] = useState([]);
   const [selectedStoreId, setSelectedStoreId] = useState(''); // '' means All Stores
+
+  useEffect(() => {
+    if (activeProjectId) {
+      setSelectedProjectId(String(activeProjectId));
+      setSelectedStoreId('');
+    }
+  }, [activeProjectId, projectEpoch]);
 
   // Sub-Navigation Tabs: 'overview' | 'materials' | 'inward' | 'outward' | 'returns' | 'transfers' | 'audit' | 'reports'
   const [activeTab, setActiveTab] = useState('overview');
@@ -719,18 +728,12 @@ export default function GeneralInventoryPage() {
   // ──────────────────────────────────────────────────────────────────────────
   return (
     <div className="gi-container">
-      {/* ── Context & Navigation Header ── */}
+      <PageHeader
+        title="Site Inventory"
+        subtitle="Storekeeper register, project-wise stock, traceable inward/outward & returns"
+        projectName={orgSelectedProject?.name || activeProject?.name}
+      />
       <div className="gi-header">
-        <div className="gi-title-area">
-          <div className="gi-title-icon">
-            <Warehouse size={24} />
-          </div>
-          <div>
-            <h1>General Inventory</h1>
-            <p>Storekeeper register, project-wise stock, traceable inward/outward & returns</p>
-          </div>
-        </div>
-
         <div className="gi-context-selectors">
           {/* Project Selector */}
           <div className="gi-select-group">

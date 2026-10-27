@@ -14,6 +14,11 @@ import {
   reportIncident,
   generateInventoryReport
 } from './general-inventory.service';
+import {
+  resolveUserAndCompany,
+  listAccessibleGlobalProjects,
+} from '../projects/module-project-adapter';
+import { assertProjectAccess } from '../projects/project-access';
 
 export function createGeneralInventoryRouter(
   getDb: () => any,
@@ -39,140 +44,80 @@ export function createGeneralInventoryRouter(
     return req.user?.companyId || 'default-company';
   };
 
-  // Helper to enforce Project Access Isolation
+  // Helper to enforce Project Access Isolation (shared project-access)
   const checkProjectAccess = async (req: any, db: Db, projectId: string) => {
-    const userRole = (req.user?.role || '').toUpperCase();
-    if (userRole === 'ADMIN' || userRole === 'OWNER' || req.user?.accountType === 'developer') {
-      return true;
-    }
-
-    const userId = req.user?.sub;
-    if (!userId) return true;
-
     try {
-      const user = await db.collection('users').findOne(idQuery(userId));
-      // Check if role restricts to assigned projects
-      if (user && user.roleId) {
-        const role = await db.collection('roles').findOne(idQuery(user.roleId));
-        if (role && role.dataScope === 'project') {
-          const assigned = (user.assignedProjects || []).map((p: any) => String(p));
-          if (!assigned.includes(String(projectId))) {
-            return false;
-          }
-        }
-      }
-    } catch {}
-    return true;
+      const ctx = await resolveUserAndCompany(req, db);
+      await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   // ════════════════════════════════════════════════════════════════════════════
   // 1. PROJECTS & STORES
   // ════════════════════════════════════════════════════════════════════════════
 
-  // GET all projects for General Inventory
+  // GET all projects for General Inventory (global catalog — no name-sync inventing)
   router.get('/projects', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
 
-      let query: any = { companyId, status: { $ne: 'archived' } };
-
-      // Filter by assigned projects if applicable
-      const userRole = (req.user?.role || '').toUpperCase();
-      if (userRole !== 'ADMIN' && userRole !== 'OWNER' && req.user?.accountType !== 'developer' && req.user?.sub) {
-        const user = await db.collection('users').findOne(idQuery(req.user.sub));
-        if (user && user.roleId) {
-          const role = await db.collection('roles').findOne(idQuery(user.roleId));
-          if (role && role.dataScope === 'project') {
-            const assigned = (user.assignedProjects || []).map((p: any) => String(p));
-            query = {
-              companyId,
-              status: { $ne: 'archived' },
-              $or: [
-                { _id: { $in: assigned.filter(a => ObjectId.isValid(a)).map(a => new ObjectId(a)) } },
-                { code: { $in: assigned } },
-                { name: { $in: assigned } }
-              ]
-            };
-          }
+      const globalProjects = await listAccessibleGlobalProjects(db, ctx);
+      // Ensure default Main Store exists per project (non-destructive)
+      for (const gp of globalProjects) {
+        const pId = String(gp._id || gp.id);
+        const storeCount = await db.collection('gi_stores').countDocuments({ projectId: pId }).catch(() => 0);
+        if (storeCount === 0) {
+          await db.collection('gi_stores').insertOne({
+            companyId,
+            projectId: pId,
+            name: 'Main Store',
+            isDefault: true,
+            status: 'active',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }).catch(() => {});
         }
       }
 
-      // Auto-discover company projects from BBS, Casting, and Core projects if not already registered in General Inventory
-      try {
-        const compFilter = ObjectId.isValid(companyId)
-          ? { $or: [{ companyId: companyId }, { companyId: new ObjectId(companyId) }] }
-          : { companyId };
-
-        const [existingBbs, existingCasting, existingCore] = await Promise.all([
-          db.collection('bbs_projects').find(compFilter).toArray().catch(() => []),
-          db.collection('casting_projects').find({ ...compFilter, isDeleted: { $ne: true } }).toArray().catch(() => []),
-          db.collection('projects').find(compFilter).toArray().catch(() => [])
-        ]);
-
-        const candidateProjects = [
-          ...existingBbs.map((p: any) => ({ name: p.name, code: p.code, description: p.description, address: p.location })),
-          ...existingCasting.map((p: any) => ({ name: p.name, code: p.code, description: p.description, address: p.location })),
-          ...existingCore.map((p: any) => ({ name: p.name, code: p.code, description: p.description, address: p.location }))
-        ];
-
-        for (const cp of candidateProjects) {
-          if (!cp.name || !cp.name.trim()) continue;
-          const trimmedName = cp.name.trim();
-          const existing = await db.collection('gi_projects').findOne({ companyId, name: trimmedName });
-          if (!existing) {
-            const insRes = await db.collection('gi_projects').insertOne({
-              companyId,
-              name: trimmedName,
-              code: cp.code || undefined,
-              description: cp.description || undefined,
-              address: cp.address || undefined,
-              status: 'active',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            });
-            await db.collection('gi_stores').insertOne({
-              companyId,
-              projectId: insRes.insertedId.toString(),
-              name: 'Main Store',
-              code: 'STR-MAIN',
-              location: 'Central Site Store',
-              status: 'active',
-              isDefault: true,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            });
-          }
-        }
-      } catch (discErr) {
-        console.warn('Auto project discovery notice:', discErr);
-      }
-
-      const projects = await db.collection('gi_projects').find(query).sort({ name: 1 }).toArray();
-
-      // Enrich projects with store count
       const enriched = await Promise.all(
-        projects.map(async (p: any) => {
-          const pId = p._id.toString();
+        globalProjects.map(async (p: any) => {
+          const pId = String(p._id || p.id);
           const storeCount = await db.collection('gi_stores').countDocuments({ companyId, projectId: pId, status: { $ne: 'inactive' } });
           const materialCount = await db.collection('gi_materials').countDocuments({ companyId, projectId: pId, isActive: true });
           return {
             ...p,
             id: pId,
+            name: p.name,
+            code: p.code || '',
+            status: p.status || 'active',
             storeCount,
-            materialCount
+            materialCount,
           };
-        })
+        }),
       );
 
       return res.json({ success: true, data: enriched });
     } catch (err: any) {
-      return res.status(500).json({ success: false, message: err.message });
+      return res.status(err.status || 500).json({ success: false, message: err.message });
     }
   });
 
-  // POST create project
-  router.post('/projects', authMiddleware, async (req: any, res: any) => {
+  // POST create project — unified to global catalog
+  router.post('/projects', authMiddleware, async (_req: any, res: any) => {
+    return res.status(400).json({
+      success: false,
+      message: 'Create projects via Company Projects (POST /api/projects).',
+      code: 'USE_GLOBAL_PROJECTS',
+    });
+  });
+
+  // Legacy create body retained below as dead route removed — stub for store bootstrap only
+  router.post('/projects/_legacy_disabled', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);

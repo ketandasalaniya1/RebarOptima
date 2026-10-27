@@ -1,27 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Menu,
-  X,
-  PlusSquare,
-  LogOut,
-  LayoutDashboard,
-  Package,
-  ClipboardList,
-  BookOpen,
-  Settings as SettingsIcon,
-  Users,
-  Shield,
-  Layers,
-  ChevronDown,
-  History,
-  Ruler,
-  Building2,
-  Boxes,
-  Warehouse,
-  FileStack,
-  Home,
-} from 'lucide-react';
+import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse, Layers2, CalendarRange, Wallet,FileStack,
+  Home } from 'lucide-react';
+import logo from '../../assets/logo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import ProjectSelector from '../ProjectSelector/ProjectSelector';
 import './SideNavbar.css';
@@ -141,10 +122,22 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       moduleKey: 'crm',
     },
     {
+      id: 'project-management',
+      label: 'Projects & Tasks',
+      icon: <CalendarRange size={18} />,
+      moduleKey: 'projectManagement'
+    },
+    {
       id: 'drawings',
       label: 'Drawing & Files',
       icon: <FileStack size={18} />,
       moduleKey: 'drawings',
+    },
+    {
+      id: 'petty-cash',
+      label: 'Petty Cash',
+      icon: <Wallet size={18} />,
+      moduleKey: 'pettyCash'
     },
     {
       id: 'settings',

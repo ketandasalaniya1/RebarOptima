@@ -14,6 +14,7 @@ import CastingPage from './pages/CastingPage/CastingPage';
 import GeneralInventoryPage from './pages/GeneralInventoryPage/GeneralInventoryPage';
 import CrmPage from './pages/CrmPage/CrmPage';
 import DrawingsPage from './pages/DrawingsPage/DrawingsPage';
+import PettyCashPage from './pages/PettyCashPage/PettyCashPage';
 import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
@@ -22,6 +23,7 @@ import ActivityLogsPage from './pages/ActivityLogsPage/ActivityLogsPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
 import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
+import ProjectManagementPage from './pages/ProjectManagementPage/ProjectManagementPage';
 import SubscribePage from './pages/SubscribePage/SubscribePage';
 import BbsProjectsPage from './pages/BBSPage/BbsProjectsPage';
 import BbsDashboardPage from './pages/BBSPage/BbsDashboardPage';
@@ -380,22 +382,60 @@ function App() {
                 }}
               />
             )}
-            {view === 'bbs' && <BBSPage />}
-            {view === 'casting' && <CastingPage />}
-            {view === 'general-inventory' && <GeneralInventoryPage />}
-            {view === 'crm' && <CrmPage />}
-            {view === 'drawings' && <DrawingsPage />}
-            {view === 'ledger' && <LedgerPage />}
-            {view === 'activity-logs' && <ActivityLogsPage />}
-            {view === 'settings' && <SettingsPage />}
-            {view === 'users' && <UsersPage />}
-            {view === 'roles' && <RolesPage />}
-            {view === 'profile' && <ProfilePage onNavigate={handleNavigate} />}
-            {view === 'bbs-projects' && <BbsProjectsPage />}
-            {view === 'bbs-dashboard' && <BbsDashboardPage />}
-            {view === 'bbs-wizard' && <BbsWizardPage />}
-            {view === 'bbs-shapes' && <BbsShapesPage />}
-            {view === 'bbs-reports' && <BbsReportsPage />}
+            {view === 'bbs' && (
+              <BBSPage />
+            )}
+            {view === 'casting' && (
+              <CastingPage />
+            )}
+            {view === 'general-inventory' && (
+              <GeneralInventoryPage />
+            )}
+            {view === 'crm' && (
+              <CrmPage />
+            )}
+            {view === 'project-management' && (
+              <ProjectManagementPage />
+            )}
+            {view === 'drawings' && (
+              <DrawingsPage />
+            )}
+            {view === 'petty-cash' && (
+              <PettyCashPage />
+            )}
+            {view === 'ledger' && (
+              <LedgerPage />
+            )}
+            {view === 'activity-logs' && (
+              <ActivityLogsPage />
+            )}
+            {view === 'settings' && (
+              <SettingsPage />
+            )}
+            {view === 'users' && (
+              <UsersPage />
+            )}
+            {view === 'roles' && (
+              <RolesPage />
+            )}
+            {view === 'profile' && (
+              <ProfilePage onNavigate={handleNavigate} />
+            )}
+            {view === 'bbs-projects' && (
+              <BbsProjectsPage />
+            )}
+            {view === 'bbs-dashboard' && (
+              <BbsDashboardPage />
+            )}
+            {view === 'bbs-wizard' && (
+              <BbsWizardPage />
+            )}
+            {view === 'bbs-shapes' && (
+              <BbsShapesPage />
+            )}
+            {view === 'bbs-reports' && (
+              <BbsReportsPage />
+            )}
           </div>
         </div>
       ) : (

@@ -156,14 +156,22 @@ input:-webkit-autofill:active {
   --accent-subtle: rgba(112, 22, 210, 0.18);
 }
 
+html,
 body {
+  width: 100%;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
   background-color: var(--main-bg);
   color: var(--text-primary);
+  overflow-x: hidden;
 }
 
 #root {
+  width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 button {

@@ -6,23 +6,32 @@ import {
 } from 'lucide-react';
 import { bbsApi } from '../../utils/api';
 import {
-  setDashboardData, setLoading, setError, setActiveMember,
+  setDashboardData, setLoading, setError, setActiveMember, setActiveProject,
 } from '../../store/slices/bbsSlice';
 import { setView } from '../../store/slices/routingSlice';
+import { useActiveProject } from '../../hooks/useActiveProject';
 import './BbsDashboardPage.css';
 
 export default function BbsDashboardPage() {
   const dispatch = useDispatch();
   const { activeProjectId, activeProject, blocks, levels, members, kpis, loading } = useSelector(s => s.bbs);
+  const { projectId: orgProjectId, selectedProject: orgProject, projectEpoch } = useActiveProject();
 
   const [expandedLevels, setExpandedLevels] = useState({});
   const [expandedBlocks, setExpandedBlocks] = useState({});
 
   useEffect(() => {
+    if (orgProject) {
+      dispatch(setActiveProject(orgProject));
+    }
+  }, [orgProjectId, projectEpoch, orgProject, dispatch]);
+
+  useEffect(() => {
     if (activeProjectId) {
       loadMatrix();
     }
-  }, [activeProjectId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProjectId, projectEpoch]);
 
   const loadMatrix = async () => {
     try {

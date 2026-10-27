@@ -32,6 +32,21 @@
   --border-color: var(--card-border);
   --bg-secondary: var(--main-bg);
   --accent-alpha: var(--accent-subtle);
+
+  /* Compatibility aliases (token drift from older page CSS) */
+  --bg-primary: var(--main-bg);
+  --bg-tertiary: var(--input-bg);
+  --text-muted: var(--text-label);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --touch-min: 40px;
   --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
   --card-shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
   --auth-gradient: linear-gradient(to bottom, rgba(248, 250, 252, 0.85), rgba(248, 250, 252, 0.98));
@@ -238,7 +253,29 @@ input[type="number"] {
 /* Accessible focus outline */
 :focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
+}
+
+/* Dense data tables: keep IDs/status readable on narrow viewports */
+.ro-table-scroll th,
+.ro-table-scroll td {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 0;
+}
+
+.sidenav-item,
+.ro-btn,
+.menu-toggle-btn,
+.bc-link {
+  min-height: var(--touch-min, 40px);
 }
 
 /* Reduced motion preference */

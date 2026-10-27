@@ -6,9 +6,12 @@ import {
   UserCheck, Sliders, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
 import { activityLogsApi, usersApi } from '../../utils/api';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader, Button } from '../../components/ui';
 import './ActivityLogsPage.css';
 
 export default function ActivityLogsPage() {
+  const { projectId: activeProjectId, projectEpoch, selectedProject } = useActiveProject();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -78,6 +81,7 @@ export default function ActivityLogsPage() {
         module: selectedModule !== 'all' ? selectedModule : undefined,
         action: selectedAction !== 'all' ? selectedAction : undefined,
         userId: selectedUser !== 'all' ? selectedUser : undefined,
+        projectId: activeProjectId || undefined,
         startDate: startDate || undefined,
         endDate: endDate || undefined
       });
@@ -99,7 +103,8 @@ export default function ActivityLogsPage() {
 
   useEffect(() => {
     fetchLogs();
-  }, [currentPage, selectedModule, selectedAction, selectedUser, dateRange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, selectedModule, selectedAction, selectedUser, dateRange, activeProjectId, projectEpoch]);
 
   // Debounced search trigger
   useEffect(() => {
@@ -319,43 +324,28 @@ export default function ActivityLogsPage() {
 
   return (
     <div className="activity-logs-container">
-      {/* Header Banner */}
-      <div className="activity-header">
-        <div className="activity-header-left">
-          <div className="activity-title-wrapper">
-            <div className="activity-icon-bubble">
-              <Shield className="activity-shield-icon" size={24} />
-            </div>
-            <div>
-              <h1 className="activity-page-title">Company Activity Logs & Audit Trail</h1>
-              <p className="activity-page-subtitle">
-                Clear plain-English history of who made changes, their role, timestamp, and exact details in your company.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="activity-header-actions">
-          <button 
-            className="btn-activity-secondary" 
-            onClick={fetchLogs} 
-            disabled={loading}
-            title="Refresh Logs"
-          >
-            <RefreshCw size={16} className={loading ? 'spinning' : ''} />
-            <span>Refresh</span>
-          </button>
-          <button 
-            className="btn-activity-primary" 
-            onClick={handleExportCSV} 
-            disabled={exporting || logs.length === 0}
-            title="Download CSV Audit Record"
-          >
-            <Download size={16} />
-            <span>{exporting ? 'Exporting...' : 'Export Audit CSV'}</span>
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Activity Logs & Audit Trail"
+        subtitle="Who changed what, when, and with which role — company-wide audit history."
+        projectName={selectedProject?.name}
+        actions={
+          <>
+            <Button variant="secondary" onClick={fetchLogs} disabled={loading} title="Refresh Logs">
+              <RefreshCw size={16} className={loading ? 'spinning' : ''} />
+              Refresh
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleExportCSV}
+              disabled={exporting || logs.length === 0}
+              title="Download CSV Audit Record"
+            >
+              <Download size={16} />
+              {exporting ? 'Exporting...' : 'Export Audit CSV'}
+            </Button>
+          </>
+        }
+      />
 
       {/* KPI Stats Cards */}
       <div className="activity-kpi-grid">
@@ -470,7 +460,7 @@ export default function ActivityLogsPage() {
       </div>
 
       {/* Main Table / Feed Section */}
-      <div className="activity-table-wrapper">
+      <div className="activity-table-wrapper ro-table-scroll">
         {loading ? (
           <div className="activity-state-box">
             <div className="activity-spinner" />

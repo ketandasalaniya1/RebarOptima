@@ -3,18 +3,27 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ChevronLeft, FileText, Download, Scissors, AlertCircle } from 'lucide-react';
 import { bbsApi } from '../../utils/api';
 import { setView } from '../../store/slices/routingSlice';
-import { setMTO, setLoading, setError } from '../../store/slices/bbsSlice';
+import { setMTO, setLoading, setError, setActiveProject } from '../../store/slices/bbsSlice';
+import { useActiveProject } from '../../hooks/useActiveProject';
 import './BbsReportsPage.css';
 
 export default function BbsReportsPage() {
   const dispatch = useDispatch();
   const { activeProjectId, activeProject, mto, loading } = useSelector(s => s.bbs);
+  const { projectId: orgProjectId, selectedProject: orgProject, projectEpoch } = useActiveProject();
+
+  useEffect(() => {
+    if (orgProject) {
+      dispatch(setActiveProject(orgProject));
+    }
+  }, [orgProjectId, projectEpoch, orgProject, dispatch]);
 
   useEffect(() => {
     if (activeProjectId) {
       loadMTO();
     }
-  }, [activeProjectId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProjectId, projectEpoch]);
 
   const loadMTO = async () => {
     try {

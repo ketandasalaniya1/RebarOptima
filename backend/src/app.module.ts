@@ -8,6 +8,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { BatchesModule } from './batches/batches.module';
 import { BbsModule } from './bbs/bbs.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BbsModule } from './bbs/bbs.module';
     InventoryModule,
     BatchesModule,
     BbsModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

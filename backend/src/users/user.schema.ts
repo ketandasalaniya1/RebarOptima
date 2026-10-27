@@ -15,11 +15,14 @@ export class User extends Document {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ required: true, enum: ['SUPPORT', 'OWNER', 'ADMIN', 'ENGINEER', 'OPERATOR', 'VIEWER'], default: 'VIEWER' })
+  @Prop({ required: true, enum: ['SUPPORT', 'OWNER', 'ADMIN', 'ENGINEER', 'OPERATOR', 'VIEWER', 'PROJECT_PARTNER_ADMIN'], default: 'VIEWER' })
   role: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company', required: true })
   companyId: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Project' }], default: [] })
+  assignedProjects?: MongooseSchema.Types.ObjectId[];
 
   @Prop({ required: false })
   mobileNumber?: string;

@@ -6,6 +6,9 @@ export class StockItem extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company', required: true })
   companyId: MongooseSchema.Types.ObjectId;
 
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Project', required: false })
+  projectId?: MongooseSchema.Types.ObjectId;
+
   @Prop({ required: true })
   diameter: number; // e.g., 8, 10, 12, 16, 20, 25, 32
 

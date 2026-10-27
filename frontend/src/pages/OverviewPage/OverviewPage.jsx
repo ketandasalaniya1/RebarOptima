@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { batchesApi } from '../../utils/api'
+import { useActiveProject } from '../../hooks/useActiveProject'
 import {
   Package,
   Trash2,
@@ -11,55 +12,67 @@ import {
   Activity,
   ArrowRight,
   AlertTriangle,
-  Sparkles,
   Layers,
   BarChart3,
   RefreshCw
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import { PageHeader, Button, EmptyState } from '../../components/ui'
 import './OverviewPage.css'
 
 export default function OverviewPage({ onNavigate }) {
   const user = useSelector((state) => state.auth.user)
+  const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [isSyncing, setIsSyncing] = useState(false)
   const [lastSynced, setLastSynced] = useState(null)
   const [relativeTime, setRelativeTime] = useState('just now')
   const [error, setError] = useState('')
+  const statsRef = useRef(stats)
+  statsRef.current = stats
 
-  const fetchStats = async (isManual = false) => {
+  const fetchStats = async (isManual = false, epochAtStart = projectEpoch) => {
+    if (!projectId) return
     try {
       if (isManual) {
         setIsSyncing(true)
-      } else if (!stats) {
+      } else if (!statsRef.current) {
         setLoading(true)
       }
       setError('')
-      const data = await batchesApi.getStats()
+      const data = await batchesApi.getStats(projectId)
+      if (isStale(epochAtStart)) return
       setStats(data)
       setLastSynced(Date.now())
       setRelativeTime('just now')
     } catch (err) {
+      if (isStale(epochAtStart)) return
       setError(err.message || 'Failed to fetch overview statistics.')
     } finally {
-      setLoading(false)
-      if (isManual) {
-        setTimeout(() => setIsSyncing(false), 450)
+      if (!isStale(epochAtStart)) {
+        setLoading(false)
+        if (isManual) {
+          setTimeout(() => setIsSyncing(false), 450)
+        }
       }
     }
   }
 
+  // Refetch whenever the active project changes
   useEffect(() => {
-    fetchStats(false)
+    if (!projectId) return
+    setStats(null)
+    setLoading(true)
+    fetchStats(false, projectEpoch)
 
-    // Background auto-refresh every 30 seconds
     const autoRefreshTimer = setInterval(() => {
-      fetchStats(false)
+      fetchStats(false, projectEpoch)
     }, 30000)
 
     return () => clearInterval(autoRefreshTimer)
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, projectEpoch])
 
   // Relative time ticker effect (updates every 3 seconds)
   useEffect(() => {
@@ -153,14 +166,19 @@ export default function OverviewPage({ onNavigate }) {
   const graphHeight = chartHeight - padBottom - padTop
   const graphWidth = chartWidth - padLeft - padRight
 
+  const go = (view) => {
+    if (onNavigate) onNavigate(view)
+  }
+
   return (
     <div className="overview-page-wrapper">
       <div className="overview-page">
-        {/* Top Header */}
-        <div className="overview-header">
-          <div className="header-title-group">
-            <div className="title-row">
-              <h1 className="overview-title">Dashboard Overview</h1>
+        <PageHeader
+          title="Dashboard Overview"
+          subtitle={`Real-time material analytics for ${user?.companyName || 'Enterprise'}`}
+          projectName={selectedProject?.name}
+          actions={
+            <>
               <button
                 type="button"
                 className={`live-status-pill interactive ${isSyncing ? 'syncing' : ''}`}
@@ -173,37 +191,28 @@ export default function OverviewPage({ onNavigate }) {
                 </span>
                 <RefreshCw size={11} className={`sync-icon ${isSyncing ? 'spin-icon' : ''}`} />
               </button>
-            </div>
-            <p className="overview-subtitle">
-              Real-time material analytics for <span className="highlight-company">{user?.companyName || 'Enterprise'}</span>
-              {user?.projectName && (
-                <>
-                  <span className="subtitle-sep">•</span>
-                  Project: <span className="highlight-project">{user.projectName}</span>
-                </>
+              {onNavigate && (
+                <Button variant="primary" onClick={() => go('inputs')}>
+                  <Activity size={15} />
+                  Run Optimization
+                  <ArrowRight size={15} />
+                </Button>
               )}
-            </p>
-          </div>
-          {onNavigate && (
-            <button className="run-opt-btn" onClick={() => onNavigate('inputs')}>
-              <Activity size={15} />
-              <span>Run Optimization</span>
-              <ArrowRight size={15} />
-            </button>
-          )}
-        </div>
+            </>
+          }
+        />
 
         {error && (
-          <div className="overview-error-banner">
+          <div className="overview-error-banner" role="alert">
             <AlertTriangle size={16} />
             <span>{error}</span>
           </div>
         )}
 
-        {/* 6 Equal-Sized Primary Metric Cards Grid */}
+        {/* 6 Equal-Sized Primary Metric Cards Grid — each KPI navigates to related module */}
         <div className="equal-kpi-grid">
-          {/* Card 1: Live Stock */}
-          <div className="equal-kpi-card card-purple-accent">
+          {/* Card 1: Live Stock → Inventory */}
+          <button type="button" className="equal-kpi-card card-purple-accent kpi-actionable" onClick={() => go('inventory')} aria-label="View live stock in Steel Inventory">
             <div className="kpi-card-header">
               <span className="kpi-card-title">Live Stock</span>
               <div className="kpi-icon-pill icon-purple">
@@ -229,10 +238,10 @@ export default function OverviewPage({ onNavigate }) {
                 </div>
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Card 2: Scrap Stock */}
-          <div className="equal-kpi-card card-rose-accent">
+          {/* Card 2: Scrap Stock → Inventory */}
+          <button type="button" className="equal-kpi-card card-rose-accent kpi-actionable" onClick={() => go('inventory')} aria-label="View scrap stock in Steel Inventory">
             <div className="kpi-card-header">
               <span className="kpi-card-title">Scrap Stock</span>
               <div className="kpi-icon-pill icon-rose">
@@ -258,10 +267,10 @@ export default function OverviewPage({ onNavigate }) {
                 </div>
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Card 3: Scrap Percentage */}
-          <div className="equal-kpi-card card-amber-accent">
+          {/* Card 3: Scrap Percentage → Batch History */}
+          <button type="button" className="equal-kpi-card card-amber-accent kpi-actionable" onClick={() => go('history')} aria-label="View scrap percentage in Batch History">
             <div className="kpi-card-header">
               <span className="kpi-card-title">Scrap Percentage</span>
               <div className="kpi-icon-pill icon-amber">
@@ -279,10 +288,10 @@ export default function OverviewPage({ onNavigate }) {
                   : '0.00% Scrap Loss'}
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Card 4: Total Steel Purchased */}
-          <div className="equal-kpi-card card-blue-accent">
+          {/* Card 4: Total Steel Purchased → Ledger */}
+          <button type="button" className="equal-kpi-card card-blue-accent kpi-actionable" onClick={() => go('ledger')} aria-label="View steel purchases in Ledger">
             <div className="kpi-card-header">
               <span className="kpi-card-title">Total Steel Purchased</span>
               <div className="kpi-icon-pill icon-blue">
@@ -301,10 +310,10 @@ export default function OverviewPage({ onNavigate }) {
                 Inward: {formatTons(totalSteelPurchasedKg)} ({formatKg(totalSteelPurchasedKg)} Kg)
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Card 5: Total Scrap Sold */}
-          <div className="equal-kpi-card card-cyan-accent">
+          {/* Card 5: Total Scrap Sold → Ledger */}
+          <button type="button" className="equal-kpi-card card-cyan-accent kpi-actionable" onClick={() => go('ledger')} aria-label="View scrap sales in Ledger">
             <div className="kpi-card-header">
               <span className="kpi-card-title">Total Scrap Sold</span>
               <div className="kpi-icon-pill icon-cyan">
@@ -332,10 +341,10 @@ export default function OverviewPage({ onNavigate }) {
                 </div>
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Card 6: Lost Material Value */}
-          <div className="equal-kpi-card card-crimson-accent">
+          {/* Card 6: Lost Material Value → Batch History */}
+          <button type="button" className="equal-kpi-card card-crimson-accent kpi-actionable" onClick={() => go('history')} aria-label="View lost material in Batch History">
             <div className="kpi-card-header">
               <span className="kpi-card-title">Lost Material Value</span>
               <div className="kpi-icon-pill icon-crimson">
@@ -351,7 +360,7 @@ export default function OverviewPage({ onNavigate }) {
                 <span className="badge-dot"></span> Unrecovered Scrap Loss
               </div>
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Lower Analytics Section: Diawise Live Stock & 30-Day Scrap Generation */}
@@ -442,10 +451,17 @@ export default function OverviewPage({ onNavigate }) {
 
             <div className="svg-chart-container">
               {dailyScrapGraph.length === 0 ? (
-                <div className="no-data-placeholder">
-                  <Sparkles size={28} color="#64748b" />
-                  <p>No batch runs logged yet.</p>
-                </div>
+                <EmptyState
+                  title="No batch runs logged yet"
+                  description="Run an optimization to start tracking daily scrap generation."
+                  action={
+                    onNavigate ? (
+                      <Button variant="secondary" size="sm" onClick={() => go('inputs')}>
+                        Run Optimization
+                      </Button>
+                    ) : null
+                  }
+                />
               ) : (
                 (() => {
                   const points = dailyScrapGraph.map((item, idx) => {

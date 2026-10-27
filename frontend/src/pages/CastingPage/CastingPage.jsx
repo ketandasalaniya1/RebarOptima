@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Boxes, Building, Layers, Calendar, Plus, RefreshCw, CheckCircle2, FlaskConical, PackageCheck, Droplets, FileSpreadsheet, CalendarDays } from 'lucide-react';
+import { Building, Layers, Calendar, Plus, RefreshCw, CheckCircle2, FlaskConical, PackageCheck, Droplets, FileSpreadsheet, CalendarDays } from 'lucide-react';
 import { castingApi } from './castingApi';
+import { useActiveProject } from '../../hooks/useActiveProject';
 import ProjectHierarchyManager from './components/ProjectHierarchyManager';
 import MemberRegisterTable from './components/MemberRegisterTable';
 import CreateMemberModal from './components/CreateMemberModal';
@@ -20,9 +21,11 @@ import CuringManagementView from './components/CuringManagementView';
 import CubeTestingView from './components/CubeTestingView';
 import TrackSheetView from './components/TrackSheetView';
 import CastingTimelineView from './components/CastingTimelineView';
+import { PageHeader, Button } from '../../components/ui';
 import './CastingPage.css';
 
 export default function CastingPage() {
+  const { projectId: activeProjectId, selectedProject: globalProject, projectEpoch } = useActiveProject();
   const [activeTab, setActiveTab] = useState('structural'); // 'structural' | 'events' | 'timeline' | 'recipes' | 'curing' | 'cubes' | 'tracksheet'
 
   // Hierarchy Data States
@@ -60,10 +63,10 @@ export default function CastingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // 1. Initial Load: Projects & Member Types
+  // 1. Initial Load: Projects & Member Types — bind to global active project
   useEffect(() => {
     loadInitialData();
-  }, []);
+  }, [activeProjectId, projectEpoch]);
 
   const loadInitialData = async () => {
     setIsLoading(true);
@@ -85,9 +88,16 @@ export default function CastingPage() {
       setMemberTypes(safeTypes);
       setRecipes(safeRecipes);
 
-      if (safeProjects.length > 0) {
-        setSelectedProject(safeProjects[0]);
-      }
+      const match =
+        safeProjects.find((p) => String(p.id || p._id) === String(activeProjectId)) ||
+        globalProject ||
+        (safeProjects.length > 0 ? safeProjects[0] : null);
+      setSelectedProject(match);
+      setSelectedBlock(null);
+      setSelectedLevel(null);
+      setBlocks([]);
+      setMembers([]);
+      setEvents([]);
     } catch (err) {
       setErrorMsg(err.message || 'Error connecting to Casting API');
     } finally {
@@ -224,25 +234,13 @@ export default function CastingPage() {
 
   return (
     <div className="casting-container">
-      {/* Module Header */}
-      <div className="casting-header-row">
-        <div className="casting-header-left">
-          <div className="casting-header-icon">
-            <Boxes size={24} />
-          </div>
-          <div>
-            <div className="casting-title-with-badge">
-              <h1 className="casting-main-title">Casting Management</h1>
-            </div>
-            <p className="casting-subtitle">
-              Structural members register, mix designs, pour execution logs, and quality compliance.
-            </p>
-          </div>
-        </div>
-
-        <div className="casting-header-right">
-          <button
-            className="casting-btn casting-btn-secondary"
+      <PageHeader
+        title="Casting Management"
+        subtitle="Structural members register, mix designs, pour execution logs, and quality compliance."
+        projectName={globalProject?.name}
+        actions={
+          <Button
+            variant="secondary"
             onClick={async () => {
               await handleRefreshHierarchy();
               await handleRefreshRecipes();
@@ -250,9 +248,9 @@ export default function CastingPage() {
             title="Refresh Casting Data"
           >
             <RefreshCw size={14} /> Refresh Data
-          </button>
-        </div>
-      </div>
+          </Button>
+        }
+      />
 
       {/* Quick Stats Grid */}
       <div className="casting-stats-grid">

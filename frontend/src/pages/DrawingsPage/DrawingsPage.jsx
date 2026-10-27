@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DrawingsPage.css';
 import { drawingsApi } from '../../utils/drawingsApi';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader, Button } from '../../components/ui';
+
 import SimpleDrawingViewer from './components/SimpleDrawingViewer';
 import {
   Search,
@@ -23,6 +26,8 @@ import {
 } from 'lucide-react';
 
 export default function DrawingsPage() {
+  const { projectId: activeProjectId, projectEpoch, selectedProject } = useActiveProject();
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [drawings, setDrawings] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -32,9 +37,11 @@ export default function DrawingsPage() {
   const [selectedDrawing, setSelectedDrawing] = useState(null);
   const [selectedDrawingDetail, setSelectedDrawingDetail] = useState(null);
 
-  // Filters & Search
-  const [searchTerm, setSearchTerm] = useState('');
+  // Filter & Search States — locked to active org project (not company-wide client filter)
   const [projectFilter, setProjectFilter] = useState('all');
+  const [disciplineFilter, setDisciplineFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [viewLayout, setViewLayout] = useState('grid'); // 'grid' | 'table'
 
   // Upload Modal State
@@ -53,6 +60,24 @@ export default function DrawingsPage() {
 
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    if (activeProjectId) setProjectFilter(String(activeProjectId));
+  }, [activeProjectId, projectEpoch]);
+
+  // Initial Data Load
+  const loadAllData = async () => {
+    setLoading(true);
+    try {
+      const pid = activeProjectId || undefined;
+      const [dash, prjs, discs, dws, trans, acts, usrs, stts] = await Promise.all([
+        drawingsApi.getDashboard().catch(() => null),
+        drawingsApi.getProjects().catch(() => []),
+        drawingsApi.getDisciplines().catch(() => []),
+        drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
+        drawingsApi.getTransmittals().catch(() => []),
+        drawingsApi.getActivityLog().catch(() => []),
+        drawingsApi.getUsers().catch(() => []),
+        drawingsApi.getSettings().catch(() => null)
   // Load All Data
   const loadData = async () => {
     setLoading(true);
@@ -84,6 +109,9 @@ export default function DrawingsPage() {
   };
 
   useEffect(() => {
+    loadAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProjectId, projectEpoch]);
     loadData();
   }, []);
 
@@ -281,6 +309,29 @@ export default function DrawingsPage() {
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="drawings-module-root">
+      <PageHeader
+        title="Drawing & File Management"
+        subtitle="ISO 19650 document control, registers, revisions, and transmittals."
+        projectName={selectedProject?.name}
+        actions={
+          <>
+            <div className="drawings-header-search">
+              <Search size={15} className="search-icon" aria-hidden />
+              <input
+                type="search"
+                placeholder="Search drawings, projects, files…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search drawings"
+              />
+            </div>
+            <Button variant="secondary" onClick={loadAllData} title="Refresh Workspace">
+              <RefreshCw size={14} className={loading ? 'spin' : ''} />
+              Refresh
+            </Button>
+          </>
+        }
+      />
       {/* ── Clean Top Header Bar ────────────────────────────────────────── */}
       <div className="drawings-top-header">
         <div className="drawings-brand-section">

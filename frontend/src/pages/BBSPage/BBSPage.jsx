@@ -9,6 +9,8 @@ import { bbsApi } from './bbsApi';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import ShapeLibrary from './ShapeLibrary';
 import CADEditor from './cad/CADEditor';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader, Button, EmptyState, StatusBadge } from '../../components/ui';
 import './BBSPage.css';
 
 const MEMBER_TYPE_OPTIONS = [
@@ -46,6 +48,7 @@ const DEFAULT_PREFIX_MAP = {
 };
 
 export default function BBSPage() {
+  const { projectId: orgProjectId, selectedProject: orgProject, projectEpoch } = useActiveProject();
   // Main Module Tab State ('projects' | 'shapes' | 'cad')
   const [activeMainTab, setActiveMainTab] = useState('projects');
   const [customShapes, setCustomShapes] = useState([]);
@@ -99,13 +102,43 @@ export default function BBSPage() {
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Load Projects and Custom Shapes on mount
+  // Bind to global active project — reload hierarchy on switch
   useEffect(() => {
-    if (!selectedProjectId) {
-      loadProjects();
-    }
     loadShapes();
-  }, [selectedProjectId]);
+    if (!orgProjectId) return;
+    setSelectedBlockId(null);
+    setSelectedLevelId(null);
+    setBlocks([]);
+    setLevels([]);
+    setMembers([]);
+    loadProjectsAndBind();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgProjectId, projectEpoch]);
+
+  const loadProjectsAndBind = async () => {
+    setLoading(true);
+    try {
+      const data = await bbsApi.getProjects();
+      const list = data || [];
+      setProjects(list);
+      const match =
+        list.find((p) => String(p._id || p.id) === String(orgProjectId)) ||
+        orgProject ||
+        null;
+      if (match) {
+        const pid = match._id || match.id;
+        setSelectedProjectId(pid);
+        setActiveProject(match);
+      } else {
+        setSelectedProjectId(null);
+        setActiveProject(null);
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to load BBS projects', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadProjects = async () => {
     setLoading(true);
@@ -808,17 +841,17 @@ export default function BBSPage() {
           </button>
         </div>
 
-        {/* Header */}
-        <div className="bbs-header-row">
-          <div className="bbs-title-with-badge">
-            <Building2 className="bbs-main-icon" size={28} />
-            <h1 className="bbs-main-title">Bar Bending Schedule (BBS)</h1>
-          </div>
-          <button className="bbs-btn bbs-btn-primary" onClick={() => openProjectModal('create')}>
-            <Plus size={18} />
-            <span>New Project</span>
-          </button>
-        </div>
+        <PageHeader
+          title="Bar Bending Schedule (BBS)"
+          subtitle="Project-bound bar bending schedules, members, and cutting shapes."
+          projectName={orgProject?.name}
+          actions={
+            <Button variant="primary" onClick={() => openProjectModal('create')}>
+              <Plus size={16} />
+              New Project
+            </Button>
+          }
+        />
 
 
         {/* Toolbar */}
@@ -852,15 +885,19 @@ export default function BBSPage() {
             <p>Loading BBS Projects...</p>
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="bbs-empty-state">
-            <Building2 size={48} className="bbs-empty-icon" />
-            <h3>No BBS Projects Found</h3>
-            <p>{searchQuery ? 'No projects match your search query.' : 'Get started by creating your first structural BBS project profile.'}</p>
-            <button className="bbs-btn bbs-btn-primary" onClick={() => openProjectModal('create')}>
-              <Plus size={18} />
-              <span>Create First Project</span>
-            </button>
-          </div>
+          <EmptyState
+            icon={<Building2 size={24} />}
+            title="No BBS Projects Found"
+            description={searchQuery ? 'No projects match your search query.' : 'Get started by creating your first structural BBS project profile.'}
+            action={
+              !searchQuery ? (
+                <button className="bbs-btn bbs-btn-primary" onClick={() => openProjectModal('create')}>
+                  <Plus size={18} />
+                  <span>Create First Project</span>
+                </button>
+              ) : null
+            }
+          />
         ) : (
           <div className="bbs-projects-grid" style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.25rem' }}>
             {filteredProjects.map((project) => {
@@ -1091,9 +1128,7 @@ export default function BBSPage() {
           <div>
             <div className="bbs-banner-title-row">
               <h1 className="bbs-banner-title">{activeProject?.name}</h1>
-              <span className={`bbs-status-pill bbs-status-${(activeProject?.status || 'Active').toLowerCase()}`}>
-                {activeProject?.status || 'Active'}
-              </span>
+              <StatusBadge status={activeProject?.status || 'Active'} />
             </div>
             {activeProject?.location && (
               <div className="bbs-banner-meta">

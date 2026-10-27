@@ -21,6 +21,11 @@ import {
   consolidateIngredients,
   checkInventoryAvailability
 } from './casting.calculation.service';
+import {
+  resolveUserAndCompany,
+  listAccessibleGlobalProjects,
+  resolveCanonicalProjectId,
+} from '../projects/module-project-adapter';
 
 export function createCastingRouter(
   getDb: () => any,
@@ -151,20 +156,16 @@ export function createCastingRouter(
   // 2. CASTING PROJECTS
   // ════════════════════════════════════════════════════════════════════════════
 
-  // GET all projects with aggregated metrics
+  // GET all projects with aggregated metrics (global catalog)
   router.get('/projects', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-
-      const projects = await db.collection('casting_projects')
-        .find({ companyId, isDeleted: { $ne: true } })
-        .sort({ createdAt: -1 })
-        .toArray();
+      const ctx = await resolveUserAndCompany(req, db);
+      const projects = await listAccessibleGlobalProjects(db, ctx);
 
       const enriched = await Promise.all(
         projects.map(async (p: any) => {
-          const pId = p._id.toString();
+          const pId = String(p._id || p.id);
           const [blocks, levels, members, events] = await Promise.all([
             db.collection('casting_blocks').find({ projectId: pId, isDeleted: { $ne: true } }).toArray(),
             db.collection('casting_levels').find({ projectId: pId, isDeleted: { $ne: true } }).toArray(),
@@ -177,7 +178,8 @@ export function createCastingRouter(
 
           return {
             ...p,
-            id: p._id.toString(),
+            id: pId,
+            code: p.code || p.projectCode || '',
             blockCount: blocks.length,
             levelCount: levels.length,
             memberCount: members.length,
@@ -190,7 +192,7 @@ export function createCastingRouter(
 
       res.json(enriched);
     } catch (err: any) {
-      res.status(500).json({ message: err.message || 'Error fetching casting projects' });
+      res.status(err.status || 500).json({ message: err.message || 'Error fetching casting projects' });
     }
   });
 
@@ -198,78 +200,20 @@ export function createCastingRouter(
   router.get('/projects/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const project = await db.collection('casting_projects').findOne({
-        ...idQuery(req.params.id),
-        companyId,
-        isDeleted: { $ne: true }
-      });
-
-      if (!project) return res.status(404).json({ message: 'Casting Project not found' });
-      res.json({ ...project, id: project._id.toString() });
+      const ctx = await resolveUserAndCompany(req, db);
+      const { project, projectId } = await resolveCanonicalProjectId(db, ctx, req.params.id);
+      res.json({ ...project, id: projectId });
     } catch (err: any) {
-      res.status(500).json({ message: err.message || 'Error fetching casting project' });
+      res.status(err.status || 500).json({ message: err.message || 'Error fetching casting project', code: err.code });
     }
   });
 
-  // POST create project
-  router.post('/projects', authMiddleware, async (req: any, res: any) => {
-    try {
-      const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const { name, code, location, clientName, contractorName, status } = req.body;
-
-      if (!name || !name.trim()) {
-        return res.status(400).json({ message: 'Project Name is required' });
-      }
-
-      const projCode = (code || `PRJ-C-${Date.now().toString().slice(-4)}`).trim().toUpperCase();
-
-      // Check unique code per company
-      const existing = await db.collection('casting_projects').findOne({
-        companyId,
-        code: projCode,
-        isDeleted: { $ne: true }
-      });
-      if (existing) {
-        return res.status(409).json({ message: `Project code '${projCode}' is already in use` });
-      }
-
-      const now = new Date();
-      const newProj: ICastingProject = {
-        companyId,
-        name: name.trim(),
-        code: projCode,
-        location: location ? location.trim() : '',
-        clientName: clientName ? clientName.trim() : '',
-        contractorName: contractorName ? contractorName.trim() : '',
-        status: status || 'Active',
-        isDeleted: false,
-        createdAt: now,
-        updatedAt: now
-      };
-
-      const result = await db.collection('casting_projects').insertOne(newProj);
-      const created = await db.collection('casting_projects').findOne({ _id: result.insertedId });
-
-      if (logAudit) {
-        await logAudit(db, {
-          actorId: req.user.sub,
-          actorType: req.user.accountType || 'user',
-          companyId,
-          module: 'casting',
-          action: 'CASTING_PROJECT_CREATED',
-          resource: 'casting_projects',
-          resourceId: result.insertedId.toString(),
-          description: `Created casting project '${newProj.name}' (${projCode})`,
-          newValue: newProj
-        });
-      }
-
-      res.status(201).json({ ...created, id: created._id.toString() });
-    } catch (err: any) {
-      res.status(500).json({ message: err.message || 'Error creating casting project' });
-    }
+  // POST create — unified to global projects
+  router.post('/projects', authMiddleware, async (_req: any, res: any) => {
+    return res.status(400).json({
+      message: 'Create projects via Company Projects (POST /api/projects). Module catalogs are unified.',
+      code: 'USE_GLOBAL_PROJECTS',
+    });
   });
 
   // PUT update project

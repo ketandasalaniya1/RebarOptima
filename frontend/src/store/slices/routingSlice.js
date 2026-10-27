@@ -30,6 +30,7 @@ const getInitialView = () => {
     if (path === '/petty-cash') return 'petty-cash';
     if (path === '/ledger') return 'ledger';
     if (path === '/activity-logs') return 'activity-logs';
+    if (path === '/project-management') return 'project-management';
     if (path === '/settings') return 'settings';
     if (path === '/profile') return 'profile';
     if (path === '/developer' || path === '/superadmin') return 'superadmin';

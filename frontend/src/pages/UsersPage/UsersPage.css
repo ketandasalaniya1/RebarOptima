@@ -1,6 +1,8 @@
 .users-page {
-  max-width: 1080px;
+  width: 100%;
+  max-width: 1680px;
   margin: 0 auto;
+  padding: 12px 16px 36px;
 }
 
 .users-header {
@@ -9,6 +11,7 @@
   justify-content: space-between;
   margin-bottom: 24px;
   gap: 16px;
+  width: 100%;
 }
 
 .users-title-section {
@@ -186,6 +189,7 @@
   border: 1px solid var(--card-border);
   border-radius: 10px;
   overflow: hidden;
+  width: 100%;
 }
 .users-toolbar {
   display: flex;
@@ -223,6 +227,7 @@
 
 .users-table-wrap {
   overflow-x: auto;
+  width: 100%;
 }
 .users-table {
   width: 100%;

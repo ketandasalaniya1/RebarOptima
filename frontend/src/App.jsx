@@ -14,6 +14,7 @@ import CastingPage from './pages/CastingPage/CastingPage';
 import GeneralInventoryPage from './pages/GeneralInventoryPage/GeneralInventoryPage';
 import CrmPage from './pages/CrmPage/CrmPage';
 import DrawingsPage from './pages/DrawingsPage/DrawingsPage';
+import PettyCashPage from './pages/PettyCashPage/PettyCashPage';
 import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
@@ -241,6 +242,9 @@ function App() {
             )}
             {view === 'drawings' && (
               <DrawingsPage />
+            )}
+            {view === 'petty-cash' && (
+              <PettyCashPage />
             )}
             {view === 'ledger' && (
               <LedgerPage />

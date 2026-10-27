@@ -13,6 +13,7 @@ import { verifyMultiDocumentTransactionRollback } from './casting/casting.invent
 import { createGeneralInventoryRouter } from './general-inventory/general-inventory.routes';
 import { createCrmMasterRouter } from './crm/crm.routes';
 import { createDrawingsMasterRouter } from './drawings/drawings.routes';
+import { createPettyCashRouter } from './petty-cash/petty-cash.routes';
 import { createPmMasterRouter } from './pm/pm.routes';
 
 try {
@@ -378,6 +379,16 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
       settings: 'Configure Drawing Settings'
     }
   },
+
+  pettyCash: {
+    displayName: 'Petty Cash',
+    features: {
+      view: 'View Petty Cash',
+      create: 'Record Transactions',
+      manageCategories: 'Manage Categories & Persons'
+    }
+  },
+
   projectManagement: {
     displayName: 'Project & Task Management',
     features: {
@@ -641,6 +652,8 @@ app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit));
 // Mount Standalone Enterprise Drawing & File Management Module Routes
 app.use('/api/drawings', createDrawingsMasterRouter(() => db, authMiddleware, logAudit));
 
+// Mount Petty Cash / Expense Module Routes
+app.use('/api/petty-cash', createPettyCashRouter(() => db, authMiddleware, logAudit));
 // Mount Enterprise Project & Task Management Master Routes
 app.use('/api/pm', createPmMasterRouter(() => db, authMiddleware, logAudit));
 

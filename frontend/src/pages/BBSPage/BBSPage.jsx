@@ -786,7 +786,7 @@ export default function BBSPage() {
   // ════════════════════════════════════════════════════════════════════════════
   if (!selectedProjectId) {
     return (
-      <div className="bbs-container">
+      <div className="bbs-container" style={{ width: '100%', maxWidth: '1680px', margin: '0 auto', flex: 1, minWidth: 0 }}>
         {/* Toast alert */}
         {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
 
@@ -862,7 +862,7 @@ export default function BBSPage() {
             </button>
           </div>
         ) : (
-          <div className="bbs-projects-grid">
+          <div className="bbs-projects-grid" style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.25rem' }}>
             {filteredProjects.map((project) => {
               const projId = project._id || project.id;
               const progress = project.completionPercentage || 0;
@@ -1056,7 +1056,7 @@ export default function BBSPage() {
   // RENDER: PROJECT PROFILE & HIERARCHY WORKSPACE
   // ════════════════════════════════════════════════════════════════════════════
   return (
-    <div className="bbs-container">
+    <div className="bbs-container" style={{ width: '100%', maxWidth: '1680px', margin: '0 auto', flex: 1, minWidth: 0 }}>
       {/* Toast alert */}
       {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
 

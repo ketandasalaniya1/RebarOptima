@@ -1,6 +1,7 @@
 .history-page {
-  padding: 24px;
-  max-width: 1200px;
+  padding: 12px 16px 36px;
+  width: 100%;
+  max-width: 1680px;
   margin: 0 auto;
   animation: fadeIn 0.4s ease-out;
 }

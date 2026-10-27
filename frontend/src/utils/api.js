@@ -406,3 +406,21 @@ export const generalInventoryApi = {
     return apiRequest(`/general-inventory/projects/${projectId}/reports/${reportType}${qs ? `?${qs}` : ''}`);
   }
 };
+
+export const pettyCashApi = {
+  getSites: () => apiRequest('/petty-cash/sites'),
+  createSite: (data) => apiRequest('/petty-cash/sites', { method: 'POST', body: data }),
+  getPersons: () => apiRequest('/petty-cash/persons'),
+  createPerson: (data) => apiRequest('/petty-cash/persons', { method: 'POST', body: data }),
+  deletePerson: (id) => apiRequest(`/petty-cash/persons/${id}`, { method: 'DELETE' }),
+  getCategories: () => apiRequest('/petty-cash/categories'),
+  createCategory: (data) => apiRequest('/petty-cash/categories', { method: 'POST', body: data }),
+  deleteCategory: (id) => apiRequest(`/petty-cash/categories/${id}`, { method: 'DELETE' }),
+  getTransactions: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/petty-cash/transactions${qs ? `?${qs}` : ''}`);
+  },
+  createTransaction: (data) => apiRequest('/petty-cash/transactions', { method: 'POST', body: data }),
+  deleteTransaction: (id) => apiRequest(`/petty-cash/transactions/${id}`, { method: 'DELETE' })
+};
+

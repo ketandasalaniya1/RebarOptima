@@ -1,0 +1,444 @@
+/* Shared UI primitives — RebarOptima design system */
+
+/* ── Button ─────────────────────────────────────────────── */
+.ro-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.ro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ro-btn--sm {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 0.8125rem;
+}
+
+.ro-btn--lg {
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.ro-btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.ro-btn--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.ro-btn--secondary {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-color: var(--card-border);
+}
+
+.ro-btn--secondary:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+}
+
+.ro-btn--danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.ro-btn--danger:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.ro-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.ro-btn--ghost:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+}
+
+/* ── PageHeader ─────────────────────────────────────────── */
+.ro-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.ro-page-header__title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.ro-page-header__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  max-width: 52rem;
+  line-height: 1.45;
+}
+
+.ro-page-header__context {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ro-page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── EmptyState ─────────────────────────────────────────── */
+.ro-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  min-height: 220px;
+  border: 1px dashed var(--card-border);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+}
+
+.ro-empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.ro-empty__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.ro-empty__desc {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ── StatusBadge ────────────────────────────────────────── */
+.ro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ro-badge--neutral {
+  background: var(--accent-subtle);
+  color: var(--text-secondary);
+}
+
+.ro-badge--success {
+  background: var(--success-subtle);
+  color: var(--success);
+}
+
+.ro-badge--warning {
+  background: var(--warning-subtle);
+  color: var(--warning);
+}
+
+.ro-badge--danger {
+  background: var(--danger-subtle);
+  color: var(--danger);
+}
+
+.ro-badge--info {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+/* ── DataToolbar ────────────────────────────────────────── */
+.ro-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.ro-toolbar__search {
+  position: relative;
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+
+.ro-toolbar__search input {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 12px 0 36px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.ro-toolbar__search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-label);
+  pointer-events: none;
+}
+
+.ro-toolbar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ro-toolbar__count {
+  margin-left: auto;
+  font-size: 0.8125rem;
+  color: var(--text-label);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── AppModal ───────────────────────────────────────────── */
+.ro-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.ro-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: min(90vh, 840px);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow-hover);
+  overflow: hidden;
+}
+
+.ro-modal--lg {
+  max-width: 720px;
+}
+
+.ro-modal--xl {
+  max-width: 960px;
+}
+
+.ro-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.ro-modal__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.ro-modal__subtitle {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.ro-modal__close {
+  flex-shrink: 0;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-label);
+}
+
+.ro-modal__close:hover {
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+}
+
+.ro-modal__body {
+  padding: var(--space-5);
+  overflow: auto;
+  flex: 1;
+}
+
+.ro-modal__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--card-border);
+  background: var(--bg-primary);
+}
+
+/* Responsive table helper */
+.ro-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+}
+
+.ro-table-scroll table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
+.ro-table-scroll th:first-child,
+.ro-table-scroll td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--card-bg);
+}
+
+@media (max-width: 640px) {
+  .ro-page-header {
+    flex-direction: column;
+  }
+
+  .ro-page-header__actions {
+    width: 100%;
+  }
+
+  .ro-page-header__actions .ro-btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* Accessibility helpers for shared primitives */
+.ro-btn:focus-visible,
+.ro-modal__close:focus-visible,
+.ro-toolbar__search input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ro-badge {
+  border: 1px solid transparent;
+}
+
+.ro-badge--success {
+  color: #047857;
+  background: var(--success-subtle);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.ro-badge--warning {
+  color: #b45309;
+  background: var(--warning-subtle);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.ro-badge--danger {
+  color: #b91c1c;
+  background: var(--danger-subtle);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.ro-badge--info {
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.ro-badge--neutral {
+  color: var(--text-secondary);
+  background: var(--accent-subtle);
+  border-color: var(--card-border);
+}
+
+[data-theme='dark'] .ro-badge--success {
+  color: #6ee7b7;
+}
+
+[data-theme='dark'] .ro-badge--warning {
+  color: #fcd34d;
+}
+
+[data-theme='dark'] .ro-badge--danger {
+  color: #fca5a5;
+}
+
+[data-theme='dark'] .ro-badge--info {
+  color: #93c5fd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ro-btn,
+  .ro-modal-backdrop,
+  .ro-modal {
+    transition: none !important;
+  }
+}

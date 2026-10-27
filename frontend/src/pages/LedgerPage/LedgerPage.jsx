@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { inventoryApi, batchesApi } from '../../utils/api';
+import { useActiveProject } from '../../hooks/useActiveProject';
 import html2pdf from 'html2pdf.js';
 import { 
   TrendingUp, 
@@ -34,6 +35,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { PageHeader, StatusBadge } from '../../components/ui';
 import './LedgerPage.css';
 
 export default function LedgerPage() {
@@ -77,25 +79,30 @@ export default function LedgerPage() {
   });
 
   const [editQtyMap, setEditQtyMap] = useState({});
+  const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject();
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!projectId) return;
+    fetchData(projectEpoch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, projectEpoch]);
 
-  async function fetchData() {
+  async function fetchData(epochAtStart = projectEpoch) {
     try {
       setLoading(true);
       setError('');
       const [ledgerData, ordersData] = await Promise.all([
-        inventoryApi.getLedger(),
-        batchesApi.getHistory()
+        inventoryApi.getLedger(projectId),
+        batchesApi.getHistory(projectId)
       ]);
+      if (isStale(epochAtStart)) return;
       setLedger(ledgerData || []);
       setOrders(ordersData || []);
     } catch (err) {
+      if (isStale(epochAtStart)) return;
       setError(err.message || 'Failed to load ledger data.');
     } finally {
-      setLoading(false);
+      if (!isStale(epochAtStart)) setLoading(false);
     }
   }
 
@@ -466,13 +473,23 @@ export default function LedgerPage() {
 
   return (
     <div className="ledger-page">
-      {/* Page Header */}
+      <PageHeader
+        title="Ledger & Procurement"
+        subtitle="Track material ledger logs, optimization batches, and site purchase requests."
+        projectName={selectedProject?.name}
+        actions={
+          <button 
+            className="btn-print-action"
+            onClick={handlePrintReport}
+            disabled={isPrinting}
+            title="Print or export PDF report"
+          >
+            <Printer size={15} />
+            <span>{isPrinting ? 'Exporting...' : 'Print Report'}</span>
+          </button>
+        }
+      />
       <div className="ledger-header-row">
-        <div className="header-title-block">
-          <h1 className="ledger-title">Ledger & Procurement</h1>
-          <p className="ledger-subtitle">Track material ledger logs, optimization batches, and site purchase requests.</p>
-        </div>
-        
         <div className="header-controls-block">
           <div className="tab-buttons">
             <button 
@@ -502,18 +519,6 @@ export default function LedgerPage() {
             >
               <Clock size={15} />
               <span>Order Requests</span>
-            </button>
-          </div>
-
-          <div className="header-actions-group">
-            <button 
-              className="btn-print-action"
-              onClick={handlePrintReport}
-              disabled={isPrinting}
-              title="Print or export PDF report"
-            >
-              <Printer size={15} />
-              <span>{isPrinting ? 'Exporting...' : 'Print Report'}</span>
             </button>
           </div>
         </div>
@@ -1649,9 +1654,7 @@ export default function LedgerPage() {
                               )}
                             </td>
                             <td>
-                              <span className={`order-status-badge badge-${req.status.toLowerCase()}`}>
-                                {req.status}
-                              </span>
+                              <StatusBadge status={req.status} />
                             </td>
                             <td className="text-secondary">{req.approver || '-'}</td>
                             {user?.role !== 'ENGINEER' && (

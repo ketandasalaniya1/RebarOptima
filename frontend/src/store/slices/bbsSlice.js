@@ -58,7 +58,7 @@ const bbsSlice = createSlice({
     },
     setActiveProject: (state, action) => {
       state.activeProject = action.payload;
-      state.activeProjectId = action.payload?._id || null;
+      state.activeProjectId = action.payload?._id || action.payload?.id || null;
     },
     clearActiveProject: (state) => {
       state.activeProjectId = null;

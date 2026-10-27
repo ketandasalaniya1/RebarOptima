@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { Users, Plus, Edit3, Shield, Mail, CheckCircle, XCircle, Search, Save, X, AlertTriangle } from 'lucide-react';
 import { usersApi, rolesApi } from '../../utils/api';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader, Button, EmptyState, StatusBadge } from '../../components/ui';
 import './UsersPage.css';
 
 export default function UserManagementPage() {
@@ -22,6 +24,8 @@ export default function UserManagementPage() {
   const [formPassword, setFormPassword] = useState('');
   const [formRoleId, setFormRoleId] = useState('');
   const [formMobile, setFormMobile] = useState('');
+  const [formAssignedProjects, setFormAssignedProjects] = useState([]);
+  const [filterByActiveProject, setFilterByActiveProject] = useState(false);
   
   const [statusFilter, setStatusFilter] = useState('all');
   
@@ -30,6 +34,8 @@ export default function UserManagementPage() {
   
   // Current user info to prevent self-deactivation
   const currentUser = useSelector(state => state.auth.user);
+  const { projectId: activeProjectId, selectedProject } = useActiveProject();
+  const orgProjects = useSelector((state) => state.project.projects || []);
 
   useEffect(() => { loadData(); }, []);
 
@@ -57,6 +63,7 @@ export default function UserManagementPage() {
     setFormPassword('');
     setFormRoleId('');
     setFormMobile('');
+    setFormAssignedProjects(activeProjectId ? [String(activeProjectId)] : []);
     setShowForm(true);
     setError('');
   };
@@ -69,6 +76,7 @@ export default function UserManagementPage() {
     setFormPassword(''); // Password not required for edit
     setFormRoleId(user.roleId || '');
     setFormMobile(user.mobileNumber || '');
+    setFormAssignedProjects((user.assignedProjects || []).map(String));
     setShowForm(true);
     setError('');
   };
@@ -91,7 +99,8 @@ export default function UserManagementPage() {
           firstName: formFirstName.trim(),
           lastName: formLastName.trim(),
           roleId: formRoleId,
-          mobileNumber: formMobile.trim()
+          mobileNumber: formMobile.trim(),
+          assignedProjects: formAssignedProjects,
         });
         setSuccess('User updated successfully');
       } else {
@@ -101,7 +110,8 @@ export default function UserManagementPage() {
           firstName: formFirstName.trim(),
           lastName: formLastName.trim(),
           roleId: formRoleId,
-          mobileNumber: formMobile.trim()
+          mobileNumber: formMobile.trim(),
+          assignedProjects: formAssignedProjects,
         });
         setSuccess('User created successfully');
       }
@@ -148,8 +158,12 @@ export default function UserManagementPage() {
     const matchesSearch = `${u.firstName} ${u.lastName} ${u.email} ${u.roleName}`.toLowerCase().includes(search.toLowerCase());
     if (!matchesSearch) return false;
     const isActive = u.isActive !== false;
-    if (statusFilter === 'active') return isActive;
-    if (statusFilter === 'inactive') return !isActive;
+    if (statusFilter === 'active' && !isActive) return false;
+    if (statusFilter === 'inactive' && isActive) return false;
+    if (filterByActiveProject && activeProjectId) {
+      const assigned = (u.assignedProjects || []).map(String);
+      if (!assigned.includes(String(activeProjectId))) return false;
+    }
     return true;
   });
 
@@ -159,20 +173,18 @@ export default function UserManagementPage() {
 
   return (
     <div className="users-page">
-      <div className="users-header">
-        <div className="users-title-section">
-          <Users size={22} className="users-title-icon" />
-          <div>
-            <h2>User Management</h2>
-            <p>Manage team members and role assignments</p>
-          </div>
-        </div>
-        {!showForm && (
-          <button className="users-create-btn" onClick={openCreateForm}>
-            <Plus size={16} /> Add Team Member
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title="User Management"
+        subtitle="Manage team members and role assignments"
+        projectName={selectedProject?.name}
+        actions={
+          !showForm ? (
+            <Button variant="primary" onClick={openCreateForm}>
+              <Plus size={16} /> Add Team Member
+            </Button>
+          ) : null
+        }
+      />
 
       {error && <div className="users-error"><AlertTriangle size={14} /> {error}</div>}
       {success && <div className="users-success"><CheckCircle size={14} /> {success}</div>}
@@ -232,6 +244,27 @@ export default function UserManagementPage() {
               )}
             </div>
 
+            <div className="users-field" style={{ marginBottom: '1rem' }}>
+              <label>Assigned Projects</label>
+              <select
+                multiple
+                value={formAssignedProjects}
+                onChange={(e) =>
+                  setFormAssignedProjects(Array.from(e.target.selectedOptions).map((o) => o.value))
+                }
+                style={{ minHeight: 88, width: '100%' }}
+              >
+                {orgProjects.map((p) => (
+                  <option key={p._id || p.id} value={String(p._id || p.id)}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <span className="users-field-hint">
+                Hold Ctrl/Cmd to multi-select. Active project: {selectedProject?.name || 'none'}
+              </span>
+            </div>
+
             <div className="users-form-actions">
               <button type="button" className="users-cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>
               <button type="submit" className="users-save-btn">
@@ -255,6 +288,14 @@ export default function UserManagementPage() {
               />
             </div>
             <div className="users-stats" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={filterByActiveProject}
+                  onChange={(e) => setFilterByActiveProject(e.target.checked)}
+                />
+                Assigned to active project
+              </label>
               <select 
                 value={statusFilter} 
                 onChange={e => setStatusFilter(e.target.value)}
@@ -275,7 +316,7 @@ export default function UserManagementPage() {
             </div>
           </div>
 
-          <div className="users-table-wrap">
+          <div className="users-table-wrap ro-table-scroll">
             <table className="users-table">
               <thead>
                 <tr>
@@ -315,9 +356,7 @@ export default function UserManagementPage() {
                         </div>
                       </td>
                       <td>
-                        <span className={`status-pill ${isActive ? 'active' : 'inactive'}`}>
-                          {isActive ? 'Active' : 'Inactive'}
-                        </span>
+                        <StatusBadge status={isActive ? 'Active' : 'Inactive'} />
                       </td>
                       <td className="users-muted">{new Date(user.createdAt).toLocaleDateString('en-GB')}</td>
                       <td className="actions-cell">
@@ -344,8 +383,12 @@ export default function UserManagementPage() {
                 })}
                 {filteredUsers.length === 0 && (
                   <tr>
-                    <td colSpan="6" className="users-empty">
-                      No team members found matching your search.
+                    <td colSpan="6">
+                      <EmptyState
+                        icon={<Users size={24} />}
+                        title="No team members found"
+                        description="No team members match your search or filters."
+                      />
                     </td>
                   </tr>
                 )}

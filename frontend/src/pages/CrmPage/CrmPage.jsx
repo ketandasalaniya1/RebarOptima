@@ -9,6 +9,8 @@ import {
   GripVertical, FileSpreadsheet, MapPin
 } from 'lucide-react';
 import { crmApi } from '../../utils/crmApi';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader } from '../../components/ui';
 import './CrmPage.css';
 
 // ── 2D ARCHITECTURAL FLOOR PLAN BLUEPRINT VECTOR COMPONENT (SCREENSHOTS 1 & 2) ──
@@ -97,11 +99,16 @@ function FloorPlanBlueprint({ unit }) {
 }
 
 export default function CrmPage() {
+  const { projectId: activeProjectId, projectEpoch, selectedProject } = useActiveProject();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+
+  useEffect(() => {
+    if (activeProjectId) setSelectedProjectId(String(activeProjectId));
+  }, [activeProjectId, projectEpoch]);
   const [searchResults, setSearchResults] = useState(null);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
@@ -196,10 +203,11 @@ export default function CrmPage() {
   // Load Initial Workspace Data
   useEffect(() => {
     loadProjects();
-    loadDashboard();
   }, []);
 
+  // Reload CRM views whenever tab or active project changes
   useEffect(() => {
+    if (!selectedProjectId) return;
     if (activeTab === 'dashboard') loadDashboard();
     if (activeTab === 'customers') loadCustomers();
     if (activeTab === 'pipeline') loadPipeline();
@@ -209,7 +217,8 @@ export default function CrmPage() {
     if (activeTab === 'payments') loadPayments();
     if (activeTab === 'reports') loadReports();
     if (activeTab === 'settings') loadSettings();
-  }, [activeTab, selectedProjectId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedProjectId, projectEpoch]);
 
   const loadProjects = async () => {
     try {
@@ -649,17 +658,13 @@ export default function CrmPage() {
 
   return (
     <div className="crm-container">
-      {/* ── Top Header & Global Bar ────────────────────────────────────────── */}
+      <PageHeader
+        title="Real Estate CRM"
+        subtitle="Customers, unit pipelines, bookings, and collections"
+        projectName={selectedProject?.name}
+      />
       <div className="crm-header-bar">
-        <div className="crm-header-title-group">
-          <h1><Building2 size={26} color="var(--accent)" /> Real Estate Enterprise CRM</h1>
-          <div className="crm-subtitle">
-            Unified Customer Management, Multi-Unit Pipelines, Inventory Availability, Bookings & Collections
-          </div>
-        </div>
-
-        <div className="crm-header-actions">
-          {/* Global Search */}
+        <div className="crm-header-actions" style={{ width: '100%' }}>
           <div className="crm-search-box">
             <Search size={16} className="crm-search-icon" />
             <input
@@ -668,6 +673,7 @@ export default function CrmPage() {
               value={globalSearchTerm}
               onChange={(e) => handleGlobalSearch(e.target.value)}
               onFocus={() => globalSearchTerm.length >= 2 && setShowSearchDropdown(true)}
+              aria-label="Search CRM"
             />
             {showSearchDropdown && searchResults && (
               <div style={{

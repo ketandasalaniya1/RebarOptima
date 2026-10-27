@@ -6,6 +6,9 @@ export class Batch extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company', required: true })
   companyId: MongooseSchema.Types.ObjectId;
 
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Project', required: false })
+  projectId?: MongooseSchema.Types.ObjectId;
+
   @Prop({ required: true })
   batchName: string;
 
@@ -34,3 +37,5 @@ export class Batch extends Document {
 
 export const BatchSchema = SchemaFactory.createForClass(Batch);
 BatchSchema.index({ companyId: 1, createdAt: -1 });
+BatchSchema.index({ companyId: 1, projectId: 1, createdAt: -1 });
+

@@ -12,19 +12,15 @@ import {
   publishRevisionSafely
 } from './drawings.service';
 import { seedDrawingsSampleData } from './drawings.seed.service';
+import { resolveUserAndCompany, listAccessibleGlobalProjects } from '../projects/module-project-adapter';
 
 export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any, logAudit?: any) {
   const router = Router();
 
   // Helper to extract companyId safely
   async function resolveCompanyId(req: any, db: any): Promise<any> {
-    let companyId: any = req.user?.companyId;
-    if (!companyId && req.user?.sub) {
-      const u = await db.collection('users').findOne({
-        _id: ObjectId.isValid(req.user.sub) ? new ObjectId(req.user.sub) : req.user.sub
-      });
-      if (u && u.companyId) companyId = u.companyId;
-    }
+    const ctx = await resolveUserAndCompany(req, db);
+    const companyId = ctx.companyId;
     if (companyId && ObjectId.isValid(companyId)) {
       return new ObjectId(companyId);
     }
@@ -128,15 +124,19 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
   router.get('/projects', authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
       const companyId = await resolveCompanyId(req, db);
 
-      const projects = await db.collection('doc_projects').find({ companyId }).sort({ createdAt: -1 }).toArray();
+      const projects = await listAccessibleGlobalProjects(db, ctx);
       const drawings = await db.collection('doc_drawings').find({ companyId }).toArray();
 
       const projectsWithStats = projects.map((p: any) => {
-        const pDrawings = drawings.filter((d: any) => String(d.projectId) === String(p._id));
+        const pId = String(p._id || p.id);
+        const pDrawings = drawings.filter((d: any) => String(d.projectId) === pId);
         return {
           ...p,
+          projectName: p.name || p.projectName,
+          projectCode: p.code || p.projectCode || '',
           drawingCount: pDrawings.length,
           underReviewCount: pDrawings.filter((d: any) => d.currentStatus === 'Under Review').length,
           approvedCount: pDrawings.filter((d: any) => d.currentStatus === 'Approved').length
@@ -145,11 +145,18 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
 
       return res.json(projectsWithStats);
     } catch (err: any) {
-      return res.status(500).json({ message: 'Error fetching projects', error: err.message });
+      return res.status(err.status || 500).json({ message: 'Error fetching projects', error: err.message });
     }
   });
 
-  router.post('/projects', authMiddleware, async (req: any, res) => {
+  router.post('/projects', authMiddleware, async (_req: any, res) => {
+    return res.status(400).json({
+      message: 'Create projects via Company Projects (POST /api/projects).',
+      code: 'USE_GLOBAL_PROJECTS',
+    });
+  });
+
+  router.post('/projects/_legacy_disabled', authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);

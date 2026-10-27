@@ -1,14 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse, Layers2 } from 'lucide-react';
-import logo from '../../assets/logo.png';
+import {
+  Menu,
+  X,
+  PlusSquare,
+  LogOut,
+  LayoutDashboard,
+  Package,
+  ClipboardList,
+  BookOpen,
+  Settings as SettingsIcon,
+  Users,
+  Shield,
+  Layers,
+  ChevronDown,
+  History,
+  Ruler,
+  Building2,
+  Boxes,
+  Warehouse,
+  FileStack,
+  Home,
+} from 'lucide-react';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
+import ProjectSelector from '../ProjectSelector/ProjectSelector';
 import './SideNavbar.css';
+
+/**
+ * Partner Admin nav allowlist (frontend UX only — API auth remains authoritative).
+ * Intentional product subset: no Site Inventory, CRM, Users, Roles, Settings, Activity Logs.
+ * Backend role grants may be broader; do not widen this list without product approval.
+ */
+const PARTNER_ALLOWED_MODULES = [
+  'overview',
+  'projects',
+  'inventory',
+  'ledger',
+  'optimizer',
+  'history',
+  'bbs',
+  'casting',
+  'drawings',
+];
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSteelOpen, setIsSteelOpen] = useState(() => ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView));
-  const [isBbsOpen, setIsBbsOpen] = useState(() => (currentView || '').startsWith('bbs-'));
+  const [isSteelOpen, setIsSteelOpen] = useState(() =>
+    ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView)
+  );
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
 
@@ -24,6 +63,9 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     if (roleUpper === 'ADMIN' || roleUpper === 'OWNER' || user?.accountType === 'developer') {
       return true;
     }
+    if (roleUpper === 'PROJECT_PARTNER_ADMIN' || roleUpper === 'PROJECT PARTNER ADMIN') {
+      return PARTNER_ALLOWED_MODULES.includes(moduleKey);
+    }
     if (!permissions || Object.keys(permissions).length === 0) {
       return true;
     }
@@ -34,7 +76,13 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     {
       id: 'overview',
       label: 'Overview',
-      icon: <LayoutDashboard size={18} />
+      icon: <LayoutDashboard size={18} />,
+    },
+    {
+      id: 'projects',
+      label: 'Projects',
+      icon: <Building2 size={18} />,
+      moduleKey: 'projects',
     },
     {
       id: 'steel',
@@ -46,88 +94,87 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           id: 'inventory',
           label: 'Inventory',
           icon: <Package size={17} />,
-          moduleKey: 'inventory'
+          moduleKey: 'inventory',
         },
         {
           id: 'ledger',
           label: 'Ledger & Procurement',
           icon: <BookOpen size={17} />,
-          moduleKey: 'ledger'
+          moduleKey: 'ledger',
         },
         {
           id: 'inputs',
           label: 'Run Optimizer',
           icon: <PlusSquare size={17} />,
-          moduleKey: 'optimizer'
+          moduleKey: 'optimizer',
         },
         {
           id: 'history',
           label: 'Batch History',
           icon: <ClipboardList size={17} />,
-          moduleKey: 'history'
-        }
-      ]
+          moduleKey: 'history',
+        },
+      ],
     },
     {
       id: 'bbs',
       label: 'BBS',
-      icon: <Building2 size={18} />,
-      moduleKey: 'bbs'
+      icon: <Ruler size={18} />,
+      moduleKey: 'bbs',
     },
     {
       id: 'casting',
       label: 'Casting Management',
       icon: <Boxes size={18} />,
-      moduleKey: 'casting'
+      moduleKey: 'casting',
     },
     {
       id: 'general-inventory',
-      label: 'Inventory',
+      label: 'Site Inventory',
       icon: <Warehouse size={18} />,
-      moduleKey: 'generalInventory'
+      moduleKey: 'generalInventory',
     },
     {
       id: 'crm',
       label: 'Real Estate CRM',
-      icon: <Building2 size={18} />,
-      moduleKey: 'crm'
+      icon: <Home size={18} />,
+      moduleKey: 'crm',
     },
     {
       id: 'drawings',
       label: 'Drawing & Files',
-      icon: <Layers2 size={18} />,
-      moduleKey: 'drawings'
+      icon: <FileStack size={18} />,
+      moduleKey: 'drawings',
     },
     {
       id: 'settings',
       label: 'Settings',
       icon: <SettingsIcon size={18} />,
-      moduleKey: 'settings'
+      moduleKey: 'settings',
     },
     {
       id: 'users',
       label: 'User Management',
       icon: <Users size={18} />,
-      moduleKey: 'users'
+      moduleKey: 'users',
     },
     {
       id: 'roles',
       label: 'Roles & Permissions',
       icon: <Shield size={18} />,
-      moduleKey: 'roles'
+      moduleKey: 'roles',
     },
     {
       id: 'activity-logs',
       label: 'Activity Logs',
       icon: <History size={18} />,
-      moduleKey: 'activityLogs'
-    }
+      moduleKey: 'activityLogs',
+    },
   ];
 
-  // Filter menu items based on permissions
-  const menuItems = MENU_STRUCTURE.map(item => {
+  const menuItems = MENU_STRUCTURE.map((item) => {
     if (item.isGroup && item.children) {
-      const allowedChildren = item.children.filter(child => checkPermission(child.moduleKey));
+      const allowedChildren = item.children.filter((child) => checkPermission(child.moduleKey));
       if (allowedChildren.length === 0) return null;
       return { ...item, children: allowedChildren };
     }
@@ -136,35 +183,20 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   }).filter(Boolean);
 
   const isSteelActive = ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView);
-  const isBbsActive = (currentView || '').startsWith('bbs-');
 
-  const getGroupOpen = (item) => {
-    if (item.groupKey === 'bbs') return isBbsOpen;
-    return isSteelOpen; // default for 'steel'
-  };
-  const toggleGroup = (item) => {
-    if (item.groupKey === 'bbs') {
-      setIsBbsOpen(prev => !prev);
-      if (!isBbsOpen) setIsSteelOpen(false);
-    } else {
-      setIsSteelOpen(prev => !prev);
-      if (!isSteelOpen) setIsBbsOpen(false);
-    }
-  };
-  const isGroupActive = (item) => {
-    if (item.groupKey === 'bbs') return isBbsActive;
-    return isSteelActive;
-  };
-
-  const initials = user 
-    ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() 
+  const initials = user
+    ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase()
     : 'U';
 
   return (
     <>
-      {/* Mobile Header */}
       <div className="mobile-header">
-        <button className="menu-toggle-btn" onClick={() => setIsOpen(true)}>
+        <button
+          type="button"
+          className="menu-toggle-btn"
+          onClick={() => setIsOpen(true)}
+          aria-label="Open navigation menu"
+        >
           <Menu size={24} />
         </button>
         <div className="mobile-logo-wrapper brand-logo-text">
@@ -174,14 +206,16 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
         <ThemeToggle />
       </div>
 
-      {/* Sidenavbar */}
-      <div className={`sidenav ${isOpen ? 'open' : ''}`}>
-        {/* Close button for Mobile Drawer */}
-        <button className="sidenav-close-btn" onClick={() => setIsOpen(false)}>
+      <div className={`sidenav ${isOpen ? 'open' : ''}`} aria-label="Main navigation">
+        <button
+          type="button"
+          className="sidenav-close-btn"
+          onClick={() => setIsOpen(false)}
+          aria-label="Close navigation menu"
+        >
           <X size={24} />
         </button>
 
-        {/* Logo Section */}
         <div className="sidenav-logo-container">
           <div className="brand-logo-text">
             <span className="brand-rebar">Rebar</span>
@@ -189,36 +223,37 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           </div>
         </div>
 
-        {/* Menu Links */}
+        <ProjectSelector />
+
         <nav className="sidenav-menu">
-          {menuItems.map(item => {
+          {menuItems.map((item) => {
             if (item.isGroup) {
-              const groupOpen = getGroupOpen(item);
-              const groupActive = isGroupActive(item);
               return (
                 <div key={item.id} className="sidenav-group-container">
                   <button
-                    className={`sidenav-item sidenav-group-header ${groupActive && !groupOpen ? 'active-parent' : ''}`}
-                    onClick={() => toggleGroup(item)}
-                    aria-expanded={groupOpen}
+                    type="button"
+                    className={`sidenav-item sidenav-group-header ${isSteelActive && !isSteelOpen ? 'active-parent' : ''}`}
+                    onClick={() => setIsSteelOpen((prev) => !prev)}
+                    aria-expanded={isSteelOpen}
                   >
                     <span className="sidenav-icon">{item.icon}</span>
                     <span className="sidenav-label">{item.label}</span>
-                    <ChevronDown size={16} className={`sidenav-chevron ${groupOpen ? 'open' : ''}`} />
+                    <ChevronDown size={16} className={`sidenav-chevron ${isSteelOpen ? 'open' : ''}`} />
                   </button>
-                  <div className={`sidenav-submenu-wrapper ${groupOpen ? 'open' : ''}`}>
+                  <div className={`sidenav-submenu-wrapper ${isSteelOpen ? 'open' : ''}`}>
                     <div className="sidenav-submenu">
                       <div className="sidenav-submenu-content">
-                        {item.children.map(child => (
+                        {item.children.map((child) => (
                           <button
+                            type="button"
                             key={child.id}
                             className={`sidenav-item sidenav-subitem ${currentView === child.id || (currentView === 'results' && child.id === 'inputs') ? 'active' : ''}`}
                             onClick={() => {
                               onViewChange(child.id);
                               setIsOpen(false);
                             }}
-                            tabIndex={groupOpen ? 0 : -1}
-                            aria-hidden={!groupOpen}
+                            tabIndex={isSteelOpen ? 0 : -1}
+                            aria-hidden={!isSteelOpen}
                           >
                             <span className="sidenav-icon">{child.icon}</span>
                             <span className="sidenav-label">{child.label}</span>
@@ -231,10 +266,13 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
               );
             }
 
+            const isBbsChild = (currentView || '').startsWith('bbs-') && item.id === 'bbs';
+
             return (
               <button
+                type="button"
                 key={item.id}
-                className={`sidenav-item ${currentView === item.id || (currentView === 'results' && item.id === 'inputs') ? 'active' : ''}`}
+                className={`sidenav-item ${currentView === item.id || isBbsChild || (currentView === 'results' && item.id === 'inputs') ? 'active' : ''}`}
                 onClick={() => {
                   onViewChange(item.id);
                   setIsOpen(false);
@@ -247,15 +285,15 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           })}
         </nav>
 
-        {/* Sidebar Footer with Theme Toggle, User Profile & Logout */}
         <div className="sidenav-footer">
           <div className="theme-toggle-row">
             <span className="sidenav-footer-lbl">Theme</span>
             <ThemeToggle />
           </div>
-          
+
           {user && (
-            <button 
+            <button
+              type="button"
               className={`user-profile-badge ${currentView === 'profile' ? 'active' : ''}`}
               onClick={() => {
                 onViewChange('profile');
@@ -264,17 +302,23 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
               title="View & Edit Profile"
             >
               {user.avatar ? (
-                <img src={user.avatar} alt={user.firstName} className="profile-avatar-img" />
+                <img src={user.avatar} alt="" className="profile-avatar-img" />
               ) : (
                 <div className="profile-initials">{initials}</div>
               )}
               <div className="profile-details">
-                <div className="profile-name">{user.firstName} {user.lastName}</div>
+                <div className="profile-name">
+                  {user.firstName} {user.lastName}
+                </div>
                 <div className="profile-role-company">
                   <span className="profile-role">{user.role}</span>
                   <span className="profile-divider">•</span>
-                  <span className="profile-company" title={`${user.companyName || 'Standard Firm'}${user.projectName ? ` (${user.projectName})` : ''}`}>
-                    {user.companyName || 'Standard Firm'}{user.projectName ? ` • ${user.projectName}` : ''}
+                  <span
+                    className="profile-company"
+                    title={`${user.companyName || 'Standard Firm'}${user.projectName ? ` (${user.projectName})` : ''}`}
+                  >
+                    {user.companyName || 'Standard Firm'}
+                    {user.projectName ? ` • ${user.projectName}` : ''}
                   </span>
                 </div>
               </div>
@@ -282,22 +326,31 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           )}
 
           {onLogout && (
-            <button 
-              className="sidenav-item logout-btn" 
+            <button
+              type="button"
+              className="sidenav-item logout-btn"
               onClick={() => {
                 setIsOpen(false);
                 onLogout();
               }}
             >
-              <span className="sidenav-icon"><LogOut size={18} /></span>
+              <span className="sidenav-icon">
+                <LogOut size={18} />
+              </span>
               <span className="sidenav-label">Logout</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Backdrop overlay for Mobile Drawer */}
-      {isOpen && <div className="sidenav-backdrop" onClick={() => setIsOpen(false)}></div>}
+      {isOpen && (
+        <div
+          className="sidenav-backdrop"
+          onClick={() => setIsOpen(false)}
+          role="presentation"
+          aria-hidden="true"
+        />
+      )}
     </>
   );
 }

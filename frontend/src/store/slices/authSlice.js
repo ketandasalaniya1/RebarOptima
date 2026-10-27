@@ -58,6 +58,10 @@ const authSlice = createSlice({
       sessionStorage.removeItem('user');
       sessionStorage.removeItem('lastActivity');
       sessionStorage.removeItem('permissions');
+      // Project hint must not survive logout as proof of access
+      try {
+        localStorage.removeItem('rebar_active_project_id');
+      } catch (_) {}
     },
     updateUserSuccess: (state, action) => {
       state.user = {

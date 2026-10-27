@@ -28,6 +28,7 @@ const getInitialView = () => {
     if (path === '/settings') return 'settings';
     if (path === '/profile') return 'profile';
     if (path === '/developer' || path === '/superadmin') return 'superadmin';
+    if (path === '/projects') return 'projects';
     if (path === '/roles') return 'roles';
     if (path === '/users') return 'users';
     if (path === '/bbs') return 'bbs-projects';

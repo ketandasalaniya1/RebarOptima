@@ -1,0 +1,16 @@
+{
+  "generatedAt": null,
+  "dryRun": true,
+  "note": "Run backend/scripts/project-migration-inventory.js against a live DB to populate. This placeholder is not a verified mapping.",
+  "summary": {
+    "globalCount": 0,
+    "mappingCandidates": 0,
+    "exact": 0,
+    "fuzzy": 0,
+    "orphans": 0,
+    "globalsOnly": 0
+  },
+  "mappings": [],
+  "orphans": [],
+  "globalsOnly": []
+}

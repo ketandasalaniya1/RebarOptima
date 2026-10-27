@@ -13,6 +13,7 @@ import { verifyMultiDocumentTransactionRollback } from './casting/casting.invent
 import { createGeneralInventoryRouter } from './general-inventory/general-inventory.routes';
 import { createCrmMasterRouter } from './crm/crm.routes';
 import { createDrawingsMasterRouter } from './drawings/drawings.routes';
+import { createProjectsRouter } from './projects/projects.routes';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
@@ -27,7 +28,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Project-Id');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
@@ -376,6 +377,16 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
       transmittals: 'Manage Transmittals',
       settings: 'Configure Drawing Settings'
     }
+  },
+  projects: {
+    displayName: 'Project Management',
+    features: {
+      view: 'View Projects',
+      create: 'Create Projects',
+      edit: 'Edit Projects',
+      geofence: 'Configure Geofences',
+      settings: 'Project Settings'
+    }
   }
 };
 
@@ -397,6 +408,27 @@ const DEFAULT_SYSTEM_ROLES = [
     description: 'Full access to all modules and features within the organization',
     permissions: buildFullPermissions(),
     dataScope: 'organization'
+  },
+  {
+    name: 'Project Partner Admin',
+    description: 'Project-level administrator assigned to manage specific projects, settings, and geofences',
+    permissions: {
+      overview: { view: true, export: true },
+      projects: { view: true, create: false, edit: true, geofence: true, settings: true },
+      inventory: { view: true, inward: true, edit: true, delete: false, export: true },
+      optimizer: { view: true, create: true },
+      history: { view: true, edit: true, delete: false, export: true },
+      ledger: { view: true, export: true },
+      scrapSales: { view: true, create: false, edit: false, delete: false },
+      activityLogs: { view: true, export: false },
+      settings: { view: true, edit: false },
+      users: { view: false },
+      roles: { view: false },
+      casting: { view: true, create: true, edit: true, delete: false },
+      generalInventory: { view: true, create: true, edit: true, delete: false, export: true },
+      drawings: { view: true, upload: true, review: false, transmittals: false, settings: false }
+    },
+    dataScope: 'project'
   },
   {
     name: 'Project Manager',
@@ -626,6 +658,9 @@ app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit));
 
 // Mount Standalone Enterprise Drawing & File Management Module Routes
 app.use('/api/drawings', createDrawingsMasterRouter(() => db, authMiddleware, logAudit));
+
+// Mount Multi-Project Management & Geofencing Module Routes
+app.use('/api/projects', createProjectsRouter(() => db, authMiddleware, logAudit));
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {
@@ -910,6 +945,7 @@ async function logAudit(db: Db, params: {
   actorEmail?: string;
   actorRole?: string;
   companyId?: string | ObjectId | null;
+  projectId?: string | null;
   module?: string;
   action: string;
   resource: string;
@@ -966,6 +1002,7 @@ async function logAudit(db: Db, params: {
       actorEmail: actorEmail || '',
       actorRole: actorRole || 'User',
       companyId: companyId || null,
+      projectId: params.projectId ? String(params.projectId) : null,
       module: params.module || 'general',
       action: params.action,
       resource: params.resource,
@@ -1490,9 +1527,24 @@ app.get('/api/activity-logs', authMiddleware, requirePermission('activityLogs', 
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     if (!companyId) return res.status(400).json({ message: 'Company not found' });
 
-    const { module, userId, action, startDate, endDate, search, page = 1, limit = 50 } = req.query as any;
+    const { module, userId, action, startDate, endDate, search, page = 1, limit = 50, projectId } = req.query as any;
+    const headerProjectId = req.headers['x-project-id'];
+    const activeProjectId = projectId || headerProjectId;
 
     const filter: any = { companyId };
+
+    // Prefer project-scoped logs when project context is present; include company-wide (no projectId) for admin visibility
+    if (activeProjectId) {
+      filter.$and = [
+        {
+          $or: [
+            { projectId: String(activeProjectId) },
+            { projectId: { $exists: false } },
+            { projectId: null },
+          ],
+        },
+      ];
+    }
 
     if (module && module !== 'all') {
       filter.module = module;
@@ -1771,6 +1823,7 @@ app.post('/api/auth/signin', async (req, res) => {
         id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName,
         role: roleName, companyId: user.companyId ? user.companyId.toString() : null,
         companyName: company?.name ?? 'System', projectName: company?.projectName ?? '',
+        assignedProjects: user.assignedProjects || [],
         accountType: 'user'
       },
       permissions
@@ -2354,7 +2407,7 @@ app.get('/api/users', adminMiddleware, async (req: any, res) => {
 
 app.post('/api/users', adminMiddleware, async (req: any, res) => {
   try {
-    const { email, password, firstName, lastName, roleId, mobileNumber } = req.body;
+    const { email, password, firstName, lastName, roleId, mobileNumber, assignedProjects } = req.body;
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ message: 'Email, password, first name, and last name are required' });
     }
@@ -2398,7 +2451,8 @@ app.post('/api/users', adminMiddleware, async (req: any, res) => {
       email: email.toLowerCase().trim(), passwordHash, firstName, lastName,
       role: roleName, companyId,
       roleId: roleObjId || null,
-      mobileNumber: mobileNumber || '', isActive: true, assignedProjects: [],
+      mobileNumber: mobileNumber || '', isActive: true,
+      assignedProjects: Array.isArray(assignedProjects) ? assignedProjects.map(String) : [],
       createdAt: new Date()
     };
     const result = await db.collection('users').insertOne(userDoc);
@@ -2494,11 +2548,33 @@ app.get('/api/system-roles', authMiddleware, async (req: any, res) => {
 app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const items = await db.collection('stockitems').find({ companyId, quantity: { $gt: 0 } }).sort({ createdAt: 1 }).toArray();
+    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
+    const ctx = await resolveUserAndCompany(req, db);
+    const projectId = req.query.projectId || req.headers['x-project-id'];
+    if (!projectId) {
+      return res.status(400).json({ message: 'Project context is required (X-Project-Id or projectId)', code: 'PROJECT_REQUIRED' });
+    }
+    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(companyId) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(companyId) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+
+    const pIdObj = toObjectId(projectId);
+    const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    const query: any = {
+      $and: [companyClause, { $or: projectOr }],
+      quantity: { $gt: 0 },
+    };
+
+    const items = await db.collection('stockitems').find(query).sort({ createdAt: 1 }).toArray();
     res.json({ standardStock: items.filter((i: any) => !i.isRemnant), remnantsStock: items.filter((i: any) => i.isRemnant).sort((a: any, b: any) => Number(a.length) - Number(b.length)) });
-  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+  } catch (e: any) {
+    console.error(e);
+    res.status(e.status || 500).json({ message: e.message, code: e.code });
+  }
 });
 
 app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory', 'inward'), async (req: any, res) => {
@@ -2506,14 +2582,17 @@ app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory',
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '' } = req.body;
+    const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '', projectId } = req.body;
     let quantity = Number(rawQty), weightInKgs = Number(rawWeight);
     const singleWeight = getSingleBarWeight(Number(diameter), Number(length));
     if (weightInKgs > 0 && quantity === 0) quantity = Math.round(weightInKgs / singleWeight);
     else if (quantity > 0 && weightInKgs === 0) weightInKgs = quantity * singleWeight;
-    const filter = { companyId, diameter: Number(diameter), length: Number(length), costPerKg: Number(costPerKg), typeOfBar, brandName, vendorName, isRemnant: false };
+    const filter: any = { companyId, diameter: Number(diameter), length: Number(length), costPerKg: Number(costPerKg), typeOfBar, brandName, vendorName, isRemnant: false };
+    if (projectId) {
+      filter.projectId = toObjectId(projectId) || projectId;
+    }
     const result = await db.collection('stockitems').findOneAndUpdate(filter, { $inc: { quantity, weightInKgs }, $setOnInsert: { createdAt: new Date() } }, { upsert: true, returnDocument: 'after' });
-    await db.collection('inventorytransactions').insertOne({ companyId, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
+    await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
 
     await logAudit(db, {
       actorId: req.user.sub,
@@ -2579,11 +2658,30 @@ app.post('/api/inventory/scrap-rules', authMiddleware, requirePermission('settin
 app.get('/api/inventory/ledger', authMiddleware, requirePermission('ledger', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const ledger = await db.collection('inventorytransactions').find({ companyId }).sort({ createdAt: -1 }).toArray();
+    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
+    const ctx = await resolveUserAndCompany(req, db);
+    const projectId = req.query.projectId || req.headers['x-project-id'];
+    if (!projectId) {
+      return res.status(400).json({ message: 'Project context is required', code: 'PROJECT_REQUIRED' });
+    }
+    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+    const pIdObj = toObjectId(projectId);
+    const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    const ledger = await db.collection('inventorytransactions')
+      .find({ $and: [companyClause, { $or: projectOr }] })
+      .sort({ createdAt: -1 })
+      .toArray();
     res.json(ledger);
-  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+  } catch (e: any) {
+    console.error(e);
+    res.status(e.status || 500).json({ message: e.message, code: e.code });
+  }
 });
 
 app.delete('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'delete'), async (req: any, res) => {
@@ -2803,7 +2901,7 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const { batchName, inputStock, requiredParts, layouts, summary } = req.body;
+    const { batchName, inputStock, requiredParts, layouts, summary, projectId } = req.body;
     const scrapRules = await ensureScrapRules(db, companyId as any);
     const rulesMap = new Map(scrapRules.map((r: any) => [r.diameter, r.scrapLengthThreshold]));
     let totalScrapKg = 0, totalRemnantKg = 0;
@@ -2823,22 +2921,24 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
           const newWeight = Math.max(0, original.weightInKgs - layoutWeight);
           if (newQty === 0) await db.collection('stockitems').deleteOne({ _id: original._id });
           else await db.collection('stockitems').updateOne({ _id: original._id }, { $set: { quantity: newQty, weightInKgs: newWeight } });
-          await db.collection('inventorytransactions').insertOne({ companyId, type: 'OUTWARD', diameter, length: stockLength, quantity: repetition, weightInKgs: layoutWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
+          await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'OUTWARD', diameter, length: stockLength, quantity: repetition, weightInKgs: layoutWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
 
           if (waste > 0) {
             const threshold = rulesMap.get(diameter) ?? 1000;
             const wasteWeight = getSingleBarWeight(diameter, waste) * repetition;
             if (waste < threshold) {
               totalScrapKg += wasteWeight;
-              await db.collection('inventorytransactions').insertOne({ companyId, type: 'SCRAP', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
+              await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'SCRAP', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
             } else {
               totalRemnantKg += wasteWeight;
+              const remnantFilter: any = { companyId, diameter, length: waste, isRemnant: true, costPerKg: original.costPerKg, typeOfBar: original.typeOfBar || '', brandName: original.brandName || '', vendorName: original.vendorName || '' };
+              if (projectId) remnantFilter.projectId = toObjectId(projectId) || projectId;
               await db.collection('stockitems').findOneAndUpdate(
-                { companyId, diameter, length: waste, isRemnant: true, costPerKg: original.costPerKg, typeOfBar: original.typeOfBar || '', brandName: original.brandName || '', vendorName: original.vendorName || '' },
+                remnantFilter,
                 { $inc: { quantity: repetition, weightInKgs: wasteWeight }, $setOnInsert: { createdAt: new Date() } },
                 { upsert: true }
               );
-              await db.collection('inventorytransactions').insertOne({ companyId, type: 'REMNANT', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
+              await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'REMNANT', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, brandName: original.brandName || '', vendorName: original.vendorName || '', typeOfBar: original.typeOfBar || '', referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
             }
           }
         }
@@ -2848,7 +2948,7 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
           const wasteWeight = getSingleBarWeight(diameter, waste) * repetition;
           if (waste < threshold) {
             totalScrapKg += wasteWeight;
-            await db.collection('inventorytransactions').insertOne({ companyId, type: 'SCRAP', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
+            await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'SCRAP', diameter, length: waste, quantity: repetition, weightInKgs: wasteWeight, referenceName: batchName || 'Cutting Batch', createdAt: new Date() });
           } else {
             totalRemnantKg += wasteWeight;
           }
@@ -2856,7 +2956,18 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
       }
     }
 
-    const batch = await db.collection('batches').insertOne({ companyId, batchName, inputStock, requiredParts, layouts, summary: { ...summary, totalScrapKg, totalRemnantKg }, createdAt: new Date() });
+    const batchDoc: any = {
+      companyId,
+      batchName,
+      inputStock,
+      requiredParts,
+      layouts,
+      summary: { ...summary, totalScrapKg, totalRemnantKg },
+      createdAt: new Date(),
+    };
+    if (projectId) batchDoc.projectId = toObjectId(projectId) || projectId;
+
+    const batch = await db.collection('batches').insertOne(batchDoc);
 
     await logAudit(db, {
       actorId: req.user.sub,
@@ -2877,11 +2988,29 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
 app.get('/api/batches', authMiddleware, requirePermission('history', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const batches = await db.collection('batches').find({ companyId }).sort({ createdAt: -1 }).toArray();
+    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
+    const ctx = await resolveUserAndCompany(req, db);
+    const projectId = req.query.projectId || req.headers['x-project-id'];
+    if (!projectId) {
+      return res.status(400).json({ message: 'Project context is required', code: 'PROJECT_REQUIRED' });
+    }
+    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+    const pIdObj = toObjectId(projectId);
+    const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    const query: any = { $and: [companyClause, { $or: projectOr }] };
+
+    const batches = await db.collection('batches').find(query).sort({ createdAt: -1 }).toArray();
     res.json(batches);
-  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+  } catch (e: any) {
+    console.error(e);
+    res.status(e.status || 500).json({ message: e.message, code: e.code });
+  }
 });
 
 app.put('/api/batches/:id', authMiddleware, requirePermission('history', 'edit'), async (req: any, res) => {
@@ -3011,10 +3140,29 @@ app.get('/api/batches/scrap-records', authMiddleware, requirePermission('history
 app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
+    const ctx = await resolveUserAndCompany(req, db);
+    const projectId = req.query.projectId || req.headers['x-project-id'];
+    if (!projectId) {
+      return res.status(400).json({ message: 'Project context is required', code: 'PROJECT_REQUIRED' });
+    }
+    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
 
-    const liveStock = await db.collection('stockitems').find({ companyId, quantity: { $gt: 0 } }).toArray();
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+    const pIdObj = toObjectId(projectId);
+    const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    const scoped: any = {
+      $and: [
+        companyClause,
+        { $or: projectOr },
+      ],
+    };
+
+    const liveStock = await db.collection('stockitems').find({ ...scoped, quantity: { $gt: 0 } }).toArray();
     let liveStandardKg = 0, liveRemnantsKg = 0;
     const diameterWeights: { [key: number]: number } = { 8: 0, 10: 0, 12: 0, 16: 0, 20: 0, 25: 0, 32: 0 };
     const remnantDiameterWeights: { [key: number]: number } = { 8: 0, 10: 0, 12: 0, 16: 0, 20: 0, 25: 0, 32: 0 };
@@ -3034,7 +3182,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
       }
     });
 
-    const batches = await db.collection('batches').find({ companyId }).sort({ createdAt: 1 }).toArray();
+    const batches = await db.collection('batches').find(scoped).sort({ createdAt: 1 }).toArray();
     let totalScrapKg = 0, totalStockUsedKg = 0;
     const dailyScrapMap = new Map<string, number>();
 
@@ -3061,7 +3209,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
 
     const wastagePercentage = totalStockUsedKg > 0 ? (totalScrapKg / totalStockUsedKg) * 100 : 0;
 
-    const scrapSales = await db.collection('scrapsales').find({ companyId }).toArray();
+    const scrapSales = await db.collection('scrapsales').find(scoped).toArray();
     let totalScrapSoldWeight = 0;
     let totalScrapRevenue = 0;
     let totalScrapLossDifferential = 0;
@@ -3074,7 +3222,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
     });
 
     // Compute Inward Steel Purchased Value and Weight Till Date
-    const inwardTransactions = await db.collection('inventorytransactions').find({ companyId, type: 'INWARD' }).toArray();
+    const inwardTransactions = await db.collection('inventorytransactions').find({ $and: [...scoped.$and, { type: 'INWARD' }] }).toArray();
     let totalSteelPurchasedCost = 0;
     let totalSteelPurchasedKg = 0;
     inwardTransactions.forEach((t: any) => {

@@ -2,42 +2,31 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { reserveUnitSafely, releaseUnitSafely, evaluateUnitAvailability, generateBusinessReference } from './crm.reservation.service';
 import { calculateBookingFinancials } from './crm.calculation.service';
+import { resolveUserAndCompany, listAccessibleGlobalProjects } from '../projects/module-project-adapter';
 
 export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
   const router = Router();
 
   const resolveCompanyId = async (req: any, db: any): Promise<ObjectId | string> => {
-    if (req.user?.companyId) {
-      return ObjectId.isValid(req.user.companyId) ? new ObjectId(req.user.companyId) : req.user.companyId;
-    }
-    const userId = req.user?.sub;
-    if (userId) {
-      try {
-        const u = await db.collection('users').findOne({
-          $or: [{ _id: ObjectId.isValid(userId) ? new ObjectId(userId) : userId }, { _id: userId }]
-        });
-        if (u && u.companyId) {
-          return ObjectId.isValid(u.companyId) ? new ObjectId(u.companyId) : u.companyId;
-        }
-      } catch {}
-    }
-    return 'default-company';
+    const ctx = await resolveUserAndCompany(req, db);
+    return ctx.companyId;
   };
 
   // ── PROJECTS ─────────────────────────────────────────────────────────────
 
-  // GET /api/crm/projects - List all projects with unit availability summary
+  // GET /api/crm/projects - List global projects with unit availability summary
   router.get('/projects', authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
 
-      const projects = await db.collection('crm_projects').find({ companyId }).sort({ createdAt: -1 }).toArray();
+      const projects = await listAccessibleGlobalProjects(db, ctx);
       const allUnits = await db.collection('crm_units').find({ companyId }).toArray();
       const allInterests = await db.collection('crm_unit_interests').find({ companyId }).toArray();
 
       const enriched = projects.map((p: any) => {
-        const pIdStr = String(p._id);
+        const pIdStr = String(p._id || p.id);
         const pUnits = allUnits.filter((u: any) => String(u.projectId) === pIdStr);
         const pInterests = allInterests.filter((i: any) => String(i.projectId) === pIdStr);
 
@@ -70,8 +59,15 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
     }
   });
 
-  // POST /api/crm/projects - Create project
-  router.post('/projects', authMiddleware, async (req: any, res) => {
+  // POST /api/crm/projects - Create via global catalog
+  router.post('/projects', authMiddleware, async (_req: any, res) => {
+    return res.status(400).json({
+      message: 'Create projects via Company Projects (POST /api/projects).',
+      code: 'USE_GLOBAL_PROJECTS',
+    });
+  });
+
+  router.post('/projects/_legacy_disabled', authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);

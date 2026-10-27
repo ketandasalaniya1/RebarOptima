@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { inventoryApi, batchesApi } from '../../utils/api'
+import { useActiveProject } from '../../hooks/useActiveProject'
 import {
   Package,
   Settings,
@@ -30,6 +31,7 @@ import {
   RotateCcw
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import { PageHeader } from '../../components/ui'
 import './InventoryPage.css'
 
 const STANDARD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32]
@@ -100,31 +102,36 @@ export default function InventoryPage() {
   const [standardSearch, setStandardSearch] = useState('')
   const [standardFilterDia, setStandardFilterDia] = useState('ALL')
 
-  // Load inventory and rules on mount
-  useEffect(() => {
-    fetchData()
-  }, [])
+  const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
 
-  async function fetchData() {
+  // Load inventory and rules when active project changes
+  useEffect(() => {
+    if (!projectId) return
+    fetchData(projectEpoch)
+  }, [projectId, projectEpoch])
+
+  async function fetchData(epochAtStart) {
     try {
       setLoading(true)
       setError('')
       const [invData, rulesData, salesData, scrapRecordsData, ledgerData] = await Promise.all([
-        inventoryApi.getInventory(),
+        inventoryApi.getInventory(projectId),
         inventoryApi.getScrapRules(),
         inventoryApi.getScrapSales(),
         batchesApi.getScrapRecords().catch(() => []),
         inventoryApi.getLedger().catch(() => [])
       ])
+      if (epochAtStart != null && isStale(epochAtStart)) return
       setInventory(invData)
       setScrapRules(rulesData)
       setScrapSales(salesData)
       setBatchScrapRecords(scrapRecordsData || [])
       setLedgerHistory(ledgerData || [])
     } catch (err) {
+      if (epochAtStart != null && isStale(epochAtStart)) return
       setError(err.message || 'Failed to fetch inventory data.')
     } finally {
-      setLoading(false)
+      if (epochAtStart == null || !isStale(epochAtStart)) setLoading(false)
     }
   }
 
@@ -450,7 +457,7 @@ export default function InventoryPage() {
       setSuccess(`Voucher inward entry recorded successfully for ${filledRows.length} diameter${filledRows.length > 1 ? 's' : ''}!`)
       setVoucherRows(createDefaultVoucherRows())
       
-      const invData = await inventoryApi.getInventory()
+      const invData = await inventoryApi.getInventory(projectId)
       setInventory(invData)
 
       setTimeout(() => {
@@ -902,11 +909,12 @@ export default function InventoryPage() {
 
   return (
     <div className="inventory-page">
+      <PageHeader
+        title="Inventory Stock"
+        subtitle="Manage standard rebar stock, voucher entries, batch scrap history, and scrap sales."
+        projectName={selectedProject?.name}
+      />
       <div className="inventory-header-row">
-        <div>
-          <h1 className="inventory-title">Inventory Stock</h1>
-          <p className="inventory-subtitle">Manage standard rebar stock, voucher entries, batch scrap history, and scrap sales.</p>
-        </div>
         <div className="tab-buttons">
           <button 
             className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
@@ -1093,7 +1101,7 @@ export default function InventoryPage() {
                 <p>No standard stock items found matching your filters. Add stock using Voucher Inward.</p>
               </div>
             ) : (
-              <div className="table-responsive">
+              <div className="table-responsive ro-table-scroll">
                 <table className="inventory-table">
                   <thead>
                     <tr>
@@ -1913,7 +1921,7 @@ export default function InventoryPage() {
                 Detailed ledger of scrap cleared from site for {user?.companyName || 'Firm'}{user?.projectName ? ` (${user.projectName})` : ''}.
               </p>
 
-              <div className="table-responsive">
+              <div className="table-responsive ro-table-scroll">
                 <table className="inventory-table">
                   <thead>
                     <tr>

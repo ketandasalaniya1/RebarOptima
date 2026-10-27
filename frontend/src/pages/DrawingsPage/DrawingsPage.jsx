@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './DrawingsPage.css';
 import { drawingsApi } from '../../utils/drawingsApi';
+import { useActiveProject } from '../../hooks/useActiveProject';
+import { PageHeader, Button } from '../../components/ui';
 
 import {
   LayoutDashboard,
@@ -15,8 +17,7 @@ import {
   Search,
   Plus,
   RefreshCw,
-  Folder,
-  Layers2
+  Folder
 } from 'lucide-react';
 
 import DrawingsDashboard from './components/DrawingsDashboard';
@@ -32,6 +33,7 @@ import ModulePermissionsView from './components/ModulePermissionsView';
 import ModuleSettingsView from './components/ModuleSettingsView';
 
 export default function DrawingsPage() {
+  const { projectId: activeProjectId, projectEpoch, selectedProject } = useActiveProject();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
 
@@ -50,21 +52,26 @@ export default function DrawingsPage() {
   const [selectedDrawingDetail, setSelectedDrawingDetail] = useState(null);
   const [preselectedTransmittalIds, setPreselectedTransmittalIds] = useState([]);
 
-  // Filter & Search States
+  // Filter & Search States — locked to active org project (not company-wide client filter)
   const [projectFilter, setProjectFilter] = useState('all');
   const [disciplineFilter, setDisciplineFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    if (activeProjectId) setProjectFilter(String(activeProjectId));
+  }, [activeProjectId, projectEpoch]);
+
   // Initial Data Load
   const loadAllData = async () => {
     setLoading(true);
     try {
+      const pid = activeProjectId || undefined;
       const [dash, prjs, discs, dws, trans, acts, usrs, stts] = await Promise.all([
         drawingsApi.getDashboard().catch(() => null),
         drawingsApi.getProjects().catch(() => []),
         drawingsApi.getDisciplines().catch(() => []),
-        drawingsApi.getDrawings().catch(() => ({ drawings: [] })),
+        drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
         drawingsApi.getTransmittals().catch(() => []),
         drawingsApi.getActivityLog().catch(() => []),
         drawingsApi.getUsers().catch(() => []),
@@ -93,7 +100,8 @@ export default function DrawingsPage() {
 
   useEffect(() => {
     loadAllData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProjectId, projectEpoch]);
 
   // Filtered Drawings
   const filteredDrawings = (drawings || []).filter((d) => {
@@ -207,61 +215,29 @@ export default function DrawingsPage() {
 
   return (
     <div className="drawings-module-root">
-      {/* ── Top Header Navigation Bar (Screenshot 5 Panel 1) ───────────── */}
-      <div className="drawings-top-header">
-        <div className="drawings-brand-section">
-          <div className="drawings-module-title">
-            <Layers2 size={22} color="#38bdf8" />
-            <span>Drawing &amp; File Management</span>
-          </div>
-          <span className="drawings-badge-tag">ISO 19650 Standard</span>
-        </div>
-
-        {/* Global Search across module */}
-        <div className="drawings-header-search">
-          <Search size={15} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search drawings, projects, files... (Ctrl + K)"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="drawings-header-actions">
-          <button
-            className="dw-btn-secondary"
-            style={{ padding: '0.4rem 0.65rem' }}
-            onClick={loadAllData}
-            title="Refresh Workspace"
-          >
-            <RefreshCw size={14} className={loading ? 'spin' : ''} />
-          </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '0.5rem' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: '#0284c7',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                fontSize: '0.8rem'
-              }}
-            >
-              RS
+      <PageHeader
+        title="Drawing & File Management"
+        subtitle="ISO 19650 document control, registers, revisions, and transmittals."
+        projectName={selectedProject?.name}
+        actions={
+          <>
+            <div className="drawings-header-search">
+              <Search size={15} className="search-icon" aria-hidden />
+              <input
+                type="search"
+                placeholder="Search drawings, projects, files…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search drawings"
+              />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>Rahul Singh</span>
-              <span style={{ fontSize: '0.68rem', color: 'var(--text-label)' }}>Lead Document Controller</span>
-            </div>
-          </div>
-        </div>
-      </div>
+            <Button variant="secondary" onClick={loadAllData} title="Refresh Workspace">
+              <RefreshCw size={14} className={loading ? 'spin' : ''} />
+              Refresh
+            </Button>
+          </>
+        }
+      />
 
       {/* ── Sub-Navigation Tabs Bar (11 Required Screens) ───────────────── */}
       <div className="drawings-nav-tabs-bar">

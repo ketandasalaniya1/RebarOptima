@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setThemeMode, setThemeColor, setDefaults } from '../../store/slices/settingsSlice';
-import { Save, Palette, Sliders, Moon, Sun, Settings, Database, Scale, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Save, Palette, Sliders, Moon, Sun, Database, Scale, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { companyApi, inventoryApi } from '../../utils/api';
+import { PageHeader } from '../../components/ui';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -96,13 +97,10 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <div className="settings-header">
-        <Settings className="settings-header-icon" size={24} />
-        <div>
-          <h1 className="settings-title">Company & Optimizer Settings</h1>
-          <p className="settings-subtitle">Configure interface colors, scrap rules, cutting parameters, and storage.</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Company & Optimizer Settings"
+        subtitle="Configure interface colors, scrap rules, cutting parameters, and storage."
+      />
 
       <div className="settings-grid">
         {/* Reusable Remnant & Scrap Rules Card */}

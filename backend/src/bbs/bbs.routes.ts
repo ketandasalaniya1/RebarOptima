@@ -1,67 +1,67 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { BBS_MEMBER_TYPES } from './bbs.types';
+import {
+  resolveUserAndCompany,
+  listAccessibleGlobalProjects,
+  resolveCanonicalProjectId,
+} from '../projects/module-project-adapter';
 
 export function createBBSRouter(getDb: () => any, authMiddleware: any) {
   const router = Router();
 
   // Helper to extract companyId from authenticated user
   const resolveCompanyId = async (req: any, db: any): Promise<string> => {
-    if (req.user?.companyId) return String(req.user.companyId);
-    const userId = req.user?.sub;
-    if (userId) {
-      try {
-        const u = await db.collection('users').findOne({ 
-          $or: [{ _id: new ObjectId(userId) }, { _id: userId }] 
-        });
-        if (u && u.companyId) return String(u.companyId);
-      } catch {}
+    const ctx = await resolveUserAndCompany(req, db);
+    return ctx.companyId;
+  };
+
+  const enrichBbsStats = async (db: any, project: any) => {
+    const projectId = String(project._id || project.id);
+    // Include legacy module id if bridged
+    const legacy = await db.collection('bbs_projects').findOne({
+      companyId: String(project.companyId),
+      $or: [{ orgProjectId: projectId }, { _id: project._id }],
+    }).catch(() => null);
+    const ids = [projectId];
+    if (legacy) ids.push(String(legacy._id));
+
+    const [blocks, levels, members] = await Promise.all([
+      db.collection('bbs_blocks').find({ projectId: { $in: ids } }).toArray(),
+      db.collection('bbs_levels').find({ projectId: { $in: ids } }).toArray(),
+      db.collection('bbs_members').find({ projectId: { $in: ids } }).toArray(),
+    ]);
+
+    let completionPercentage = 0;
+    if (members.length > 0) {
+      const totalProgress = members.reduce((sum: number, m: any) => sum + (Number(m.completionPercentage) || 0), 0);
+      completionPercentage = Math.round(totalProgress / members.length);
     }
-    return req.user?.companyId || 'default-company';
+
+    return {
+      ...project,
+      id: projectId,
+      blockCount: blocks.length,
+      levelCount: levels.length,
+      memberCount: members.length,
+      completionPercentage,
+    };
   };
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 1. BBS PROJECTS
+  // 1. BBS PROJECTS — adapters over global /api/projects
   // ════════════════════════════════════════════════════════════════════════════
 
-  // GET all BBS projects with aggregated stats
+  // GET all BBS projects with aggregated stats (global catalog)
   router.get('/projects', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-
-      const projects = await db.collection('bbs_projects').find({ companyId }).sort({ createdAt: -1 }).toArray();
-
-      // Enrich with blocks, levels, members count & completion %
-      const enrichedProjects = await Promise.all(
-        projects.map(async (project: any) => {
-          const projectId = project._id.toString();
-
-          const [blocks, levels, members] = await Promise.all([
-            db.collection('bbs_blocks').find({ projectId }).toArray(),
-            db.collection('bbs_levels').find({ projectId }).toArray(),
-            db.collection('bbs_members').find({ projectId }).toArray()
-          ]);
-
-          let completionPercentage = 0;
-          if (members.length > 0) {
-            const totalProgress = members.reduce((sum: number, m: any) => sum + (Number(m.completionPercentage) || 0), 0);
-            completionPercentage = Math.round(totalProgress / members.length);
-          }
-
-          return {
-            ...project,
-            blockCount: blocks.length,
-            levelCount: levels.length,
-            memberCount: members.length,
-            completionPercentage
-          };
-        })
-      );
-
+      const ctx = await resolveUserAndCompany(req, db);
+      const projects = await listAccessibleGlobalProjects(db, ctx);
+      const enrichedProjects = await Promise.all(projects.map((p: any) => enrichBbsStats(db, p)));
       res.json(enrichedProjects);
     } catch (err: any) {
-      res.status(500).json({ message: err.message || 'Error fetching BBS projects' });
+      res.status(err.status || 500).json({ message: err.message || 'Error fetching BBS projects' });
     }
   });
 
@@ -69,71 +69,20 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
   router.get('/projects/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const id = req.params.id;
-
-      const project = await db.collection('bbs_projects').findOne({
-        $or: [{ _id: new ObjectId(id) }, { _id: id }],
-        companyId
-      });
-
-      if (!project) {
-        return res.status(404).json({ message: 'BBS Project not found' });
-      }
-
-      const projectId = project._id.toString();
-      const [blocks, levels, members] = await Promise.all([
-        db.collection('bbs_blocks').find({ projectId }).toArray(),
-        db.collection('bbs_levels').find({ projectId }).toArray(),
-        db.collection('bbs_members').find({ projectId }).toArray()
-      ]);
-
-      let completionPercentage = 0;
-      if (members.length > 0) {
-        const totalProgress = members.reduce((sum: number, m: any) => sum + (Number(m.completionPercentage) || 0), 0);
-        completionPercentage = Math.round(totalProgress / members.length);
-      }
-
-      res.json({
-        ...project,
-        blockCount: blocks.length,
-        levelCount: levels.length,
-        memberCount: members.length,
-        completionPercentage
-      });
+      const ctx = await resolveUserAndCompany(req, db);
+      const { project } = await resolveCanonicalProjectId(db, ctx, req.params.id);
+      res.json(await enrichBbsStats(db, project));
     } catch (err: any) {
-      res.status(500).json({ message: err.message || 'Error fetching BBS project' });
+      res.status(err.status || 500).json({ message: err.message || 'Error fetching BBS project', code: err.code });
     }
   });
 
-  // POST create new BBS project
+  // POST create — deprecated; use POST /api/projects. Kept as thin proxy for compatibility.
   router.post('/projects', authMiddleware, async (req: any, res: any) => {
-    try {
-      const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const { name, location, description, status } = req.body;
-
-      if (!name || !name.trim()) {
-        return res.status(400).json({ message: 'Project Name is required' });
-      }
-
-      const now = new Date();
-      const newProject = {
-        companyId,
-        name: name.trim(),
-        location: location ? location.trim() : '',
-        description: description ? description.trim() : '',
-        status: status || 'Active',
-        createdAt: now,
-        updatedAt: now
-      };
-
-      const result = await db.collection('bbs_projects').insertOne(newProject);
-      const created = await db.collection('bbs_projects').findOne({ _id: result.insertedId });
-      res.status(201).json(created);
-    } catch (err: any) {
-      res.status(500).json({ message: err.message || 'Error creating BBS project' });
-    }
+    return res.status(400).json({
+      message: 'Create projects via Company Projects (POST /api/projects). Module-specific project catalogs are unified.',
+      code: 'USE_GLOBAL_PROJECTS',
+    });
   });
 
   // PUT update BBS project
@@ -204,7 +153,8 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
   router.get('/projects/:projectId/blocks', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const projectId = req.params.projectId;
+      const ctx = await resolveUserAndCompany(req, db);
+      const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
 
       const blocks = await db.collection('bbs_blocks').find({ projectId }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
 
@@ -240,8 +190,9 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
   router.post('/projects/:projectId/blocks', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const projectId = req.params.projectId;
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
+      const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
       const { name, code, description } = req.body;
 
       if (!name || !name.trim()) {

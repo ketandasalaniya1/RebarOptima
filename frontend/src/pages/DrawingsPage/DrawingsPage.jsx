@@ -27,7 +27,6 @@ import {
 
 export default function DrawingsPage() {
   const { projectId: activeProjectId, projectEpoch, selectedProject } = useActiveProject();
-  const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [drawings, setDrawings] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -39,8 +38,6 @@ export default function DrawingsPage() {
 
   // Filter & Search States — locked to active org project (not company-wide client filter)
   const [projectFilter, setProjectFilter] = useState('all');
-  const [disciplineFilter, setDisciplineFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewLayout, setViewLayout] = useState('grid'); // 'grid' | 'table'
 
@@ -64,26 +61,13 @@ export default function DrawingsPage() {
     if (activeProjectId) setProjectFilter(String(activeProjectId));
   }, [activeProjectId, projectEpoch]);
 
-  // Initial Data Load
-  const loadAllData = async () => {
-    setLoading(true);
-    try {
-      const pid = activeProjectId || undefined;
-      const [dash, prjs, discs, dws, trans, acts, usrs, stts] = await Promise.all([
-        drawingsApi.getDashboard().catch(() => null),
-        drawingsApi.getProjects().catch(() => []),
-        drawingsApi.getDisciplines().catch(() => []),
-        drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
-        drawingsApi.getTransmittals().catch(() => []),
-        drawingsApi.getActivityLog().catch(() => []),
-        drawingsApi.getUsers().catch(() => []),
-        drawingsApi.getSettings().catch(() => null)
   // Load All Data
   const loadData = async () => {
     setLoading(true);
     try {
+      const pid = activeProjectId || undefined;
       const [dwsRes, prjsRes, discsRes] = await Promise.all([
-        drawingsApi.getDrawings().catch(() => ({ drawings: [] })),
+        drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
         drawingsApi.getProjects().catch(() => []),
         drawingsApi.getDisciplines().catch(() => [])
       ]);
@@ -108,12 +92,12 @@ export default function DrawingsPage() {
     }
   };
 
+  const loadAllData = loadData;
+
   useEffect(() => {
-    loadAllData();
+    loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId, projectEpoch]);
-    loadData();
-  }, []);
 
   // Open Drawing in Simple Viewer
   const handleOpenDrawing = async (dw) => {
@@ -226,10 +210,10 @@ export default function DrawingsPage() {
     setUploadError('');
 
     try {
-      let activeProjectId = uploadForm.projectId;
+      let targetProjectId = uploadForm.projectId;
 
       // Create new project if user selected new project
-      if (activeProjectId === 'new' && uploadForm.newProjectName.trim()) {
+      if (targetProjectId === 'new' && uploadForm.newProjectName.trim()) {
         const code = uploadForm.newProjectName.substring(0, 3).toUpperCase();
         const newProj = await drawingsApi.createProject({
           projectName: uploadForm.newProjectName.trim(),
@@ -237,10 +221,10 @@ export default function DrawingsPage() {
           location: 'Site Location',
           status: 'Active'
         });
-        activeProjectId = newProj._id;
+        targetProjectId = String(newProj._id || newProj.id);
         await loadData();
-      } else if (!activeProjectId && projects.length > 0) {
-        activeProjectId = projects[0]._id;
+      } else if (!targetProjectId && projects.length > 0) {
+        targetProjectId = projects[0]._id;
       }
 
       const activeDisciplineId =
@@ -251,7 +235,7 @@ export default function DrawingsPage() {
       const payload = {
         title: uploadForm.title.trim(),
         drawingNumber: uploadForm.drawingNumber.trim() || undefined,
-        projectId: activeProjectId,
+        projectId: targetProjectId,
         disciplineId: activeDisciplineId,
         drawingType: 'General Arrangement',
         initialChangeDescription: 'Initial drawing upload',

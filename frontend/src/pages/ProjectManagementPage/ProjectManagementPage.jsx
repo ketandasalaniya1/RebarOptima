@@ -6,7 +6,8 @@ import {
   BarChart3,
   CalendarCheck,
   ShieldCheck,
-  DollarSign,
+  Users,
+  Calendar,
   Clock,
   Database,
   RefreshCw,
@@ -17,21 +18,21 @@ import PmDashboardView from './components/PmDashboardView';
 import PmProjectsView from './components/PmProjectsView';
 import PmTasksView from './components/PmTasksView';
 import PmGanttView from './components/PmGanttView';
+import PmManpowerView from './components/PmManpowerView';
+import PmCalendarView from './components/PmCalendarView';
 import PmDailyProgressView from './components/PmDailyProgressView';
 import PmQualityView from './components/PmQualityView';
-import PmCostProductivityView from './components/PmCostProductivityView';
 import PmDelayModal from './components/PmDelayModal';
 import './ProjectManagementPage.css';
 
 export default function ProjectManagementPage() {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'projects' | 'tasks' | 'gantt' | 'dpr' | 'quality' | 'costs'
+  const [activeTab, setActiveTab] = useState('overview');
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [dependencies, setDependencies] = useState([]);
   const [dprs, setDprs] = useState([]);
   const [inspections, setInspections] = useState([]);
-  const [costs, setCosts] = useState([]);
   const [kpis, setKpis] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -77,19 +78,17 @@ export default function ProjectManagementPage() {
 
   const loadProjectDetails = async (projId) => {
     try {
-      const [tasksRes, depsRes, dprRes, inspRes, costsRes] = await Promise.all([
+      const [tasksRes, depsRes, dprRes, inspRes] = await Promise.all([
         pmApi.getTasks(projId),
         pmApi.getDependencies(projId),
         pmApi.getDprs(projId),
-        pmApi.getInspections(projId),
-        pmApi.getCosts(projId)
+        pmApi.getInspections(projId)
       ]);
 
       setTasks(tasksRes?.data || []);
       setDependencies(depsRes?.data || []);
       setDprs(dprRes?.data || []);
       setInspections(inspRes?.data || []);
-      setCosts(costsRes?.data || []);
     } catch (err) {
       console.error('Error loading project details:', err);
     }
@@ -127,9 +126,10 @@ export default function ProjectManagementPage() {
     { id: 'projects', label: 'Projects', icon: FolderKanban },
     { id: 'tasks', label: 'Tasks & WBS', icon: CheckSquare },
     { id: 'gantt', label: 'Gantt Schedule', icon: BarChart3 },
+    { id: 'manpower', label: 'Manpower & Workforce', icon: Users },
+    { id: 'calendar', label: 'Calendar & Hours', icon: Calendar },
     { id: 'dpr', label: 'Daily Reports (DPR)', icon: CalendarCheck },
-    { id: 'quality', label: 'Quality & QA', icon: ShieldCheck },
-    { id: 'costs', label: 'Cost & Variance', icon: DollarSign }
+    { id: 'quality', label: 'Quality & QA', icon: ShieldCheck }
   ];
 
   return (
@@ -265,6 +265,28 @@ export default function ProjectManagementPage() {
                 dependencies={dependencies}
                 onOpenDelayModal={() => setIsDelayModalOpen(true)}
                 onLockBaseline={handleLockBaseline}
+                onRefreshSchedule={() => {
+                  loadProjectsAndKpis();
+                  loadProjectDetails(selectedProjectId);
+                }}
+              />
+            )}
+
+            {activeTab === 'manpower' && (
+              <PmManpowerView
+                project={currentProject}
+                tasks={tasks}
+                onRefreshTasks={() => loadProjectDetails(selectedProjectId)}
+              />
+            )}
+
+            {activeTab === 'calendar' && (
+              <PmCalendarView
+                project={currentProject}
+                onRefreshProject={() => {
+                  loadProjectsAndKpis();
+                  loadProjectDetails(selectedProjectId);
+                }}
               />
             )}
 
@@ -286,15 +308,6 @@ export default function ProjectManagementPage() {
                 tasks={tasks}
                 inspections={inspections}
                 onRefreshInspections={() => loadProjectDetails(selectedProjectId)}
-              />
-            )}
-
-            {activeTab === 'costs' && (
-              <PmCostProductivityView
-                project={currentProject}
-                tasks={tasks}
-                costs={costs}
-                onRefreshCosts={() => loadProjectDetails(selectedProjectId)}
               />
             )}
           </>

@@ -6,10 +6,94 @@ export type DependencyType = 'FS' | 'SS' | 'FF' | 'SF';
 export type ProjectStatus = 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'AT_RISK' | 'DELAYED' | 'COMPLETED' | 'CANCELLED';
 export type DelayCategory = 'LABOUR_SHORTAGE' | 'MATERIAL_SHORTAGE' | 'EQUIPMENT_FAILURE' | 'WEATHER' | 'DESIGN_CLARIFICATION' | 'QUALITY_REWORK' | 'SITE_ACCESS' | 'DEPENDENCY_DELAY' | 'CLIENT_APPROVAL' | 'OTHER';
 
+export interface BreakInterval {
+  name: string; // e.g. "Lunch Break", "Morning Tea / Recess", "Afternoon Recess"
+  startTime: string; // "12:30"
+  endTime: string; // "13:30"
+  durationMinutes: number; // 60
+}
+
+export interface HolidayItem {
+  date: string; // YYYY-MM-DD
+  name: string; // e.g. "Republic Day", "Monsoon Site Shutdown"
+  type: 'PUBLIC' | 'PROJECT_SPECIFIC' | 'WEEKLY_OFF';
+}
+
 export interface ProjectCalendar {
   workingDaysPerWeek: 5 | 6 | 7; // 6 is standard in construction (Mon-Sat)
+  weeklyOffDays?: number[]; // [0] for Sunday, [0, 6] for Sat-Sun. Default is derived from workingDaysPerWeek
+  workStartTime?: string; // "08:00"
+  workEndTime?: string; // "17:30"
+  lunchBreak?: BreakInterval;
+  recessIntervals?: BreakInterval[];
   workingHoursPerDay: number;
   holidays: string[]; // YYYY-MM-DD
+  holidayList?: HolidayItem[];
+}
+
+export interface ManpowerResource {
+  _id?: ObjectId | string;
+  companyId: string;
+  projectId?: string;
+  name: string;
+  role: string;
+  category: 'STAFF' | 'LABOUR_GANG' | 'SUBCONTRACTOR' | 'SPECIALIST';
+  headcount: number;
+  dailyCapacityHours: number;
+  contactPhone?: string;
+  skills?: string[];
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface TaskManpowerAllocation {
+  resourceId: string;
+  resourceName: string;
+  role: string;
+  headcount: number;
+  plannedDailyHours: number;
+}
+
+export interface ManpowerConflict {
+  resourceId: string;
+  resourceName: string;
+  role: string;
+  category: string;
+  headcount: number;
+  dailyCapacityHours: number;
+  conflictDate: string;
+  totalAllocatedHours: number;
+  tasks: Array<{
+    taskId: string;
+    taskName: string;
+    wbsCode: string;
+    allocatedHours: number;
+  }>;
+  severity: 'CRITICAL' | 'WARNING';
+}
+
+export interface ProjectReschedulePreviewResult {
+  projectId: string;
+  oldPlannedStart: string;
+  newPlannedStart: string;
+  shiftWorkingDays: number;
+  shiftCalendarDays: number;
+  oldForecastFinish: string;
+  newForecastFinish: string;
+  tasksCount: number;
+  affectedTasks: Array<{
+    taskId: string;
+    wbsCode: string;
+    taskName: string;
+    durationDays: number;
+    originalForecastStart: string;
+    originalForecastFinish: string;
+    revisedForecastStart: string;
+    revisedForecastFinish: string;
+    isMilestone: boolean;
+    isCritical: boolean;
+  }>;
 }
 
 export interface PmProject {
@@ -74,6 +158,7 @@ export interface PmTask {
   assignedRole?: string; // e.g. 'Site Engineer', 'Steel Fixer Lead', 'Contractor'
   assignedUserName?: string;
   assignedUserId?: string;
+  manpowerAllocations?: TaskManpowerAllocation[];
   
   // Progress & Quantities
   plannedQty?: number;

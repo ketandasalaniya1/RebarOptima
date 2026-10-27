@@ -119,6 +119,104 @@ export function createPmMasterRouter(
   });
 
   // ══════════════════════════════════════════════════════════════════════════════
+  // CALENDAR & WORKING HOURS
+  // ══════════════════════════════════════════════════════════════════════════════
+  router.put('/projects/:id/calendar', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const updated = await pmService.updateProjectCalendar(companyId, req.params.id, req.body);
+      if (!updated) return res.status(404).json({ message: 'Project not found' });
+      res.json({ success: true, message: 'Project calendar and working hours updated successfully', data: updated });
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // GANTT START DATE RESCHEDULING & PREVIEW
+  // ══════════════════════════════════════════════════════════════════════════════
+  router.post('/projects/:id/reschedule-start-date/preview', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const { newPlannedStart } = req.body;
+      if (!newPlannedStart) return res.status(400).json({ message: 'newPlannedStart is required' });
+
+      const preview = await pmService.previewRescheduleProjectStartDate(companyId, req.params.id, newPlannedStart);
+      res.json({ success: true, data: preview });
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
+  router.post('/projects/:id/reschedule-start-date/confirm', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const { newPlannedStart } = req.body;
+      if (!newPlannedStart) return res.status(400).json({ message: 'newPlannedStart is required' });
+
+      const updated = await pmService.confirmRescheduleProjectStartDate(companyId, req.params.id, newPlannedStart, req.user?.email || 'admin');
+      if (!updated) return res.status(404).json({ message: 'Project not found' });
+      res.json({ success: true, message: 'Project start date rescheduled successfully', data: updated });
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // MANPOWER & WORKFORCE MANAGEMENT
+  // ══════════════════════════════════════════════════════════════════════════════
+  router.get('/projects/:id/manpower', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const list = await pmService.getManpower(companyId, req.params.id);
+      res.json({ success: true, data: list });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  router.post('/projects/:id/manpower', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const item = await pmService.createManpower(companyId, req.params.id, req.body);
+      res.status(201).json({ success: true, data: item });
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
+  router.put('/projects/:id/manpower/:resourceId', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const item = await pmService.updateManpower(companyId, req.params.resourceId, req.body);
+      if (!item) return res.status(404).json({ message: 'Manpower resource not found' });
+      res.json({ success: true, data: item });
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
+  router.delete('/projects/:id/manpower/:resourceId', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const success = await pmService.deleteManpower(companyId, req.params.resourceId);
+      res.json({ success });
+    } catch (e: any) {
+      res.status(400).json({ message: e.message });
+    }
+  });
+
+  router.get('/projects/:id/manpower-conflicts', authMiddleware, async (req: any, res) => {
+    try {
+      const companyId = getCompanyId(req);
+      const conflicts = await pmService.getManpowerConflicts(companyId, req.params.id);
+      res.json({ success: true, data: conflicts });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════════
   // TASKS
   // ══════════════════════════════════════════════════════════════════════════════
   router.get('/projects/:id/tasks', authMiddleware, async (req: any, res) => {

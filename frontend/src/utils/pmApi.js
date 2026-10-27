@@ -35,11 +35,21 @@ export const pmApi = {
   submitDpr: (projectId, data) => apiRequest(`/pm/projects/${projectId}/dpr`, { method: 'POST', body: data }),
   approveDpr: (id) => apiRequest(`/pm/dpr/${id}/approve`, { method: 'PUT' }),
 
+  // Calendar & Working Hours
+  updateCalendar: (projectId, data) => apiRequest(`/pm/projects/${projectId}/calendar`, { method: 'PUT', body: data }),
+
+  // Gantt Start Date Rescheduling & Preview
+  previewRescheduleStartDate: (projectId, data) => apiRequest(`/pm/projects/${projectId}/reschedule-start-date/preview`, { method: 'POST', body: data }),
+  confirmRescheduleStartDate: (projectId, data) => apiRequest(`/pm/projects/${projectId}/reschedule-start-date/confirm`, { method: 'POST', body: data }),
+
+  // Manpower & Workforce Management
+  getManpower: (projectId) => apiRequest(`/pm/projects/${projectId}/manpower`),
+  createManpower: (projectId, data) => apiRequest(`/pm/projects/${projectId}/manpower`, { method: 'POST', body: data }),
+  updateManpower: (projectId, resourceId, data) => apiRequest(`/pm/projects/${projectId}/manpower/${resourceId}`, { method: 'PUT', body: data }),
+  deleteManpower: (projectId, resourceId) => apiRequest(`/pm/projects/${projectId}/manpower/${resourceId}`, { method: 'DELETE' }),
+  getManpowerConflicts: (projectId) => apiRequest(`/pm/projects/${projectId}/manpower-conflicts`),
+
   // Quality & Inspections
   getInspections: (projectId) => apiRequest(`/pm/projects/${projectId}/inspections`),
-  recordInspection: (projectId, data) => apiRequest(`/pm/projects/${projectId}/inspections`, { method: 'POST', body: data }),
-
-  // Costs & Productivity
-  getCosts: (projectId) => apiRequest(`/pm/projects/${projectId}/costs`),
-  addCost: (projectId, data) => apiRequest(`/pm/projects/${projectId}/costs`, { method: 'POST', body: data })
+  recordInspection: (projectId, data) => apiRequest(`/pm/projects/${projectId}/inspections`, { method: 'POST', body: data })
 };

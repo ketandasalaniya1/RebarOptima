@@ -7,20 +7,46 @@ export class CpmSchedulingEngine {
   public static isWorkingDay(date: Date, calendar: ProjectCalendar): boolean {
     const dayOfWeek = date.getDay(); // 0 is Sunday, 6 is Saturday
     
-    // Check days per week
-    if (calendar.workingDaysPerWeek === 5) {
-      if (dayOfWeek === 0 || dayOfWeek === 6) return false;
-    } else if (calendar.workingDaysPerWeek === 6) {
-      if (dayOfWeek === 0) return false; // Sunday off, Saturday is working
+    // 1. Explicit weeklyOffDays check if configured
+    if (calendar.weeklyOffDays && Array.isArray(calendar.weeklyOffDays) && calendar.weeklyOffDays.length > 0) {
+      if (calendar.weeklyOffDays.includes(dayOfWeek)) return false;
+    } else {
+      // Fallback based on workingDaysPerWeek
+      if (calendar.workingDaysPerWeek === 5) {
+        if (dayOfWeek === 0 || dayOfWeek === 6) return false;
+      } else if (calendar.workingDaysPerWeek === 6) {
+        if (dayOfWeek === 0) return false; // Sunday off, Saturday is working
+      }
     }
     
-    // Check holiday list
+    // 2. Check holiday list
     const ymd = date.toISOString().split('T')[0];
     if (calendar.holidays && calendar.holidays.includes(ymd)) {
       return false;
     }
+    if (calendar.holidayList && calendar.holidayList.some(h => h.date === ymd)) {
+      return false;
+    }
     
     return true;
+  }
+
+  /**
+   * Calculates net working hours per day after deducting lunch and recess breaks.
+   */
+  public static calculateNetWorkingHours(
+    workStartTime: string = '08:00',
+    workEndTime: string = '17:30',
+    lunchDurationMinutes: number = 60,
+    recessIntervalsMinutes: number = 30
+  ): number {
+    const parseMinutes = (t: string) => {
+      const [h, m] = (t || '00:00').split(':').map(Number);
+      return (h || 0) * 60 + (m || 0);
+    };
+    const totalMinutes = Math.max(0, parseMinutes(workEndTime) - parseMinutes(workStartTime));
+    const netMinutes = Math.max(0, totalMinutes - lunchDurationMinutes - recessIntervalsMinutes);
+    return Math.round((netMinutes / 60) * 10) / 10;
   }
 
   /**

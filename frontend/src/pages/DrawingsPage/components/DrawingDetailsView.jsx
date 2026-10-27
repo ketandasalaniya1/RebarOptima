@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import CADViewer from './CADViewer';
+import SimpleDrawingViewer from './SimpleDrawingViewer';
 import PDFViewer from './PDFViewer';
 import {
   ZoomIn,
@@ -303,9 +303,9 @@ export default function DrawingDetailsView({
           {/* Interactive Viewport: CAD / PDF / Image / Vector Blueprint */}
           {(viewMode === 'cad' || (viewMode === 'auto' && isCad)) ? (
             <div style={{ flex: 1, minHeight: '560px', width: '100%', position: 'relative' }}>
-              <CADViewer
-                fileData={rev?.fileData}
-                fileName={rev?.fileName || `${drawing.drawingNumber}.${fileExt}`}
+              <SimpleDrawingViewer
+                drawingData={drawingData}
+                onBack={onBack}
               />
             </div>
           ) : (viewMode === 'pdf' || (viewMode === 'auto' && isPdf)) ? (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, AlertTriangle, CheckCircle2, Clock, DollarSign, Calendar, ArrowRight, ShieldCheck, Database } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, AlertTriangle, CheckCircle2, Clock, Calendar, ArrowRight, ShieldCheck, Database } from 'lucide-react';
 
 export default function PmDashboardView({ kpis, projects, tasks, onSelectProject, onSeedData, isSeeding }) {
   const activeCount = projects.filter(p => p.status === 'ACTIVE').length;
@@ -67,12 +67,12 @@ export default function PmDashboardView({ kpis, projects, tasks, onSelectProject
 
         <div className="pm-kpi-card">
           <div className="pm-kpi-icon-wrap pm-icon-purple">
-            <DollarSign size={20} />
+            <Calendar size={20} />
           </div>
           <div className="pm-kpi-details">
-            <span className="pm-kpi-label">Approved Budget</span>
-            <span className="pm-kpi-value">₹{((kpis?.totalBudget || 0) / 10000000).toFixed(2)} Cr</span>
-            <span className="pm-kpi-sub">Spend: ₹{((kpis?.actualSpend || 0) / 100000).toFixed(1)} Lakhs</span>
+            <span className="pm-kpi-label">CPM Working Calendar</span>
+            <span className="pm-kpi-value">{projects[0]?.calendar?.workingDaysPerWeek || 6}-Day Week</span>
+            <span className="pm-kpi-sub">{projects[0]?.calendar?.workingHoursPerDay || 8}h daily | {projects[0]?.calendar?.holidays?.length || 0} holidays</span>
           </div>
         </div>
       </div>

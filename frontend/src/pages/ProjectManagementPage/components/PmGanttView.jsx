@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Clock, ShieldCheck, ZoomIn, ZoomOut, AlertCircle, Calendar, Flag, ArrowRight } from 'lucide-react';
+import { Clock, ShieldCheck, ZoomIn, ZoomOut, AlertCircle, Calendar, Flag, ArrowRight, Edit3 } from 'lucide-react';
+import PmRescheduleModal from './PmRescheduleModal';
 
-export default function PmGanttView({ project, tasks, dependencies, onOpenDelayModal, onLockBaseline }) {
+export default function PmGanttView({ project, tasks, dependencies, onOpenDelayModal, onLockBaseline, onRefreshSchedule }) {
   const [zoomLevel, setZoomLevel] = useState('DAYS'); // 'DAYS' | 'WEEKS'
   const [filterCriticalOnly, setFilterCriticalOnly] = useState(false);
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
 
   // Filter tasks if critical path filter is active
   const displayedTasks = useMemo(() => {
@@ -115,6 +117,20 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
               onClick={() => setZoomLevel('WEEKS')}
             >
               Compact
+            </button>
+          </div>
+
+          <div className="pm-gantt-start-group">
+            <span className="pm-gantt-start-badge" title="Project Planned Start Anchor">
+              <Calendar size={13} />
+              <span>Start: <strong>{project?.plannedStart || '—'}</strong></span>
+            </span>
+            <button
+              className="pm-btn pm-btn-xs pm-btn-secondary"
+              onClick={() => setIsRescheduleOpen(true)}
+              title="Change project start date with automatic schedule recalculation"
+            >
+              <Edit3 size={11} /> Shift Start
             </button>
           </div>
 
@@ -348,6 +364,14 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
           </div>
         </div>
       </div>
+
+      {/* PROJECT START DATE RESCHEDULE MODAL */}
+      <PmRescheduleModal
+        isOpen={isRescheduleOpen}
+        onClose={() => setIsRescheduleOpen(false)}
+        project={project}
+        onRescheduled={onRefreshSchedule}
+      />
     </div>
   );
 }

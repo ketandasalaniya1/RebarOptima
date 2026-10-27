@@ -1036,3 +1036,474 @@
   border-radius: 8px;
   font-size: 13px;
 }
+
+.pm-success-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--success-subtle);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.pm-btn-xs {
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.pm-field-hint {
+  font-size: 11px;
+  color: var(--text-label);
+  margin-top: 3px;
+  display: block;
+}
+
+/* Gantt Start Date Controls */
+.pm-gantt-start-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--main-bg);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+}
+
+.pm-gantt-start-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pm-gantt-start-badge strong {
+  color: var(--text-primary);
+}
+
+/* Reschedule Modal */
+.pm-reschedule-modal {
+  max-width: 820px;
+}
+
+.pm-reschedule-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.pm-input-readonly {
+  background: var(--main-bg);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.pm-form-group-highlight input {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.pm-reschedule-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.pm-reschedule-preview-box {
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 14px;
+}
+
+.pm-preview-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pm-preview-stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pm-preview-stat-card .pm-stat-lbl {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.pm-preview-stat-card .pm-stat-val {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 4px 0 2px;
+}
+
+.pm-preview-stat-card .pm-stat-sub {
+  font-size: 11px;
+  color: var(--text-label);
+}
+
+.pm-guarantee-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--success-subtle);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 6px;
+  font-size: 12px;
+  margin-bottom: 14px;
+  color: var(--text-primary);
+}
+
+.pm-preview-table-wrap h5 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+}
+
+.pm-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.pm-preview-table th {
+  text-align: left;
+  padding: 6px 8px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.pm-preview-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* Calendar & Hours View */
+.pm-calendar-view, .pm-manpower-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pm-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.pm-days-checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.pm-day-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+
+.pm-chip-work {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.pm-chip-off {
+  background: var(--danger-subtle);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.pm-subsection-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 14px 0 8px 0;
+}
+
+.pm-subsection-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 8px 0;
+}
+
+.pm-subsection-title-row .pm-subsection-title {
+  margin: 0;
+}
+
+.pm-form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pm-form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.pm-recess-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pm-recess-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pm-recess-name {
+  flex: 1.5;
+}
+
+.pm-input-sm {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.pm-net-hours-card {
+  background: var(--accent-subtle);
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.pm-net-lbl {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pm-net-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 4px 0;
+}
+
+.pm-net-sub {
+  font-size: 11px;
+  color: var(--text-label);
+}
+
+.pm-add-holiday-box {
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.pm-add-holiday-box label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.pm-form-row-action {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pm-form-row-action input {
+  flex: 1;
+}
+
+.pm-holiday-list-wrap {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.pm-holiday-count {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.pm-mini-table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+
+.pm-mini-table th {
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--card-border);
+  padding: 6px 4px;
+  text-align: left;
+}
+
+.pm-mini-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* Manpower View */
+.pm-conflicts-banner {
+  background: var(--danger-subtle);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+.pm-conflicts-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pm-conflicts-header strong {
+  font-size: 14px;
+  color: var(--danger);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.pm-conflicts-header p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pm-conflicts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 12px;
+}
+
+.pm-conflict-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.pm-conflict-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.pm-conflict-name {
+  font-weight: 700;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.pm-conflict-dates {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: block;
+  margin-top: 2px;
+}
+
+.pm-conflict-hours {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.pm-conflict-tasks small {
+  font-size: 10px;
+  color: var(--text-label);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.pm-conflict-tasks ul {
+  margin: 4px 0 0 16px;
+  padding: 0;
+  font-size: 11px;
+}
+
+.pm-skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pm-skill-badge {
+  font-size: 10px;
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+.pm-phone-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.pm-resource-name {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.pm-task-assign-summary {
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.pm-task-assign-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+

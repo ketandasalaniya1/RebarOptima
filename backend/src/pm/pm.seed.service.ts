@@ -27,8 +27,21 @@ export async function seedSampleProjectData(db: Db, companyId: string, userEmail
     approvedBudget: 45000000, // 4.5 Crores INR
     calendar: {
       workingDaysPerWeek: 6, // Mon-Sat
-      workingHoursPerDay: 8,
-      holidays: []
+      weeklyOffDays: [0], // Sundays off
+      workStartTime: '08:00',
+      workEndTime: '17:30',
+      lunchBreak: { name: 'Lunch Break', startTime: '12:30', endTime: '13:30', durationMinutes: 60 },
+      recessIntervals: [
+        { name: 'Morning Tea / Briefing', startTime: '10:15', endTime: '10:30', durationMinutes: 15 },
+        { name: 'Afternoon Recess', startTime: '15:30', endTime: '15:45', durationMinutes: 15 }
+      ],
+      workingHoursPerDay: 8.0,
+      holidays: ['2026-08-15', '2026-10-02', '2026-11-08'],
+      holidayList: [
+        { date: '2026-08-15', name: 'Independence Day', type: 'PUBLIC' },
+        { date: '2026-10-02', name: 'Gandhi Jayanti', type: 'PUBLIC' },
+        { date: '2026-11-08', name: 'Diwali Site Holiday', type: 'PUBLIC' }
+      ]
     },
     status: 'ACTIVE'
   });
@@ -171,6 +184,67 @@ export async function seedSampleProjectData(db: Db, companyId: string, userEmail
       recoveryAction: 'Mobilized additional steel-fixing shift to recover 1.5 days during column cage assembly'
     });
   }
+
+  // 7. Seed Manpower Workforce
+  await pmService.createManpower(companyId, projectId, {
+    name: 'Er. Amit Saxena',
+    role: 'Senior Site Engineer',
+    category: 'STAFF',
+    headcount: 1,
+    dailyCapacityHours: 8.0,
+    contactPhone: '+91 98201 12345',
+    skills: ['RCC Execution', 'Bar Bending Inspection', 'Pour Card Signoff']
+  });
+
+  await pmService.createManpower(companyId, projectId, {
+    name: 'Pooja Nair',
+    role: 'Planning Lead',
+    category: 'STAFF',
+    headcount: 1,
+    dailyCapacityHours: 8.0,
+    contactPhone: '+91 98202 23456',
+    skills: ['Primavera P6', 'CPM Scheduling', 'WBS Management']
+  });
+
+  await pmService.createManpower(companyId, projectId, {
+    name: 'Suresh Patel',
+    role: 'QA/QC Lead Inspector',
+    category: 'STAFF',
+    headcount: 1,
+    dailyCapacityHours: 8.0,
+    contactPhone: '+91 98203 34567',
+    skills: ['Concrete Slump Tests', 'Rebar Cover Verification', 'Cube Compressive Strength']
+  });
+
+  await pmService.createManpower(companyId, projectId, {
+    name: 'Gang A — Raft Rebar Bending & Placing Crew',
+    role: 'Steel Fixer Lead',
+    category: 'LABOUR_GANG',
+    headcount: 14,
+    dailyCapacityHours: 8.0,
+    contactPhone: '+91 98450 88765',
+    skills: ['Heavy Bar Bending (32mm)', 'Shear Link Tying', 'Chair Stool Fabrication']
+  });
+
+  await pmService.createManpower(companyId, projectId, {
+    name: 'Gang B — Formwork & Shuttering Carpentry Team',
+    role: 'Formwork Foreman',
+    category: 'LABOUR_GANG',
+    headcount: 10,
+    dailyCapacityHours: 8.0,
+    contactPhone: '+91 98450 88766',
+    skills: ['Plywood Formwork', 'Column Box Alignment', 'Water-stop Fixing']
+  });
+
+  await pmService.createManpower(companyId, projectId, {
+    name: 'Apex Earthmovers & Shoring Services',
+    role: 'Excavation Contractor',
+    category: 'SUBCONTRACTOR',
+    headcount: 6,
+    dailyCapacityHours: 10.0,
+    contactPhone: '+91 98110 55432',
+    skills: ['Excavators 20T', 'Dewatering Pumps', 'Muck Haulage Dumpers']
+  });
 
   // 7. Seed Cost Entries
   await pmService.addCostEntry(companyId, projectId, {

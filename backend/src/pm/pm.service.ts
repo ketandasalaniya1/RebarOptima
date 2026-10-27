@@ -1,5 +1,18 @@
 import { Db, ObjectId } from 'mongodb';
-import { PmProject, PmTask, PmDependency, PmDelayRecord, PmDailyProgressReport, PmQualityInspection, PmCostEntry, ScheduleSimulationResult } from './pm.types';
+import { 
+  PmProject, 
+  PmTask, 
+  PmDependency, 
+  PmDelayRecord, 
+  PmDailyProgressReport, 
+  PmQualityInspection, 
+  PmCostEntry, 
+  ScheduleSimulationResult,
+  ProjectCalendar,
+  ManpowerResource,
+  ManpowerConflict,
+  ProjectReschedulePreviewResult
+} from './pm.types';
 import { CpmSchedulingEngine } from './pm.cpm.engine';
 
 export class PmService {
@@ -583,5 +596,283 @@ export class PmService {
       costVariance: totalBudget - actualSpend,
       averageProgress: totalProjects > 0 ? Math.round(projects.reduce((sum, p) => sum + (p.progressPercentage || 0), 0) / totalProjects) : 0
     };
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // CALENDAR & WORKING HOURS
+  // ══════════════════════════════════════════════════════════════════════════════
+  async updateProjectCalendar(companyId: string, projectId: string, calendarData: Partial<ProjectCalendar>): Promise<PmProject | null> {
+    const project = await this.getProjectById(companyId, projectId);
+    if (!project) throw new Error('Project not found');
+
+    const workingDaysPerWeek = calendarData.workingDaysPerWeek || project.calendar?.workingDaysPerWeek || 6;
+    const weeklyOffDays = calendarData.weeklyOffDays || (workingDaysPerWeek === 5 ? [0, 6] : workingDaysPerWeek === 6 ? [0] : []);
+    const workStartTime = calendarData.workStartTime || project.calendar?.workStartTime || '08:00';
+    const workEndTime = calendarData.workEndTime || project.calendar?.workEndTime || '17:30';
+    const lunchBreak = calendarData.lunchBreak || project.calendar?.lunchBreak || { name: 'Lunch Break', startTime: '12:30', endTime: '13:30', durationMinutes: 60 };
+    const recessIntervals = calendarData.recessIntervals || project.calendar?.recessIntervals || [];
+    const holidays = calendarData.holidays || project.calendar?.holidays || [];
+    const holidayList = calendarData.holidayList || project.calendar?.holidayList || [];
+
+    const totalRecessMins = recessIntervals.reduce((acc, r) => acc + (Number(r.durationMinutes) || 0), 0);
+    const netWorkingHours = CpmSchedulingEngine.calculateNetWorkingHours(
+      workStartTime,
+      workEndTime,
+      lunchBreak.durationMinutes || 60,
+      totalRecessMins
+    );
+
+    const mergedCalendar: ProjectCalendar = {
+      workingDaysPerWeek,
+      weeklyOffDays,
+      workStartTime,
+      workEndTime,
+      lunchBreak,
+      recessIntervals,
+      workingHoursPerDay: netWorkingHours > 0 ? netWorkingHours : (calendarData.workingHoursPerDay || 8),
+      holidays,
+      holidayList
+    };
+
+    await this.db().collection('pm_projects').updateOne(
+      { _id: new ObjectId(projectId), companyId },
+      {
+        $set: {
+          calendar: mergedCalendar,
+          updatedAt: new Date()
+        }
+      }
+    );
+
+    // Recalculate CPM schedule with updated working calendar
+    await this.recalculateProjectCPM(companyId, projectId);
+    return this.getProjectById(companyId, projectId);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // GANTT START DATE RESCHEDULING & PREVIEW
+  // ══════════════════════════════════════════════════════════════════════════════
+  async previewRescheduleProjectStartDate(companyId: string, projectId: string, newPlannedStart: string): Promise<ProjectReschedulePreviewResult> {
+    const project = await this.getProjectById(companyId, projectId);
+    if (!project) throw new Error('Project not found');
+
+    const tasks = await this.getTasks(companyId, projectId);
+    const dependencies = await this.getDependencies(companyId, projectId);
+
+    const simulation = CpmSchedulingEngine.calculateSchedule(newPlannedStart, tasks, dependencies, project.calendar);
+
+    const oldStart = project.plannedStart;
+    const oldFinish = project.forecastFinish;
+    const newFinish = simulation.projectForecastFinish;
+
+    const shiftCalDays = Math.round((new Date(newPlannedStart).getTime() - new Date(oldStart).getTime()) / (1000 * 60 * 60 * 24));
+    const shiftWorkDays = shiftCalDays >= 0
+      ? CpmSchedulingEngine.countWorkingDays(oldStart, newPlannedStart, project.calendar) - 1
+      : -(CpmSchedulingEngine.countWorkingDays(newPlannedStart, oldStart, project.calendar) - 1);
+
+    const affectedTasks = simulation.tasks.map(simTask => {
+      const origTask = tasks.find(t => String(t._id) === String(simTask._id))!;
+      return {
+        taskId: String(simTask._id),
+        wbsCode: simTask.wbsCode,
+        taskName: simTask.name,
+        durationDays: simTask.durationDays,
+        originalForecastStart: origTask.forecastStart || origTask.plannedStart,
+        originalForecastFinish: origTask.forecastFinish || origTask.plannedFinish,
+        revisedForecastStart: simTask.forecastStart,
+        revisedForecastFinish: simTask.forecastFinish,
+        isMilestone: !!simTask.isMilestone,
+        isCritical: !!simTask.isCritical
+      };
+    });
+
+    return {
+      projectId,
+      oldPlannedStart: oldStart,
+      newPlannedStart,
+      shiftWorkingDays: shiftWorkDays,
+      shiftCalendarDays: shiftCalDays,
+      oldForecastFinish: oldFinish,
+      newForecastFinish: newFinish,
+      tasksCount: affectedTasks.length,
+      affectedTasks
+    };
+  }
+
+  async confirmRescheduleProjectStartDate(companyId: string, projectId: string, newPlannedStart: string, userEmail: string = 'admin'): Promise<PmProject | null> {
+    const project = await this.getProjectById(companyId, projectId);
+    if (!project) throw new Error('Project not found');
+
+    const tasks = await this.getTasks(companyId, projectId);
+    const dependencies = await this.getDependencies(companyId, projectId);
+
+    // Calculate new schedule strictly preserving durations and dependencies
+    const result = CpmSchedulingEngine.calculateSchedule(newPlannedStart, tasks, dependencies, project.calendar);
+
+    // Update all tasks while preserving baseline commitments
+    for (const t of result.tasks) {
+      await this.db().collection('pm_tasks').updateOne(
+        { _id: new ObjectId(String(t._id)) },
+        {
+          $set: {
+            plannedStart: t.forecastStart,
+            plannedFinish: t.forecastFinish,
+            forecastStart: t.forecastStart,
+            forecastFinish: t.forecastFinish,
+            earlyStart: t.earlyStart,
+            earlyFinish: t.earlyFinish,
+            lateStart: t.lateStart,
+            lateFinish: t.lateFinish,
+            totalFloatDays: t.totalFloatDays,
+            isCritical: t.isCritical,
+            updatedAt: new Date()
+          }
+        }
+      );
+    }
+
+    // Update project dates
+    await this.db().collection('pm_projects').updateOne(
+      { _id: new ObjectId(projectId), companyId },
+      {
+        $set: {
+          plannedStart: newPlannedStart,
+          forecastFinish: result.projectForecastFinish,
+          criticalPathLengthDays: result.criticalPathLengthDays,
+          updatedAt: new Date()
+        }
+      }
+    );
+
+    // Record audit event
+    await this.db().collection('activity_logs').insertOne({
+      companyId,
+      action: 'RESCHEDULE_PROJECT_START_DATE',
+      module: 'projectManagement',
+      projectId,
+      userEmail,
+      details: {
+        previousPlannedStart: project.plannedStart,
+        newPlannedStart,
+        previousForecastFinish: project.forecastFinish,
+        newForecastFinish: result.projectForecastFinish
+      },
+      createdAt: new Date()
+    } as any);
+
+    return this.getProjectById(companyId, projectId);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // MANPOWER & WORKFORCE MANAGEMENT
+  // ══════════════════════════════════════════════════════════════════════════════
+  async getManpower(companyId: string, projectId?: string): Promise<ManpowerResource[]> {
+    const query: any = { companyId };
+    if (projectId) {
+      query.$or = [{ projectId }, { projectId: { $exists: false } }, { projectId: null }];
+    }
+    const list = await this.db().collection('pm_manpower').find(query).sort({ category: 1, name: 1 }).toArray();
+    return list.map(m => ({ ...m, _id: m._id.toString() })) as any;
+  }
+
+  async createManpower(companyId: string, projectId: string, data: Partial<ManpowerResource>): Promise<ManpowerResource> {
+    const now = new Date();
+    const newResource: ManpowerResource = {
+      companyId,
+      projectId: data.projectId || projectId,
+      name: data.name || 'Untitled Resource',
+      role: data.role || 'Site Worker',
+      category: data.category || 'LABOUR_GANG',
+      headcount: Math.max(1, Number(data.headcount) || 1),
+      dailyCapacityHours: Number(data.dailyCapacityHours) || 8.0,
+      contactPhone: data.contactPhone || '',
+      skills: data.skills || [],
+      isActive: data.isActive !== false,
+      createdAt: now,
+      updatedAt: now
+    };
+
+    const res = await this.db().collection('pm_manpower').insertOne(newResource as any);
+    return { ...newResource, _id: res.insertedId.toString() };
+  }
+
+  async updateManpower(companyId: string, resourceId: string, data: Partial<ManpowerResource>): Promise<ManpowerResource | null> {
+    const clean = { ...data, updatedAt: new Date() };
+    delete (clean as any)._id;
+    delete (clean as any).companyId;
+
+    await this.db().collection('pm_manpower').updateOne(
+      { _id: new ObjectId(resourceId), companyId },
+      { $set: clean }
+    );
+    const updated = await this.db().collection('pm_manpower').findOne({ _id: new ObjectId(resourceId), companyId });
+    return updated ? ({ ...updated, _id: updated._id.toString() } as any) : null;
+  }
+
+  async deleteManpower(companyId: string, resourceId: string): Promise<boolean> {
+    const res = await this.db().collection('pm_manpower').deleteOne({ _id: new ObjectId(resourceId), companyId });
+    return res.deletedCount > 0;
+  }
+
+  async getManpowerConflicts(companyId: string, projectId: string): Promise<ManpowerConflict[]> {
+    const resources = await this.getManpower(companyId, projectId);
+    const tasks = await this.getTasks(companyId, projectId);
+    const conflicts: ManpowerConflict[] = [];
+
+    // Filter active/in-progress/not completed tasks
+    const activeTasks = tasks.filter(t => t.status !== 'COMPLETED' && t.status !== 'CANCELLED');
+
+    for (const res of resources) {
+      // Find tasks assigned to this resource
+      const assignedTasks = activeTasks.filter(t => {
+        const matchesName = t.assignedUserName && t.assignedUserName.toLowerCase().includes(res.name.toLowerCase());
+        const matchesRole = t.assignedRole && t.assignedRole.toLowerCase() === res.role.toLowerCase();
+        const matchesAlloc = t.manpowerAllocations?.some(a => a.resourceId === String(res._id) || a.resourceName === res.name);
+        return matchesName || matchesAlloc || (res.category === 'STAFF' && matchesRole);
+      });
+
+      if (assignedTasks.length <= 1) continue;
+
+      // Check date overlaps among assigned tasks
+      for (let i = 0; i < assignedTasks.length; i++) {
+        for (let j = i + 1; j < assignedTasks.length; j++) {
+          const t1 = assignedTasks[i];
+          const t2 = assignedTasks[j];
+
+          const start1 = t1.forecastStart || t1.plannedStart;
+          const finish1 = t1.forecastFinish || t1.plannedFinish;
+          const start2 = t2.forecastStart || t2.plannedStart;
+          const finish2 = t2.forecastFinish || t2.plannedFinish;
+
+          // Check overlap: max(start1, start2) <= min(finish1, finish2)
+          const overlapStart = start1 > start2 ? start1 : start2;
+          const overlapFinish = finish1 < finish2 ? finish1 : finish2;
+
+          if (overlapStart <= overlapFinish) {
+            const plannedHours1 = t1.manpowerAllocations?.find(a => a.resourceName === res.name)?.plannedDailyHours || (res.dailyCapacityHours / 2);
+            const plannedHours2 = t2.manpowerAllocations?.find(a => a.resourceName === res.name)?.plannedDailyHours || (res.dailyCapacityHours / 2);
+            const totalHours = plannedHours1 + plannedHours2;
+
+            conflicts.push({
+              resourceId: String(res._id),
+              resourceName: res.name,
+              role: res.role,
+              category: res.category,
+              headcount: res.headcount,
+              dailyCapacityHours: res.dailyCapacityHours,
+              conflictDate: `${overlapStart} to ${overlapFinish}`,
+              totalAllocatedHours: totalHours,
+              tasks: [
+                { taskId: String(t1._id), taskName: t1.name, wbsCode: t1.wbsCode, allocatedHours: plannedHours1 },
+                { taskId: String(t2._id), taskName: t2.name, wbsCode: t2.wbsCode, allocatedHours: plannedHours2 }
+              ],
+              severity: totalHours > res.dailyCapacityHours ? 'CRITICAL' : 'WARNING'
+            });
+          }
+        }
+      }
+    }
+
+    return conflicts;
   }
 }

@@ -29,7 +29,7 @@ export function isPartnerAdminRole(role: any): boolean {
 export function isCompanyAdminRole(role: any, accountType?: string): boolean {
   if (accountType === 'developer') return true;
   const n = normalizeRole(role);
-  return n === 'ADMIN' || n === 'OWNER' || n === 'COMPANY_ADMIN';
+  return n === 'ADMIN' || n === 'OWNER' || n === 'COMPANY_ADMIN' || n === 'SUPER_ADMIN' || n === 'SUPERADMIN';
 }
 
 export function idQuery(id: string) {
@@ -46,7 +46,13 @@ export function projectIdQuery(projectId: string, companyId?: string) {
     { id: projectId },
   ].filter(Boolean);
   const q: any = { $or: or };
-  if (companyId) q.companyId = companyId;
+  if (companyId) {
+    const cMatcher =
+      ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : String(companyId);
+    q.companyId = cMatcher;
+  }
   return q;
 }
 
@@ -88,7 +94,11 @@ export async function resolveUserAndCompany(req: any, db: any): Promise<ProjectA
   }
   if (isPartnerAdminRole(roleRaw)) dataScope = 'project';
 
-  const isDeveloper = req.user?.accountType === 'developer';
+  const isDeveloper =
+    req.user?.accountType === 'developer' ||
+    roleNormalized === 'DEVELOPER' ||
+    roleNormalized === 'SUPER_ADMIN' ||
+    roleNormalized === 'SUPERADMIN';
   const isCompanyAdmin = isCompanyAdminRole(roleRaw, req.user?.accountType);
   const isPartnerAdmin = isPartnerAdminRole(roleRaw);
   const requiresProjectAssignment =
@@ -190,7 +200,13 @@ export function createProjectAccessMiddleware(getDb: () => any, options: { requi
 }
 
 export function filterProjectsForUser(ctx: ProjectAccessContext, baseQuery: any = {}) {
-  const query: any = { ...baseQuery, companyId: ctx.companyId };
+  const query: any = { ...baseQuery };
+  if (!ctx.isDeveloper || ctx.companyId !== 'default-company') {
+    query.companyId =
+      ObjectId.isValid(String(ctx.companyId)) && String(ctx.companyId).length === 24
+        ? { $in: [String(ctx.companyId), new ObjectId(String(ctx.companyId))] }
+        : ctx.companyId;
+  }
   if (ctx.requiresProjectAssignment) {
     query.status = query.status || 'active';
     const ids = ctx.assignedProjects;

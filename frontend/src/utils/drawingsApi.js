@@ -9,7 +9,20 @@ export const drawingsApi = {
 
   // 2. Projects
   getProjects: () => apiRequest('/drawings/projects'),
-  createProject: (data) => apiRequest('/drawings/projects', { method: 'POST', body: data }),
+  createProject: (data) =>
+    apiRequest('/projects', {
+      method: 'POST',
+      body: {
+        name: data.projectName || data.name,
+        address: data.address || 'Site Location',
+        pincode: data.pincode || '382418',
+        location:
+          data.location && typeof data.location === 'object' && data.location.latitude !== undefined
+            ? data.location
+            : { latitude: 23.012, longitude: 72.681 },
+        projectType: data.projectType || 'Residential',
+      },
+    }),
 
   // 3. Disciplines
   getDisciplines: () => apiRequest('/drawings/disciplines'),

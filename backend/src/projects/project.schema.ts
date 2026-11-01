@@ -91,6 +91,10 @@ export class Project extends Document {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
   updatedBy?: Types.ObjectId;
+
+  /** Denormalized count of active canonical blocks in `project_blocks` (Express is runtime source of truth). */
+  @Prop({ type: Number, default: 0 })
+  blockCount?: number;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

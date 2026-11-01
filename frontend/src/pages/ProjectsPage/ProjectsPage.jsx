@@ -25,6 +25,7 @@ import {
   updateProjectInList,
 } from '../../store/slices/projectSlice';
 import { PageHeader, Button, EmptyState, StatusBadge, DataToolbar } from '../../components/ui';
+import ProjectBlocksPanel from './ProjectBlocksPanel';
 import './ProjectsPage.css';
 
 export default function ProjectsPage() {
@@ -38,9 +39,12 @@ export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // all, active, inactive
   const [typeFilter, setTypeFilter] = useState('all');
+  const [blocksProjectId, setBlocksProjectId] = useState(null);
 
   const roleUpper = (user?.role || '').toUpperCase();
   const isCompanyAdmin = roleUpper === 'ADMIN' || roleUpper === 'OWNER' || user?.accountType === 'developer';
+  // Align with backend canCreateProjects gate (company admin / owner / developer)
+  const canManageBlocks = isCompanyAdmin;
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -62,6 +66,17 @@ export default function ProjectsPage() {
   const handleSelectProject = (project) => {
     setActiveProjectHeader(project?._id || project?.id || null);
     dispatch(setSelectedProject(project));
+    setBlocksProjectId(project?._id || project?.id || null);
+  };
+
+  const handleBlocksChanged = (project, nextCount) => {
+    if (!project) return;
+    dispatch(
+      updateProjectInList({
+        ...project,
+        blockCount: typeof nextCount === 'number' ? nextCount : project.blockCount,
+      }),
+    );
   };
 
   const handleToggleStatus = async (project, e) => {
@@ -106,7 +121,7 @@ export default function ProjectsPage() {
     <div className="projects-page-container">
       <PageHeader
         title="Project Management"
-        subtitle="Organize construction sites, geofences, and Project Partner Admins"
+        subtitle="Organize construction sites, blocks, geofences, and Project Partner Admins"
         projectName={selectedProject?.name}
         actions={
           isCompanyAdmin ? (
@@ -251,7 +266,8 @@ export default function ProjectsPage() {
           }
         />
       ) : (
-        /* Projects Grid */
+        /* Projects Grid + optional blocks panel */
+        <>
         <div className="pp-cards-grid">
           {filteredProjects.map((p) => {
             const isSelected = selectedProject && (selectedProject._id || selectedProject.id) === (p._id || p.id);
@@ -302,8 +318,15 @@ export default function ProjectsPage() {
                   )}
                 </div>
 
-                {/* Geofence & Partner Stats Summary */}
+                {/* Geofence, Blocks & Partner Stats Summary */}
                 <div className="pp-card-stats-row">
+                  <div className="pp-card-stat">
+                    <Layers size={14} className="text-emerald" />
+                    <span>
+                      <strong>{p.blockCount ?? '—'}</strong> Block
+                      {(p.blockCount || 0) === 1 ? '' : 's'}
+                    </span>
+                  </div>
                   <div className="pp-card-stat">
                     <Shield size={14} className="text-purple" />
                     <span>
@@ -330,6 +353,19 @@ export default function ProjectsPage() {
                   </button>
 
                   <div className="pp-action-icon-buttons">
+                    <button
+                      type="button"
+                      className={`pp-icon-btn ${blocksProjectId === (p._id || p.id) ? 'active-blocks' : ''}`}
+                      onClick={() =>
+                        setBlocksProjectId((cur) =>
+                          cur === (p._id || p.id) ? null : p._id || p.id,
+                        )
+                      }
+                      title="Manage Blocks"
+                    >
+                      <Layers size={15} />
+                    </button>
+
                     <button
                       type="button"
                       className="pp-icon-btn"
@@ -375,6 +411,24 @@ export default function ProjectsPage() {
             );
           })}
         </div>
+
+        {blocksProjectId && (
+          <ProjectBlocksPanel
+            project={
+              projects.find((p) => (p._id || p.id) === blocksProjectId) ||
+              (selectedProject && (selectedProject._id || selectedProject.id) === blocksProjectId
+                ? selectedProject
+                : null)
+            }
+            canEdit={canManageBlocks}
+            onBlocksChanged={(nextCount) => {
+              const proj =
+                projects.find((p) => (p._id || p.id) === blocksProjectId) || selectedProject;
+              if (proj) handleBlocksChanged(proj, nextCount);
+            }}
+          />
+        )}
+        </>
       )}
     </div>
   );

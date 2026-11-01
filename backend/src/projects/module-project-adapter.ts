@@ -75,3 +75,4 @@ export function attachProjectContextMiddleware(getDb: () => any) {
 }
 
 export { resolveUserAndCompany, assertProjectAccess };
+export { assertBlockInProject } from './project-blocks.service';

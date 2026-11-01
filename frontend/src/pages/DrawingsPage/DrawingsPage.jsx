@@ -64,43 +64,35 @@ export default function DrawingsPage() {
     if (activeProjectId) setProjectFilter(String(activeProjectId));
   }, [activeProjectId, projectEpoch]);
 
-  // Initial Data Load
-  const loadAllData = async () => {
-    setLoading(true);
-    try {
-      const pid = activeProjectId || undefined;
-      const [dash, prjs, discs, dws, trans, acts, usrs, stts] = await Promise.all([
-        drawingsApi.getDashboard().catch(() => null),
-        drawingsApi.getProjects().catch(() => []),
-        drawingsApi.getDisciplines().catch(() => []),
-        drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
-        drawingsApi.getTransmittals().catch(() => []),
-        drawingsApi.getActivityLog().catch(() => []),
-        drawingsApi.getUsers().catch(() => []),
-        drawingsApi.getSettings().catch(() => null)
-  // Load All Data
   const loadData = async () => {
     setLoading(true);
     try {
+      const pid = activeProjectId || undefined;
       const [dwsRes, prjsRes, discsRes] = await Promise.all([
-        drawingsApi.getDrawings().catch(() => ({ drawings: [] })),
+        drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
         drawingsApi.getProjects().catch(() => []),
-        drawingsApi.getDisciplines().catch(() => [])
+        drawingsApi.getDisciplines().catch(() => []),
       ]);
 
-      const loadedDrawings = dwsRes.drawings || [];
+      const loadedDrawings = dwsRes?.drawings || (Array.isArray(dwsRes) ? dwsRes : []);
       setDrawings(loadedDrawings);
       setProjects(prjsRes || []);
       setDisciplines(discsRes || []);
 
-      // Pre-populate default project in upload form
-      if (prjsRes && prjsRes.length > 0 && !uploadForm.projectId) {
-        setUploadForm((prev) => ({
-          ...prev,
-          projectId: prjsRes[0]._id,
-          disciplineId: discsRes?.[0]?._id || ''
-        }));
-      }
+      // Prefer active org project for upload form; fall back to first drawings project
+      const defaultProjectId =
+        (pid && (prjsRes || []).some((p) => String(p._id || p.id) === String(pid))
+          ? pid
+          : null) ||
+        prjsRes?.[0]?._id ||
+        prjsRes?.[0]?.id ||
+        '';
+
+      setUploadForm((prev) => ({
+        ...prev,
+        projectId: prev.projectId || defaultProjectId || '',
+        disciplineId: prev.disciplineId || discsRes?.[0]?._id || discsRes?.[0]?.id || '',
+      }));
     } catch (err) {
       console.error('Error loading drawings data:', err);
     } finally {
@@ -108,12 +100,12 @@ export default function DrawingsPage() {
     }
   };
 
+  const loadAllData = loadData;
+
   useEffect(() => {
-    loadAllData();
+    loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId, projectEpoch]);
-    loadData();
-  }, []);
 
   // Open Drawing in Simple Viewer
   const handleOpenDrawing = async (dw) => {

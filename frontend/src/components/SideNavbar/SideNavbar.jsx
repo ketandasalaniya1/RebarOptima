@@ -1,8 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, X, PlusSquare, LogOut, LayoutDashboard, Package, ClipboardList, BookOpen, Settings as SettingsIcon, Users, Shield, Layers, ChevronDown, History, Grid3X3, Ruler, Building2, Boxes, Warehouse, Layers2, CalendarRange, Wallet,FileStack,
-  Home } from 'lucide-react';
-import logo from '../../assets/logo.png';
+import {
+  Menu,
+  X,
+  PlusSquare,
+  LogOut,
+  LayoutDashboard,
+  Package,
+  ClipboardList,
+  BookOpen,
+  Settings as SettingsIcon,
+  Users,
+  Shield,
+  Layers,
+  ChevronDown,
+  History,
+  Ruler,
+  Building2,
+  Boxes,
+  Warehouse,
+  CalendarRange,
+  Wallet,
+  FileStack,
+  HardHat,
+  Home,
+  UsersRound,
+  UserRound,
+  CalendarCheck2,
+  FileSpreadsheet,
+  MessageSquare,
+} from 'lucide-react';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import ProjectSelector from '../ProjectSelector/ProjectSelector';
 import './SideNavbar.css';
@@ -22,20 +49,34 @@ const PARTNER_ALLOWED_MODULES = [
   'bbs',
   'casting',
   'drawings',
+  'contractors',
+  'manpower',
+  'attendance',
 ];
+
+const ATTENDANCE_VIEWS = ['attendance-mark', 'attendance-history', 'attendance-reports'];
+
+const STEEL_VIEWS = ['inventory', 'ledger', 'inputs', 'results', 'history'];
+const MANPOWER_VIEWS = ['manpower-labour', 'manpower-contractor-labour'];
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSteelOpen, setIsSteelOpen] = useState(() =>
-    ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView)
-  );
+  const [openGroups, setOpenGroups] = useState(() => ({
+    steel: STEEL_VIEWS.includes(currentView),
+    manpower: MANPOWER_VIEWS.includes(currentView),
+    attendance: ATTENDANCE_VIEWS.includes(currentView),
+  }));
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
 
   useEffect(() => {
-    if (['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView)) {
-      setIsSteelOpen(true);
-    }
+    setOpenGroups((prev) => {
+      const next = { ...prev };
+      if (STEEL_VIEWS.includes(currentView)) next.steel = true;
+      if (MANPOWER_VIEWS.includes(currentView)) next.manpower = true;
+      if (ATTENDANCE_VIEWS.includes(currentView)) next.attendance = true;
+      return next;
+    });
   }, [currentView]);
 
   const checkPermission = (moduleKey) => {
@@ -125,7 +166,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       id: 'project-management',
       label: 'Projects & Tasks',
       icon: <CalendarRange size={18} />,
-      moduleKey: 'projectManagement'
+      moduleKey: 'projectManagement',
     },
     {
       id: 'drawings',
@@ -137,7 +178,73 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       id: 'petty-cash',
       label: 'Petty Cash',
       icon: <Wallet size={18} />,
-      moduleKey: 'pettyCash'
+      moduleKey: 'pettyCash',
+    },
+    {
+      id: 'contractors',
+      label: 'Contractors',
+      icon: <HardHat size={18} />,
+      moduleKey: 'contractors',
+    },
+    {
+      id: 'manpower',
+      label: 'Manpower',
+      icon: <UsersRound size={18} />,
+      isGroup: true,
+      moduleKey: 'manpower',
+      children: [
+        {
+          id: 'manpower-labour',
+          label: 'Labour',
+          icon: <UserRound size={17} />,
+          moduleKey: 'manpower',
+        },
+        {
+          id: 'manpower-contractor-labour',
+          label: 'Contractor Labour',
+          icon: <HardHat size={17} />,
+          moduleKey: 'manpower',
+        },
+      ],
+    },
+    {
+      id: 'attendance',
+      label: 'Attendance',
+      icon: <CalendarCheck2 size={18} />,
+      isGroup: true,
+      moduleKey: 'attendance',
+      children: [
+        {
+          id: 'attendance-mark',
+          label: 'Mark Attendance',
+          icon: <CalendarCheck2 size={17} />,
+          moduleKey: 'attendance',
+        },
+        {
+          id: 'attendance-history',
+          label: 'History',
+          icon: <History size={17} />,
+          moduleKey: 'attendance',
+        },
+        {
+          id: 'attendance-reports',
+          label: 'Reports',
+          icon: <ClipboardList size={17} />,
+          moduleKey: 'attendance',
+        },
+      ],
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
+      icon: <FileSpreadsheet size={18} />,
+      moduleKey: 'reports',
+    },
+    {
+      id: 'chat',
+      label: 'Project Chat',
+      icon: <MessageSquare size={18} />,
+      moduleKey: 'chat',
     },
     {
       id: 'settings',
@@ -167,6 +274,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
 
   const menuItems = MENU_STRUCTURE.map((item) => {
     if (item.isGroup && item.children) {
+      if (item.moduleKey && !checkPermission(item.moduleKey)) return null;
       const allowedChildren = item.children.filter((child) => checkPermission(child.moduleKey));
       if (allowedChildren.length === 0) return null;
       return { ...item, children: allowedChildren };
@@ -175,7 +283,11 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     return item;
   }).filter(Boolean);
 
-  const isSteelActive = ['inventory', 'ledger', 'inputs', 'results', 'history'].includes(currentView);
+  const groupChildViews = {
+    steel: STEEL_VIEWS,
+    manpower: MANPOWER_VIEWS,
+    attendance: ATTENDANCE_VIEWS,
+  };
 
   const initials = user
     ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase()
@@ -221,32 +333,42 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
         <nav className="sidenav-menu">
           {menuItems.map((item) => {
             if (item.isGroup) {
+              const isGroupOpen = !!openGroups[item.id];
+              const childIds = groupChildViews[item.id] || item.children.map((c) => c.id);
+              const isGroupActive = childIds.includes(currentView);
               return (
                 <div key={item.id} className="sidenav-group-container">
                   <button
                     type="button"
-                    className={`sidenav-item sidenav-group-header ${isSteelActive && !isSteelOpen ? 'active-parent' : ''}`}
-                    onClick={() => setIsSteelOpen((prev) => !prev)}
-                    aria-expanded={isSteelOpen}
+                    className={`sidenav-item sidenav-group-header ${isGroupActive && !isGroupOpen ? 'active-parent' : ''}`}
+                    onClick={() =>
+                      setOpenGroups((prev) => ({ ...prev, [item.id]: !prev[item.id] }))
+                    }
+                    aria-expanded={isGroupOpen}
                   >
                     <span className="sidenav-icon">{item.icon}</span>
                     <span className="sidenav-label">{item.label}</span>
-                    <ChevronDown size={16} className={`sidenav-chevron ${isSteelOpen ? 'open' : ''}`} />
+                    <ChevronDown size={16} className={`sidenav-chevron ${isGroupOpen ? 'open' : ''}`} />
                   </button>
-                  <div className={`sidenav-submenu-wrapper ${isSteelOpen ? 'open' : ''}`}>
+                  <div className={`sidenav-submenu-wrapper ${isGroupOpen ? 'open' : ''}`}>
                     <div className="sidenav-submenu">
                       <div className="sidenav-submenu-content">
                         {item.children.map((child) => (
                           <button
                             type="button"
                             key={child.id}
-                            className={`sidenav-item sidenav-subitem ${currentView === child.id || (currentView === 'results' && child.id === 'inputs') ? 'active' : ''}`}
+                            className={`sidenav-item sidenav-subitem ${
+                              currentView === child.id ||
+                              (currentView === 'results' && child.id === 'inputs')
+                                ? 'active'
+                                : ''
+                            }`}
                             onClick={() => {
                               onViewChange(child.id);
                               setIsOpen(false);
                             }}
-                            tabIndex={isSteelOpen ? 0 : -1}
-                            aria-hidden={!isSteelOpen}
+                            tabIndex={isGroupOpen ? 0 : -1}
+                            aria-hidden={!isGroupOpen}
                           >
                             <span className="sidenav-icon">{child.icon}</span>
                             <span className="sidenav-label">{child.label}</span>
@@ -265,7 +387,13 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
               <button
                 type="button"
                 key={item.id}
-                className={`sidenav-item ${currentView === item.id || isBbsChild || (currentView === 'results' && item.id === 'inputs') ? 'active' : ''}`}
+                className={`sidenav-item ${
+                  currentView === item.id ||
+                  isBbsChild ||
+                  (currentView === 'results' && item.id === 'inputs')
+                    ? 'active'
+                    : ''
+                }`}
                 onClick={() => {
                   onViewChange(item.id);
                   setIsOpen(false);

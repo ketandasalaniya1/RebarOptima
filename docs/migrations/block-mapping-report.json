@@ -1,0 +1,1894 @@
+{
+  "generatedAt": "2026-10-27T21:06:30.941Z",
+  "dryRun": true,
+  "mutatesData": false,
+  "notes": [
+    "Read-only inventory. Do not auto-merge ambiguous or fuzzy rows.",
+    "Destructive remaps require separate approved scripts (not this file).",
+    "Prefer exact (canonicalProjectId, nameLower) maps only when creating project_blocks."
+  ],
+  "projectReportPresent": true,
+  "projectReportIsPlaceholder": false,
+  "liveLegacyProjectMapSize": 1,
+  "summary": {
+    "globalProjectCount": 5,
+    "existingProjectBlocks": 0,
+    "bbsCastingBlockRows": 0,
+    "orphanBlocks": 88,
+    "duplicatesWithinSource": 0,
+    "crossModuleSameName": 0,
+    "alreadyBridged": 0,
+    "crmDistinctTowers": 10,
+    "crmUnmapped": 10,
+    "crmAmbiguous": 0,
+    "proposeCreateCanonical": 0
+  },
+  "blockRows": [],
+  "orphans": [
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ac3b829b2efdada274be97d",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6ac3b810b2efdada274be97c",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 3,
+        "bbs_members": 45
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ac3b947b2efdada274be98a",
+      "sourceName": "Block B",
+      "nameLower": "block b",
+      "sourceProjectId": "6ac3b810b2efdada274be97c",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ac762302d609cb1410ba580",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6ac762202d609cb1410ba57f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 2,
+        "bbs_members": 30
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ac7623f2d609cb1410ba581",
+      "sourceName": "Block B",
+      "nameLower": "block b",
+      "sourceProjectId": "6ac762202d609cb1410ba57f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6acc85c7b9346e0c35bc4780",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6acc85aeb9346e0c35bc477f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 2,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6acc85dfb9346e0c35bc4782",
+      "sourceName": "Block C",
+      "nameLower": "block c",
+      "sourceProjectId": "6acc85aeb9346e0c35bc477f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6acc8603b9346e0c35bc4783",
+      "sourceName": "Block B",
+      "nameLower": "block b",
+      "sourceProjectId": "6acc85aeb9346e0c35bc477f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ad9d8455b7a34c1cbcb7a76",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ad9db4a5b7a34c1cbcb7a7b",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6ad9db315b7a34c1cbcb7a7a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 1,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ad9d8455b7a34c1cbcb7a76",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ad9db585b7a34c1cbcb7a7c",
+      "sourceName": "Block B",
+      "nameLower": "block b",
+      "sourceProjectId": "6ad9db315b7a34c1cbcb7a7a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ad9d8455b7a34c1cbcb7a76",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ad9db8b5b7a34c1cbcb7a7d",
+      "sourceName": "Block C",
+      "nameLower": "block c",
+      "sourceProjectId": "6ad9db315b7a34c1cbcb7a7a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ad9d8455b7a34c1cbcb7a76",
+      "sourceCollection": "bbs_blocks",
+      "sourceBlockId": "6ad9db985b7a34c1cbcb7a7e",
+      "sourceName": "Block D",
+      "nameLower": "block d",
+      "sourceProjectId": "6ad9db315b7a34c1cbcb7a7a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "bbs_levels": 0,
+        "bbs_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac8c559a80b1a3e3e68fa83",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8c559a80b1a3e3e68fa89",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8c559a80b1a3e3e68fa87",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 6
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8c911a80b1a3e3e68fa96",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6ac8c8fda80b1a3e3e68fa94",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 27
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545401536",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d03a51566577e710357c",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d03a51566577e710357a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545425031",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d05251566577e7103582",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d05151566577e7103580",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545456755",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d07151566577e7103588",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d07151566577e7103586",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545477438",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d08651566577e710358e",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d08651566577e710358c",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545491795",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d09451566577e7103594",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d09451566577e7103592",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545509865",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d0a651566577e710359a",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d0a651566577e7103598",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545521308",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d0b351566577e71035a0",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d0b351566577e710359e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545553992",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d0d251566577e71035a6",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d0d251566577e71035a4",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791545579278",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d0ec51566577e71035b0",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d0ec51566577e71035ae",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791547770981",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d97be79727b46d78191d",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d97be79727b46d78191b",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791547879263",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8d9e8e79727b46d781928",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8d9e7e79727b46d781926",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791547943964",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8da28662847a628f0a8dd",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8da28662847a628f0a8db",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554317226",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f30d69d6fb46998e1ba4",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f30d69d6fb46998e1ba2",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554375619",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f34769d6fb46998e1bab",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f34769d6fb46998e1ba9",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554414393",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f36e69d6fb46998e1bb7",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f36e69d6fb46998e1bb5",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554465155",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f3a169d6fb46998e1bc3",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f3a169d6fb46998e1bc1",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554487152",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f3b769d6fb46998e1bcf",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f3b769d6fb46998e1bcd",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554594449",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f4226142701da5c9f1de",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f4226142701da5c9f1dc",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554675207",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f473b6f4781db685d4c1",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f473b6f4781db685d4bf",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554727056",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f4a7b6f4781db685d4f1",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f4a7b6f4781db685d4ef",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791554750294",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f4beb6f4781db685d521",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f4beb6f4781db685d51f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791554759895",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f4c8b6f4781db685d557",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f4c8b6f4781db685d555",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791555370786",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f72ab6f4781db685d562",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f72ab6f4781db685d560",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791555826040",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ac8f8f2b6f4781db685d592",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ac8f8f2b6f4781db685d590",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791647203956",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca5de48b1ed3013f76ce60",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca5de48b1ed3013f76ce5e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1791647694045",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca5fcecfac3a0d5a87ba46",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6aca5fcecfac3a0d5a87ba44",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "c1",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca5fd7cfac3a0d5a87ba4a",
+      "sourceName": "B",
+      "nameLower": "b",
+      "sourceProjectId": "6aca5fd7cfac3a0d5a87ba48",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "c1",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca600ccfac3a0d5a87ba4e",
+      "sourceName": "B",
+      "nameLower": "b",
+      "sourceProjectId": "6aca600ccfac3a0d5a87ba4c",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "c1",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6015cfac3a0d5a87ba52",
+      "sourceName": "B",
+      "nameLower": "b",
+      "sourceProjectId": "6aca6015cfac3a0d5a87ba50",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1791647844448",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6064cfac3a0d5a87ba59",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6aca6064cfac3a0d5a87ba57",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1791647902859",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca609fdd3cdc84f80bcd1e",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6aca609edd3cdc84f80bcd1c",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791647913761",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca60a9dd3cdc84f80bcd6d",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca60a9dd3cdc84f80bcd6b",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791647922673",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca60b3dd3cdc84f80bcda3",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca60b2dd3cdc84f80bcda1",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1791648623430",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca636f9a0f97b04c27ee56",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6aca636f9a0f97b04c27ee54",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791648635880",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca637c9a0f97b04c27eea5",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca637b9a0f97b04c27eea3",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791648642620",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca63829a0f97b04c27eedb",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca63829a0f97b04c27eed9",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650394417",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6a5a48ff41a5687e5bf3",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca6a5a48ff41a5687e5bf1",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650394417",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6a5a48ff41a5687e5bf4",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca6a5a48ff41a5687e5bf1",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 0,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650475834",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6aab48ff41a5687e5bf8",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca6aab48ff41a5687e5bf6",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650475834",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6aac48ff41a5687e5bf9",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca6aab48ff41a5687e5bf6",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650703037",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6b8f62a6d1560337f74a",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca6b8f62a6d1560337f748",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650703037",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6b8f62a6d1560337f74b",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca6b8f62a6d1560337f748",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650772392",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6bd462a6d1560337f75f",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca6bd462a6d1560337f75d",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650772392",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6bd462a6d1560337f760",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca6bd462a6d1560337f75d",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650885132",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6c4573ebc5326a41eabe",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca6c4573ebc5326a41eabc",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650885132",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6c4573ebc5326a41eabf",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca6c4573ebc5326a41eabc",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650950229",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6c86aa0741b034fcc7b7",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca6c86aa0741b034fcc7b5",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791650950229",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6c86aa0741b034fcc7b8",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca6c86aa0741b034fcc7b5",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1791650957445",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6c8daa0741b034fcc7cc",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6aca6c8daa0741b034fcc7ca",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1791650977110",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6ca1aa0741b034fcc81b",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca6ca1aa0741b034fcc819",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1791650986407",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca6caaaa0741b034fcc851",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6aca6caaaa0741b034fcc84f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791654735047",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca7b4f2c5c5a64ce2dbf20",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6aca7b4f2c5c5a64ce2dbf1e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1791654735047",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca7b4f2c5c5a64ce2dbf21",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6aca7b4f2c5c5a64ce2dbf1e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1791654741454",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6aca7b552c5c5a64ce2dbf35",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6aca7b552c5c5a64ce2dbf33",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1792658527874",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9cc60d5b6e86c0c16ff0c",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6ad9cc5fd5b6e86c0c16ff0a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1792658527874",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9cc60d5b6e86c0c16ff0d",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6ad9cc5fd5b6e86c0c16ff0a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1792658538269",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9cc6ad5b6e86c0c16ff21",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6ad9cc6ad5b6e86c0c16ff1f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1792659404165",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9cfccd5b6e86c0c16ff70",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6ad9cfccd5b6e86c0c16ff6e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1792659404165",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9cfccd5b6e86c0c16ff71",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6ad9cfccd5b6e86c0c16ff6e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1792660228447",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d305d5b6e86c0c16ff8b",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d304d5b6e86c0c16ff89",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1792660257253",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d321a46ba39cebd1f80d",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d321a46ba39cebd1f80b",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1792660269993",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d32ea46ba39cebd1f817",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d32ea46ba39cebd1f815",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p6_alpha_1792660363569",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d38ba46ba39cebd1f847",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d38ba46ba39cebd1f845",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 0,
+        "casting_members": 0
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p6_alpha_1792660437173",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d3d5a46ba39cebd1f84a",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d3d5a46ba39cebd1f848",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p6_alpha_1792660626990",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d4935b7a34c1cbcb7969",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d4935b7a34c1cbcb7967",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p6_alpha_1792660868196",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d5845b7a34c1cbcb7970",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d5845b7a34c1cbcb796e",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p6_alpha_1792660910148",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d5ae5b7a34c1cbcb798c",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d5ae5b7a34c1cbcb798a",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p6_alpha_1792660975737",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d5f05b7a34c1cbcb79a8",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d5ef5b7a34c1cbcb79a6",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_alpha_1792660991392",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d5ff5b7a34c1cbcb79d8",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d5ff5b7a34c1cbcb79d6",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p3_alpha_1792660998962",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d6075b7a34c1cbcb79e2",
+      "sourceName": "Tower A",
+      "nameLower": "tower a",
+      "sourceProjectId": "6ad9d6075b7a34c1cbcb79e0",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p4_alpha_1792661009349",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d6115b7a34c1cbcb7a12",
+      "sourceName": "Block Q",
+      "nameLower": "block q",
+      "sourceProjectId": "6ad9d6115b7a34c1cbcb7a10",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 2
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1792661029896",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d6265b7a34c1cbcb7a61",
+      "sourceName": "Concourse Block A",
+      "nameLower": "concourse block a",
+      "sourceProjectId": "6ad9d6255b7a34c1cbcb7a5f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "comp_p5_a_1792661029896",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9d6265b7a34c1cbcb7a62",
+      "sourceName": "Platform Block B",
+      "nameLower": "platform block b",
+      "sourceProjectId": "6ad9d6255b7a34c1cbcb7a5f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 1
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ad9d8455b7a34c1cbcb7a76",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6ad9ddab5b7a34c1cbcb7a81",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6ad9dd975b7a34c1cbcb7a7f",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 1,
+        "casting_members": 10
+      },
+      "verified": false,
+      "action": "manual_review"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceCollection": "casting_blocks",
+      "sourceBlockId": "6add01f3fb61f19ffebd56f0",
+      "sourceName": "Block A",
+      "nameLower": "block a",
+      "sourceProjectId": "6add01d7fb61f19ffebd56ee",
+      "resolvedCanonicalProjectId": null,
+      "projectResolveVia": "unresolved",
+      "globalProjectName": null,
+      "orgBlockId": null,
+      "matchType": "unmapped",
+      "canonicalBlockId": null,
+      "childCounts": {
+        "casting_levels": 2,
+        "casting_members": 10
+      },
+      "verified": false,
+      "action": "manual_review"
+    }
+  ],
+  "duplicatesWithinSource": [],
+  "ambiguousCrossModule": [],
+  "alreadyBridged": [],
+  "crmTowers": [
+    {
+      "companyId": "comp_crm_test_1792781452883",
+      "sourceProjectId": "6adbac8d68af07a431803b3b",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER B",
+      "nameLower": "tower b",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_crm_test_1792781452883",
+      "sourceProjectId": "6adbac8d68af07a431803b3b",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER A",
+      "nameLower": "tower a",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_crm_test_1792781452883",
+      "sourceProjectId": "6adbac8d68af07a431803b3b",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER C",
+      "nameLower": "tower c",
+      "unitCount": 1,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_crm_test_1792876253955",
+      "sourceProjectId": "6add1ede6249c43f51aec124",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER A",
+      "nameLower": "tower a",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_crm_test_1792876253955",
+      "sourceProjectId": "6add1ede6249c43f51aec124",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER B",
+      "nameLower": "tower b",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_crm_test_1792876253955",
+      "sourceProjectId": "6add1ede6249c43f51aec124",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER C",
+      "nameLower": "tower c",
+      "unitCount": 1,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_test",
+      "sourceProjectId": "6add2566f3ad93b3e0104603",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER A",
+      "nameLower": "tower a",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "comp_test",
+      "sourceProjectId": "6add2566f3ad93b3e0104603",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER B",
+      "nameLower": "tower b",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceProjectId": "6ae0744e10a4312c8a65d98b",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER A",
+      "nameLower": "tower a",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    },
+    {
+      "companyId": "6ac3506e48d058771dccb169",
+      "sourceProjectId": "6ae0744e10a4312c8a65d98b",
+      "resolvedCanonicalProjectId": null,
+      "buildingTower": "TOWER B",
+      "nameLower": "tower b",
+      "unitCount": 56,
+      "unitsWithBlockId": 0,
+      "matchType": "crm_orphan_project"
+    }
+  ]
+}

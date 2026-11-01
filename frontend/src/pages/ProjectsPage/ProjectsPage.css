@@ -519,3 +519,17 @@
   border-color: #10b981;
   color: #34d399;
 }
+
+.pp-icon-btn.active-blocks {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.45);
+  color: #34d399;
+}
+
+.pp-card-stats-row {
+  flex-wrap: wrap;
+}
+
+.text-emerald {
+  color: #34d399;
+}

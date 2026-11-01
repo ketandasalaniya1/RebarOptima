@@ -15,11 +15,34 @@ import { createCrmMasterRouter } from './crm/crm.routes';
 import { createDrawingsMasterRouter } from './drawings/drawings.routes';
 import { createProjectsRouter } from './projects/projects.routes';
 import { createPettyCashRouter } from './petty-cash/petty-cash.routes';
+import { createContractorsRouter } from './contractors/contractors.routes';
+import { createManpowerRouter } from './manpower/manpower.routes';
+import { createServer } from 'http';
+import { createAttendanceRouter } from './attendance/attendance.routes';
 import { createPmMasterRouter } from './pm/pm.routes';
+import { createReportsRouter } from './reports/reports.routes';
+import { createDeveloperConsoleRouter } from './developer-console/developer.routes';
+import { createNotificationRouter } from './notifications/notification.routes';
+import { createChatRouter } from './chat/chat.routes';
+import { ChatSocketGateway } from './chat/chat.socket';
+import { resolveUserAndCompany, assertProjectAccess } from './projects/project-access';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
 } catch {}
+
+// Prevent server process termination on transient socket/network errors (e.g., MongoDB Atlas ECONNRESET)
+process.on('unhandledRejection', (reason: any) => {
+  console.warn('⚠️ Warning: Unhandled Promise Rejection caught:', reason?.message || reason);
+});
+
+process.on('uncaughtException', (err: any) => {
+  console.error('⚠️ Warning: Uncaught Exception caught:', err?.message || err);
+  if (err?.code !== 'ECONNRESET' && err?.code !== 'ETIMEDOUT') {
+    // For non-transient socket errors, log stack
+    console.error(err?.stack);
+  }
+});
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -259,7 +282,15 @@ async function connectDB(): Promise<Db> {
   const uri = process.env.MONGODB_URI;
   if (uri) {
     try {
-      client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000, connectTimeoutMS: 5000 });
+      client = new MongoClient(uri, {
+        serverSelectionTimeoutMS: 10000,
+        connectTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+        maxPoolSize: 50,
+        minPoolSize: 2,
+        retryWrites: true,
+        retryReads: true,
+      });
       await client.connect();
       const connectedDb = client.db();
       db = connectedDb;
@@ -390,6 +421,37 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
     }
   },
 
+  contractors: {
+    displayName: 'Contractors',
+    features: {
+      view: 'View Contractors',
+      create: 'Create Contractors',
+      edit: 'Edit Contractors',
+      delete: 'Deactivate Contractors'
+    }
+  },
+
+  manpower: {
+    displayName: 'Manpower',
+    features: {
+      view: 'View Manpower',
+      create: 'Create Labour Records',
+      edit: 'Edit Labour Records',
+      delete: 'Deactivate Labour Records'
+    }
+  },
+
+  attendance: {
+    displayName: 'Attendance',
+    features: {
+      view: 'View Attendance',
+      create: 'Mark Attendance',
+      edit: 'Edit Attendance',
+      delete: 'Void Attendance',
+      export: 'Export Attendance Reports'
+    }
+  },
+
   projectManagement: {
     displayName: 'Project & Task Management',
     features: {
@@ -411,6 +473,14 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
       edit: 'Edit Projects',
       geofence: 'Configure Geofences',
       settings: 'Project Settings'
+    }
+  },
+  reports: {
+    displayName: 'Reports',
+    features: {
+      view: 'View Reports',
+      create: 'Create PDF Reports',
+      export: 'Export Excel Reports'
     }
   }
 };
@@ -451,7 +521,9 @@ const DEFAULT_SYSTEM_ROLES = [
       roles: { view: false },
       casting: { view: true, create: true, edit: true, delete: false },
       generalInventory: { view: true, create: true, edit: true, delete: false, export: true },
-      drawings: { view: true, upload: true, review: false, transmittals: false, settings: false }
+      drawings: { view: true, upload: true, review: false, transmittals: false, settings: false },
+      manpower: { view: true, create: true, edit: true, delete: false },
+      attendance: { view: true, create: true, edit: true, delete: true, export: true },
     },
     dataScope: 'project'
   },
@@ -469,7 +541,9 @@ const DEFAULT_SYSTEM_ROLES = [
       settings: { view: true, edit: true },
       users: { view: true },
       roles: { view: true },
-      casting: { view: true, create: true, edit: true, delete: true }
+      casting: { view: true, create: true, edit: true, delete: true },
+      manpower: { view: true, create: true, edit: true, delete: true },
+      attendance: { view: true, create: true, edit: true, delete: true, export: true },
     },
     dataScope: 'organization'
   },
@@ -602,7 +676,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'FREE',
     displayName: 'Free',
     description: 'Basic access for small teams getting started',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true, reports: true },
     features: {},
     limits: { maxUsers: 3, maxProjects: 1, maxStorageMB: 100 },
     isActive: true
@@ -611,7 +685,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'BASIC',
     displayName: 'Basic',
     description: 'Essential features for growing construction firms',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: false, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true, reports: true },
     features: {},
     limits: { maxUsers: 10, maxProjects: 5, maxStorageMB: 500 },
     isActive: true
@@ -620,7 +694,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'PRO',
     displayName: 'Professional',
     description: 'Full-featured plan for professional construction management',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true, reports: true },
     features: {},
     limits: { maxUsers: 50, maxProjects: 25, maxStorageMB: 5000 },
     isActive: true
@@ -629,7 +703,7 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
     name: 'ENTERPRISE',
     displayName: 'Enterprise',
     description: 'Unlimited access with priority support for large organizations',
-    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true },
+    modules: { overview: true, inventory: true, optimizer: true, history: true, ledger: true, scrapSales: true, activityLogs: true, settings: true, users: true, roles: true, casting: true, generalInventory: true, crm: true, drawings: true, projectManagement: true, reports: true },
     features: {},
     limits: { maxUsers: null, maxProjects: null, maxStorageMB: null },
     isActive: true
@@ -685,11 +759,17 @@ app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit));
 app.use('/api/drawings', createDrawingsMasterRouter(() => db, authMiddleware, logAudit));
 
 // Mount Multi-Project Management & Geofencing Module Routes
-app.use('/api/projects', createProjectsRouter(() => db, authMiddleware, logAudit));
+app.use('/api/projects', createProjectsRouter(() => db, authMiddleware, logAudit, () => client));
 // Mount Petty Cash / Expense Module Routes
 app.use('/api/petty-cash', createPettyCashRouter(() => db, authMiddleware, logAudit));
+// Mount Project Contractors Module Routes
+app.use('/api/contractors', createContractorsRouter(() => db, authMiddleware, logAudit));
+// Mount Manpower (company labour + contractor labour) Module Routes
+app.use('/api/manpower', createManpowerRouter(() => db, authMiddleware, logAudit));
 // Mount Enterprise Project & Task Management Master Routes
 app.use('/api/pm', createPmMasterRouter(() => db, authMiddleware, logAudit));
+
+// Attendance is mounted after requirePermission is defined (see below).
 
 // Developer-only auth middleware
 function developerAuthMiddleware(req: any, res: any, next: any) {
@@ -963,6 +1043,56 @@ function requirePermission(moduleName: string, featureName?: string) {
     }
   };
 }
+
+/** Allow if user has any of the listed features on the module (same canAccess path as requirePermission). */
+function requireAnyPermission(moduleName: string, featureNames: string[]) {
+  return async (req: any, res: any, next: any) => {
+    if (req.user?.accountType === 'developer') return next();
+    try {
+      const database = await connectDB();
+      let lastReason = 'Permission denied';
+      for (const featureName of featureNames) {
+        const result = await canAccess(database, req.user.sub, moduleName, featureName);
+        if (result.allowed) return next();
+        lastReason = result.reason || lastReason;
+      }
+      return res.status(403).json({ message: lastReason, code: 'PERMISSION_DENIED' });
+    } catch (err: any) {
+      console.error('Permission middleware error:', err);
+      res.status(500).json({ message: 'Permission check failed' });
+    }
+  };
+}
+
+// Mount Attendance after requirePermission exists
+app.use(
+  '/api/attendance',
+  createAttendanceRouter(() => db, authMiddleware, logAudit, requirePermission, requireAnyPermission),
+);
+
+// Mount Centralized Reports Module
+app.use(
+  '/api/reports',
+  createReportsRouter(() => db, authMiddleware, logAudit),
+);
+
+// Mount Real-Time Project Chat Module
+app.use(
+  '/api/chat',
+  createChatRouter(() => db, authMiddleware, () => chatSocketGateway?.getIO()),
+);
+
+// Mount Client Push Notification Discovery & Subscription
+app.use(
+  '/api/notifications',
+  createNotificationRouter(() => db, authMiddleware),
+);
+
+// Mount Developer Console (Global Push & SMTP Management)
+app.use(
+  '/api/developer/console',
+  createDeveloperConsoleRouter(() => db, developerAuthMiddleware),
+);
 
 // ══════════════════════════════════════════════════════════════════════════════
 // AUDIT LOG HELPER
@@ -1805,11 +1935,25 @@ app.post('/api/auth/signin', async (req, res) => {
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
     const db = await connectDB();
 
-    // Check if user is a regular user
-    const user = await db.collection('users').findOne({ email: email.toLowerCase().trim() });
+    // Check if user is a regular user or platform developer
+    let user = await db.collection('users').findOne({ email: email.toLowerCase().trim() });
+    let isPlatformDev = false;
+    if (!user) {
+      user = await db.collection('platformusers').findOne({ email: email.toLowerCase().trim() });
+      if (user) isPlatformDev = true;
+    }
     if (!user) return res.status(401).json({ message: 'Invalid email or password' });
     if (user.isActive === false) return res.status(403).json({ message: 'Account is inactive. Contact your administrator.' });
     if (!await bcrypt.compare(password, user.passwordHash)) return res.status(401).json({ message: 'Invalid email or password' });
+
+    if (isPlatformDev) {
+      const tokens = generateTokens(user._id.toString(), user.email, user.role || 'DEVELOPER', 'developer');
+      await logAudit(db, { actorId: user._id.toString(), actorType: 'developer', action: 'DEVELOPER_LOGIN', resource: 'platformusers', resourceId: user._id.toString() });
+      return res.json({
+        ...tokens,
+        user: { id: user._id.toString(), email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role || 'DEVELOPER', accountType: 'developer' }
+      });
+    }
 
     // Check company status (if companyId exists)
     let company: any = null;
@@ -2577,7 +2721,6 @@ app.get('/api/system-roles', authMiddleware, async (req: any, res) => {
 app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
     const ctx = await resolveUserAndCompany(req, db);
     const projectId = req.query.projectId || req.headers['x-project-id'];
     if (!projectId) {
@@ -2687,7 +2830,6 @@ app.post('/api/inventory/scrap-rules', authMiddleware, requirePermission('settin
 app.get('/api/inventory/ledger', authMiddleware, requirePermission('ledger', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
     const ctx = await resolveUserAndCompany(req, db);
     const projectId = req.query.projectId || req.headers['x-project-id'];
     if (!projectId) {
@@ -3017,7 +3159,6 @@ app.post('/api/batches', authMiddleware, requirePermission('optimizer', 'create'
 app.get('/api/batches', authMiddleware, requirePermission('history', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
     const ctx = await resolveUserAndCompany(req, db);
     const projectId = req.query.projectId || req.headers['x-project-id'];
     if (!projectId) {
@@ -3169,7 +3310,6 @@ app.get('/api/batches/scrap-records', authMiddleware, requirePermission('history
 app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const { resolveUserAndCompany, assertProjectAccess } = await import('./projects/project-access.js');
     const ctx = await resolveUserAndCompany(req, db);
     const projectId = req.query.projectId || req.headers['x-project-id'];
     if (!projectId) {
@@ -3304,6 +3444,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
 // START — with seed initialization
 // ══════════════════════════════════════════════════════════════════════════════
 const PORT = process.env.PORT || 3000;
+let chatSocketGateway: ChatSocketGateway | null = null;
 
 async function startServer() {
   try {
@@ -3312,8 +3453,12 @@ async function startServer() {
     console.error('⚠️  Database connection error:', err);
   }
 
+  const httpServer = createServer(app);
+  if (db) {
+    chatSocketGateway = new ChatSocketGateway(httpServer, db, ACCESS_SECRET);
+  }
 
-  app.listen(PORT, () => console.log(`🚀 Express server listening on port ${PORT}`));
+  httpServer.listen(PORT, () => console.log(`🚀 Express server with Socket.IO listening on port ${PORT}`));
 }
 
 startServer();

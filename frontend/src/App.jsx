@@ -15,6 +15,14 @@ import GeneralInventoryPage from './pages/GeneralInventoryPage/GeneralInventoryP
 import CrmPage from './pages/CrmPage/CrmPage';
 import DrawingsPage from './pages/DrawingsPage/DrawingsPage';
 import PettyCashPage from './pages/PettyCashPage/PettyCashPage';
+import ContractorsPage from './pages/ContractorsPage/ContractorsPage';
+import CompanyLabourPage from './pages/ManpowerPage/CompanyLabourPage';
+import ContractorLabourPage from './pages/ManpowerPage/ContractorLabourPage';
+import MarkAttendancePage from './pages/AttendancePage/MarkAttendancePage';
+import AttendanceHistoryPage from './pages/AttendancePage/AttendanceHistoryPage';
+import AttendanceReportsPage from './pages/AttendancePage/AttendanceReportsPage';
+import ReportsPage from './pages/ReportsPage/ReportsPage';
+import ChatPage from './pages/ChatPage/ChatPage';
 import LedgerPage from './pages/LedgerPage/LedgerPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import UsersPage from './pages/UsersPage/UsersPage';
@@ -37,9 +45,11 @@ import ProjectFormModal from './components/ProjectModals/ProjectFormModal';
 import GeofenceConfigModal from './components/ProjectModals/GeofenceConfigModal';
 import AssignPartnerModal from './components/ProjectModals/AssignPartnerModal';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
+import ChatNotificationToaster from './components/ChatNotificationToaster/ChatNotificationToaster';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
 import { permissionsApi, projectsApi, setActiveProjectHeader } from './utils/api';
+import { autoRegisterPushDevice } from './utils/pushNotifications';
 import { setPermissions, clearPermissions } from './store/slices/permissionsSlice';
 import {
   setProjects,
@@ -61,12 +71,15 @@ const NO_PROJECT_SAFE_VIEWS = new Set([
   'superadmin',
   'no-project',
   'profile',
+  'chat',
+  'manpower-labour',
 ]);
 
 function App() {
   const dispatch = useDispatch();
   const view = useSelector((state) => state.routing.view);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isDeveloper = useSelector((state) => state.auth.isDeveloper);
   const projectsReady = useSelector((state) => state.project.projectsReady);
   const selectedProject = useSelector((state) => state.project.selectedProject);
   const projects = useSelector((state) => state.project.projects);
@@ -86,9 +99,16 @@ function App() {
     setActiveProjectHeader(id);
   }, [selectedProject, projectEpoch]);
 
+  // Automatically register browser device for Web Push & FCM upon login
+  useEffect(() => {
+    if (isAuthenticated && !isDeveloper && view !== 'superadmin' && view !== 'superadmin-login') {
+      autoRegisterPushDevice(false);
+    }
+  }, [isAuthenticated, isDeveloper, view]);
+
   // Authenticate → load permissions + projects → validate active project via backend
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || isDeveloper || view === 'superadmin' || view === 'superadmin-login') return;
     const token = sessionStorage.getItem('accessToken');
     if (!token) return;
 
@@ -150,10 +170,6 @@ function App() {
 
         if (cancelled || gen !== validateGen.current) return;
         dispatch(setSelectedProject(chosen));
-
-        // If we landed on no-project from a previous empty state, enter app
-        const currentView = sessionStorage.getItem('accessToken') ? undefined : undefined;
-        void currentView;
         setProjectBootstrapping(false);
       } catch (err) {
         console.warn('Project bootstrap failed:', err);
@@ -168,27 +184,44 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated, isDeveloper, view, dispatch]);
 
-  // After projects become available while on no-project (e.g. create), enter overview
+  // Ensure active developer session consistently renders developer console
   useEffect(() => {
-    if (!isAuthenticated || !projectsReady) return;
+    if (isDeveloper && view !== 'superadmin' && view !== 'superadmin-login') {
+      dispatch(setView('superadmin'));
+    }
+  }, [isDeveloper, view, dispatch]);
+
+  // Leave auth screens / no-project once bootstrap has a valid project
+  useEffect(() => {
+    if (!isAuthenticated || isDeveloper || view === 'superadmin' || view === 'superadmin-login' || !projectsReady || projectBootstrapping) return;
+
+    if (view === 'signin' || view === 'signup') {
+      if (projects.length > 0 && selectedProject) {
+        dispatch(setView('overview'));
+      } else if (projects.length === 0) {
+        dispatch(setView('no-project'));
+      }
+      return;
+    }
+
     if (projects.length > 0 && selectedProject && view === 'no-project') {
       dispatch(setView('overview'));
     }
     if (projects.length === 0 && view !== 'no-project' && view !== 'subscribe' && !NO_PROJECT_SAFE_VIEWS.has(view)) {
       dispatch(setView('no-project'));
     }
-  }, [isAuthenticated, projectsReady, projects.length, selectedProject, view, dispatch]);
+  }, [isAuthenticated, isDeveloper, projectsReady, projectBootstrapping, projects.length, selectedProject, view, dispatch]);
 
   // Guard: project-scoped views require validated project
   useEffect(() => {
-    if (!isAuthenticated || !projectsReady || projectBootstrapping) return;
+    if (!isAuthenticated || isDeveloper || view === 'superadmin' || view === 'superadmin-login' || !projectsReady || projectBootstrapping) return;
     if (NO_PROJECT_SAFE_VIEWS.has(view)) return;
     if (!selectedProject) {
       dispatch(setView('no-project'));
     }
-  }, [isAuthenticated, projectsReady, projectBootstrapping, selectedProject, view, dispatch]);
+  }, [isAuthenticated, isDeveloper, projectsReady, projectBootstrapping, selectedProject, view, dispatch]);
 
   useEffect(() => {
     const storedThemeMode = localStorage.getItem('themeMode') || 'dark';
@@ -205,7 +238,16 @@ function App() {
           dispatch(syncViewFromPopState(event.state.view));
         }
       } else {
-        dispatch(syncViewFromPopState(tokenExists ? 'overview' : 'signin'));
+        const rawPath = (window.location.pathname || '/').length > 1 
+          ? window.location.pathname.replace(/\/+$/, '') 
+          : (window.location.pathname || '/');
+        if (rawPath === '/developer' || rawPath === '/superadmin') {
+          dispatch(syncViewFromPopState('superadmin'));
+        } else if (rawPath === '/developer-login' || rawPath === '/superadmin-login') {
+          dispatch(syncViewFromPopState('superadmin-login'));
+        } else {
+          dispatch(syncViewFromPopState(tokenExists ? 'overview' : 'signin'));
+        }
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -267,11 +309,21 @@ function App() {
 
   const handleSignInSuccess = (authData) => {
     dispatch(loginSuccess(authData));
+    const u = authData?.user;
+    if (u?.accountType === 'developer' || u?.role === 'DEVELOPER' || u?.role === 'SUPER_ADMIN') {
+      dispatch(clearProjectContext());
+      dispatch(clearPermissions());
+      setActiveProjectHeader(null);
+      dispatch(setView('superadmin'));
+      return;
+    }
     const perms = authData?.permissions;
     if (perms && (perms.companyStatus === 'suspended' || perms.subscription?.isExpired)) {
       dispatch(setView('subscribe'));
+      return;
     }
-    // Do not jump to overview until project bootstrap completes
+    // Keep view on signin/signup briefly; render skips auth pages once authenticated
+    // and the bootstrap effect navigates to overview / no-project when ready.
   };
 
   const handleLogout = () => {
@@ -311,7 +363,8 @@ function App() {
 
   return (
     <div className="app-layout">
-      {view === 'signin' ? (
+      {/* Auth screens only when logged out — staying on view=signin after login was trapping users */}
+      {!isAuthenticated && view === 'signin' ? (
         <SignInPage
           onSignIn={handleSignInSuccess}
           onNavigateToSignUp={() => {
@@ -321,7 +374,7 @@ function App() {
             dispatch(setView('superadmin-login'));
           }}
         />
-      ) : view === 'signup' ? (
+      ) : !isAuthenticated && view === 'signup' ? (
         <SignUpPage
           onSignUp={handleSignInSuccess}
           onNavigateToSignIn={() => {
@@ -332,7 +385,7 @@ function App() {
         <SubscribePage />
       ) : view === 'superadmin-login' ? (
         <SuperadminLoginPage />
-      ) : view === 'superadmin' ? (
+      ) : view === 'superadmin' || isDeveloper ? (
         <SuperadminDashboard />
       ) : isAuthenticated && (!projectsReady || projectBootstrapping) ? (
         <div className="no-project-page">
@@ -403,6 +456,30 @@ function App() {
             {view === 'petty-cash' && (
               <PettyCashPage />
             )}
+            {view === 'contractors' && (
+              <ContractorsPage />
+            )}
+            {view === 'manpower-labour' && (
+              <CompanyLabourPage />
+            )}
+            {view === 'manpower-contractor-labour' && (
+              <ContractorLabourPage />
+            )}
+            {view === 'attendance-mark' && (
+              <MarkAttendancePage />
+            )}
+            {view === 'attendance-history' && (
+              <AttendanceHistoryPage />
+            )}
+            {view === 'attendance-reports' && (
+              <AttendanceReportsPage />
+            )}
+            {view === 'reports' && (
+              <ReportsPage />
+            )}
+            {view === 'chat' && (
+              <ChatPage />
+            )}
             {view === 'ledger' && (
               <LedgerPage />
             )}
@@ -450,6 +527,7 @@ function App() {
       {showWorkspace && geofenceModalProject && <GeofenceConfigModal />}
       {showWorkspace && assignPartnerModalProject && <AssignPartnerModal />}
 
+      <ChatNotificationToaster />
       <ScrollToTop />
     </div>
   );

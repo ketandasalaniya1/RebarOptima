@@ -22,6 +22,15 @@ const VIEW_TITLES = {
   'general-inventory': 'Site Inventory',
   crm: 'Real Estate CRM',
   drawings: 'Drawings & Files',
+  'petty-cash': 'Petty Cash',
+  'project-management': 'Projects & Tasks',
+  contractors: 'Contractors',
+  'manpower-labour': 'Labour',
+  'manpower-contractor-labour': 'Contractor Labour',
+  'attendance-mark': 'Mark Attendance',
+  'attendance-history': 'Attendance History',
+  'attendance-reports': 'Attendance Reports',
+  reports: 'Reports',
   users: 'User Management',
   roles: 'Roles & Permissions',
   settings: 'Settings',
@@ -73,6 +82,16 @@ export default function Breadcrumbs() {
       return segments;
     }
 
+    // Company-wide manpower labour (no project scope)
+    if (currentView === 'manpower-labour') {
+      segments.push({ label: 'Manpower' });
+      segments.push({
+        label: VIEW_TITLES[currentView],
+        isCurrent: true,
+      });
+      return segments;
+    }
+
     // Project-dependent or operational modules
     if (selectedProject) {
       segments.push({
@@ -84,6 +103,18 @@ export default function Breadcrumbs() {
         icon: <Building2 size={14} className="bc-icon text-emerald" />,
         onClick: () => navigate('overview'),
       });
+    }
+
+    if (currentView === 'manpower-contractor-labour') {
+      segments.push({ label: 'Manpower' });
+    }
+
+    if (
+      currentView === 'attendance-mark' ||
+      currentView === 'attendance-history' ||
+      currentView === 'attendance-reports'
+    ) {
+      segments.push({ label: 'Attendance' });
     }
 
     segments.push({

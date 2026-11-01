@@ -60,7 +60,7 @@ export async function apiRequest(endpoint, options = {}) {
   let response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   let data = await response.json().catch(() => null);
   
-  if (response.status === 401 && !endpoint.includes('/auth/signin') && !endpoint.includes('/auth/refresh')) {
+  if (response.status === 401 && !endpoint.startsWith('/auth/')) {
     if (isRefreshing) {
       try {
         const newToken = await new Promise((resolve, reject) => {
@@ -101,8 +101,18 @@ export async function apiRequest(endpoint, options = {}) {
       } catch (refreshErr) {
         processQueue(refreshErr, null);
         isRefreshing = false;
+        const storedUser = sessionStorage.getItem('user');
+        let isDev = false;
+        try {
+          const parsed = JSON.parse(storedUser || '{}');
+          if (parsed.accountType === 'developer' || parsed.role === 'DEVELOPER' || parsed.role === 'SUPER_ADMIN') isDev = true;
+        } catch (_) {}
         sessionStorage.clear();
-        window.location.href = '/login';
+        if (isDev) {
+          window.location.href = '/developer-login';
+        } else {
+          window.location.href = '/login';
+        }
         throw refreshErr;
       }
     }
@@ -167,6 +177,8 @@ export const batchesApi = {
     apiRequest(`/batches/${id}?restoreStock=${restoreStock}`, { method: 'DELETE' }),
 };
 
+export const MAX_BLOCKS_PER_PROJECT = 200;
+
 export const projectsApi = {
   getAll: (status) => apiRequest(`/projects${status ? `?status=${status}` : ''}`),
   getById: (id) => apiRequest(`/projects/${id}`),
@@ -175,6 +187,14 @@ export const projectsApi = {
   updateStatus: (id, status) => apiRequest(`/projects/${id}/status`, { method: 'PUT', body: { status } }),
   updateGeofences: (id, geofences) => apiRequest(`/projects/${id}/geofences`, { method: 'PUT', body: { geofences } }),
   assignPartnerAdmins: (id, partnerAdminIds) => apiRequest(`/projects/${id}/assign-partner`, { method: 'POST', body: { partnerAdminIds } }),
+  getBlocks: (projectId, { includeInactive = false } = {}) =>
+    apiRequest(`/projects/${projectId}/blocks${includeInactive ? '?includeInactive=true' : ''}`),
+  createBlock: (projectId, data) =>
+    apiRequest(`/projects/${projectId}/blocks`, { method: 'POST', body: data }),
+  updateBlock: (projectId, blockId, data) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}`, { method: 'PUT', body: data }),
+  archiveBlock: (projectId, blockId, { hard = false } = {}) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}${hard ? '?hard=true' : ''}`, { method: 'DELETE' }),
 };
 
 // Developer API
@@ -204,8 +224,60 @@ export const developerApi = {
     const query = queryParts.length ? `?${queryParts.join('&')}` : '';
     return apiRequest(`/developer/audit-logs${query}`);
   },
-  // Modules
-  getModules: () => apiRequest('/developer/modules'),
+  // Developer Console — Push & SMTP & FCM
+  getWebPushConfig: () => apiRequest('/developer/console/push/config'),
+  saveWebPushConfig: (dto) => apiRequest('/developer/console/push/config', { method: 'POST', body: dto }),
+  generateVapidKeys: () => apiRequest('/developer/console/push/generate-keys', { method: 'POST' }),
+  testPushNotification: (dto) => apiRequest('/developer/console/push/test', { method: 'POST', body: dto }),
+  getFcmConfig: () => apiRequest('/developer/console/push/fcm/config'),
+  saveFcmConfig: (dto) => apiRequest('/developer/console/push/fcm/config', { method: 'POST', body: dto }),
+  testFcmNotification: (dto) => apiRequest('/developer/console/push/fcm/test', { method: 'POST', body: dto }),
+  getFcmTokens: () => apiRequest('/developer/console/push/fcm/tokens'),
+  registerFcmTokenForUser: (dto) => apiRequest('/developer/console/push/fcm/tokens', { method: 'POST', body: dto }),
+  deleteFcmToken: (id) => apiRequest(`/developer/console/push/fcm/tokens/${id}`, { method: 'DELETE' }),
+  getSmtpConfig: () => apiRequest('/developer/console/smtp/config'),
+  saveSmtpConfig: (dto) => apiRequest('/developer/console/smtp/config', { method: 'POST', body: dto }),
+  testSmtpConnection: (dto) => apiRequest('/developer/console/smtp/test', { method: 'POST', body: dto }),
+  getNotificationTemplates: () => apiRequest('/developer/console/templates'),
+  saveNotificationTemplate: (dto) => apiRequest('/developer/console/templates', { method: 'POST', body: dto }),
+  getConsoleLogs: (type = 'email', page = 1, limit = 50) => apiRequest(`/developer/console/logs?type=${type}&page=${page}&limit=${limit}`),
+  getSystemHealth: () => apiRequest('/developer/console/health'),
+};
+
+// Notifications Client API
+export const notificationsApi = {
+  getVapidKey: () => apiRequest('/notifications/vapid-key'),
+  subscribe: (subscription, userAgent) => apiRequest('/notifications/subscribe', { method: 'POST', body: { subscription, userAgent } }),
+  unsubscribe: (endpoint) => apiRequest('/notifications/unsubscribe', { method: 'POST', body: { endpoint } }),
+  registerFcmToken: (token, platform = 'web', deviceInfo = '') =>
+    apiRequest('/notifications/fcm-token', { method: 'POST', body: { token, platform, deviceInfo } }),
+  unregisterFcmToken: (token) =>
+    apiRequest('/notifications/fcm-token', { method: 'DELETE', body: { token } }),
+};
+
+// Real-Time Chat API
+export const chatApi = {
+  getConversations: (projectId = '') => apiRequest(`/chat/conversations${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`),
+  startDirectChat: (otherUserId, projectId = '') => apiRequest('/chat/conversations/direct', { method: 'POST', body: { otherUserId, projectId } }),
+  createGroupChat: (dto) => apiRequest('/chat/conversations/group', { method: 'POST', body: dto }),
+  getMessages: (conversationId, limit = 40, before = null) => {
+    let url = `/chat/conversations/${conversationId}/messages?limit=${limit}`;
+    if (before) url += `&before=${before}`;
+    return apiRequest(url);
+  },
+  sendMessage: (conversationId, dto) => apiRequest(`/chat/conversations/${conversationId}/messages`, { method: 'POST', body: dto }),
+  markAsRead: (conversationId) => apiRequest(`/chat/conversations/${conversationId}/read`, { method: 'POST' }),
+  markAsDelivered: (conversationId) => apiRequest(`/chat/conversations/${conversationId}/delivered`, { method: 'POST' }),
+  addGroupMember: (conversationId, newUserId) => apiRequest(`/chat/conversations/${conversationId}/members`, { method: 'POST', body: { newUserId } }),
+  removeGroupMember: (conversationId, memberId) => apiRequest(`/chat/conversations/${conversationId}/members/${memberId}`, { method: 'DELETE' }),
+  updateGroupInfo: (conversationId, dto) => apiRequest(`/chat/conversations/${conversationId}`, { method: 'PUT', body: dto }),
+  leaveGroup: (conversationId) => apiRequest(`/chat/conversations/${conversationId}/leave`, { method: 'POST' }),
+  searchMessages: (q, conversationId = '') => apiRequest(`/chat/search?q=${encodeURIComponent(q)}${conversationId ? `&conversationId=${conversationId}` : ''}`),
+  getCandidates: (search = '', projectId = '') => apiRequest(`/chat/users?search=${encodeURIComponent(search || '')}${projectId ? `&projectId=${encodeURIComponent(projectId)}` : ''}`),
+  uploadAttachment: (dto) => apiRequest('/chat/attachments', { method: 'POST', body: dto }),
+  togglePinConversation: (conversationId) => apiRequest(`/chat/conversations/${conversationId}/pin`, { method: 'POST' }),
+  togglePinMessage: (conversationId, messageId) => apiRequest(`/chat/conversations/${conversationId}/pin-message`, { method: 'POST', body: { messageId } }),
+  toggleStarMessage: (messageId) => apiRequest(`/chat/messages/${messageId}/star`, { method: 'POST' }),
 };
 
 // Public API
@@ -455,5 +527,214 @@ export const pettyCashApi = {
   },
   createTransaction: (data) => apiRequest('/petty-cash/transactions', { method: 'POST', body: data }),
   deleteTransaction: (id) => apiRequest(`/petty-cash/transactions/${id}`, { method: 'DELETE' })
+};
+
+export const contractorsApi = {
+  list: () => apiRequest('/contractors'),
+  getById: (id) => apiRequest(`/contractors/${id}`),
+  suggest: (q) => apiRequest(`/contractors/suggest?q=${encodeURIComponent(q || '')}`),
+  create: (data) => apiRequest('/contractors', { method: 'POST', body: data }),
+  update: (id, data) => apiRequest(`/contractors/${id}`, { method: 'PUT', body: data }),
+  remove: (id) => apiRequest(`/contractors/${id}`, { method: 'DELETE' }),
+  getDepartments: () => apiRequest('/contractors/departments'),
+  suggestDepartments: (q) =>
+    apiRequest(`/contractors/departments/suggest?q=${encodeURIComponent(q || '')}`),
+  createDepartment: (data) => apiRequest('/contractors/departments', { method: 'POST', body: data }),
+};
+
+export const manpowerApi = {
+  listLabours: () => apiRequest('/manpower/labours'),
+  getLabour: (id) => apiRequest(`/manpower/labours/${id}`),
+  createLabour: (data) => apiRequest('/manpower/labours', { method: 'POST', body: data }),
+  updateLabour: (id, data) => apiRequest(`/manpower/labours/${id}`, { method: 'PUT', body: data }),
+  deleteLabour: (id) => apiRequest(`/manpower/labours/${id}`, { method: 'DELETE' }),
+  getContractorMode: (contractorId) =>
+    apiRequest(`/manpower/contractor-labours/mode?contractorId=${encodeURIComponent(contractorId || '')}`),
+  getContractorLabours: (contractorId) =>
+    apiRequest(`/manpower/contractor-labours?contractorId=${encodeURIComponent(contractorId || '')}`),
+  createWorker: (data) =>
+    apiRequest('/manpower/contractor-labours/workers', { method: 'POST', body: data }),
+  updateWorker: (id, data) =>
+    apiRequest(`/manpower/contractor-labours/workers/${id}`, { method: 'PUT', body: data }),
+  deleteWorker: (id) =>
+    apiRequest(`/manpower/contractor-labours/workers/${id}`, { method: 'DELETE' }),
+  saveWorkforce: (data) =>
+    apiRequest('/manpower/contractor-labours/workforce', { method: 'PUT', body: data }),
+};
+
+export const attendanceApi = {
+  getAssignments: () => apiRequest('/attendance/assignments'),
+  setAssignments: (labourIds) =>
+    apiRequest('/attendance/assignments', { method: 'PUT', body: { labourIds } }),
+  getEligible: (params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v != null && v !== '') qs.set(k, String(v));
+    });
+    return apiRequest(`/attendance/eligible?${qs.toString()}`);
+  },
+  saveSession: (data) => apiRequest('/attendance/sessions', { method: 'PUT', body: data }),
+  listSessions: (params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v != null && v !== '') qs.set(k, String(v));
+    });
+    return apiRequest(`/attendance/sessions?${qs.toString()}`);
+  },
+  getSession: (id) => apiRequest(`/attendance/sessions/${id}`),
+  voidSession: (id) => apiRequest(`/attendance/sessions/${id}`, { method: 'DELETE' }),
+  reportSummary: (params = {}) => {
+    const qs = new URLSearchParams(params);
+    return apiRequest(`/attendance/reports/summary?${qs.toString()}`);
+  },
+  reportDetail: (params = {}) => {
+    const qs = new URLSearchParams(params);
+    return apiRequest(`/attendance/reports/detail?${qs.toString()}`);
+  },
+  reportMeta: () => apiRequest('/attendance/reports/meta'),
+  reportPreview: (params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v != null && v !== '') qs.set(k, String(v));
+    });
+    return apiRequest(`/attendance/reports/preview?${qs.toString()}`);
+  },
+  exportExcelUrl: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return `${API_BASE_URL}/attendance/reports/export.xlsx?${qs}`;
+  },
+  exportPdfUrl: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return `${API_BASE_URL}/attendance/reports/export.pdf?${qs}`;
+  },
+  /** Authenticated blob download with project header + one refresh retry (same as apiRequest). */
+  downloadExport: async (kind, params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v != null && v !== '') qs.set(k, String(v));
+    });
+    const path =
+      kind === 'xlsx'
+        ? `/attendance/reports/export.xlsx?${qs}`
+        : `/attendance/reports/export.pdf?${qs}`;
+    const buildHeaders = (token) => {
+      const headers = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const projectHeader =
+        activeProjectIdForApi ||
+        (typeof localStorage !== 'undefined' ? localStorage.getItem('rebar_active_project_id') : null);
+      if (projectHeader) headers['X-Project-Id'] = String(projectHeader);
+      return headers;
+    };
+
+    let token = sessionStorage.getItem('accessToken');
+    let res = await fetch(`${API_BASE_URL}${path}`, { headers: buildHeaders(token) });
+
+    if (res.status === 401) {
+      const refreshToken = sessionStorage.getItem('refreshToken');
+      if (!refreshToken) throw new Error('Session expired');
+      const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+      const refreshData = await refreshRes.json().catch(() => null);
+      if (!refreshRes.ok) {
+        sessionStorage.clear();
+        window.location.href = '/login';
+        throw new Error('Session expired');
+      }
+      sessionStorage.setItem('accessToken', refreshData.accessToken);
+      if (refreshData.refreshToken) {
+        sessionStorage.setItem('refreshToken', refreshData.refreshToken);
+      }
+      token = refreshData.accessToken;
+      res = await fetch(`${API_BASE_URL}${path}`, { headers: buildHeaders(token) });
+    }
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      throw new Error(data?.message || `Export failed (${res.status})`);
+    }
+    const blob = await res.blob();
+    const filename = kind === 'xlsx' ? 'attendance-report.xlsx' : 'attendance-report.pdf';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  },
+};
+
+export const reportsApi = {
+  getConfigOptions: async () => {
+    const res = await apiRequest('/reports/config-options');
+    return res.data;
+  },
+  preview: async (config) => {
+    const res = await apiRequest('/reports/preview', {
+      method: 'POST',
+      body: config,
+    });
+    return res.data;
+  },
+  downloadPdf: async (config) => {
+    const token = sessionStorage.getItem('accessToken');
+    const projectHeader = activeProjectIdForApi || (typeof localStorage !== 'undefined' ? localStorage.getItem('rebar_active_project_id') : null);
+    const res = await fetch(`${API_BASE_URL}/reports/pdf`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(projectHeader ? { 'X-Project-Id': projectHeader } : {}),
+      },
+      body: JSON.stringify(config),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      throw new Error(err?.message || 'Failed to download PDF report');
+    }
+    const blob = await res.blob();
+    const disposition = res.headers.get('content-disposition');
+    let filename = `RebarOptima_Report_${config.reportMode}_${config.startDate}.pdf`;
+    if (disposition && disposition.includes('filename=')) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match && match[1]) filename = match[1];
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  },
+  downloadExcel: async (config) => {
+    const token = sessionStorage.getItem('accessToken');
+    const projectHeader = activeProjectIdForApi || (typeof localStorage !== 'undefined' ? localStorage.getItem('rebar_active_project_id') : null);
+    const res = await fetch(`${API_BASE_URL}/reports/excel`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(projectHeader ? { 'X-Project-Id': projectHeader } : {}),
+      },
+      body: JSON.stringify(config),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      throw new Error(err?.message || 'Failed to export Excel workbook');
+    }
+    const blob = await res.blob();
+    const disposition = res.headers.get('content-disposition');
+    let filename = `RebarOptima_Export_${config.extractType}.xlsx`;
+    if (disposition && disposition.includes('filename=')) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match && match[1]) filename = match[1];
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  },
 };
 

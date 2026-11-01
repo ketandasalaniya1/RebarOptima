@@ -7,6 +7,14 @@ export default defineConfig({
   build: {
     cssMinify: false
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
   define: {
     __VUE_OPTIONS_API__: true,
     __VUE_PROD_DEVTOOLS__: false,

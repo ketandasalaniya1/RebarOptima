@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ObjectId } from 'mongodb';
+import { ObjectId, MongoClient } from 'mongodb';
 import {
   resolveUserAndCompany,
   assertProjectAccess,
@@ -7,9 +7,32 @@ import {
   projectIdQuery,
   isPartnerAdminRole,
 } from './project-access';
+import {
+  validateBlocksPayload,
+  insertProjectWithBlocks,
+  listProjectBlocks,
+  createBlockForProject,
+  updateBlockForProject,
+  archiveBlockForProject,
+  assertBlockInProject,
+  ensureProjectBlocksIndexes,
+} from './project-blocks.service';
 
-export function createProjectsRouter(getDb: () => any, authMiddleware: any, logAudit?: any) {
+export function createProjectsRouter(
+  getDb: () => any,
+  authMiddleware: any,
+  logAudit?: any,
+  getClient?: () => MongoClient | null,
+) {
   const router = Router();
+
+  // Best-effort indexes (non-blocking for request path failures)
+  let indexesReady = false;
+  const readyIndexes = async (db: any) => {
+    if (indexesReady) return;
+    await ensureProjectBlocksIndexes(db);
+    indexesReady = true;
+  };
 
   const validateCoordinates = (lat: any, lng: any) => {
     const latNum = Number(lat);
@@ -137,7 +160,8 @@ export function createProjectsRouter(getDb: () => any, authMiddleware: any, logA
         });
       }
 
-      const { name, address, pincode, location, projectType, geofences, assignedPartnerAdminIds } = req.body;
+      const { name, address, pincode, location, projectType, geofences, assignedPartnerAdminIds, blocks } =
+        req.body;
 
       if (!name || !String(name).trim()) {
         return res.status(400).json({ message: 'Project Name is required' });
@@ -164,6 +188,16 @@ export function createProjectsRouter(getDb: () => any, authMiddleware: any, logA
         const gfErr = validateGeofences(geofences);
         if (gfErr) return res.status(400).json({ message: gfErr });
       }
+
+      const blocksValidation = validateBlocksPayload(blocks);
+      if (!blocksValidation.ok) {
+        return res.status(400).json({
+          message: blocksValidation.message,
+          code: blocksValidation.code,
+        });
+      }
+
+      await readyIndexes(db);
 
       const newId = new ObjectId();
       const now = new Date();
@@ -192,9 +226,16 @@ export function createProjectsRouter(getDb: () => any, authMiddleware: any, logA
         createdBy: ctx.userId,
         createdAt: now,
         updatedAt: now,
+        blockCount: blocksValidation.items?.length || 0,
       };
 
-      await db.collection('projects').insertOne(newProject);
+      const client = getClient ? getClient() : null;
+      const { project: createdProject, blocks: createdBlocks } = await insertProjectWithBlocks({
+        db,
+        client,
+        projectDoc: newProject,
+        blockItems: blocksValidation.items || [],
+      });
 
       if (Array.isArray(assignedPartnerAdminIds) && assignedPartnerAdminIds.length > 0) {
         for (const partnerId of assignedPartnerAdminIds) {
@@ -217,14 +258,153 @@ export function createProjectsRouter(getDb: () => any, authMiddleware: any, logA
           resource: 'projects',
           resourceId: newId.toString(),
           projectId: newId.toString(),
-          newValue: { name: newProject.name, projectType: newProject.projectType },
+          newValue: {
+            name: createdProject.name,
+            projectType: createdProject.projectType,
+            blockCount: createdBlocks.length,
+          },
         });
       }
 
-      res.status(201).json(newProject);
+      res.status(201).json({
+        ...createdProject,
+        blocks: createdBlocks,
+      });
     } catch (e: any) {
       console.error('Create project error:', e);
-      res.status(500).json({ message: e.message });
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate block name for this project' : e.message,
+        code: e.code === 11000 ? 'BLOCK_NAME_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // ─── Project blocks (canonical) ───────────────────────────────────────────
+
+  // GET /api/projects/:id/blocks
+  router.get('/:id/blocks', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const includeInactive = String(req.query.includeInactive || '') === 'true';
+      const project = await assertProjectAccess(db, ctx, req.params.id, { requireActive: false });
+      const blocks = await listProjectBlocks(db, String(project._id || project.id), { includeInactive });
+      res.json(blocks);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // POST /api/projects/:id/blocks
+  router.post('/:id/blocks', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      if (!(await canCreateProjects(db, ctx))) {
+        // Allow users who can manage project structure: same gate as create for now
+        return res.status(403).json({
+          message: 'You are not authorized to create project blocks',
+          code: 'BLOCK_CREATE_DENIED',
+        });
+      }
+      await readyIndexes(db);
+      const created = await createBlockForProject({
+        db,
+        ctx,
+        projectId: req.params.id,
+        input: {
+          name: req.body?.name,
+          code: req.body?.code,
+          description: req.body?.description,
+        },
+      });
+      if (logAudit) {
+        await logAudit(db, {
+          actorId: ctx.userId,
+          actorType: 'user',
+          companyId: ctx.companyId,
+          action: 'PROJECT_BLOCK_CREATED',
+          resource: 'project_blocks',
+          resourceId: String(created._id),
+          projectId: String(created.projectId),
+          newValue: { name: created.name },
+        });
+      }
+      res.status(201).json(created);
+    } catch (e: any) {
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate block name for this project' : e.message,
+        code: e.code === 11000 ? 'BLOCK_NAME_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // PUT /api/projects/:id/blocks/:blockId
+  router.put('/:id/blocks/:blockId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const updated = await updateBlockForProject({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        patch: {
+          name: req.body?.name,
+          code: req.body?.code,
+          description: req.body?.description,
+          displayOrder: req.body?.displayOrder,
+          status: req.body?.status,
+        },
+      });
+      res.json(updated);
+    } catch (e: any) {
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate block name for this project' : e.message,
+        code: e.code === 11000 ? 'BLOCK_NAME_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // DELETE /api/projects/:id/blocks/:blockId — soft-archive by default; ?hard=true only if no children
+  router.delete('/:id/blocks/:blockId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const hardDelete = String(req.query.hard || '') === 'true';
+      const result = await archiveBlockForProject({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        hardDelete,
+      });
+      res.json(result);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // GET single block (ownership check) — useful for module adapters
+  router.get('/:id/blocks/:blockId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const { block } = await assertBlockInProject(db, ctx, req.params.id, req.params.blockId, {
+        requireActive: false,
+      });
+      res.json(block);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
     }
   });
 
@@ -447,3 +627,4 @@ export function createProjectsRouter(getDb: () => any, authMiddleware: any, logA
 
 // Re-export for module adapters
 export { projectIdQuery, resolveUserAndCompany, assertProjectAccess };
+export { assertBlockInProject } from './project-blocks.service';

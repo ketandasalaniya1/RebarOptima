@@ -69,22 +69,28 @@ export default function DrawingsPage() {
       const [dwsRes, prjsRes, discsRes] = await Promise.all([
         drawingsApi.getDrawings(pid ? { projectId: pid } : undefined).catch(() => ({ drawings: [] })),
         drawingsApi.getProjects().catch(() => []),
-        drawingsApi.getDisciplines().catch(() => [])
+        drawingsApi.getDisciplines().catch(() => []),
       ]);
 
-      const loadedDrawings = dwsRes.drawings || [];
+      const loadedDrawings = dwsRes?.drawings || (Array.isArray(dwsRes) ? dwsRes : []);
       setDrawings(loadedDrawings);
       setProjects(prjsRes || []);
       setDisciplines(discsRes || []);
 
-      // Pre-populate default project in upload form
-      if (prjsRes && prjsRes.length > 0 && !uploadForm.projectId) {
-        setUploadForm((prev) => ({
-          ...prev,
-          projectId: prjsRes[0]._id,
-          disciplineId: discsRes?.[0]?._id || ''
-        }));
-      }
+      // Prefer active org project for upload form; fall back to first drawings project
+      const defaultProjectId =
+        (pid && (prjsRes || []).some((p) => String(p._id || p.id) === String(pid))
+          ? pid
+          : null) ||
+        prjsRes?.[0]?._id ||
+        prjsRes?.[0]?.id ||
+        '';
+
+      setUploadForm((prev) => ({
+        ...prev,
+        projectId: prev.projectId || defaultProjectId || '',
+        disciplineId: prev.disciplineId || discsRes?.[0]?._id || discsRes?.[0]?.id || '',
+      }));
     } catch (err) {
       console.error('Error loading drawings data:', err);
     } finally {

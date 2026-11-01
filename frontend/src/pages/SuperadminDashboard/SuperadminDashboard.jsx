@@ -6,10 +6,15 @@ import {
   ShieldAlert, Users, CreditCard, Database, Search, CheckCircle, XCircle, 
   LogOut, Clock, Cpu, Building2, Package, ToggleLeft, ToggleRight,
   ChevronDown, ChevronRight, AlertTriangle, Activity, FileText, RefreshCw,
-  Plus, Edit3, Eye, Layers, Trash2
+  Plus, Edit3, Eye, Layers, Trash2, Bell, Mail
 } from 'lucide-react';
 import { developerApi } from '../../utils/api';
 import './SuperadminDashboard.css';
+import WebPushPanel from './components/WebPushPanel';
+import SmtpPanel from './components/SmtpPanel';
+import TemplatesPanel from './components/TemplatesPanel';
+import DeliveryLogsPanel from './components/DeliveryLogsPanel';
+import SystemHealthPanel from './components/SystemHealthPanel';
 
 export default function SuperadminDashboard() {
   const dispatch = useDispatch();
@@ -180,7 +185,12 @@ export default function SuperadminDashboard() {
     { id: 'companies', label: 'Builder Firms', icon: <Building2 size={16} /> },
     { id: 'packages', label: 'Packages', icon: <Package size={16} /> },
     { id: 'subscriptions', label: 'Subscriptions', icon: <CreditCard size={16} /> },
-    { id: 'audit', label: 'Audit Logs', icon: <FileText size={16} /> },
+    { id: 'push', label: 'Push Notifications', icon: <Bell size={16} /> },
+    { id: 'smtp', label: 'SMTP & Email', icon: <Mail size={16} /> },
+    { id: 'templates', label: 'Templates', icon: <FileText size={16} /> },
+    { id: 'logs', label: 'Delivery Logs', icon: <Activity size={16} /> },
+    { id: 'health', label: 'System Health', icon: <Cpu size={16} /> },
+    { id: 'audit', label: 'Audit Logs', icon: <ShieldAlert size={16} /> },
   ];
 
   const MODULE_LABELS = {
@@ -617,6 +627,21 @@ export default function SuperadminDashboard() {
                   </div>
                 </div>
               )}
+
+              {/* PUSH NOTIFICATIONS TAB */}
+              {activeTab === 'push' && <WebPushPanel />}
+
+              {/* SMTP & EMAIL GATEWAY TAB */}
+              {activeTab === 'smtp' && <SmtpPanel />}
+
+              {/* NOTIFICATION TEMPLATES TAB */}
+              {activeTab === 'templates' && <TemplatesPanel />}
+
+              {/* DELIVERY LOGS TAB */}
+              {activeTab === 'logs' && <DeliveryLogsPanel />}
+
+              {/* SYSTEM HEALTH TAB */}
+              {activeTab === 'health' && <SystemHealthPanel />}
             </>
           )}
         </div>

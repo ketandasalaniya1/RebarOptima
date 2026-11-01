@@ -8,6 +8,7 @@ Scopes: **project** | **company** | **shared** | **out_of_scope**
 | Entity / Collection | Scope | Notes |
 |---------------------|--------|--------|
 | `projects` (global metadata, geofence, partner assignment) | project | Canonical catalog |
+| `project_blocks` (canonical construction blocks / towers) | project | Org-level blocks for active project; BBS/Casting bridge via `orgBlockId` during migration |
 | `users.assignedProjects` | project ACL | Company user record; ACL is project-scoped |
 | Steel stock items (`stockitems` / inventory) | project | Require active `projectId`; legacy null until backfilled |
 | Steel batches | project | Require active `projectId` |

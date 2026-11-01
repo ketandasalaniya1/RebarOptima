@@ -3,18 +3,36 @@ import { User, Lock, EyeOff, Eye, Map, ClipboardList, TrendingUp, Shield, Users 
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
 import { authApi } from '../../utils/api';
+import { autoRegisterPushDevice } from '../../utils/pushNotifications';
 import { useDispatch } from 'react-redux';
 import { setPermissions } from '../../store/slices/permissionsSlice';
 import './SignInPage.css';
+
+const REMEMBER_EMAIL_KEY = 'rebar_remember_email';
+const REMEMBER_FLAG_KEY = 'rebar_remember_me';
 
 const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [logoClicks, setLogoClicks] = useState(0);
+
+  useEffect(() => {
+    try {
+      const savedFlag = localStorage.getItem(REMEMBER_FLAG_KEY) === '1';
+      const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || '';
+      if (savedFlag && savedEmail) {
+        setRememberMe(true);
+        setEmail(savedEmail);
+      }
+    } catch {
+      /* ignore storage errors */
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -38,18 +56,36 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
     }
   };
 
+  const persistRememberMe = (nextEmail, enabled) => {
+    try {
+      if (enabled && nextEmail) {
+        localStorage.setItem(REMEMBER_FLAG_KEY, '1');
+        localStorage.setItem(REMEMBER_EMAIL_KEY, nextEmail.trim());
+      } else {
+        localStorage.removeItem(REMEMBER_FLAG_KEY);
+        localStorage.removeItem(REMEMBER_EMAIL_KEY);
+      }
+    } catch {
+      /* ignore storage errors */
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
     try {
       const data = await authApi.signin(email, password);
+      // Persist email only — never store passwords in localStorage
+      persistRememberMe(email, rememberMe);
       if (data.permissions) {
         dispatch(setPermissions(data.permissions));
       }
       if (onSignIn) {
         onSignIn(data);
       }
+      // Automatically register device for push notifications & FCM upon signin
+      autoRegisterPushDevice(true).catch(() => {});
     } catch (err) {
       setError(err.message || 'Failed to sign in. Please check your credentials.');
     } finally {
@@ -161,11 +197,21 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
 
                 <div className="form-actions">
                   <label className="remember-me">
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setRememberMe(checked);
+                        if (!checked) persistRememberMe('', false);
+                      }}
+                    />
                     <span className="checkmark"></span>
                     Remember Me
                   </label>
-                  <a href="#" className="forgot-password">Forgot Password?</a>
+                  <a href="#" className="forgot-password" onClick={(e) => e.preventDefault()}>
+                    Forgot Password?
+                  </a>
                 </div>
 
                 <button type="submit" className="signin-button" disabled={isLoading}>
@@ -180,6 +226,29 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
                   if (onNavigateToSignUp) onNavigateToSignUp();
                 }}>Sign Up</a>
               </p>
+
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', textAlign: 'center' }}>
+                <a
+                  href="/developer-login"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onNavigateToDeveloper) onNavigateToDeveloper();
+                  }}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontSize: '0.82rem',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent, #10b981)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)')}
+                >
+                  <Shield size={14} /> Platform Developer Console →
+                </a>
+              </div>
             </div>
           </div>
         </div>

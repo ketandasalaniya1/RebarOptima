@@ -3,7 +3,9 @@ import { useDispatch } from 'react-redux';
 import { setView } from '../../store/slices/routingSlice';
 import { loginSuccess } from '../../store/slices/authSlice';
 import { ShieldAlert, Mail, Lock, Eye, EyeOff, Terminal, Server, Database } from 'lucide-react';
-import { authApi } from '../../utils/api';
+import { clearProjectContext } from '../../store/slices/projectSlice';
+import { clearPermissions } from '../../store/slices/permissionsSlice';
+import { authApi, setActiveProjectHeader } from '../../utils/api';
 import './SuperadminLoginPage.css';
 
 export default function SuperadminLoginPage() {
@@ -20,6 +22,13 @@ export default function SuperadminLoginPage() {
     setLoading(true);
     try {
       const data = await authApi.developerSignin(email, password);
+      dispatch(clearProjectContext());
+      dispatch(clearPermissions());
+      setActiveProjectHeader(null);
+      try {
+        localStorage.removeItem('rebar_active_project_id');
+      } catch (_) {}
+
       dispatch(loginSuccess(data));
       dispatch(setView('superadmin'));
     } catch (err) {

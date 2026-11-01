@@ -3,21 +3,33 @@ import { createSlice } from '@reduxjs/toolkit';
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 const getInitialView = () => {
-  const path = window.location.pathname;
-  const token = sessionStorage.getItem('accessToken');
-  const lastActivity = sessionStorage.getItem('lastActivity');
+  const rawPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const path = rawPath.length > 1 ? rawPath.replace(/\/+$/, '') : rawPath;
+  const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
+  const lastActivity = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('lastActivity') : null;
   const isExpired = lastActivity && (Date.now() - parseInt(lastActivity, 10) > SESSION_TIMEOUT_MS);
 
+  let isDevUser = false;
   if (token && !isExpired) {
-    // Check if developer
     try {
       const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-      if (user.accountType === 'developer') {
-        if (path === '/developer') return 'superadmin';
-        return 'superadmin';
+      if (user.accountType === 'developer' || user.role === 'DEVELOPER' || user.role === 'SUPER_ADMIN') {
+        isDevUser = true;
       }
     } catch { /* ignore */ }
+  }
 
+  // If authenticated as a platform developer, always route to superadmin console
+  if (isDevUser) {
+    return 'superadmin';
+  }
+
+  // Developer/Superadmin dedicated entry points when not logged in as developer
+  if (path === '/developer-login' || path === '/superadmin-login') return 'superadmin-login';
+  if (path === '/developer' || path === '/superadmin') return 'superadmin-login';
+  if (path === '/register') return 'signup';
+
+  if (token && !isExpired) {
     if (path === '/inventory') return 'inventory';
     if (path === '/inputs') return 'inputs';
     if (path === '/results') return 'results';
@@ -28,12 +40,19 @@ const getInitialView = () => {
     if (path === '/crm') return 'crm';
     if (path === '/drawings') return 'drawings';
     if (path === '/petty-cash') return 'petty-cash';
+    if (path === '/contractors') return 'contractors';
+    if (path === '/manpower/labour') return 'manpower-labour';
+    if (path === '/manpower/contractor-labour') return 'manpower-contractor-labour';
+    if (path === '/attendance' || path === '/attendance/mark') return 'attendance-mark';
+    if (path === '/attendance/history') return 'attendance-history';
+    if (path === '/attendance/reports') return 'attendance-reports';
+    if (path === '/reports') return 'reports';
+    if (path === '/chat') return 'chat';
     if (path === '/ledger') return 'ledger';
     if (path === '/activity-logs') return 'activity-logs';
     if (path === '/project-management') return 'project-management';
     if (path === '/settings') return 'settings';
     if (path === '/profile') return 'profile';
-    if (path === '/developer' || path === '/superadmin') return 'superadmin';
     if (path === '/projects') return 'projects';
     if (path === '/roles') return 'roles';
     if (path === '/users') return 'users';
@@ -73,6 +92,11 @@ const routingSlice = createSlice({
       else if (newView === 'bbs-shapes') targetPath = '/bbs/shapes';
       else if (newView === 'bbs-reports') targetPath = '/bbs/reports';
       else if (newView === 'general-inventory') targetPath = '/general-inventory';
+      else if (newView === 'manpower-labour') targetPath = '/manpower/labour';
+      else if (newView === 'manpower-contractor-labour') targetPath = '/manpower/contractor-labour';
+      else if (newView === 'attendance-mark') targetPath = '/attendance/mark';
+      else if (newView === 'attendance-history') targetPath = '/attendance/history';
+      else if (newView === 'attendance-reports') targetPath = '/attendance/reports';
       else if (newView !== 'overview') targetPath = `/${newView}`;
 
       if (window.location.pathname !== targetPath) {

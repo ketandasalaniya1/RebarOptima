@@ -1,0 +1,327 @@
+.mp-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 16px 48px;
+}
+
+.mp-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.mp-banner--error {
+  background: var(--danger-subtle, rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--danger);
+}
+.mp-banner--ok {
+  background: var(--success-subtle, rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  color: var(--success, #059669);
+}
+
+.mp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.mp-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-label);
+}
+.mp-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+
+.mp-table-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.mp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.mp-table th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-label);
+  background: var(--main-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+.mp-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--card-border);
+  vertical-align: middle;
+  color: var(--text-primary);
+}
+.mp-table tr:last-child td {
+  border-bottom: none;
+}
+.mp-name {
+  font-weight: 600;
+}
+.mp-muted {
+  color: var(--text-label);
+  font-size: 12px;
+}
+.mp-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.mp-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-left: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+.mp-icon-btn:hover {
+  background: var(--accent-subtle);
+}
+.mp-icon-btn--danger {
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.mp-icon-btn--danger:hover {
+  background: var(--danger-subtle, rgba(239, 68, 68, 0.08));
+}
+
+.mp-form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.mp-form-head h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mp-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mp-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.mp-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-label);
+  margin-bottom: 6px;
+}
+.mp-field .req {
+  color: var(--danger);
+}
+.mp-optional {
+  font-weight: 400;
+  color: var(--text-label);
+}
+.mp-field input,
+.mp-field textarea,
+.mp-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+.mp-field input:focus,
+.mp-field textarea:focus,
+.mp-field select:focus {
+  border-color: var(--accent);
+}
+
+.mp-salary-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 10px;
+}
+
+.mp-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.mp-clear-upload {
+  border: none;
+  background: none;
+  color: var(--danger);
+  font-size: 13px;
+  cursor: pointer;
+}
+.mp-preview {
+  margin-top: 10px;
+  max-width: 180px;
+  max-height: 140px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  object-fit: cover;
+}
+.mp-preview--avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mp-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.mp-contractor-select {
+  min-width: 260px;
+  max-width: 360px;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.mp-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.1));
+  color: var(--accent);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.mp-workforce-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mp-workforce-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 1.1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+.mp-workforce-row .mp-field {
+  margin: 0;
+}
+
+.mp-history {
+  margin-top: 8px;
+}
+.mp-history h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.mp-history-empty {
+  font-size: 13px;
+  color: var(--text-label);
+}
+.mp-history-item {
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: var(--main-bg);
+}
+.mp-history-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-label);
+  margin-bottom: 8px;
+}
+.mp-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.mp-history-table th,
+.mp-history-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--card-border);
+}
+.mp-history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.mp-worker-photo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--card-border);
+}
+.mp-worker-photo--placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--main-bg);
+  color: var(--text-label);
+  border: 1px solid var(--card-border);
+}
+
+@media (max-width: 800px) {
+  .mp-grid-2,
+  .mp-salary-row,
+  .mp-workforce-row {
+    grid-template-columns: 1fr;
+  }
+}

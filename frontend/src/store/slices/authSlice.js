@@ -17,7 +17,7 @@ const getInitialState = () => {
           accessToken: token,
           user,
           isAuthenticated: true,
-          isDeveloper: user.accountType === 'developer',
+          isDeveloper: user.accountType === 'developer' || user.role === 'DEVELOPER' || user.role === 'SUPER_ADMIN',
         };
       }
     }
@@ -42,7 +42,7 @@ const authSlice = createSlice({
       state.accessToken = accessToken;
       state.user = user;
       state.isAuthenticated = true;
-      state.isDeveloper = user.accountType === 'developer';
+      state.isDeveloper = user.accountType === 'developer' || user.role === 'DEVELOPER' || user.role === 'SUPER_ADMIN';
       sessionStorage.setItem('accessToken', accessToken);
       if (refreshToken) sessionStorage.setItem('refreshToken', refreshToken);
       sessionStorage.setItem('user', JSON.stringify(user));

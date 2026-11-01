@@ -1,0 +1,193 @@
+.ro-matrix-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ro-matrix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ro-matrix-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-matrix-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #475569);
+  flex-wrap: wrap;
+}
+
+.ro-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ro-legend-icon-check {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.ro-legend-icon-dash {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.ro-legend-icon-review {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #f59e0b;
+}
+
+.ro-legend-icon-rejected {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Filter row on top of matrix */
+.ro-matrix-filters-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.ro-matrix-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ro-matrix-filter-item label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-label, #64748b);
+  text-transform: uppercase;
+}
+
+/* Matrix Table Container */
+.ro-matrix-container {
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 10px);
+  overflow-x: auto;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ro-matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+.ro-matrix-table th,
+.ro-matrix-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  border-right: 1px solid var(--border-color, #e2e8f0);
+  white-space: nowrap;
+}
+
+.ro-matrix-table th {
+  background-color: var(--bg-secondary, #f8fafc);
+  color: var(--text-label, #64748b);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Sticky left columns: Drawing No and Title */
+.ro-matrix-table .sticky-col-1 {
+  position: sticky;
+  left: 0;
+  background-color: var(--card-bg, #ffffff);
+  z-index: 5;
+  text-align: left;
+  min-width: 110px;
+  font-weight: 700;
+}
+
+.ro-matrix-table .sticky-col-2 {
+  position: sticky;
+  left: 110px;
+  background-color: var(--card-bg, #ffffff);
+  z-index: 5;
+  text-align: left;
+  min-width: 160px;
+  border-right: 2px solid var(--border-color, #cbd5e1);
+}
+
+.ro-matrix-table th.sticky-col-1,
+.ro-matrix-table th.sticky-col-2 {
+  background-color: var(--bg-secondary, #f8fafc);
+  z-index: 20;
+}
+
+/* Cell styles */
+.ro-matrix-cell {
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  min-width: 60px;
+}
+
+.ro-matrix-cell:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.ro-cell-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ro-cell-check {
+  color: #10b981;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.ro-cell-dash {
+  color: #cbd5e1;
+  font-size: 15px;
+}
+
+.ro-cell-review {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #f59e0b;
+}
+
+.ro-cell-rejected {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 14px;
+}
+

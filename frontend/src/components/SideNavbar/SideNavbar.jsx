@@ -29,6 +29,7 @@ import {
   CalendarCheck2,
   FileSpreadsheet,
   MessageSquare,
+  Grid3X3,
 } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import ProjectSelector from '../ProjectSelector/ProjectSelector';
@@ -65,6 +66,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     steel: STEEL_VIEWS.includes(currentView),
     manpower: MANPOWER_VIEWS.includes(currentView),
     attendance: ATTENDANCE_VIEWS.includes(currentView),
+    drawings: ['drawings', 'drawings-matrix', 'drawings-approvals', 'drawings-transmittals', 'drawings-activity', 'drawings-plan-pass', 'drawings-viewer'].includes(currentView),
   }));
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
@@ -75,6 +77,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       if (STEEL_VIEWS.includes(currentView)) next.steel = true;
       if (MANPOWER_VIEWS.includes(currentView)) next.manpower = true;
       if (ATTENDANCE_VIEWS.includes(currentView)) next.attendance = true;
+      if (['drawings', 'drawings-matrix', 'drawings-approvals', 'drawings-transmittals', 'drawings-activity', 'drawings-plan-pass', 'drawings-viewer'].includes(currentView)) next.drawings = true;
       return next;
     });
   }, [currentView]);
@@ -170,9 +173,42 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     },
     {
       id: 'drawings',
-      label: 'Drawing & Files',
+      label: 'Drawings',
       icon: <FileStack size={18} />,
+      isGroup: true,
       moduleKey: 'drawings',
+      children: [
+        {
+          id: 'drawings',
+          label: 'All Drawings',
+          icon: <FileStack size={17} />,
+          moduleKey: 'drawings',
+        },
+        {
+          id: 'drawings-matrix',
+          label: 'Drawing Matrix',
+          icon: <Grid3X3 size={17} />,
+          moduleKey: 'drawings',
+        },
+        {
+          id: 'drawings-approvals',
+          label: 'Approvals',
+          icon: <Shield size={17} />,
+          moduleKey: 'drawings',
+        },
+        {
+          id: 'drawings-transmittals',
+          label: 'Transmittals',
+          icon: <ClipboardList size={17} />,
+          moduleKey: 'drawings',
+        },
+        {
+          id: 'drawings-activity',
+          label: 'Activity Logs',
+          icon: <History size={17} />,
+          moduleKey: 'drawings',
+        },
+      ],
     },
     {
       id: 'petty-cash',
@@ -334,16 +370,21 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           {menuItems.map((item) => {
             if (item.isGroup) {
               const isGroupOpen = !!openGroups[item.id];
-              const childIds = groupChildViews[item.id] || item.children.map((c) => c.id);
-              const isGroupActive = childIds.includes(currentView);
+              const toggleGroup = () => {
+                setOpenGroups((prev) => ({ ...prev, [item.id]: !prev[item.id] }));
+              };
+              const isGroupActive = item.children.some(
+                (child) => currentView === child.id ||
+                  (item.id === 'steel' && currentView === 'results' && child.id === 'inputs') ||
+                  (item.id === 'drawings' && (currentView === 'drawings-plan-pass' || currentView === 'drawings-viewer'))
+              );
+
               return (
                 <div key={item.id} className="sidenav-group-container">
                   <button
                     type="button"
                     className={`sidenav-item sidenav-group-header ${isGroupActive && !isGroupOpen ? 'active-parent' : ''}`}
-                    onClick={() =>
-                      setOpenGroups((prev) => ({ ...prev, [item.id]: !prev[item.id] }))
-                    }
+                    onClick={toggleGroup}
                     aria-expanded={isGroupOpen}
                   >
                     <span className="sidenav-icon">{item.icon}</span>
@@ -357,12 +398,11 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
                           <button
                             type="button"
                             key={child.id}
-                            className={`sidenav-item sidenav-subitem ${
-                              currentView === child.id ||
+                            className={`sidenav-item sidenav-subitem ${currentView === child.id ||
                               (currentView === 'results' && child.id === 'inputs')
-                                ? 'active'
-                                : ''
-                            }`}
+                              ? 'active'
+                              : ''
+                              }`}
                             onClick={() => {
                               onViewChange(child.id);
                               setIsOpen(false);
@@ -387,13 +427,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
               <button
                 type="button"
                 key={item.id}
-                className={`sidenav-item ${
-                  currentView === item.id ||
+                className={`sidenav-item ${currentView === item.id ||
                   isBbsChild ||
                   (currentView === 'results' && item.id === 'inputs')
-                    ? 'active'
-                    : ''
-                }`}
+                  ? 'active'
+                  : ''
+                  }`}
                 onClick={() => {
                   onViewChange(item.id);
                   setIsOpen(false);

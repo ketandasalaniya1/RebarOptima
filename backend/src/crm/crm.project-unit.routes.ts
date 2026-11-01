@@ -21,7 +21,10 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const ctx = await resolveUserAndCompany(req, db);
       const companyId = ctx.companyId;
 
-      const projects = await listAccessibleGlobalProjects(db, ctx);
+      let projects = await listAccessibleGlobalProjects(db, ctx);
+      if (!projects || projects.length === 0) {
+        projects = await db.collection('crm_projects').find({ companyId }).toArray();
+      }
       const allUnits = await db.collection('crm_units').find({ companyId }).toArray();
       const allInterests = await db.collection('crm_unit_interests').find({ companyId }).toArray();
 
@@ -123,7 +126,8 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const companyId = await resolveCompanyId(req, db);
       const pId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
 
-      const project = await db.collection('crm_projects').findOne({ _id: pId, companyId });
+      let project = (await db.collection('projects').findOne({ _id: pId }))
+        || (await db.collection('crm_projects').findOne({ _id: pId, companyId }));
       if (!project) return res.status(404).json({ message: 'Project not found.' });
 
       const units = await db.collection('crm_units').find({ projectId: pId, companyId }).sort({ floorNumber: 1, unitNumber: 1 }).toArray();
@@ -142,9 +146,12 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
       const { projectId, status, tower, configuration, minFloor, maxFloor, search } = req.query;
 
-      const query: any = { companyId };
+      const query: any = { companyId: cMatcher };
       if (projectId) {
         query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
       }
@@ -197,9 +204,17 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
-      const uId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
+      const uId = ObjectId.isValid(String(req.params.id)) && String(req.params.id).length === 24
+        ? { $in: [new ObjectId(String(req.params.id)), String(req.params.id)] }
+        : req.params.id;
 
-      const unit = await db.collection('crm_units').findOne({ _id: uId, companyId });
+      let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
+      if (!unit) {
+        unit = await db.collection('crm_units').findOne({ _id: uId });
+      }
       if (!unit) return res.status(404).json({ message: 'Property unit not found.' });
 
       const evalRes = evaluateUnitAvailability(unit);
@@ -289,7 +304,8 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       }
 
       const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
-      const project = await db.collection('crm_projects').findOne({ _id: prjId, companyId });
+      const project = (await db.collection('projects').findOne({ _id: prjId }))
+        || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }));
       if (!project) return res.status(404).json({ message: 'Parent project not found.' });
 
       const unitCode = `${buildingTower}-${unitNumber}`.toUpperCase();
@@ -412,6 +428,277 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       res.json(updated);
     } catch (err: any) {
       console.error('Error updating unit:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // ── BLOCKS & TOWERS ──────────────────────────────────────────────────────
+
+  // GET /api/crm/blocks - List distinct blocks/towers for a project
+  router.get('/blocks', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { projectId } = req.query;
+
+      const query: any = { companyId };
+      if (projectId) {
+        query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+      }
+
+      // Explicit blocks in crm_blocks
+      const explicitBlocks = await db.collection('crm_blocks').find(query).sort({ blockName: 1 }).toArray();
+
+      // Distinct towers inferred from crm_units
+      const unitTowers = await db.collection('crm_units').distinct('buildingTower', query);
+
+      const map = new Map<string, any>();
+      explicitBlocks.forEach((b: any) => {
+        const name = b.blockName || b.name;
+        if (name) map.set(name.toUpperCase(), { ...b, blockName: name });
+      });
+
+      for (const t of unitTowers) {
+        if (t && !map.has(t.toUpperCase())) {
+          map.set(t.toUpperCase(), {
+            blockName: t,
+            projectId: query.projectId,
+            source: 'inferred'
+          });
+        }
+      }
+
+      res.json(Array.from(map.values()));
+    } catch (err: any) {
+      console.error('Error fetching blocks:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // POST /api/crm/blocks - Create new Block / Tower and batch-generate units
+  router.post('/blocks', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const {
+        projectId,
+        blockName,
+        floorsCount = 10,
+        startFloor = 1,
+        unitsPerFloor = 4,
+        configurations = ['1BHK', '2BHK', '3BHK', '2BHK'],
+        basePrice = 6500000,
+        askingPrice = 7200000,
+        carpetAreaSqFt = 950,
+        saleableAreaSqFt = 1250,
+        facing = 'East',
+        prefix,
+        notes = ''
+      } = req.body;
+
+      if (!projectId || !blockName) {
+        return res.status(400).json({ message: 'Project ID and Block/Tower Name are required.' });
+      }
+
+      const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+      const project = (await db.collection('projects').findOne({ _id: prjId }))
+        || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }));
+      if (!project) return res.status(404).json({ message: 'Parent project not found.' });
+
+      const cleanBlockName = String(blockName).trim().toUpperCase();
+      const blockPrefix = prefix ? String(prefix).trim().toUpperCase() : cleanBlockName.replace(/[^A-Z0-9]/gi, '').slice(0, 3) || 'BLK';
+
+      // 1. Create or upsert Block record
+      const blockDoc: any = {
+        companyId,
+        projectId: prjId,
+        projectName: project.name,
+        blockName: cleanBlockName,
+        prefix: blockPrefix,
+        startFloor: Number(startFloor) || 1,
+        floorsCount: Number(floorsCount) || 1,
+        unitsPerFloor: Number(unitsPerFloor) || 1,
+        notes,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      const blockResult = await db.collection('crm_blocks').insertOne(blockDoc);
+
+      // 2. Batch generate units
+      const unitsToInsert: any[] = [];
+      const numFloors = Math.max(1, Math.min(Number(floorsCount) || 10, 100));
+      const startF = Math.max(1, Number(startFloor) || 1);
+      const numUnitsPerF = Math.max(1, Math.min(Number(unitsPerFloor) || 4, 30));
+      const configList = Array.isArray(configurations) && configurations.length > 0
+        ? configurations
+        : ['1BHK', '2BHK', '3BHK', '2BHK'];
+
+      // Get existing unit codes in this project to prevent duplicates
+      const existingUnits = await db.collection('crm_units').find(
+        { projectId: prjId, companyId },
+        { projection: { unitCode: 1 } }
+      ).toArray();
+      const existingCodeSet = new Set(existingUnits.map((u: any) => u.unitCode));
+
+      for (let f = startF; f < startF + numFloors; f++) {
+        for (let u = 1; u <= numUnitsPerF; u++) {
+          const unitNumber = `${f < 10 ? '0' : ''}${f}0${u}`;
+          const unitCode = `${blockPrefix}-${unitNumber}`.toUpperCase();
+
+          if (existingCodeSet.has(unitCode)) continue; // skip already existing
+
+          const config = configList[(u - 1) % configList.length] || '2BHK';
+          const uFacing = u % 2 === 0 ? 'East Garden View' : 'West Skyline View';
+
+          unitsToInsert.push({
+            companyId,
+            projectId: prjId,
+            projectName: project.name,
+            blockId: blockResult.insertedId,
+            buildingTower: cleanBlockName,
+            sectionName: cleanBlockName,
+            floorNumber: f,
+            unitNumber,
+            unitCode,
+            configuration: config,
+            propertyType: 'Apartment',
+            carpetAreaSqFt: Number(carpetAreaSqFt) || 950,
+            saleableAreaSqFt: Number(saleableAreaSqFt) || Number(carpetAreaSqFt) || 1250,
+            basePrice: Number(basePrice) || 6500000,
+            askingPrice: Number(askingPrice) || Number(basePrice) || 7200000,
+            availabilityStatus: 'Available',
+            heldUntil: null,
+            heldByCustomerId: null,
+            activeBookingId: null,
+            facing: facing || uFacing,
+            notes,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+        }
+      }
+
+      if (unitsToInsert.length > 0) {
+        await db.collection('crm_units').insertMany(unitsToInsert);
+      }
+
+      res.status(201).json({
+        success: true,
+        message: `Block ${cleanBlockName} created with ${unitsToInsert.length} units.`,
+        block: { _id: blockResult.insertedId, ...blockDoc },
+        createdUnitsCount: unitsToInsert.length,
+        units: unitsToInsert
+      });
+    } catch (err: any) {
+      console.error('Error creating block and units:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // POST /api/crm/units/:id/block - Put unit on Management Hold / Blocked status
+  router.post('/units/:id/block', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
+      const uId = ObjectId.isValid(String(req.params.id)) && String(req.params.id).length === 24
+        ? { $in: [new ObjectId(String(req.params.id)), String(req.params.id)] }
+        : req.params.id;
+      const { reason = 'Management Hold', notes = '' } = req.body;
+
+      let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
+      if (!unit) {
+        unit = await db.collection('crm_units').findOne({ _id: uId });
+      }
+      if (!unit) return res.status(404).json({ message: 'Unit not found.' });
+
+      if (['Booked', 'Sold'].includes(unit.availabilityStatus)) {
+        return res.status(400).json({ message: `Cannot block unit that is already ${unit.availabilityStatus}.` });
+      }
+
+      const now = new Date();
+      await db.collection('crm_units').updateOne(
+        { _id: unit._id },
+        {
+          $set: {
+            availabilityStatus: 'Blocked',
+            blockedReason: reason,
+            blockedNotes: notes,
+            blockedAt: now,
+            updatedAt: now
+          }
+        }
+      );
+
+      // Record activity
+      await db.collection('crm_activities').insertOne({
+        companyId,
+        entityType: 'unit',
+        entityId: unit._id,
+        action: 'UNIT_BLOCKED',
+        description: `Unit ${unit.unitCode} blocked (${reason})`,
+        createdAt: now
+      });
+
+      const updated = await db.collection('crm_units').findOne({ _id: unit._id });
+      res.json({ success: true, message: `Unit ${unit.unitCode} is now blocked.`, unit: updated });
+    } catch (err: any) {
+      console.error('Error blocking unit:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // POST /api/crm/units/:id/unblock - Release unit from Blocked back to Available
+  router.post('/units/:id/unblock', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
+      const uId = ObjectId.isValid(String(req.params.id)) && String(req.params.id).length === 24
+        ? { $in: [new ObjectId(String(req.params.id)), String(req.params.id)] }
+        : req.params.id;
+
+      let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
+      if (!unit) {
+        unit = await db.collection('crm_units').findOne({ _id: uId });
+      }
+      if (!unit) return res.status(404).json({ message: 'Unit not found.' });
+
+      const now = new Date();
+      await db.collection('crm_units').updateOne(
+        { _id: unit._id },
+        {
+          $set: {
+            availabilityStatus: 'Available',
+            updatedAt: now
+          },
+          $unset: {
+            blockedReason: '',
+            blockedNotes: '',
+            blockedAt: ''
+          }
+        }
+      );
+
+      // Record activity
+      await db.collection('crm_activities').insertOne({
+        companyId,
+        entityType: 'unit',
+        entityId: uId,
+        action: 'UNIT_UNBLOCKED',
+        description: `Unit ${unit.unitCode} unblocked back to Available`,
+        createdAt: now
+      });
+
+      const updated = await db.collection('crm_units').findOne({ _id: uId });
+      res.json({ success: true, message: `Unit ${unit.unitCode} unblocked.`, unit: updated });
+    } catch (err: any) {
+      console.error('Error unblocking unit:', err);
       res.status(500).json({ message: err.message });
     }
   });

@@ -1,10 +1,12 @@
 .app-layout {
   display: flex;
   flex-direction: column;
+  height: 100vh;
   min-height: 100vh;
   width: 100%;
   flex: 1;
   background-color: var(--main-bg);
+  overflow: hidden;
 }
 
 /* SideNavbar Workspace Layout */
@@ -14,19 +16,23 @@
   flex: 1;
   width: 100%;
   min-width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   background-color: var(--main-bg);
+  overflow: hidden;
 }
 
 .main-viewport {
   flex: 1 1 0% !important;
   min-width: 0 !important;
-  width: calc(100% - 240px) !important;
+  height: 100vh !important;
   background-color: var(--main-bg);
-  padding: 20px 24px 40px;
+  padding: 0 0 40px 0;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
   display: block !important;
+  scroll-behavior: smooth;
 }
 
 .main-viewport > * {
@@ -35,14 +41,25 @@
 }
 
 @media (max-width: 900px) {
+  .app-layout {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   .app-workspace {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
   .main-viewport {
     width: 100% !important;
+    height: auto !important;
+    min-height: calc(100vh - 64px) !important;
     padding: 16px;
-    min-height: calc(100vh - 64px);
+    overflow-y: visible !important;
   }
 }
 

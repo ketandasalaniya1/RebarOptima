@@ -17,10 +17,12 @@ export const crmApi = {
   addCustomerInterest: (customerId, data) => apiRequest(`/crm/customers/${customerId}/interests`, { method: 'POST', body: data }),
   addCustomerActivity: (customerId, data) => apiRequest(`/crm/customers/${customerId}/activities`, { method: 'POST', body: data }),
 
-  // Projects & Units
+  // Projects, Blocks & Units
   getProjects: () => apiRequest('/crm/projects'),
   getProjectDetail: (id) => apiRequest(`/crm/projects/${id}`),
   createProject: (data) => apiRequest('/crm/projects', { method: 'POST', body: data }),
+  getBlocks: (projectId) => apiRequest(`/crm/blocks${projectId ? `?projectId=${projectId}` : ''}`),
+  createBlock: (data) => apiRequest('/crm/blocks', { method: 'POST', body: data }),
   getUnits: (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return apiRequest(`/crm/units${qs ? `?${qs}` : ''}`);
@@ -30,6 +32,8 @@ export const crmApi = {
   updateUnit: (id, data) => apiRequest(`/crm/units/${id}`, { method: 'PUT', body: data }),
   reserveUnit: (id, data) => apiRequest(`/crm/units/${id}/reserve`, { method: 'POST', body: data }),
   releaseUnit: (id) => apiRequest(`/crm/units/${id}/release`, { method: 'POST' }),
+  blockUnit: (id, data = {}) => apiRequest(`/crm/units/${id}/block`, { method: 'POST', body: data }),
+  unblockUnit: (id) => apiRequest(`/crm/units/${id}/unblock`, { method: 'POST' }),
 
   // Leads & Pipeline
   getLeads: (params = {}) => {

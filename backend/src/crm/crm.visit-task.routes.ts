@@ -74,7 +74,9 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       const custId = ObjectId.isValid(customerId) ? new ObjectId(customerId) : customerId;
       const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
       const customer = await db.collection('crm_customers').findOne({ _id: custId, companyId });
-      const project = await db.collection('crm_projects').findOne({ _id: prjId, companyId });
+      const project = (await db.collection('projects').findOne({ _id: prjId }))
+        || (ObjectId.isValid(prjId) ? await db.collection('projects').findOne({ _id: new ObjectId(prjId) }) : null)
+        || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }));
 
       if (!customer) return res.status(404).json({ message: 'Customer not found.' });
 

@@ -40,6 +40,7 @@ import BbsReportsPage from './pages/BBSPage/BbsReportsPage';
 import BbsShapesPage from './pages/BBSPage/BbsShapesPage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import NoProjectPage from './pages/NoProjectPage/NoProjectPage';
+import PublicTransmittalPage from './pages/PublicTransmittalPage/PublicTransmittalPage';
 import Breadcrumbs from './components/Breadcrumbs/Breadcrumbs';
 import ProjectFormModal from './components/ProjectModals/ProjectFormModal';
 import GeofenceConfigModal from './components/ProjectModals/GeofenceConfigModal';
@@ -73,6 +74,7 @@ const NO_PROJECT_SAFE_VIEWS = new Set([
   'profile',
   'chat',
   'manpower-labour',
+  'public-transmittal',
 ]);
 
 function App() {
@@ -231,15 +233,19 @@ function App() {
 
     const handlePopState = (event) => {
       const tokenExists = sessionStorage.getItem('accessToken');
+      if (window.location.pathname.startsWith('/t/')) {
+        dispatch(syncViewFromPopState('public-transmittal'));
+        return;
+      }
       if (event.state && event.state.view) {
-        if (!tokenExists && event.state.view !== 'signin' && event.state.view !== 'signup' && event.state.view !== 'superadmin-login') {
+        if (!tokenExists && event.state.view !== 'signin' && event.state.view !== 'signup' && event.state.view !== 'superadmin-login' && event.state.view !== 'public-transmittal') {
           dispatch(setView('signin'));
         } else {
           dispatch(syncViewFromPopState(event.state.view));
         }
       } else {
-        const rawPath = (window.location.pathname || '/').length > 1 
-          ? window.location.pathname.replace(/\/+$/, '') 
+        const rawPath = (window.location.pathname || '/').length > 1
+          ? window.location.pathname.replace(/\/+$/, '')
           : (window.location.pathname || '/');
         if (rawPath === '/developer' || rawPath === '/superadmin') {
           dispatch(syncViewFromPopState('superadmin'));
@@ -359,12 +365,14 @@ function App() {
     view !== 'signup' &&
     view !== 'subscribe' &&
     view !== 'superadmin-login' &&
-    view !== 'superadmin';
+    view !== 'superadmin' &&
+    view !== 'public-transmittal';
 
   return (
     <div className="app-layout">
-      {/* Auth screens only when logged out — staying on view=signin after login was trapping users */}
-      {!isAuthenticated && view === 'signin' ? (
+      {view === 'public-transmittal' ? (
+        <PublicTransmittalPage />
+      ) : view === 'signin' ? (
         <SignInPage
           onSignIn={handleSignInSuccess}
           onNavigateToSignUp={() => {
@@ -450,8 +458,8 @@ function App() {
             {view === 'project-management' && (
               <ProjectManagementPage />
             )}
-            {view === 'drawings' && (
-              <DrawingsPage />
+            {(view === 'drawings' || (typeof view === 'string' && view.startsWith('drawings-'))) && (
+              <DrawingsPage subView={view} />
             )}
             {view === 'petty-cash' && (
               <PettyCashPage />

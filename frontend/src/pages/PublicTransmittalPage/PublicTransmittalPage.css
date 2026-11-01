@@ -1,0 +1,115 @@
+.ro-public-transmittal-page {
+  min-height: 100vh;
+  background-color: #0b111e;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.ro-public-card {
+  width: 100%;
+  max-width: 760px;
+  background-color: #111a2e;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ro-public-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ro-public-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ro-public-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ro-public-trans-no {
+  font-size: 13px;
+  font-weight: 600;
+  color: #059669;
+  margin-top: 4px;
+}
+
+.ro-public-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  background-color: #0d1527;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #1e293b;
+  font-size: 13px;
+}
+
+.ro-public-drawings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ro-public-drawings-table th {
+  background-color: #0d1527;
+  color: #94a3b8;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #1e293b;
+}
+
+.ro-public-drawings-table td {
+  padding: 12px;
+  border-bottom: 1px solid #1e293b;
+  color: #f8fafc;
+}
+
+.ro-public-ack-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  border-radius: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ro-btn-ack-receipt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background-color: #059669;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-ack-receipt:hover {
+  background-color: #047857;
+}
+

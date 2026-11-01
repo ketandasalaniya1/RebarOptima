@@ -98,19 +98,42 @@ export function createCrmBookingRouter(getDb: () => any, authMiddleware: any, lo
         return res.status(400).json({ message: 'Customer, project, unit, and agreement price are required.' });
       }
 
-      const custId = ObjectId.isValid(customerId) ? new ObjectId(customerId) : customerId;
-      const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
-      const uId = ObjectId.isValid(unitId) ? new ObjectId(unitId) : unitId;
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
 
-      const [customer, project, unit] = await Promise.all([
-        db.collection('crm_customers').findOne({ _id: custId, companyId }),
-        db.collection('crm_projects').findOne({ _id: prjId, companyId }),
-        db.collection('crm_units').findOne({ _id: uId, companyId })
+      const custId = ObjectId.isValid(String(customerId)) && String(customerId).length === 24
+        ? { $in: [new ObjectId(String(customerId)), String(customerId)] }
+        : customerId;
+
+      const uId = ObjectId.isValid(String(unitId)) && String(unitId).length === 24
+        ? { $in: [new ObjectId(String(unitId)), String(unitId)] }
+        : unitId;
+
+      const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+
+      let [customer, unit] = await Promise.all([
+        db.collection('crm_customers').findOne({ _id: custId, companyId: cMatcher }),
+        db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher })
       ]);
 
+      if (!customer) {
+        customer = await db.collection('crm_customers').findOne({ _id: custId });
+      }
+      if (!unit) {
+        unit = await db.collection('crm_units').findOne({ _id: uId });
+      }
+
       if (!customer) return res.status(404).json({ message: 'Customer record not found.' });
-      if (!project) return res.status(404).json({ message: 'Project record not found.' });
       if (!unit) return res.status(404).json({ message: 'Property unit not found.' });
+
+      let project = (await db.collection('projects').findOne({ _id: prjId }))
+        || (ObjectId.isValid(prjId) ? await db.collection('projects').findOne({ _id: new ObjectId(prjId) }) : null)
+        || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }))
+        || (ObjectId.isValid(prjId) ? await db.collection('crm_projects').findOne({ _id: new ObjectId(prjId), companyId }) : null)
+        || (unit?.projectName ? { name: unit.projectName, _id: prjId } : null);
+
+      if (!project) return res.status(404).json({ message: 'Project record not found.' });
 
       // Financial calculations with exact decimal rounding
       const price = roundCurrency(Number(agreementPrice));
@@ -165,7 +188,7 @@ export function createCrmBookingRouter(getDb: () => any, authMiddleware: any, lo
 
       // Update unit with activeBookingId
       await db.collection('crm_units').updateOne(
-        { _id: uId, companyId },
+        { _id: unit._id },
         { $set: { activeBookingId: String(bookingId) } }
       );
 
@@ -247,11 +270,21 @@ export function createCrmBookingRouter(getDb: () => any, authMiddleware: any, lo
       const booking = await db.collection('crm_bookings').findOne({ _id: bId, companyId });
       if (!booking) return res.status(404).json({ message: 'Booking not found.' });
 
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
+      const uIdMatcher = ObjectId.isValid(String(booking.unitId)) && String(booking.unitId).length === 24
+        ? { $in: [new ObjectId(String(booking.unitId)), String(booking.unitId)] }
+        : booking.unitId;
+      const custIdMatcher = ObjectId.isValid(String(booking.customerId)) && String(booking.customerId).length === 24
+        ? { $in: [new ObjectId(String(booking.customerId)), String(booking.customerId)] }
+        : booking.customerId;
+
       const [customer, unit, schedules, txns] = await Promise.all([
-        db.collection('crm_customers').findOne({ _id: booking.customerId, companyId }),
-        db.collection('crm_units').findOne({ _id: booking.unitId, companyId }),
-        db.collection('crm_payment_schedules').find({ bookingId: bId, companyId }).sort({ sortOrder: 1 }).toArray(),
-        db.collection('crm_payment_transactions').find({ bookingId: bId, companyId }).sort({ paymentDate: -1 }).toArray()
+        db.collection('crm_customers').findOne({ _id: custIdMatcher }),
+        db.collection('crm_units').findOne({ _id: uIdMatcher }),
+        db.collection('crm_payment_schedules').find({ bookingId: bId }).sort({ sortOrder: 1 }).toArray(),
+        db.collection('crm_payment_transactions').find({ bookingId: bId }).sort({ paymentDate: -1 }).toArray()
       ]);
 
       const financials = calculateBookingFinancials(booking, schedules, txns);
@@ -294,8 +327,11 @@ export function createCrmBookingRouter(getDb: () => any, authMiddleware: any, lo
       );
 
       // Unit availability status confirmed
+      const uIdMatcher = ObjectId.isValid(String(booking.unitId)) && String(booking.unitId).length === 24
+        ? { $in: [new ObjectId(String(booking.unitId)), String(booking.unitId)] }
+        : booking.unitId;
       await db.collection('crm_units').updateOne(
-        { _id: booking.unitId, companyId },
+        { _id: uIdMatcher },
         { $set: { availabilityStatus: 'Booked', updatedAt: new Date() } }
       );
 

@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 const getInitialView = () => {
-  const rawPath = typeof window !== 'undefined' ? window.location.pathname : '/';
-  const path = rawPath.length > 1 ? rawPath.replace(/\/+$/, '') : rawPath;
-  const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
-  const lastActivity = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('lastActivity') : null;
+  const path = window.location.pathname;
+  if (path.startsWith('/t/')) return 'public-transmittal';
+  const token = sessionStorage.getItem('accessToken');
+  const lastActivity = sessionStorage.getItem('lastActivity');
   const isExpired = lastActivity && (Date.now() - parseInt(lastActivity, 10) > SESSION_TIMEOUT_MS);
 
   let isDevUser = false;
@@ -38,6 +38,13 @@ const getInitialView = () => {
     if (path === '/casting') return 'casting';
     if (path === '/general-inventory') return 'general-inventory';
     if (path === '/crm') return 'crm';
+    if (path.startsWith('/t/')) return 'public-transmittal';
+    if (path === '/drawings/matrix') return 'drawings-matrix';
+    if (path === '/drawings/approvals') return 'drawings-approvals';
+    if (path === '/drawings/transmittals') return 'drawings-transmittals';
+    if (path === '/drawings/activity') return 'drawings-activity';
+    if (path === '/drawings/plan-pass') return 'drawings-plan-pass';
+    if (path.startsWith('/drawings/')) return 'drawings-viewer';
     if (path === '/drawings') return 'drawings';
     if (path === '/petty-cash') return 'petty-cash';
     if (path === '/contractors') return 'contractors';
@@ -77,7 +84,7 @@ const routingSlice = createSlice({
     setView: (state, action) => {
       const newView = action.payload;
       state.view = newView;
-      
+
       // Update history if pathname doesn't match
       let targetPath = '/';
       if (newView === 'signup') targetPath = '/register';
@@ -97,6 +104,13 @@ const routingSlice = createSlice({
       else if (newView === 'attendance-mark') targetPath = '/attendance/mark';
       else if (newView === 'attendance-history') targetPath = '/attendance/history';
       else if (newView === 'attendance-reports') targetPath = '/attendance/reports';
+      else if (newView === 'drawings-matrix') targetPath = '/drawings/matrix';
+      else if (newView === 'drawings-approvals') targetPath = '/drawings/approvals';
+      else if (newView === 'drawings-transmittals') targetPath = '/drawings/transmittals';
+      else if (newView === 'drawings-activity') targetPath = '/drawings/activity';
+      else if (newView === 'drawings-plan-pass') targetPath = '/drawings/plan-pass';
+      else if (newView === 'drawings') targetPath = '/drawings';
+      else if (newView === 'public-transmittal') targetPath = window.location.pathname;
       else if (newView !== 'overview') targetPath = `/${newView}`;
 
       if (window.location.pathname !== targetPath) {

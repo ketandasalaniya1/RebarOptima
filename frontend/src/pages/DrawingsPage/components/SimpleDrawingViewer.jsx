@@ -15,8 +15,7 @@ import {
   Shrink
 } from 'lucide-react';
 import PDFViewer from './PDFViewer';
-import CADViewer from './CADViewer';
-import { AcApDocManager } from '@mlightcad/cad-simple-viewer';
+import DxfViewerComponent from './DxfViewerComponent';
 
 export default function SimpleDrawingViewer({ drawingData, onBack }) {
   const { drawing, currentRevision, revisions } = drawingData || {};
@@ -364,18 +363,13 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
             </>
           )}
 
-          {/* Fit button for DWG files */}
+          {/* Fit button for DWG/DXF files */}
           {isCadFile && (
             <button
               type="button"
               onClick={() => {
-                try {
-                  window.dispatchEvent(new Event('resize'));
-                  const inst = AcApDocManager?.tryGetInstance?.() || AcApDocManager?.instance;
-                  inst?.curView?.zoomToFitDrawing?.();
-                } catch (e) {
-                  console.warn('CAD zoomToFit notice:', e);
-                }
+                window.dispatchEvent(new CustomEvent('dxf-fit-view'));
+                window.dispatchEvent(new Event('resize'));
               }}
               title="Fit CAD Drawing to Screen"
               style={{
@@ -452,12 +446,12 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
           justifyContent: 'center',
           cursor: isImage ? (isDragging ? 'grabbing' : 'grab') : 'default'
         }}
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onDoubleClick={handleDoubleClick}
+        onWheel={isImage ? handleWheel : undefined}
+        onMouseDown={isImage ? handleMouseDown : undefined}
+        onMouseMove={isImage ? handleMouseMove : undefined}
+        onMouseUp={isImage ? handleMouseUp : undefined}
+        onMouseLeave={isImage ? handleMouseUp : undefined}
+        onDoubleClick={isImage ? handleDoubleClick : undefined}
       >
         {/* Case 1: PDF Document Viewer */}
         {isPdf ? (
@@ -494,12 +488,16 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
               }}
             />
           </div>
-        ) : isCadFile && fileData ? (
+        ) : isCadFile ? (
           /* Case 3: Actual DWG / DXF Drawing Viewer (Clean vector rendering, no ribbons) */
           <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-            <CADViewer
-              fileData={fileData}
-              fileName={rev?.fileName || `${drawingNumber}.${fileExt}`}
+            <DxfViewerComponent
+              dxfUrl={
+                rev?.dxfUrl ||
+                (drawing?._id ? `/api/drawings/${drawing._id}/dxf` : null)
+              }
+              originalFileName={rev?.fileName || `${drawingNumber}.${fileExt}`}
+              onDownloadOriginal={handleDownload}
             />
           </div>
         ) : (

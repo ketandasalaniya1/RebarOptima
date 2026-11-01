@@ -1,0 +1,306 @@
+.ro-table-container {
+  position: relative;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 10px);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ro-table-scroll-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.ro-drawings-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.ro-drawings-table th {
+  background-color: var(--bg-secondary, #f8fafc);
+  color: var(--text-label, #64748b);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ro-drawings-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary, #0f172a);
+  vertical-align: middle;
+}
+
+.ro-drawings-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ro-drawings-table tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.ro-drawings-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.ro-drawings-table tbody tr.selected-row {
+  background-color: var(--accent-subtle, rgba(5, 150, 105, 0.06));
+}
+
+.ro-col-checkbox {
+  width: 44px;
+  text-align: center;
+}
+
+.ro-checkbox-input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent, #059669);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.ro-drawing-no {
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.01em;
+}
+
+.ro-drawing-title {
+  font-weight: 500;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-version-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #475569);
+  background-color: var(--bg-secondary, #f1f5f9);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.ro-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.ro-btn-view-action {
+  padding: 4px 12px;
+  background-color: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-view-action:hover {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.ro-btn-kebab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.ro-btn-kebab:hover,
+.ro-btn-kebab.active {
+  background-color: var(--bg-secondary, #f1f5f9);
+  color: var(--text-primary, #0f172a);
+  border-color: var(--border-color, #e2e8f0);
+}
+
+/* Kebab Dropdown Menu */
+.ro-kebab-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  min-width: 180px;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ro-kebab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm, 6px);
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary, #0f172a);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background-color 0.12s ease;
+}
+
+.ro-kebab-item:hover {
+  background-color: var(--bg-secondary, #f1f5f9);
+}
+
+.ro-kebab-item.danger {
+  color: #ef4444;
+}
+
+.ro-kebab-item.danger:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+/* Floating Bulk Bar */
+.ro-bulk-bar {
+  position: sticky;
+  bottom: 12px;
+  margin: 0 auto;
+  width: calc(100% - 24px);
+  max-width: 600px;
+  background-color: var(--text-primary, #0f172a);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.25);
+  z-index: 40;
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ro-bulk-count {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ro-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ro-bulk-btn {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background-color: transparent;
+  color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.ro-bulk-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.ro-bulk-btn.primary {
+  background-color: var(--accent, #059669);
+  border-color: var(--accent, #059669);
+}
+
+.ro-bulk-btn.primary:hover {
+  background-color: var(--accent-hover, #047857);
+}
+
+/* Skeleton loader */
+.ro-skeleton-row td {
+  padding: 16px 14px;
+}
+
+.ro-skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Pagination bar */
+.ro-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  background-color: var(--card-bg, #ffffff);
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+}
+
+.ro-pagination-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: var(--radius-sm, 6px);
+  background-color: var(--card-bg, #ffffff);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary, #0f172a);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.ro-pagination-btn:hover:not(:disabled) {
+  background-color: var(--bg-secondary, #f8fafc);
+  border-color: var(--accent, #059669);
+}
+
+.ro-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

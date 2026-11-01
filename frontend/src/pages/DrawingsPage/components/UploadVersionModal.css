@@ -1,0 +1,237 @@
+.ro-upload-modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Drag & Drop Box */
+.ro-drop-zone {
+  border: 2px dashed var(--input-border, #cbd5e1);
+  border-radius: var(--radius-md, 10px);
+  padding: 32px 20px;
+  text-align: center;
+  background-color: var(--card-bg, #ffffff);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.ro-drop-zone:hover,
+.ro-drop-zone.dragging {
+  border-color: var(--accent, #059669);
+  background-color: var(--accent-subtle, rgba(5, 150, 105, 0.05));
+}
+
+.ro-drop-zone-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background-color: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+.ro-drop-zone-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-drop-zone-subtitle {
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+  margin-top: 4px;
+}
+
+/* Selected File Pill */
+.ro-selected-file-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  margin-top: 10px;
+}
+
+.ro-selected-file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.ro-file-name-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.ro-file-size-text {
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+}
+
+.ro-hash-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+/* Duplicate File Warning Banner */
+.ro-duplicate-warning-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm, 6px);
+  color: #b45309;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Form Fields */
+.ro-upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ro-field-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ro-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-char-counter {
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+}
+
+.ro-textarea-input {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border, #cbd5e1);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  background-color: var(--card-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  resize: vertical;
+  line-height: 1.5;
+  transition: all 0.15s ease;
+}
+
+.ro-textarea-input:focus {
+  outline: none;
+  border-color: var(--accent, #059669);
+  box-shadow: 0 0 0 2px var(--accent-subtle, rgba(5, 150, 105, 0.12));
+}
+
+.ro-dropdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Approval Checkbox Box */
+.ro-approval-checkbox-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+}
+
+.ro-approval-checkbox-card:hover {
+  background-color: #f1f5f9;
+}
+
+.ro-approval-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-approval-desc {
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+  margin-top: 2px;
+}
+
+/* Upload Progress Bar */
+.ro-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.ro-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.ro-progress-fill {
+  height: 100%;
+  background-color: var(--accent, #059669);
+  border-radius: 9999px;
+  transition: width 0.15s ease;
+}
+
+.ro-progress-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+}
+
+/* Modal Actions */
+.ro-modal-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+

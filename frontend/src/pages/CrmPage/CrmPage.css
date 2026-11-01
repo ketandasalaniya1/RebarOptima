@@ -514,6 +514,11 @@
 .crm-cell-sold {
   background-color: #64748b; /* Grey/Slate */
 }
+.crm-cell-blocked {
+  background-color: #475569; /* Dark Slate / Management Hold */
+  border: 1px dashed #94a3b8 !important;
+  color: #f1f5f9;
+}
 
 /* ── Interactive Right-Side Unit Inspection Panel (Profitbase Style) ─────── */
 .crm-unit-inspect-panel {

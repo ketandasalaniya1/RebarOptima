@@ -201,7 +201,9 @@ export function createCrmCustomerRouter(getDb: () => any, authMiddleware: any, l
       // If initial project/unit interest was provided in registration modal
       if (initialInterest && initialInterest.projectId) {
         const prjId = ObjectId.isValid(initialInterest.projectId) ? new ObjectId(initialInterest.projectId) : initialInterest.projectId;
-        const project = await db.collection('crm_projects').findOne({ _id: prjId });
+        const project = (await db.collection('projects').findOne({ _id: prjId }))
+          || (ObjectId.isValid(prjId) ? await db.collection('projects').findOne({ _id: new ObjectId(prjId) }) : null)
+          || (await db.collection('crm_projects').findOne({ _id: prjId }));
         let unitDoc: any = null;
         if (initialInterest.unitId) {
           const uId = ObjectId.isValid(initialInterest.unitId) ? new ObjectId(initialInterest.unitId) : initialInterest.unitId;
@@ -392,7 +394,9 @@ export function createCrmCustomerRouter(getDb: () => any, authMiddleware: any, l
       }
 
       const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
-      const project = await db.collection('crm_projects').findOne({ _id: prjId, companyId });
+      const project = (await db.collection('projects').findOne({ _id: prjId }))
+        || (ObjectId.isValid(prjId) ? await db.collection('projects').findOne({ _id: new ObjectId(prjId) }) : null)
+        || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }));
 
       let unitDoc: any = null;
       if (unitId) {

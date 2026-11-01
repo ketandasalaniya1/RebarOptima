@@ -5,6 +5,7 @@ import settingsReducer from './slices/settingsSlice';
 import permissionsReducer from './slices/permissionsSlice';
 import bbsReducer from './slices/bbsSlice';
 import projectReducer from './slices/projectSlice';
+import { drawingsApiSlice } from './api/drawingsApi';
 
 export const store = configureStore({
   reducer: {
@@ -14,5 +15,8 @@ export const store = configureStore({
     permissions: permissionsReducer,
     bbs: bbsReducer,
     project: projectReducer,
+    [drawingsApiSlice.reducerPath]: drawingsApiSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(drawingsApiSlice.middleware),
 });

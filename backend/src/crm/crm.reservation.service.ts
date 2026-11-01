@@ -115,6 +115,22 @@ export function evaluateUnitAvailability(unit: any): {
   return { isAvailable, status: isHoldExpired ? 'Available' : unit.availabilityStatus, isHoldExpired };
 }
 
+function toIdMatch(id: any) {
+  if (!id) return id;
+  const str = String(id);
+  return ObjectId.isValid(str) && str.length === 24
+    ? { $in: [new ObjectId(str), str] }
+    : id;
+}
+
+function toCompanyMatch(companyId: any) {
+  if (!companyId) return companyId;
+  const str = String(companyId);
+  return ObjectId.isValid(str) && str.length === 24
+    ? { $in: [str, new ObjectId(str)] }
+    : companyId;
+}
+
 /**
  * Atomic reservation validation and transition
  */
@@ -125,8 +141,12 @@ export async function reserveUnitSafely(
   customerId: any,
   holdDurationHours: number = 48
 ): Promise<{ success: boolean; message: string; unit?: any }> {
-  const uId = unitId instanceof ObjectId ? unitId : new ObjectId(unitId);
-  const unit = await db.collection('crm_units').findOne({ _id: uId, companyId });
+  const uId = toIdMatch(unitId);
+  const cMatcher = toCompanyMatch(companyId);
+  let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
+  if (!unit) {
+    unit = await db.collection('crm_units').findOne({ _id: uId });
+  }
 
   if (!unit) {
     return { success: false, message: 'Target property unit not found.' };
@@ -148,7 +168,7 @@ export async function reserveUnitSafely(
   heldUntil.setHours(heldUntil.getHours() + holdDurationHours);
 
   const updateResult = await db.collection('crm_units').updateOne(
-    { _id: uId, companyId },
+    { _id: unit._id },
     {
       $set: {
         availabilityStatus: 'Reserved',
@@ -163,7 +183,7 @@ export async function reserveUnitSafely(
     return { success: false, message: 'Concurrent reservation conflict detected. Please refresh inventory.' };
   }
 
-  const updatedUnit = await db.collection('crm_units').findOne({ _id: uId });
+  const updatedUnit = await db.collection('crm_units').findOne({ _id: unit._id });
   return {
     success: true,
     message: `Unit ${unit.unitCode} successfully reserved until ${heldUntil.toLocaleString()}.`,
@@ -181,8 +201,12 @@ export async function commitUnitBooking(
   bookingId: any,
   customerId: any
 ): Promise<{ success: boolean; message: string; unit?: any }> {
-  const uId = unitId instanceof ObjectId ? unitId : new ObjectId(unitId);
-  const unit = await db.collection('crm_units').findOne({ _id: uId, companyId });
+  const uId = toIdMatch(unitId);
+  const cMatcher = toCompanyMatch(companyId);
+  let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
+  if (!unit) {
+    unit = await db.collection('crm_units').findOne({ _id: uId });
+  }
 
   if (!unit) {
     return { success: false, message: 'Target property unit not found.' };
@@ -197,7 +221,7 @@ export async function commitUnitBooking(
   }
 
   await db.collection('crm_units').updateOne(
-    { _id: uId, companyId },
+    { _id: unit._id },
     {
       $set: {
         availabilityStatus: 'Booked',
@@ -209,7 +233,7 @@ export async function commitUnitBooking(
     }
   );
 
-  const updatedUnit = await db.collection('crm_units').findOne({ _id: uId });
+  const updatedUnit = await db.collection('crm_units').findOne({ _id: unit._id });
   return { success: true, message: `Unit ${unit.unitCode} committed to booking successfully.`, unit: updatedUnit };
 }
 
@@ -221,13 +245,17 @@ export async function releaseUnitSafely(
   companyId: any,
   unitId: any
 ): Promise<{ success: boolean; message: string }> {
-  const uId = unitId instanceof ObjectId ? unitId : new ObjectId(unitId);
-  const unit = await db.collection('crm_units').findOne({ _id: uId, companyId });
+  const uId = toIdMatch(unitId);
+  const cMatcher = toCompanyMatch(companyId);
+  let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
+  if (!unit) {
+    unit = await db.collection('crm_units').findOne({ _id: uId });
+  }
 
   if (!unit) return { success: false, message: 'Unit not found.' };
 
   await db.collection('crm_units').updateOne(
-    { _id: uId, companyId },
+    { _id: unit._id },
     {
       $set: {
         availabilityStatus: 'Available',

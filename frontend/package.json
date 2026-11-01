@@ -26,6 +26,7 @@
     "@velipso/polybool": "^1.1.1",
     "@vercel/analytics": "^2.0.1",
     "@vueuse/core": "^11.1.0",
+    "dxf-viewer": "^1.0.50",
     "element-plus": "^2.14.7",
     "html2pdf.js": "^0.10.2",
     "leaflet": "^1.9.4",

@@ -4,6 +4,7 @@ import './ui.css';
 
 export default function AppModal({
   open,
+  isOpen,
   title,
   subtitle,
   children,
@@ -12,10 +13,11 @@ export default function AppModal({
   size = 'md',
   className = '',
 }) {
+  const isVisible = open !== undefined ? open : isOpen;
   const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!isVisible) return undefined;
     const onKey = (e) => {
       if (e.key === 'Escape') onClose?.();
     };
@@ -27,9 +29,9 @@ export default function AppModal({
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
     };
-  }, [open, onClose]);
+  }, [isVisible, onClose]);
 
-  if (!open) return null;
+  if (!isVisible) return null;
 
   const sizeClass = size === 'md' ? '' : ` ro-modal--${size}`;
 

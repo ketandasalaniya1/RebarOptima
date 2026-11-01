@@ -1,0 +1,171 @@
+.ro-transmittals-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+}
+
+.ro-transmittals-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ro-transmittals-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-transmittals-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+}
+
+/* 2-Column Split Layout */
+.ro-transmittals-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+@media (max-width: 1024px) {
+  .ro-transmittals-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ro-transmittal-card {
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 10px);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ro-card-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  padding-bottom: 10px;
+}
+
+/* Selected Drawings Chips */
+.ro-selected-drawings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.ro-drawing-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+}
+
+.ro-chip-name {
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ro-chip-remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ro-chip-remove:hover {
+  color: #ef4444;
+}
+
+/* Recipient Type Pills */
+.ro-pill-recipient-type {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ro-pill-recipient-type.external {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.ro-pill-recipient-type.internal {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+/* Acknowledgment status pills */
+.ro-ack-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ro-ack-pill.status-acknowledged {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.ro-ack-pill.status-viewed {
+  background-color: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+.ro-ack-pill.status-sent {
+  background-color: rgba(100, 116, 139, 0.12);
+  color: #64748b;
+}
+
+/* PDF Download Button */
+.ro-btn-download-pdf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: var(--radius-sm, 6px);
+  background-color: var(--card-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-top: 12px;
+  align-self: flex-end;
+}
+
+.ro-btn-download-pdf:hover {
+  background-color: var(--bg-secondary, #f8fafc);
+  border-color: var(--accent, #059669);
+  color: var(--accent, #059669);
+}
+

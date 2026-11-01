@@ -6,7 +6,7 @@ import {
   ChevronRight, ArrowRight, AlertCircle, CheckCircle, X,
   Printer, RefreshCw, Eye, Sparkles, Building, UserCheck,
   MessageSquare, Send, Share2, Download, ChevronLeft,
-  GripVertical, FileSpreadsheet, MapPin
+  GripVertical, FileSpreadsheet, MapPin, Lock, Unlock
 } from 'lucide-react';
 import { crmApi } from '../../utils/crmApi';
 import { useActiveProject } from '../../hooks/useActiveProject';
@@ -177,6 +177,12 @@ export default function CrmPage() {
   const [showScheduleVisitModal, setShowScheduleVisitModal] = useState(false);
   const [showNewBookingModal, setShowNewBookingModal] = useState(false);
   const [showRecordPaymentModal, setShowRecordPaymentModal] = useState(false);
+  const [showAddBlockModal, setShowAddBlockModal] = useState(false);
+  const [showAddUnitModal, setShowAddUnitModal] = useState(false);
+  const [showBlockReasonModal, setShowBlockReasonModal] = useState(false);
+  const [targetUnitForBlock, setTargetUnitForBlock] = useState(null);
+  const [blockReason, setBlockReason] = useState('Management Hold');
+  const [blockSubmitting, setBlockSubmitting] = useState(false);
 
   // Form States & Duplicate Warnings
   const [duplicateWarning, setDuplicateWarning] = useState(null);
@@ -199,6 +205,32 @@ export default function CrmPage() {
     bookingId: '', amount: '', paymentMethod: 'Bank Transfer (NEFT/RTGS)',
     transactionReference: '', receiptNotes: ''
   });
+  const [blockFormData, setBlockFormData] = useState({
+    projectId: '',
+    blockName: 'BLOCK C',
+    prefix: 'C',
+    startFloor: 1,
+    floorsCount: 10,
+    unitsPerFloor: 4,
+    configurations: ['1BHK', '2BHK', '3BHK', '2BHK'],
+    basePrice: 6500000,
+    askingPrice: 7200000,
+    carpetAreaSqFt: 950,
+    saleableAreaSqFt: 1250,
+    facing: 'East Garden View',
+    notes: ''
+  });
+  const [singleUnitFormData, setSingleUnitFormData] = useState({
+    projectId: '',
+    buildingTower: 'TOWER A',
+    floorNumber: 1,
+    unitNumber: '',
+    configuration: '2BHK',
+    carpetAreaSqFt: 1050,
+    basePrice: 7500000,
+    askingPrice: 8200000,
+    facing: 'East'
+  });
 
   // Load Initial Workspace Data
   useEffect(() => {
@@ -214,7 +246,6 @@ export default function CrmPage() {
     if (activeTab === 'inventory') loadInventory();
     if (activeTab === 'visits-tasks') { loadVisits(); loadTasks(); }
     if (activeTab === 'bookings') loadBookings();
-    if (activeTab === 'payments') loadPayments();
     if (activeTab === 'reports') loadReports();
     if (activeTab === 'settings') loadSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,9 +254,115 @@ export default function CrmPage() {
   const loadProjects = async () => {
     try {
       const res = await crmApi.getProjects();
-      setProjects(Array.isArray(res) ? res : []);
+      const prjs = Array.isArray(res) ? res : [];
+      setProjects(prjs);
+      if (!selectedProjectId && prjs.length > 0) {
+        setSelectedProjectId(String(prjs[0]._id || prjs[0].id));
+      }
     } catch (err) {
       console.warn('Could not load projects:', err);
+    }
+  };
+
+  const handleCreateBlock = async (e) => {
+    e.preventDefault();
+    setBlockSubmitting(true);
+    try {
+      const targetProjId = blockFormData.projectId || selectedProjectId || (projects[0]?._id ? String(projects[0]._id) : '');
+      if (!targetProjId) {
+        alert('Please select a project for the block.');
+        return;
+      }
+      const payload = {
+        ...blockFormData,
+        projectId: targetProjId
+      };
+      const res = await crmApi.createBlock(payload);
+      alert(res.message || 'Block created successfully!');
+      setShowAddBlockModal(false);
+      loadInventory(targetProjId);
+      loadDashboard();
+    } catch (err) {
+      alert('Error creating block: ' + err.message);
+    } finally {
+      setBlockSubmitting(false);
+    }
+  };
+
+  const handleCreateSingleUnit = async (e) => {
+    e.preventDefault();
+    setBlockSubmitting(true);
+    try {
+      const targetProjId = singleUnitFormData.projectId || selectedProjectId || (projects[0]?._id ? String(projects[0]._id) : '');
+      if (!targetProjId) {
+        alert('Please select a project.');
+        return;
+      }
+      const payload = {
+        ...singleUnitFormData,
+        projectId: targetProjId
+      };
+      await crmApi.createUnit(payload);
+      alert(`Unit ${payload.buildingTower}-${payload.unitNumber} created successfully!`);
+      setShowAddUnitModal(false);
+      loadInventory(targetProjId);
+      loadDashboard();
+    } catch (err) {
+      alert('Error creating unit: ' + err.message);
+    } finally {
+      setBlockSubmitting(false);
+    }
+  };
+
+  const handleInitiateBlockUnit = (unit) => {
+    setTargetUnitForBlock(unit);
+    setBlockReason('Management Hold');
+    setShowBlockReasonModal(true);
+  };
+
+  const handleConfirmBlockUnit = async () => {
+    if (!targetUnitForBlock) return;
+    try {
+      await crmApi.blockUnit(targetUnitForBlock._id, { reason: blockReason });
+      setShowBlockReasonModal(false);
+      const updatedStatus = 'Blocked';
+      setUnits(prev => prev.map(u => u._id === targetUnitForBlock._id ? { ...u, availabilityStatus: updatedStatus, effectiveStatus: updatedStatus, blockedReason: blockReason } : u));
+      if (inspectedUnit && inspectedUnit._id === targetUnitForBlock._id) {
+        setInspectedUnit({ ...inspectedUnit, availabilityStatus: updatedStatus, effectiveStatus: updatedStatus });
+      }
+      if (selectedUnitProfile && (selectedUnitProfile.unit?._id === targetUnitForBlock._id || selectedUnitProfile._id === targetUnitForBlock._id)) {
+        setSelectedUnitProfile({
+          ...selectedUnitProfile,
+          availabilityStatus: updatedStatus,
+          unit: { ...selectedUnitProfile.unit, availabilityStatus: updatedStatus, effectiveStatus: updatedStatus }
+        });
+      }
+      loadDashboard();
+    } catch (err) {
+      alert('Failed to block unit: ' + err.message);
+    }
+  };
+
+  const handleUnblockUnit = async (unit) => {
+    if (!unit) return;
+    if (!window.confirm(`Are you sure you want to unblock Unit ${unit.unitCode}? It will be returned to Available status.`)) return;
+    try {
+      await crmApi.unblockUnit(unit._id);
+      const updatedStatus = 'Available';
+      setUnits(prev => prev.map(u => u._id === unit._id ? { ...u, availabilityStatus: updatedStatus, effectiveStatus: updatedStatus, blockedReason: null } : u));
+      if (inspectedUnit && inspectedUnit._id === unit._id) {
+        setInspectedUnit({ ...inspectedUnit, availabilityStatus: updatedStatus, effectiveStatus: updatedStatus });
+      }
+      if (selectedUnitProfile && (selectedUnitProfile.unit?._id === unit._id || selectedUnitProfile._id === unit._id)) {
+        setSelectedUnitProfile({
+          ...selectedUnitProfile,
+          availabilityStatus: updatedStatus,
+          unit: { ...selectedUnitProfile.unit, availabilityStatus: updatedStatus, effectiveStatus: updatedStatus }
+        });
+      }
+      loadDashboard();
+    } catch (err) {
+      alert('Failed to unblock unit: ' + err.message);
     }
   };
 
@@ -563,7 +700,7 @@ export default function CrmPage() {
       } else {
         setDuplicateWarning(null);
       }
-    } catch {}
+    } catch { }
   };
 
   // Create Customer Form Submit
@@ -754,9 +891,6 @@ export default function CrmPage() {
         </button>
         <button className={`crm-tab-button ${activeTab === 'bookings' ? 'active' : ''}`} onClick={() => setActiveTab('bookings')}>
           <FileText size={16} /> Bookings <span className="crm-tab-badge">{bookings.length}</span>
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'payments' ? 'active' : ''}`} onClick={() => setActiveTab('payments')}>
-          <CreditCard size={16} /> Payments & Receipts <span className="crm-tab-badge">{payments.length}</span>
         </button>
         <button className={`crm-tab-button ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => setActiveTab('reports')}>
           <BarChart3 size={16} /> Reports & Analytics
@@ -952,7 +1086,7 @@ export default function CrmPage() {
                   <th>Assigned Salesperson</th>
                   <th>Active Interests</th>
                   <th>Bookings</th>
-                  <th>Total Value</th>
+                  {/* <th>Total Value</th> */}
                   <th>Action</th>
                 </tr>
               </thead>
@@ -1209,8 +1343,9 @@ export default function CrmPage() {
         });
 
         // Determine sections / towers present
-        const rawSections = Array.from(new Set(units.map(u => u.sectionName || u.buildingTower || 'Tower A'))).sort();
-        const displaySections = rawSections.length > 0 ? rawSections : ['Section 1 (Tower A)', 'Section 2 (Tower B)'];
+        const availableTowers = Array.from(new Set(units.map(u => u.buildingTower || u.sectionName).filter(Boolean))).sort();
+        const rawSections = Array.from(new Set(filteredUnits.map(u => u.sectionName || u.buildingTower || 'Block A'))).sort();
+        const displaySections = rawSections.length > 0 ? rawSections : (availableTowers.length > 0 ? availableTowers : ['Tower A', 'Tower B']);
 
         // Distinct floors descending from max down to min (e.g. 14 down to 1)
         const maxF = Math.max(...units.map(u => u.floorNumber || 1), 14);
@@ -1220,7 +1355,11 @@ export default function CrmPage() {
           floorsList.push(f);
         }
 
-        const unitPositions = [1, 2, 3, 4];
+        const maxPos = Math.max(...units.map(u => {
+          const num = parseInt(String(u.unitNumber).slice(-2)) || 4;
+          return num > 0 && num <= 20 ? num : 4;
+        }), 4);
+        const unitPositions = Array.from({ length: maxPos }, (_, i) => i + 1);
         const activeInspected = inspectedUnit || (units.length > 0 ? units[0] : null);
 
         return (
@@ -1246,16 +1385,17 @@ export default function CrmPage() {
 
                 {/* Section / Tower Selector */}
                 <div className="crm-filter-group-mini">
-                  <label>TOWER / SECTION</label>
+                  <label>TOWER / BLOCK</label>
                   <select
                     className="crm-select-filter"
                     style={{ minWidth: '130px', padding: '0.35rem 0.6rem', fontSize: '0.78rem' }}
                     value={chessboardFilters.tower}
                     onChange={(e) => setChessboardFilters({ ...chessboardFilters, tower: e.target.value })}
                   >
-                    <option value="all">All Towers</option>
-                    <option value="Tower A">Tower A / Section 1</option>
-                    <option value="Tower B">Tower B / Section 2</option>
+                    <option value="all">All Towers / Blocks</option>
+                    {availableTowers.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -1352,6 +1492,7 @@ export default function CrmPage() {
                     <option value="held">Held 48h (Amber)</option>
                     <option value="reserved">Reserved (Blue)</option>
                     <option value="booked">Booked (Purple)</option>
+                    <option value="blocked">Blocked / Hold (Slate)</option>
                     <option value="sold">Sold (Grey)</option>
                   </select>
                 </div>
@@ -1381,11 +1522,41 @@ export default function CrmPage() {
 
                   <button
                     className="crm-btn-primary"
-                    style={{ background: '#10b981', borderColor: '#10b981', padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
+                    style={{ background: '#3b82f6', borderColor: '#3b82f6', padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
+                    onClick={() => {
+                      setBlockFormData(prev => ({
+                        ...prev,
+                        projectId: selectedProjectId || (projects[0]?._id ? String(projects[0]._id) : '')
+                      }));
+                      setShowAddBlockModal(true);
+                    }}
+                    title="Add a new Block / Tower to project inventory"
+                  >
+                    <Plus size={14} /> Add Block / Tower
+                  </button>
+
+                  <button
+                    className="crm-btn-secondary"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
+                    onClick={() => {
+                      setSingleUnitFormData(prev => ({
+                        ...prev,
+                        projectId: selectedProjectId || (projects[0]?._id ? String(projects[0]._id) : '')
+                      }));
+                      setShowAddUnitModal(true);
+                    }}
+                    title="Add an individual unit"
+                  >
+                    <Plus size={14} /> Add Unit
+                  </button>
+
+                  <button
+                    className="crm-btn-secondary"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
                     onClick={() => handleExportUnitsToExcel(filteredUnits)}
                     title="Download Excel / CSV of filtered inventory"
                   >
-                    <FileSpreadsheet size={14} /> Export to Excel
+                    <FileSpreadsheet size={14} /> Export
                   </button>
                 </div>
               </div>
@@ -1412,6 +1583,10 @@ export default function CrmPage() {
                   <div className="crm-legend-pill">
                     <span className="crm-legend-box-sample" style={{ background: '#64748b' }} />
                     <span>Sold / Closed ({units.filter(u => (u.effectiveStatus || u.availabilityStatus) === 'Sold').length})</span>
+                  </div>
+                  <div className="crm-legend-pill">
+                    <span className="crm-legend-box-sample" style={{ background: '#475569', border: '1px dashed #94a3b8' }} />
+                    <span>Blocked ({units.filter(u => (u.effectiveStatus || u.availabilityStatus) === 'Blocked').length})</span>
                   </div>
                 </div>
 
@@ -1459,11 +1634,17 @@ export default function CrmPage() {
                           {displaySections.map((secName, sIdx) =>
                             unitPositions.map((pos) => {
                               // Find matching unit
-                              const u = filteredUnits.find(
-                                unit => unit.floorNumber === floor &&
-                                (unit.sectionName === secName || unit.buildingTower === secName || (sIdx === 0 && unit.buildingTower === 'Tower A') || (sIdx === 1 && unit.buildingTower === 'Tower B')) &&
-                                (unit.unitNumber === pos || unit.unitCode?.endsWith(`0${pos}`) || unit.unitCode?.endsWith(`${pos}`))
-                              );
+                              const u = filteredUnits.find(unit => {
+                                if (Number(unit.floorNumber) !== floor) return false;
+                                const bTower = (unit.buildingTower || unit.sectionName || '').trim().toUpperCase();
+                                const sName = secName.trim().toUpperCase();
+                                const towerMatch = bTower === sName || sName.includes(bTower) || bTower.includes(sName);
+                                if (!towerMatch) return false;
+
+                                const uNum = String(unit.unitNumber || unit.unitCode || '');
+                                const lastDigits = parseInt(uNum.slice(-2), 10);
+                                return lastDigits === pos || unit.unitNumber === String(pos) || unit.unitNumber === pos || uNum.endsWith(`0${pos}`) || uNum.endsWith(`-${pos}`);
+                              });
 
                               if (!u) {
                                 return (
@@ -1679,6 +1860,24 @@ export default function CrmPage() {
                           </div>
 
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                            {(activeInspected.effectiveStatus || activeInspected.availabilityStatus) === 'Blocked' ? (
+                              <button
+                                className="crm-btn-primary"
+                                style={{ fontSize: '0.74rem', padding: '0.35rem 0.5rem', justifyContent: 'center', background: '#10b981', borderColor: '#10b981' }}
+                                onClick={() => handleUnblockUnit(activeInspected)}
+                              >
+                                <Unlock size={13} /> Unblock Unit
+                              </button>
+                            ) : (
+                              <button
+                                className="crm-btn-secondary"
+                                style={{ fontSize: '0.74rem', padding: '0.35rem 0.5rem', justifyContent: 'center', color: '#94a3b8' }}
+                                onClick={() => handleInitiateBlockUnit(activeInspected)}
+                              >
+                                <Lock size={13} /> Block (Hold)
+                              </button>
+                            )}
+
                             <button
                               className="crm-btn-secondary"
                               style={{ fontSize: '0.74rem', padding: '0.35rem 0.5rem', justifyContent: 'center' }}
@@ -1693,7 +1892,9 @@ export default function CrmPage() {
                             >
                               <Plus size={13} /> Log Enquiry
                             </button>
+                          </div>
 
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.5rem' }}>
                             <button
                               className="crm-btn-secondary"
                               style={{ fontSize: '0.74rem', padding: '0.35rem 0.5rem', justifyContent: 'center' }}
@@ -1916,67 +2117,7 @@ export default function CrmPage() {
         </div>
       )}
 
-      {/* ── TAB 7: PAYMENTS & COLLECTIONS ──────────────────────────────────── */}
-      {activeTab === 'payments' && (
-        <div className="crm-card">
-          <div className="crm-card-header">
-            <span className="crm-card-title"><CreditCard size={18} /> Verified Payment Transactions & Receipts</span>
-            <button className="crm-btn-primary" onClick={() => setShowRecordPaymentModal(true)}>
-              <Plus size={16} /> Record Payment
-            </button>
-          </div>
-
-          <div className="crm-table-container">
-            <table className="crm-table">
-              <thead>
-                <tr>
-                  <th>Receipt #</th>
-                  <th>Txn Reference</th>
-                  <th>Customer</th>
-                  <th>Booking Ref</th>
-                  <th>Amount</th>
-                  <th>Payment Mode</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Print Receipt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map(p => (
-                  <tr key={p._id}>
-                    <td><strong style={{ color: '#10b981' }}>{p.receiptNumber}</strong></td>
-                    <td>{p.transactionReference}</td>
-                    <td><strong>{p.customerName}</strong></td>
-                    <td>{p.bookingReference}</td>
-                    <td><strong style={{ fontVariantNumeric: 'tabular-nums' }}>₹{Number(p.amount).toLocaleString()}</strong></td>
-                    <td>{p.paymentMethod}</td>
-                    <td>{new Date(p.paymentDate).toLocaleDateString()}</td>
-                    <td>
-                      <span className={`crm-badge crm-badge-pay-${p.paymentStatus.toLowerCase().replace(/\s+/g, '')}`}>
-                        {p.paymentStatus}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="crm-btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }} onClick={() => openPrintableReceipt(p._id)}>
-                        <Printer size={13} /> Print
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {payments.length === 0 && (
-                  <tr>
-                    <td colSpan="9" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-label)' }}>
-                      No payments recorded. Click "+ Record Payment" to issue a receipt.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ── TAB 8: REPORTS & ANALYTICS ─────────────────────────────────────── */}
+      {/* ── TAB 7: REPORTS & ANALYTICS ─────────────────────────────────────── */}
       {activeTab === 'reports' && (
         <div>
           <div className="crm-section-grid">
@@ -1993,7 +2134,7 @@ export default function CrmPage() {
                       <th>Leads Assigned</th>
                       <th>Visits Completed</th>
                       <th>Units Closed</th>
-                      <th>Total Value</th>
+                      {/* <th>Total Value</th> */}
                       <th>Conversion</th>
                     </tr>
                   </thead>
@@ -2004,7 +2145,7 @@ export default function CrmPage() {
                         <td>{rep.leadsAssigned}</td>
                         <td>{rep.visitsConducted}</td>
                         <td><strong style={{ color: '#34d399' }}>{rep.bookingsClosed}</strong></td>
-                        <td>₹{(rep.totalBookingValue || 0).toLocaleString()}</td>
+                        {/* <td>₹{(rep.totalBookingValue || 0).toLocaleString()}</td> */}
                         <td><span className="crm-badge crm-badge-stage-booked">{rep.conversionRatePercent}%</span></td>
                       </tr>
                     ))}
@@ -2290,10 +2431,10 @@ export default function CrmPage() {
                         composerType === 'Note'
                           ? 'Add notes or type #name to notify team...'
                           : composerType === 'Email'
-                          ? 'Compose client follow-up email or payment reminder...'
-                          : composerType === 'Call'
-                          ? 'Log phone call discussion, objections, and agreed next steps...'
-                          : 'Send WhatsApp template or site visit booking confirmation...'
+                            ? 'Compose client follow-up email or payment reminder...'
+                            : composerType === 'Call'
+                              ? 'Log phone call discussion, objections, and agreed next steps...'
+                              : 'Send WhatsApp template or site visit booking confirmation...'
                       }
                       value={composerText}
                       onChange={(e) => setComposerText(e.target.value)}
@@ -2701,18 +2842,38 @@ export default function CrmPage() {
                     <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Target size={18} color="var(--accent)" /> Active Lead Management Pipeline for Unit {selectedUnitProfile.unitCode}
                     </h3>
-                    <button className="crm-btn-primary" style={{ padding: '0.3rem 0.7rem', fontSize: '0.78rem' }} onClick={() => {
-                      setBookingFormData({
-                        ...bookingFormData,
-                        projectId: selectedUnitProfile.unit?.projectId,
-                        unitId: selectedUnitProfile.unit?._id,
-                        agreementPrice: selectedUnitProfile.unit?.askingPrice || selectedUnitProfile.unit?.basePrice
-                      });
-                      setSelectedUnitProfile(null);
-                      setShowNewBookingModal(true);
-                    }}>
-                      Initiate Unit Booking
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      {selectedUnitProfile.availabilityStatus === 'Blocked' ? (
+                        <button
+                          className="crm-btn-primary"
+                          style={{ padding: '0.3rem 0.7rem', fontSize: '0.78rem', background: '#10b981', borderColor: '#10b981' }}
+                          onClick={() => handleUnblockUnit(selectedUnitProfile.unit || { _id: selectedUnitProfile._id, unitCode: selectedUnitProfile.unitCode })}
+                        >
+                          <Unlock size={14} /> Unblock Unit
+                        </button>
+                      ) : (
+                        <button
+                          className="crm-btn-secondary"
+                          style={{ padding: '0.3rem 0.7rem', fontSize: '0.78rem', color: '#94a3b8' }}
+                          onClick={() => handleInitiateBlockUnit(selectedUnitProfile.unit || { _id: selectedUnitProfile._id, unitCode: selectedUnitProfile.unitCode })}
+                        >
+                          <Lock size={14} /> Block (Hold)
+                        </button>
+                      )}
+
+                      <button className="crm-btn-primary" style={{ padding: '0.3rem 0.7rem', fontSize: '0.78rem' }} onClick={() => {
+                        setBookingFormData({
+                          ...bookingFormData,
+                          projectId: selectedUnitProfile.unit?.projectId,
+                          unitId: selectedUnitProfile.unit?._id,
+                          agreementPrice: selectedUnitProfile.unit?.askingPrice || selectedUnitProfile.unit?.basePrice
+                        });
+                        setSelectedUnitProfile(null);
+                        setShowNewBookingModal(true);
+                      }}>
+                        Initiate Unit Booking
+                      </button>
+                    </div>
                   </div>
 
                   <div className="crm-table-container">
@@ -3202,92 +3363,6 @@ export default function CrmPage() {
       )}
 
       {/* ══════════════════════════════════════════════════════════════════════════
-         MODAL: RECORD PAYMENT & ISSUE RECEIPT
-         ══════════════════════════════════════════════════════════════════════════ */}
-      {showRecordPaymentModal && (
-        <div className="crm-modal-overlay" onClick={() => setShowRecordPaymentModal(false)}>
-          <div className="crm-modal-container" onClick={(e) => e.stopPropagation()}>
-            <div className="crm-modal-header">
-              <span className="crm-modal-title"><CreditCard size={18} /> Record Customer Payment</span>
-              <button className="crm-modal-close-btn" onClick={() => setShowRecordPaymentModal(false)}><X size={20} /></button>
-            </div>
-            <form onSubmit={handleRecordPayment}>
-              <div className="crm-modal-body">
-                <div className="crm-form-grid">
-                  <div className="crm-form-group full-width">
-                    <label className="crm-form-label">Select Active Booking *</label>
-                    <select
-                      className="crm-form-select"
-                      required
-                      value={paymentFormData.bookingId}
-                      onChange={(e) => setPaymentFormData({ ...paymentFormData, bookingId: e.target.value })}
-                    >
-                      <option value="">-- Choose Booking --</option>
-                      {bookings.filter(b => b.status !== 'Cancelled').map(b => (
-                        <option key={b._id} value={b._id}>
-                          {b.bookingReference} — {b.customerName} (Unit {b.unitCode})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Payment Amount (₹) *</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      required
-                      placeholder="e.g. 945000"
-                      value={paymentFormData.amount}
-                      onChange={(e) => setPaymentFormData({ ...paymentFormData, amount: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Payment Method</label>
-                    <select
-                      className="crm-form-select"
-                      value={paymentFormData.paymentMethod}
-                      onChange={(e) => setPaymentFormData({ ...paymentFormData, paymentMethod: e.target.value })}
-                    >
-                      <option value="Bank Transfer (NEFT/RTGS)">Bank Transfer (NEFT/RTGS)</option>
-                      <option value="Cheque">Cheque</option>
-                      <option value="UPI">UPI</option>
-                      <option value="Demand Draft">Demand Draft</option>
-                      <option value="Credit/Debit Card">Credit/Debit Card</option>
-                    </select>
-                  </div>
-                  <div className="crm-form-group full-width">
-                    <label className="crm-form-label">Transaction Reference (UTR / Cheque No) *</label>
-                    <input
-                      className="crm-form-input"
-                      type="text"
-                      required
-                      placeholder="e.g. HDFC9876543210"
-                      value={paymentFormData.transactionReference}
-                      onChange={(e) => setPaymentFormData({ ...paymentFormData, transactionReference: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group full-width">
-                    <label className="crm-form-label">Receipt Notes</label>
-                    <input
-                      className="crm-form-input"
-                      type="text"
-                      placeholder="e.g. Booking token amount in full"
-                      value={paymentFormData.receiptNotes}
-                      onChange={(e) => setPaymentFormData({ ...paymentFormData, receiptNotes: e.target.value })}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="crm-modal-footer">
-                <button type="button" className="crm-btn-secondary" onClick={() => setShowRecordPaymentModal(false)}>Cancel</button>
-                <button type="submit" className="crm-btn-primary">Post Payment & Generate Receipt</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ══════════════════════════════════════════════════════════════════════════
          MODAL: SCHEDULE SITE VISIT
          ══════════════════════════════════════════════════════════════════════════ */}
       {showScheduleVisitModal && (
@@ -3365,6 +3440,293 @@ export default function CrmPage() {
                 <button type="submit" className="crm-btn-primary">Schedule Visit</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════════
+         MODAL: ADD BLOCK / TOWER TO PROJECT (PRODUCTION BATCH GENERATOR)
+         ══════════════════════════════════════════════════════════════════════════ */}
+      {showAddBlockModal && (
+        <div className="crm-modal-overlay" onClick={() => setShowAddBlockModal(false)}>
+          <div className="crm-modal-container" style={{ maxWidth: '640px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal-header">
+              <span className="crm-modal-title"><Building2 size={18} /> Add Block / Tower to Project</span>
+              <button className="crm-modal-close-btn" onClick={() => setShowAddBlockModal(false)}><X size={20} /></button>
+            </div>
+            <form onSubmit={handleCreateBlock}>
+              <div className="crm-modal-body">
+                <div className="crm-form-grid">
+                  <div className="crm-form-group full-width">
+                    <label className="crm-form-label">Target Project *</label>
+                    <select
+                      className="crm-form-select"
+                      required
+                      value={blockFormData.projectId}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, projectId: e.target.value })}
+                    >
+                      <option value="">-- Choose Project --</option>
+                      {projects.map(p => (
+                        <option key={p._id} value={p._id}>{p.name} ({p.projectCode || 'PRJ'})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Block / Tower Name *</label>
+                    <input
+                      className="crm-form-input"
+                      type="text"
+                      required
+                      placeholder="e.g. Block C, Tower 3, Wing B"
+                      value={blockFormData.blockName}
+                      onChange={(e) => {
+                        const name = e.target.value;
+                        const autoPrefix = name.replace(/[^A-Za-z0-9]/g, '').slice(0, 3).toUpperCase();
+                        setBlockFormData({ ...blockFormData, blockName: name, prefix: autoPrefix || blockFormData.prefix });
+                      }}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Unit Code Prefix *</label>
+                    <input
+                      className="crm-form-input"
+                      type="text"
+                      required
+                      placeholder="e.g. C, T3, W-B"
+                      value={blockFormData.prefix}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, prefix: e.target.value.toUpperCase() })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Starting Floor *</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      min="1"
+                      max="100"
+                      required
+                      value={blockFormData.startFloor}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, startFloor: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Total Floors *</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      min="1"
+                      max="60"
+                      required
+                      value={blockFormData.floorsCount}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, floorsCount: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Units per Floor *</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      min="1"
+                      max="16"
+                      required
+                      value={blockFormData.unitsPerFloor}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, unitsPerFloor: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Avg Carpet Area (Sq.Ft)</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      value={blockFormData.carpetAreaSqFt}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, carpetAreaSqFt: e.target.value })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Default Base Price (₹)</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      value={blockFormData.basePrice}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, basePrice: e.target.value })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Default Asking Price (₹)</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      value={blockFormData.askingPrice}
+                      onChange={(e) => setBlockFormData({ ...blockFormData, askingPrice: e.target.value })}
+                    />
+                  </div>
+                  <div className="crm-form-group full-width">
+                    <div style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: '8px', padding: '0.75rem 1rem' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#60a5fa', marginBottom: '0.25rem' }}>
+                        ⚡ Automated Unit Generation Preview
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                        Will generate <strong>{(blockFormData.floorsCount || 0) * (blockFormData.unitsPerFloor || 0)} units</strong> across floors {blockFormData.startFloor} to {Number(blockFormData.startFloor) + Number(blockFormData.floorsCount) - 1}.
+                        {' '}(Sample: {blockFormData.prefix || 'BLK'}-0{blockFormData.startFloor}01 to {blockFormData.prefix || 'BLK'}-{(Number(blockFormData.startFloor) + Number(blockFormData.floorsCount) - 1) < 10 ? '0' : ''}{Number(blockFormData.startFloor) + Number(blockFormData.floorsCount) - 1}0{blockFormData.unitsPerFloor})
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="crm-modal-footer">
+                <button type="button" className="crm-btn-secondary" onClick={() => setShowAddBlockModal(false)}>Cancel</button>
+                <button type="submit" className="crm-btn-primary" disabled={blockSubmitting}>
+                  {blockSubmitting ? 'Generating Block Units...' : 'Generate Block & Units'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════════
+         MODAL: ADD INDIVIDUAL CUSTOM UNIT
+         ══════════════════════════════════════════════════════════════════════════ */}
+      {showAddUnitModal && (
+        <div className="crm-modal-overlay" onClick={() => setShowAddUnitModal(false)}>
+          <div className="crm-modal-container" style={{ maxWidth: '540px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal-header">
+              <span className="crm-modal-title"><Plus size={18} /> Add Individual Unit</span>
+              <button className="crm-modal-close-btn" onClick={() => setShowAddUnitModal(false)}><X size={20} /></button>
+            </div>
+            <form onSubmit={handleCreateSingleUnit}>
+              <div className="crm-modal-body">
+                <div className="crm-form-grid">
+                  <div className="crm-form-group full-width">
+                    <label className="crm-form-label">Project *</label>
+                    <select
+                      className="crm-form-select"
+                      required
+                      value={singleUnitFormData.projectId}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, projectId: e.target.value })}
+                    >
+                      <option value="">-- Choose Project --</option>
+                      {projects.map(p => (
+                        <option key={p._id} value={p._id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Tower / Block Name *</label>
+                    <input
+                      className="crm-form-input"
+                      type="text"
+                      required
+                      placeholder="e.g. TOWER A, BLOCK C"
+                      value={singleUnitFormData.buildingTower}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, buildingTower: e.target.value.toUpperCase() })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Floor Number *</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      required
+                      value={singleUnitFormData.floorNumber}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, floorNumber: e.target.value })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Unit Number (e.g. 0501) *</label>
+                    <input
+                      className="crm-form-input"
+                      type="text"
+                      required
+                      placeholder="e.g. 0501"
+                      value={singleUnitFormData.unitNumber}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, unitNumber: e.target.value })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Configuration</label>
+                    <select
+                      className="crm-form-select"
+                      value={singleUnitFormData.configuration}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, configuration: e.target.value })}
+                    >
+                      <option value="1BHK">1 BHK</option>
+                      <option value="2BHK">2 BHK</option>
+                      <option value="3BHK">3 BHK</option>
+                      <option value="4BHK">4 BHK</option>
+                      <option value="Penthouse">Penthouse</option>
+                    </select>
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Carpet Area (Sq.Ft)</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      value={singleUnitFormData.carpetAreaSqFt}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, carpetAreaSqFt: e.target.value })}
+                    />
+                  </div>
+                  <div className="crm-form-group">
+                    <label className="crm-form-label">Asking Price (₹)</label>
+                    <input
+                      className="crm-form-input"
+                      type="number"
+                      value={singleUnitFormData.askingPrice}
+                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, askingPrice: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="crm-modal-footer">
+                <button type="button" className="crm-btn-secondary" onClick={() => setShowAddUnitModal(false)}>Cancel</button>
+                <button type="submit" className="crm-btn-primary" disabled={blockSubmitting}>Add Unit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════════
+         MODAL: BLOCK UNIT (MANAGEMENT HOLD)
+         ══════════════════════════════════════════════════════════════════════════ */}
+      {showBlockReasonModal && targetUnitForBlock && (
+        <div className="crm-modal-overlay" onClick={() => setShowBlockReasonModal(false)}>
+          <div className="crm-modal-container" style={{ maxWidth: '480px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal-header">
+              <span className="crm-modal-title"><Lock size={18} /> Block Unit {targetUnitForBlock.unitCode}</span>
+              <button className="crm-modal-close-btn" onClick={() => setShowBlockReasonModal(false)}><X size={20} /></button>
+            </div>
+            <div className="crm-modal-body">
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Putting this unit on <strong>Management Hold (Blocked)</strong> will temporarily make it unavailable for new buyer bookings and reservations.
+              </p>
+              <div className="crm-form-group full-width">
+                <label className="crm-form-label">Reason for Block / Management Hold</label>
+                <select
+                  className="crm-form-select"
+                  value={blockReason}
+                  onChange={(e) => setBlockReason(e.target.value)}
+                >
+                  <option value="Management Hold">Management Hold</option>
+                  <option value="Director VIP Hold">Director / VIP Hold</option>
+                  <option value="Investor Quota">Investor / Promoter Quota</option>
+                  <option value="Legal / Compliance Hold">Legal / Compliance Hold</option>
+                  <option value="Model Flat / Sample Unit">Model Flat / Sample Unit</option>
+                  <option value="Structural Inspection">Structural Inspection</option>
+                </select>
+              </div>
+            </div>
+            <div className="crm-modal-footer">
+              <button type="button" className="crm-btn-secondary" onClick={() => setShowBlockReasonModal(false)}>Cancel</button>
+              <button
+                type="button"
+                className="crm-btn-primary"
+                style={{ background: '#475569', borderColor: '#64748b' }}
+                onClick={handleConfirmBlockUnit}
+              >
+                Confirm Block Unit
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,0 +1,43 @@
+.ro-approvals-inbox-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ro-approvals-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.ro-approvals-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-approvals-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+}
+
+.ro-btn-review-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  background-color: var(--accent, #059669);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-review-action:hover {
+  background-color: var(--accent-hover, #047857);
+}
+

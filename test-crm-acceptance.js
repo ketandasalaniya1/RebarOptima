@@ -405,6 +405,68 @@ async function runCrmAcceptanceTests() {
     });
     assert(searchRes.status === 200 && searchRes.body.customers.length >= 1, 'Requirement 18: Global CRM search locates customers, units, and bookings');
 
+    // ── TEST 11: Add Block & Unit Blocking (Management Hold) ───────────────
+    console.log('\n[Phase 11: Add Block / Tower & Unit Management Hold]');
+    const addBlockRes = await request({
+      hostname: 'localhost',
+      port: PORT,
+      path: '/api/crm/blocks',
+      method: 'POST',
+      headers: authHeaders
+    }, {
+      projectId: prjA._id,
+      blockName: 'BLOCK C',
+      prefix: 'C',
+      startFloor: 1,
+      floorsCount: 5,
+      unitsPerFloor: 4,
+      configurations: ['2BHK', '3BHK', '2BHK', '4BHK'],
+      basePrice: 8000000,
+      askingPrice: 8800000,
+      carpetAreaSqFt: 1100,
+      saleableAreaSqFt: 1450,
+      facing: 'North-East'
+    });
+    assert(addBlockRes.status === 201 && addBlockRes.body.createdUnitsCount === 20, 'Add Block C generates 20 units (5 floors × 4 units/floor)');
+
+    const blocksListRes = await request({
+      hostname: 'localhost',
+      port: PORT,
+      path: `/api/crm/blocks?projectId=${prjA._id}`,
+      method: 'GET',
+      headers: authHeaders
+    });
+    assert(blocksListRes.status === 200 && blocksListRes.body.some(b => b.blockName === 'BLOCK C'), 'List blocks includes newly created BLOCK C');
+
+    // Test Blocking Unit C-0101
+    const unitSearchRes = await request({
+      hostname: 'localhost',
+      port: PORT,
+      path: `/api/crm/units?projectId=${prjA._id}&search=C-0101`,
+      method: 'GET',
+      headers: authHeaders
+    });
+    const unitToBlock = unitSearchRes.body[0];
+    assert(!!unitToBlock, 'Locate unit C-0101 in newly generated Block C inventory');
+
+    const blockActionRes = await request({
+      hostname: 'localhost',
+      port: PORT,
+      path: `/api/crm/units/${unitToBlock._id}/block`,
+      method: 'POST',
+      headers: authHeaders
+    }, { reason: 'Director VIP Hold' });
+    assert(blockActionRes.status === 200 && blockActionRes.body.unit.availabilityStatus === 'Blocked', 'Unit C-0101 successfully set to Blocked (Management Hold)');
+
+    const unblockActionRes = await request({
+      hostname: 'localhost',
+      port: PORT,
+      path: `/api/crm/units/${unitToBlock._id}/unblock`,
+      method: 'POST',
+      headers: authHeaders
+    });
+    assert(unblockActionRes.status === 200 && unblockActionRes.body.unit.availabilityStatus === 'Available', 'Unit C-0101 successfully unblocked back to Available');
+
     console.log('\n================================================================');
     console.log(`📊 CRM ACCEPTANCE SUMMARY: ${passed} PASSED, ${failed} FAILED`);
     console.log('================================================================\n');

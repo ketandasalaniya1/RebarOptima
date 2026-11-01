@@ -1,0 +1,248 @@
+.ro-review-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Top Summary Card */
+.ro-review-summary-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-review-thumb-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.ro-review-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.ro-review-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ro-review-drawing-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-review-meta-uploader {
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+}
+
+/* Metadata Block */
+.ro-review-meta-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 14px;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+}
+
+.ro-review-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ro-review-meta-item.full-width {
+  grid-column: span 2;
+}
+
+.ro-review-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-label, #64748b);
+  text-transform: uppercase;
+}
+
+.ro-review-value {
+  color: var(--text-primary, #0f172a);
+  font-weight: 500;
+}
+
+/* File Preview Row */
+.ro-review-file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+}
+
+.ro-review-file-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ro-review-file-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-review-file-size {
+  font-size: 11px;
+  color: var(--text-label, #64748b);
+}
+
+.ro-btn-view-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-view-file:hover {
+  border-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.04);
+}
+
+/* Your Action Radio Selector */
+.ro-action-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ro-action-radio-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.ro-action-radio-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ro-action-radio-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  background-color: var(--card-bg, #ffffff);
+  transition: all 0.15s ease;
+}
+
+.ro-action-radio-card:hover {
+  background-color: var(--bg-secondary, #f8fafc);
+}
+
+.ro-action-radio-card.selected-approve {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.08);
+}
+
+.ro-action-radio-card.selected-reject {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.ro-radio-label-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+/* Approval Note Textarea */
+.ro-approval-note-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ro-approval-note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ro-approval-note-header label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+/* Submit Action Button Variants */
+.ro-btn-decision-approve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background-color: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-decision-approve:hover {
+  background-color: #059669;
+}
+
+.ro-btn-decision-reject {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-decision-reject:hover {
+  background-color: #dc2626;
+}
+

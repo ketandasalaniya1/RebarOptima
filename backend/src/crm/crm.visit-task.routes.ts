@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
+import { companyQuery, idVariants, loadProjectScope, parseWallClock, taskInProject } from './crm.desk.service';
 
-export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
+export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, logAudit: any, requirePermission?: any) {
   const router = Router();
 
   const resolveCompanyId = async (req: any, db: any): Promise<ObjectId | string> => {
@@ -31,10 +32,19 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       const companyId = await resolveCompanyId(req, db);
       const { status, salespersonId, projectId, date } = req.query;
 
-      const query: any = { companyId };
+      const query: any = { companyId: companyQuery(companyId) };
       if (status) query.status = status;
       if (salespersonId) query.assignedSalespersonId = salespersonId;
-      if (projectId) query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+      if (projectId) {
+        const ids = idVariants(projectId);
+        try {
+          const scope = await loadProjectScope(db, req, String(projectId));
+          for (const id of scope.projectIds) {
+            if (!ids.some((x) => String(x) === String(id))) ids.push(id);
+          }
+        } catch { /* keep the id the caller sent */ }
+        query.projectId = { $in: ids };
+      }
 
       let visits = await db.collection('crm_site_visits').find(query).sort({ visitDateTime: 1 }).toArray();
 
@@ -71,9 +81,16 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
         return res.status(400).json({ message: 'Customer, project, and visit date/time are required.' });
       }
 
+      const scope = await loadProjectScope(db, req, String(projectId));
+      const when = parseWallClock(visitDateTime, scope.timeZone);
+      if (!when) return res.status(400).json({ message: 'Visit date/time is not a valid date.' });
+
       const custId = ObjectId.isValid(customerId) ? new ObjectId(customerId) : customerId;
-      const prjId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
-      const customer = await db.collection('crm_customers').findOne({ _id: custId, companyId });
+      const prjId = ObjectId.isValid(String(scope.projectId)) ? new ObjectId(String(scope.projectId)) : scope.projectId;
+      const customer = await db.collection('crm_customers').findOne({
+        _id: { $in: idVariants(customerId) },
+        companyId: companyQuery(companyId),
+      });
       const project = (await db.collection('projects').findOne({ _id: prjId }))
         || (ObjectId.isValid(prjId) ? await db.collection('projects').findOne({ _id: new ObjectId(prjId) }) : null)
         || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }));
@@ -89,7 +106,7 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
         projectName: project?.name || 'Site Project',
         unitId: unitId ? (ObjectId.isValid(unitId) ? new ObjectId(unitId) : unitId) : null,
         unitCode: unitCode || '',
-        visitDateTime: new Date(visitDateTime),
+        visitDateTime: when,
         assignedSalespersonId: assignedSalespersonId || customer.assignedSalespersonId || req.user?.sub,
         assignedSalespersonName: assignedSalespersonName || customer.assignedSalespersonName || req.user?.name || 'Sales Rep',
         status: 'Scheduled',
@@ -105,8 +122,8 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       // If tied to a unit interest, update stage to 'Visit Scheduled'
       if (unitInterestId) {
         await db.collection('crm_unit_interests').updateOne(
-          { _id: ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId, companyId },
-          { $set: { stage: 'Visit Scheduled', updatedAt: new Date() } }
+          { _id: ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId, companyId: companyQuery(companyId) },
+          { $set: { stage: 'Visit Scheduled', nextFollowUpDate: when, updatedAt: new Date() } }
         );
       }
 
@@ -196,11 +213,19 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       const companyId = await resolveCompanyId(req, db);
       const { filter, assignedTo, priority } = req.query;
 
-      const query: any = { companyId };
+      const query: any = { companyId: companyQuery(companyId) };
       if (assignedTo) query.assignedTo = assignedTo;
       if (priority) query.priority = priority;
 
-      const tasks = await db.collection('crm_follow_ups').find(query).sort({ dueDateTime: 1 }).toArray();
+      let tasks = await db.collection('crm_follow_ups').find(query).sort({ dueDateTime: 1 }).toArray();
+      if (req.query.projectId) {
+        const scope = await loadProjectScope(db, req, String(req.query.projectId));
+        const leads = await db.collection('crm_unit_interests').find({
+          companyId: scope.companyMatch,
+          projectId: { $in: scope.projectIds },
+        }).toArray();
+        tasks = tasks.filter((t: any) => taskInProject(t, leads, scope.projectIds));
+      }
 
       const now = new Date();
       const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -253,7 +278,8 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
         taskType = 'Phone Call',
         assignedTo,
         assignedToName,
-        notes
+        notes,
+        projectId
       } = req.body;
 
       if (!customerId || !title || !dueDateTime) {
@@ -261,16 +287,30 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       }
 
       const custId = ObjectId.isValid(customerId) ? new ObjectId(customerId) : customerId;
-      const customer = await db.collection('crm_customers').findOne({ _id: custId, companyId });
+      const customer = await db.collection('crm_customers').findOne({
+        _id: { $in: idVariants(customerId) },
+        companyId: companyQuery(companyId),
+      });
       if (!customer) return res.status(404).json({ message: 'Customer not found.' });
+
+      let storedProjectId: any = null;
+      let timeZone = 'Asia/Kolkata';
+      if (projectId) {
+        const scope = await loadProjectScope(db, req, String(projectId));
+        timeZone = scope.timeZone;
+        storedProjectId = ObjectId.isValid(String(scope.projectId)) ? new ObjectId(String(scope.projectId)) : scope.projectId;
+      }
+      const when = parseWallClock(dueDateTime, timeZone);
+      if (!when) return res.status(400).json({ message: 'Due date/time is not a valid date.' });
 
       const newTask: any = {
         companyId,
+        projectId: storedProjectId,
         customerId: custId,
         customerName: customer.fullName,
         unitInterestId: unitInterestId ? (ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId) : null,
         title: title.trim(),
-        dueDateTime: new Date(dueDateTime),
+        dueDateTime: when,
         priority,
         taskType,
         status: 'Pending',
@@ -289,7 +329,7 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       if (unitInterestId) {
         await db.collection('crm_unit_interests').updateOne(
           { _id: ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId, companyId },
-          { $set: { nextFollowUpDate: dueDateTime, updatedAt: new Date() } }
+          { $set: { nextFollowUpDate: when, updatedAt: new Date() } }
         );
       }
 
@@ -297,6 +337,53 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
     } catch (err: any) {
       console.error('Error creating follow-up task:', err);
       res.status(500).json({ message: err.message });
+    }
+  });
+
+  const taskWrite = (req: any, res: any, next: any) => {
+    if (typeof requirePermission !== 'function') return next();
+    const sub = String(req.user?.sub || '');
+    if (!ObjectId.isValid(sub) || sub.length !== 24) return next();
+    return requirePermission('crm', 'leads')(req, res, next);
+  };
+
+  // PUT /api/crm/tasks/:id/status - Move a task across To do / In progress / Done
+  router.put('/tasks/:id/status', authMiddleware, taskWrite, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const tId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
+      const allowed = ['Pending', 'In Progress', 'Completed', 'Deferred', 'Cancelled'];
+      const status = req.body?.status;
+      if (!allowed.includes(status)) return res.status(400).json({ message: 'A valid task status is required.' });
+      const task = await db.collection('crm_follow_ups').findOne({ _id: tId, companyId });
+      if (!task) return res.status(404).json({ message: 'Task not found.' });
+      const patch: any = { status, updatedAt: new Date() };
+      if (status === 'Completed') {
+        patch.completedAt = new Date();
+        patch.completedBy = req.user?.sub || 'system';
+      } else {
+        patch.completedAt = null;
+        patch.completedBy = null;
+      }
+      await db.collection('crm_follow_ups').updateOne({ _id: tId, companyId }, { $set: patch });
+      if (status === 'Completed') {
+        await db.collection('crm_activities').insertOne({
+          companyId,
+          customerId: task.customerId,
+          unitInterestId: task.unitInterestId,
+          activityType: 'Note',
+          title: `Task completed: ${task.title}`,
+          description: `Follow-up marked done by ${req.user?.name || 'Sales Rep'}.`,
+          performedBy: req.user?.sub || 'system',
+          performedByName: req.user?.name || 'Sales Team',
+          createdAt: new Date(),
+        });
+      }
+      res.json(await db.collection('crm_follow_ups').findOne({ _id: tId }));
+    } catch (err: any) {
+      console.error('Error updating task status:', err);
+      res.status(err.status || 500).json({ message: err.message });
     }
   });
 

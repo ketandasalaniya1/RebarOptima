@@ -37,7 +37,11 @@ const getInitialView = () => {
     if (path === '/bbs') return 'bbs';
     if (path === '/casting') return 'casting';
     if (path === '/general-inventory') return 'general-inventory';
-    if (path === '/crm') return 'crm';
+    if (path === '/crm' || path === '/crm/today') return 'crm';
+    if (path === '/crm/leads') return 'crm-leads';
+    if (path === '/crm/calendar') return 'crm-calendar';
+    if (path === '/crm/tasks') return 'crm-tasks';
+    if (path === '/crm/more') return 'crm-more';
     if (path.startsWith('/t/')) return 'public-transmittal';
     if (path === '/drawings/matrix') return 'drawings-matrix';
     if (path === '/drawings/approvals') return 'drawings-approvals';
@@ -79,11 +83,13 @@ const routingSlice = createSlice({
   name: 'routing',
   initialState: {
     view: getInitialView(),
+    navSeq: 0,
   },
   reducers: {
     setView: (state, action) => {
       const newView = action.payload;
       state.view = newView;
+      state.navSeq += 1;
 
       // Update history if pathname doesn't match
       let targetPath = '/';
@@ -98,6 +104,11 @@ const routingSlice = createSlice({
       else if (newView === 'bbs-wizard') targetPath = '/bbs/wizard';
       else if (newView === 'bbs-shapes') targetPath = '/bbs/shapes';
       else if (newView === 'bbs-reports') targetPath = '/bbs/reports';
+      else if (newView === 'crm') targetPath = '/crm';
+      else if (newView === 'crm-leads') targetPath = '/crm/leads';
+      else if (newView === 'crm-calendar') targetPath = '/crm/calendar';
+      else if (newView === 'crm-tasks') targetPath = '/crm/tasks';
+      else if (newView === 'crm-more') targetPath = '/crm/more';
       else if (newView === 'general-inventory') targetPath = '/general-inventory';
       else if (newView === 'manpower-labour') targetPath = '/manpower/labour';
       else if (newView === 'manpower-contractor-labour') targetPath = '/manpower/contractor-labour';

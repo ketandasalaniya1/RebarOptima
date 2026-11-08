@@ -753,7 +753,7 @@ app.use('/api/casting', createCastingRouter(() => db, () => client, authMiddlewa
 app.use('/api/general-inventory', createGeneralInventoryRouter(() => db, () => client, authMiddleware, logAudit));
 
 // Mount Real Estate Enterprise CRM Master Routes
-app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit));
+app.use('/api/crm', createCrmMasterRouter(() => db, authMiddleware, logAudit, requirePermission));
 
 // Mount Standalone Enterprise Drawing & File Management Module Routes
 app.use('/api/drawings', createDrawingsMasterRouter(() => db, authMiddleware, logAudit));

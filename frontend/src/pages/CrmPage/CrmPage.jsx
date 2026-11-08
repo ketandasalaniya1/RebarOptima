@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Building2, Users, Target, LayoutGrid, Calendar, CheckSquare,
   FileText, CreditCard, BarChart3, Settings as SettingsIcon,
@@ -10,7 +11,16 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../utils/crmApi';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader } from '../../components/ui';
+import { PageHeader, EmptyState } from '../../components/ui';
+import { setView } from '../../store/slices/routingSlice';
+import CrmToday from './CrmToday';
+import CrmLeads from './CrmLeads';
+import CrmTasks from './CrmTasks';
+import CrmCalendar from './CrmCalendar';
+import CrmPayments from './CrmPayments';
+import CrmLeadDetail from './CrmLeadDetail';
+import CrmMore from './CrmMore';
+import { CrmAddLeadModal } from './crmDeskModals';
 import './CrmPage.css';
 
 // ── 2D ARCHITECTURAL FLOOR PLAN BLUEPRINT VECTOR COMPONENT (SCREENSHOTS 1 & 2) ──
@@ -100,15 +110,32 @@ function FloorPlanBlueprint({ unit }) {
 
 export default function CrmPage() {
   const { projectId: activeProjectId, projectEpoch, selectedProject } = useActiveProject();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const view = useSelector((state) => state.routing.view);
+  const navSeq = useSelector((state) => state.routing.navSeq);
+  const tabFromView = view === 'crm-leads' ? 'leads'
+    : view === 'crm-calendar' ? 'calendar'
+    : view === 'crm-tasks' ? 'tasks'
+    : view === 'crm-more' ? 'more'
+    : 'today';
+  const [activeTab, setActiveTab] = useState(tabFromView);
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
+  const dispatch = useDispatch();
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [openLeadId, setOpenLeadId] = useState(null);
+  const [deskRefresh, setDeskRefresh] = useState(0);
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
 
   useEffect(() => {
     if (activeProjectId) setSelectedProjectId(String(activeProjectId));
+    else setSelectedProjectId('');
   }, [activeProjectId, projectEpoch]);
+
+  useEffect(() => {
+    setActiveTab(tabFromView);
+    setOpenLeadId(null);
+  }, [view, navSeq]);
   const [searchResults, setSearchResults] = useState(null);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
@@ -213,8 +240,8 @@ export default function CrmPage() {
     floorsCount: 10,
     unitsPerFloor: 4,
     configurations: ['1BHK', '2BHK', '3BHK', '2BHK'],
-    basePrice: 6500000,
-    askingPrice: 7200000,
+    basePrice: 0,
+    askingPrice: 0,
     carpetAreaSqFt: 950,
     saleableAreaSqFt: 1250,
     facing: 'East Garden View',
@@ -227,15 +254,15 @@ export default function CrmPage() {
     unitNumber: '',
     configuration: '2BHK',
     carpetAreaSqFt: 1050,
-    basePrice: 7500000,
-    askingPrice: 8200000,
+    basePrice: 0,
+    askingPrice: 0,
     facing: 'East'
   });
 
   // Load Initial Workspace Data
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [activeProjectId]);
 
   // Reload CRM views whenever tab or active project changes
   useEffect(() => {
@@ -246,6 +273,7 @@ export default function CrmPage() {
     if (activeTab === 'inventory') loadInventory();
     if (activeTab === 'visits-tasks') { loadVisits(); loadTasks(); }
     if (activeTab === 'bookings') loadBookings();
+    if (activeTab === 'payments') loadPayments();
     if (activeTab === 'reports') loadReports();
     if (activeTab === 'settings') loadSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -255,10 +283,10 @@ export default function CrmPage() {
     try {
       const res = await crmApi.getProjects();
       const prjs = Array.isArray(res) ? res : [];
-      setProjects(prjs);
-      if (!selectedProjectId && prjs.length > 0) {
-        setSelectedProjectId(String(prjs[0]._id || prjs[0].id));
+      if (selectedProject && activeProjectId && !prjs.some((p) => String(p._id || p.id) === String(activeProjectId))) {
+        prjs.unshift(selectedProject);
       }
+      setProjects(prjs);
     } catch (err) {
       console.warn('Could not load projects:', err);
     }
@@ -455,7 +483,7 @@ export default function CrmPage() {
   const loadPayments = async () => {
     setLoading(true);
     try {
-      const res = await crmApi.getPayments();
+      const res = await crmApi.getPayments(selectedProjectId ? { projectId: selectedProjectId } : {});
       setPayments(Array.isArray(res) ? res : []);
     } catch (err) {
       console.warn('Payments load error:', err);
@@ -565,7 +593,7 @@ export default function CrmPage() {
     const headers = [
       'Unit Code', 'Project', 'Tower / Section', 'Floor', 'Unit No',
       'Configuration', 'Carpet Area (sq.ft)', 'Saleable Area (sq.ft)',
-      'Base Price (INR)', 'Asking Price (INR)', 'Status', 'Facing'
+      'Status', 'Facing'
     ];
     const rows = dataList.map(u => [
       `"${u.unitCode || ''}"`,
@@ -576,8 +604,6 @@ export default function CrmPage() {
       `"${u.configuration || ''}"`,
       u.carpetAreaSqFt || 0,
       u.saleableAreaSqFt || 0,
-      u.basePrice || 0,
-      u.askingPrice || 0,
       `"${u.effectiveStatus || u.availabilityStatus || 'Available'}"`,
       `"${u.facing || ''}"`
     ]);
@@ -766,7 +792,13 @@ export default function CrmPage() {
   const handleCreateBooking = async (e) => {
     e.preventDefault();
     try {
-      await crmApi.createBooking(bookingFormData);
+      await crmApi.createBooking({
+        ...bookingFormData,
+        agreementPrice: 0,
+        discountAmount: 0,
+        taxAmount: 0,
+        bookingDepositRequired: 0,
+      });
       setShowNewBookingModal(false);
       loadBookings();
       loadInventory();
@@ -793,112 +825,138 @@ export default function CrmPage() {
     }
   };
 
+  const openBookingFromLead = (lead) => {
+    setBookingFormData((prev) => ({
+      ...prev,
+      customerId: lead?.customerId ? String(lead.customerId) : '',
+      projectId: selectedProjectId,
+      unitId: lead?.unitId ? String(lead.unitId) : '',
+    }));
+    setActiveTab('bookings');
+    setShowNewBookingModal(true);
+    loadCustomers();
+    loadInventory();
+  };
+
+  if (!activeProjectId) {
+    return (
+      <div className="crm-container">
+        <PageHeader title="Real Estate CRM" subtitle="Follow-ups, leads, and unit sales for the open project" />
+        <EmptyState
+          title="Choose a project"
+          description="CRM follows the project selected in the header, the same one used by the rest of the app."
+          action={<button type="button" className="crm-btn-primary" onClick={() => dispatch(setView('projects'))}>Open projects</button>}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="crm-container">
+    <div className="crm-container crm-app">
       <PageHeader
         title="Real Estate CRM"
-        subtitle="Customers, unit pipelines, bookings, and collections"
+        subtitle="Follow-ups, visits, and tasks for this project"
         projectName={selectedProject?.name}
       />
-      <div className="crm-header-bar">
-        <div className="crm-header-actions" style={{ width: '100%' }}>
-          <div className="crm-search-box">
-            <Search size={16} className="crm-search-icon" />
-            <input
-              type="text"
-              placeholder="Search customer, unit (e.g. A-1203), booking..."
-              value={globalSearchTerm}
-              onChange={(e) => handleGlobalSearch(e.target.value)}
-              onFocus={() => globalSearchTerm.length >= 2 && setShowSearchDropdown(true)}
-              aria-label="Search CRM"
-            />
-            {showSearchDropdown && searchResults && (
-              <div style={{
-                position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
-                background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-                borderRadius: '8px', zIndex: 50, padding: '0.5rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0.5rem', borderBottom: '1px solid var(--card-border)' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>SEARCH RESULTS</span>
-                  <button onClick={() => setShowSearchDropdown(false)} style={{ background: 'none', border: 'none', color: 'var(--text-label)', cursor: 'pointer' }}><X size={14} /></button>
+      <div className="crm-shell">
+        <div className="crm-shell-main">
+          <div className="crm-header-bar">
+            <div className="crm-search-box">
+              <Search size={16} className="crm-search-icon" />
+              <input
+                type="text"
+                placeholder="Search customer, unit, booking…"
+                value={globalSearchTerm}
+                onChange={(e) => handleGlobalSearch(e.target.value)}
+                onFocus={() => globalSearchTerm.length >= 2 && setShowSearchDropdown(true)}
+                aria-label="Search CRM"
+              />
+              {showSearchDropdown && searchResults && (
+                <div className="cx-search-pop">
+                  <div className="cx-search-pop-head">
+                    <span>Results</span>
+                    <button type="button" onClick={() => setShowSearchDropdown(false)}><X size={14} /></button>
+                  </div>
+                  {searchResults.customers?.map(c => (
+                    <button key={c._id} type="button" onClick={() => { openCustomer360(c._id); setActiveTab('customers'); setShowSearchDropdown(false); }}>
+                      {c.fullName} — {c.phone}
+                    </button>
+                  ))}
+                  {searchResults.units?.map(u => (
+                    <button key={u._id} type="button" onClick={() => { openUnitProfile(u._id); setActiveTab('inventory'); setShowSearchDropdown(false); }}>
+                      Unit {u.unitCode} — {u.availabilityStatus}
+                    </button>
+                  ))}
+                  {searchResults.bookings?.map(b => (
+                    <button key={b._id} type="button" onClick={() => { setActiveTab('bookings'); setShowSearchDropdown(false); }}>
+                      {b.bookingReference} — {b.customerName}
+                    </button>
+                  ))}
+                  {searchResults.customers?.length === 0 && searchResults.units?.length === 0 && searchResults.bookings?.length === 0 && (
+                    <p>No records found</p>
+                  )}
                 </div>
-                {searchResults.customers?.map(c => (
-                  <div key={c._id} onClick={() => { openCustomer360(c._id); setShowSearchDropdown(false); }} style={{ padding: '0.4rem 0.6rem', cursor: 'pointer', fontSize: '0.82rem', borderRadius: '4px' }} className="crm-search-item">
-                    👤 <strong>{c.fullName}</strong> — {c.phone} ({c.customerCode})
-                  </div>
-                ))}
-                {searchResults.units?.map(u => (
-                  <div key={u._id} onClick={() => { openUnitProfile(u._id); setShowSearchDropdown(false); }} style={{ padding: '0.4rem 0.6rem', cursor: 'pointer', fontSize: '0.82rem', borderRadius: '4px' }}>
-                    🏢 Unit <strong>{u.unitCode}</strong> — {u.projectName} ({u.availabilityStatus})
-                  </div>
-                ))}
-                {searchResults.bookings?.map(b => (
-                  <div key={b._id} onClick={() => { setActiveTab('bookings'); setShowSearchDropdown(false); }} style={{ padding: '0.4rem 0.6rem', cursor: 'pointer', fontSize: '0.82rem', borderRadius: '4px' }}>
-                    📑 Booking <strong>{b.bookingReference}</strong> — {b.customerName} (Unit {b.unitCode})
-                  </div>
-                ))}
-                {searchResults.customers?.length === 0 && searchResults.units?.length === 0 && searchResults.bookings?.length === 0 && (
-                  <div style={{ padding: '0.6rem', fontSize: '0.8rem', color: 'var(--text-label)', textAlign: 'center' }}>No records found</div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
-          {/* Project Filter */}
-          <select
-            className="crm-select-filter"
-            value={selectedProjectId}
-            onChange={(e) => setSelectedProjectId(e.target.value)}
-          >
-            <option value="">All Projects</option>
-            {projects.map(p => (
-              <option key={p._id} value={p._id}>{p.name}</option>
-            ))}
-          </select>
-
-          {/* Quick Create Buttons */}
-          <button className="crm-btn-primary" onClick={() => setShowAddCustomerModal(true)}>
-            <Plus size={16} /> New Customer
-          </button>
-          <button className="crm-btn-secondary" onClick={() => setShowAddLeadModal(true)}>
-            <Target size={16} /> New Lead
-          </button>
-          <button className="crm-btn-secondary" onClick={handleSeedDemoData} title="Seed Rahul Shah & Demo Real Estate Data">
-            <Sparkles size={16} color="var(--accent)" /> Load Demo Data
-          </button>
-        </div>
-      </div>
-
-      {/* ── Navigation Tabs ────────────────────────────────────────────────── */}
-      <div className="crm-nav-tabs">
-        <button className={`crm-tab-button ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
-          <LayoutGrid size={16} /> Overview
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'customers' ? 'active' : ''}`} onClick={() => setActiveTab('customers')}>
-          <Users size={16} /> Customers <span className="crm-tab-badge">{dashboardData?.kpis?.totalCustomers || customers.length || 0}</span>
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'pipeline' ? 'active' : ''}`} onClick={() => setActiveTab('pipeline')}>
-          <Target size={16} /> Leads & Pipeline <span className="crm-tab-badge">{leads.length}</span>
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'inventory' ? 'active' : ''}`} onClick={() => setActiveTab('inventory')}>
-          <Building size={16} /> Units & Availability <span className="crm-tab-badge">{dashboardData?.inventory?.total || units.length || 0}</span>
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'visits-tasks' ? 'active' : ''}`} onClick={() => setActiveTab('visits-tasks')}>
-          <CheckSquare size={16} /> Site Visits & Tasks
-          {dashboardData?.kpis?.overdueFollowUps > 0 && (
-            <span className="crm-tab-badge danger">{dashboardData.kpis.overdueFollowUps} overdue</span>
-          )}
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'bookings' ? 'active' : ''}`} onClick={() => setActiveTab('bookings')}>
-          <FileText size={16} /> Bookings <span className="crm-tab-badge">{bookings.length}</span>
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => setActiveTab('reports')}>
-          <BarChart3 size={16} /> Reports & Analytics
-        </button>
-        <button className={`crm-tab-button ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}>
-          <SettingsIcon size={16} /> CRM Settings
-        </button>
-      </div>
+      {activeTab === 'today' && (
+        <CrmToday
+          projectId={selectedProjectId}
+          projectName={selectedProject?.name}
+          refreshKey={deskRefresh}
+          onDealWon={openBookingFromLead}
+          onAddLead={() => setLeadModalOpen(true)}
+          onAddCustomer={() => setShowAddCustomerModal(true)}
+          onOpenLead={(lead) => { setOpenLeadId(lead._id); setActiveTab('lead'); }}
+          onOpenLeads={() => setActiveTab('leads')}
+          onOpenCalendar={() => setActiveTab('calendar')}
+        />
+      )}
+      {activeTab === 'leads' && (
+        <CrmLeads
+          projectId={selectedProjectId}
+          projectName={selectedProject?.name}
+          refreshKey={deskRefresh}
+          onAddLead={() => setLeadModalOpen(true)}
+          onDealWon={openBookingFromLead}
+          onOpenLead={(lead) => { setOpenLeadId(lead._id); setActiveTab('lead'); }}
+        />
+      )}
+      {activeTab === 'lead' && (
+        <CrmLeadDetail
+          leadId={openLeadId}
+          projectId={selectedProjectId}
+          projectName={selectedProject?.name}
+          onBack={() => { setOpenLeadId(null); setActiveTab('leads'); }}
+          onDealWon={openBookingFromLead}
+        />
+      )}
+      {activeTab === 'tasks' && <CrmTasks projectId={selectedProjectId} refreshKey={deskRefresh} />}
+      {activeTab === 'calendar' && (
+        <CrmCalendar
+          projectId={selectedProjectId}
+          projectName={selectedProject?.name}
+          refreshKey={deskRefresh}
+          onDealWon={openBookingFromLead}
+        />
+      )}
+      {activeTab === 'more' && <CrmMore onOpen={setActiveTab} />}
+      {!['today', 'leads', 'lead', 'calendar', 'tasks', 'more'].includes(activeTab) && (
+        <button type="button" className="cx-back" onClick={() => setActiveTab('more')}>← More modules</button>
+      )}
+      {activeTab === 'payments' && (
+        <CrmPayments
+          payments={payments}
+          onOpenReceipt={openPrintableReceipt}
+        />
+      )}
+      <CrmAddLeadModal
+        open={leadModalOpen}
+        projectId={selectedProjectId}
+        onClose={() => setLeadModalOpen(false)}
+        onSaved={() => setDeskRefresh((n) => n + 1)}
+      />
 
       {/* ── TAB 1: EXECUTIVE DASHBOARD ─────────────────────────────────────── */}
       {activeTab === 'dashboard' && (
@@ -954,32 +1012,6 @@ export default function CrmPage() {
               <div className="crm-kpi-subtitle">Units allocated & booked</div>
             </div>
 
-            <div className="crm-kpi-card">
-              <div className="crm-kpi-header">
-                <span className="crm-kpi-title">Total Booking Value</span>
-                <div className="crm-kpi-icon-wrap"><DollarSign size={16} color="#10b981" /></div>
-              </div>
-              <div className="crm-kpi-value">₹{(dashboardData?.kpis?.totalBookingValue || 0).toLocaleString()}</div>
-              <div className="crm-kpi-subtitle">Agreed net sales contract value</div>
-            </div>
-
-            <div className="crm-kpi-card">
-              <div className="crm-kpi-header">
-                <span className="crm-kpi-title">Payments Collected</span>
-                <div className="crm-kpi-icon-wrap"><CreditCard size={16} color="#34d399" /></div>
-              </div>
-              <div className="crm-kpi-value">₹{(dashboardData?.kpis?.paymentsCollected || 0).toLocaleString()}</div>
-              <div className="crm-kpi-subtitle">Verified receipts received</div>
-            </div>
-
-            <div className="crm-kpi-card">
-              <div className="crm-kpi-header">
-                <span className="crm-kpi-title">Outstanding Receivables</span>
-                <div className="crm-kpi-icon-wrap"><AlertCircle size={16} color="#f59e0b" /></div>
-              </div>
-              <div className="crm-kpi-value">₹{(dashboardData?.kpis?.outstandingReceivables || 0).toLocaleString()}</div>
-              <div className="crm-kpi-subtitle">Balance due across installments</div>
-            </div>
           </div>
 
           {/* Section Grid: Pipeline Funnel & Inventory Summary */}
@@ -1117,9 +1149,6 @@ export default function CrmPage() {
                       )}
                     </td>
                     <td>
-                      <strong>₹{(c.totalBookingValue || 0).toLocaleString()}</strong>
-                    </td>
-                    <td>
                       <button className="crm-btn-secondary" style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }} onClick={(e) => { e.stopPropagation(); openCustomer360(c._id); }}>
                         <Eye size={13} /> View 360
                       </button>
@@ -1128,8 +1157,8 @@ export default function CrmPage() {
                 ))}
                 {customers.length === 0 && (
                   <tr>
-                    <td colSpan="9" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-label)' }}>
-                      No customers found. Click "+ Add Customer Profile" or "Load Demo Data".
+                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-label)' }}>
+                      No customers on this project yet.
                     </td>
                   </tr>
                 )}
@@ -1159,7 +1188,7 @@ export default function CrmPage() {
               <button className={`crm-btn-secondary ${pipelineViewMode === 'table' ? 'active' : ''}`} onClick={() => setPipelineViewMode('table')}>
                 Table View
               </button>
-              <button className="crm-btn-primary" onClick={() => setShowAddLeadModal(true)}>
+              <button className="crm-btn-primary" onClick={() => setLeadModalOpen(true)}>
                 <Plus size={16} /> New Lead Enquiry
               </button>
             </div>
@@ -1223,11 +1252,6 @@ export default function CrmPage() {
                               </div>
                             )}
 
-                            <div className="crm-kanban-card-meta">
-                              <span>Budget:</span>
-                              <span className="crm-kanban-card-budget">₹{(lead.budget || 0).toLocaleString()}</span>
-                            </div>
-
                             {/* Quick stage mover */}
                             <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.3rem', justifyContent: 'flex-end' }}>
                               {stageName !== 'Booked' && (
@@ -1269,7 +1293,6 @@ export default function CrmPage() {
                     <th>Unit Code</th>
                     <th>Stage</th>
                     <th>Priority</th>
-                    <th>Budget</th>
                     <th>Salesperson</th>
                     <th>Next Action</th>
                   </tr>
@@ -1289,7 +1312,6 @@ export default function CrmPage() {
                         </span>
                       </td>
                       <td>{lead.priority}</td>
-                      <td>₹{(lead.budget || 0).toLocaleString()}</td>
                       <td>{lead.assignedSalespersonName || 'Unassigned'}</td>
                       <td>
                         <button className="crm-btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={(e) => { e.stopPropagation(); openCustomer360(lead.customerId); }}>
@@ -1397,26 +1419,6 @@ export default function CrmPage() {
                       <option key={t} value={t}>{t}</option>
                     ))}
                   </select>
-                </div>
-
-                {/* Price Range */}
-                <div className="crm-filter-group-mini">
-                  <label>PRICE (₹)</label>
-                  <div className="crm-filter-range-inputs">
-                    <input
-                      type="number"
-                      placeholder="From"
-                      value={chessboardFilters.priceMin}
-                      onChange={(e) => setChessboardFilters({ ...chessboardFilters, priceMin: e.target.value })}
-                    />
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-label)' }}>-</span>
-                    <input
-                      type="number"
-                      placeholder="To"
-                      value={chessboardFilters.priceMax}
-                      onChange={(e) => setChessboardFilters({ ...chessboardFilters, priceMax: e.target.value })}
-                    />
-                  </div>
                 </div>
 
                 {/* Area Range */}
@@ -1671,7 +1673,7 @@ export default function CrmPage() {
                                   <div
                                     className={`crm-chessboard-cell crm-cell-${st} ${isSelected ? 'selected' : ''}`}
                                     onClick={() => handleSelectChessboardUnit(u)}
-                                    title={`Unit ${u.unitCode}: ${u.configuration} (${u.carpetAreaSqFt} sq.ft) - ₹${(u.askingPrice || u.basePrice || 0).toLocaleString()} [${u.effectiveStatus || u.availabilityStatus}]`}
+                                    title={`Unit ${u.unitCode}: ${u.configuration} (${u.carpetAreaSqFt} sq.ft) [${u.effectiveStatus || u.availabilityStatus}]`}
                                   >
                                     {roomDigit}
                                   </div>
@@ -1709,22 +1711,6 @@ export default function CrmPage() {
                       {/* 2D Architectural CAD Blueprint Illustration */}
                       <div className="crm-floorplan-preview">
                         <FloorPlanBlueprint unit={activeInspected} />
-                      </div>
-
-                      {/* Price Box with Rate per Sq.Ft */}
-                      <div className="crm-inspect-price-box">
-                        <div>
-                          <div style={{ fontSize: '0.68rem', color: 'var(--text-label)', textTransform: 'uppercase' }}>ESTIMATED TOTAL VALUE</div>
-                          <div className="crm-inspect-price-main">
-                            ₹{(activeInspected.askingPrice || activeInspected.basePrice || 0).toLocaleString()}
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div className="crm-inspect-price-rate">
-                            ₹{Math.round((activeInspected.askingPrice || activeInspected.basePrice || 0) / (activeInspected.carpetAreaSqFt || 1080)).toLocaleString()} / sq.ft
-                          </div>
-                          <div style={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 600 }}>All-inclusive base</div>
-                        </div>
                       </div>
 
                       {/* Specifications Grid */}
@@ -1767,8 +1753,8 @@ export default function CrmPage() {
                           </div>
 
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.75rem', marginBottom: '0.6rem' }}>
-                            <div>Paid: <strong style={{ color: '#34d399' }}>₹{(inspectedUnitProfile.bookingInfo.financials?.totalReceived || 0).toLocaleString()}</strong></div>
-                            <div>Pending: <strong style={{ color: '#fbbf24' }}>₹{(inspectedUnitProfile.bookingInfo.financials?.totalOutstanding || 0).toLocaleString()}</strong></div>
+                            <div>Buyer stage: <strong>{inspectedUnitProfile.bookingInfo.booking?.status || 'Booked'}</strong></div>
+                            <div>Unit: <strong>{inspectedUnitProfile.bookingInfo.booking?.unitCode || activeInspected.unitCode}</strong></div>
                           </div>
 
                           <button
@@ -1812,9 +1798,6 @@ export default function CrmPage() {
                                       Stage: <span className="crm-badge" style={{ fontSize: '0.65rem' }}>{lead.stage}</span>
                                     </div>
                                   </div>
-                                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                                    ₹{(lead.budget || 0).toLocaleString()}
-                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1834,7 +1817,6 @@ export default function CrmPage() {
                                   ...bookingFormData,
                                   projectId: activeInspected.projectId,
                                   unitId: activeInspected._id,
-                                  agreementPrice: activeInspected.askingPrice || activeInspected.basePrice
                                 });
                                 setShowNewBookingModal(true);
                               }}
@@ -1887,7 +1869,7 @@ export default function CrmPage() {
                                   projectId: activeInspected.projectId,
                                   unitId: activeInspected._id
                                 });
-                                setShowAddLeadModal(true);
+                                setLeadModalOpen(true);
                               }}
                             >
                               <Plus size={13} /> Log Enquiry
@@ -1932,7 +1914,6 @@ export default function CrmPage() {
                     >
                       <div className="crm-unit-code">{u.unitCode}</div>
                       <div className="crm-unit-config">{u.buildingTower} • {u.configuration}</div>
-                      <div className="crm-unit-price">₹{(u.askingPrice || u.basePrice || 0).toLocaleString()}</div>
                       <div style={{ marginTop: '0.4rem' }}>
                         <span className={`crm-badge crm-badge-unit-${(u.effectiveStatus || u.availabilityStatus || 'available').toLowerCase()}`} style={{ fontSize: '0.68rem', padding: '0.1rem 0.4rem' }}>
                           {u.effectiveStatus || u.availabilityStatus}
@@ -2061,11 +2042,8 @@ export default function CrmPage() {
                   <th>Booking Reference</th>
                   <th>Customer Name</th>
                   <th>Project & Unit</th>
-                  <th>Agreement Price</th>
-                  <th>Net Value</th>
                   <th>Booking Date</th>
                   <th>Status</th>
-                  <th>Financials</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -2081,21 +2059,11 @@ export default function CrmPage() {
                       <div>{b.projectName}</div>
                       <strong>Unit {b.unitCode}</strong>
                     </td>
-                    <td>₹{Number(b.agreementPrice).toLocaleString()}</td>
-                    <td><strong>₹{Number(b.netBookingValue || b.agreementPrice).toLocaleString()}</strong></td>
                     <td>{new Date(b.bookingDate).toLocaleDateString()}</td>
                     <td>
                       <span className={`crm-badge crm-badge-stage-${b.status === 'Confirmed' ? 'booked' : (b.status === 'Cancelled' ? 'lost' : 'qualified')}`}>
                         {b.status}
                       </span>
-                    </td>
-                    <td>
-                      <div style={{ fontSize: '0.75rem' }}>
-                        Rec: <strong style={{ color: '#34d399' }}>₹{(b.financials?.totalReceived || 0).toLocaleString()}</strong>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-label)' }}>
-                        Bal: ₹{(b.financials?.totalOutstanding || 0).toLocaleString()}
-                      </div>
                     </td>
                     <td>
                       <button className="crm-btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }} onClick={(e) => { e.stopPropagation(); setSelectedBookingDetail(b); }}>
@@ -2106,8 +2074,8 @@ export default function CrmPage() {
                 ))}
                 {bookings.length === 0 && (
                   <tr>
-                    <td colSpan="9" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-label)' }}>
-                      No active bookings. Click "+ New Unit Booking" or "Load Demo Data".
+                    <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-label)' }}>
+                      No bookings on this project yet.
                     </td>
                   </tr>
                 )}
@@ -2145,7 +2113,6 @@ export default function CrmPage() {
                         <td>{rep.leadsAssigned}</td>
                         <td>{rep.visitsConducted}</td>
                         <td><strong style={{ color: '#34d399' }}>{rep.bookingsClosed}</strong></td>
-                        {/* <td>₹{(rep.totalBookingValue || 0).toLocaleString()}</td> */}
                         <td><span className="crm-badge crm-badge-stage-booked">{rep.conversionRatePercent}%</span></td>
                       </tr>
                     ))}
@@ -2363,10 +2330,6 @@ export default function CrmPage() {
                         <span>{selectedCustomer360.customer?.assignedSalespersonName || 'Ketan Dasalaniya'}</span>
                       </div>
                       <div className="crm-client-detail-row">
-                        <span>Max Budget</span>
-                        <span style={{ color: '#34d399' }}>₹{(selectedCustomer360.interests?.[0]?.budget || 12500000).toLocaleString()}</span>
-                      </div>
-                      <div className="crm-client-detail-row">
                         <span>Tags</span>
                         <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
                           <span className="crm-badge" style={{ fontSize: '0.68rem', background: 'rgba(5, 150, 105, 0.15)', color: '#34d399' }}>Investor</span>
@@ -2382,7 +2345,7 @@ export default function CrmPage() {
                       <span>Background</span>
                     </div>
                     <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginTop: '0.35rem', background: 'rgba(255,255,255,0.02)', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--card-border)' }}>
-                      Looking for premium 2BHK/3BHK corner apartment with sunrise balcony and parking slot. Pre-approved for home loan up to ₹1.5 Cr with HDFC. Prefers handover within Q4 2026.
+                      {selectedCustomer360.customer?.notes || 'No notes on this customer yet.'}
                     </div>
                   </div>
                 </div>
@@ -2625,7 +2588,7 @@ export default function CrmPage() {
                         style={{ padding: '0.15rem 0.45rem', fontSize: '0.7rem' }}
                         onClick={() => {
                           setLeadFormData({ ...leadFormData, customerId: selectedCustomer360.customer._id });
-                          setShowAddLeadModal(true);
+                          setLeadModalOpen(true);
                         }}
                       >
                         + Link Unit
@@ -2655,7 +2618,7 @@ export default function CrmPage() {
                             </span>
                           </div>
                           <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                            {interest.projectName} • ₹{(interest.budget || 0).toLocaleString()}
+                            {interest.projectName}{interest.nextFollowUpDate ? ` · Next ${new Date(interest.nextFollowUpDate).toLocaleDateString()}` : ''}
                           </div>
                           {interest.stage !== 'Booked' && (
                             <button
@@ -2679,42 +2642,19 @@ export default function CrmPage() {
                   <div className="crm-widget-card">
                     <div className="crm-widget-header">
                       <div className="crm-widget-title">
-                        💳 Financials &amp; Bookings ({selectedCustomer360.bookings?.length || 0})
+                        🏠 Bookings ({selectedCustomer360.bookings?.length || 0})
                       </div>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem' }}>
-                      <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--card-border)' }}>
-                        <div style={{ fontSize: '0.68rem', color: 'var(--text-label)' }}>TOTAL RECEIVED</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399' }}>
-                          ₹{(selectedCustomer360.summary?.totalCollected || 0).toLocaleString()}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                      {(selectedCustomer360.bookings || []).slice(0, 4).map((b) => (
+                        <div key={b._id} style={{ fontSize: '0.78rem' }}>
+                          <strong>{b.bookingReference}</strong> · Unit {b.unitCode} · {b.status}
                         </div>
-                      </div>
-                      <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--card-border)' }}>
-                        <div style={{ fontSize: '0.68rem', color: 'var(--text-label)' }}>OUTSTANDING</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f59e0b' }}>
-                          ₹{(selectedCustomer360.summary?.totalOutstanding || 0).toLocaleString()}
-                        </div>
-                      </div>
+                      ))}
+                      {!(selectedCustomer360.bookings || []).length && (
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-label)' }}>No booking on this customer yet.</div>
+                      )}
                     </div>
-
-                    {selectedCustomer360.transactions && selectedCustomer360.transactions.length > 0 && (
-                      <div style={{ marginTop: '0.35rem' }}>
-                        <div style={{ fontSize: '0.7rem', color: 'var(--text-label)', marginBottom: '0.3rem' }}>LATEST PAYMENTS</div>
-                        {selectedCustomer360.transactions.slice(0, 3).map(t => (
-                          <div key={t._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.74rem', padding: '0.3rem 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                            <span>{t.receiptNumber}</span>
-                            <span style={{ color: '#34d399', fontWeight: 600 }}>₹{Number(t.amount).toLocaleString()}</span>
-                            <button
-                              className="crm-btn-secondary"
-                              style={{ padding: '0.15rem 0.4rem', fontSize: '0.68rem' }}
-                              onClick={() => openPrintableReceipt(t._id)}
-                            >
-                              Receipt
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -2755,14 +2695,6 @@ export default function CrmPage() {
                   <div style={{ fontSize: '1.15rem', fontWeight: 700 }}>{selectedUnitProfile.unitNumber}</div>
                 </div>
                 <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--card-border)', padding: '0.6rem', borderRadius: '6px' }}>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-label)' }}>BASE PRICE</div>
-                  <div style={{ fontSize: '1.15rem', fontWeight: 700 }}>₹{(selectedUnitProfile.unit?.basePrice || 0).toLocaleString()}</div>
-                </div>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--card-border)', padding: '0.6rem', borderRadius: '6px' }}>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-label)' }}>ASKING PRICE</div>
-                  <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--accent)' }}>₹{(selectedUnitProfile.unit?.askingPrice || 0).toLocaleString()}</div>
-                </div>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--card-border)', padding: '0.6rem', borderRadius: '6px' }}>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-label)' }}>FACING / VIEW</div>
                   <div style={{ fontSize: '1rem', fontWeight: 600 }}>{selectedUnitProfile.unit?.facing || 'East'}</div>
                 </div>
@@ -2786,18 +2718,6 @@ export default function CrmPage() {
                       <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{selectedUnitProfile.bookingInfo.customer?.fullName}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>📞 {selectedUnitProfile.bookingInfo.customer?.phone}</div>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-label)' }}>NET BOOKING VALUE</div>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>₹{(selectedUnitProfile.bookingInfo.financials?.netBookingValue || 0).toLocaleString()}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-label)' }}>TOTAL RECEIVED</div>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#10b981' }}>₹{(selectedUnitProfile.bookingInfo.financials?.totalReceived || 0).toLocaleString()}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-label)' }}>OUTSTANDING BALANCE</div>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f59e0b' }}>₹{(selectedUnitProfile.bookingInfo.financials?.totalOutstanding || 0).toLocaleString()}</div>
-                    </div>
                   </div>
 
                   {/* Installment Milestone Schedule Table */}
@@ -2807,10 +2727,7 @@ export default function CrmPage() {
                       <thead>
                         <tr>
                           <th>Milestone</th>
-                          <th>%</th>
-                          <th>Due Amount</th>
                           <th>Due Date</th>
-                          <th>Paid Amount</th>
                           <th>Status</th>
                         </tr>
                       </thead>
@@ -2818,10 +2735,7 @@ export default function CrmPage() {
                         {selectedUnitProfile.bookingInfo.schedules?.map((s, idx) => (
                           <tr key={idx}>
                             <td><strong>{s.milestoneName}</strong></td>
-                            <td>{s.milestonePercentage}%</td>
-                            <td>₹{Number(s.dueAmount).toLocaleString()}</td>
                             <td>{new Date(s.dueDate).toLocaleDateString()}</td>
-                            <td style={{ color: '#34d399' }}>₹{Number(s.paidAmount || 0).toLocaleString()}</td>
                             <td>
                               <span className={`crm-badge crm-badge-pay-${(s.status || 'due').toLowerCase().replace(/\s+/g, '')}`}>
                                 {s.status}
@@ -2866,7 +2780,6 @@ export default function CrmPage() {
                           ...bookingFormData,
                           projectId: selectedUnitProfile.unit?.projectId,
                           unitId: selectedUnitProfile.unit?._id,
-                          agreementPrice: selectedUnitProfile.unit?.askingPrice || selectedUnitProfile.unit?.basePrice
                         });
                         setSelectedUnitProfile(null);
                         setShowNewBookingModal(true);
@@ -2883,7 +2796,6 @@ export default function CrmPage() {
                           <th>Enquiring Customer</th>
                           <th>Contact</th>
                           <th>Lead Stage</th>
-                          <th>Customer Budget</th>
                           <th>Assigned Salesperson</th>
                           <th>Priority</th>
                           <th>Action</th>
@@ -2899,7 +2811,6 @@ export default function CrmPage() {
                                 {lead.stage}
                               </span>
                             </td>
-                            <td>₹{(lead.budget || 0).toLocaleString()}</td>
                             <td>{lead.assignedSalespersonName || 'Sales Rep'}</td>
                             <td>{lead.priority || 'Medium'}</td>
                             <td>
@@ -2914,7 +2825,7 @@ export default function CrmPage() {
                         ))}
                         {(!selectedUnitProfile.leadManagement || selectedUnitProfile.leadManagement.length === 0) && (
                           <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-label)' }}>
+                            <td colSpan="6" style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-label)' }}>
                               No active enquiries currently logged for this unit.
                             </td>
                           </tr>
@@ -2978,7 +2889,6 @@ export default function CrmPage() {
                     <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{printableReceipt.booking?.projectName}</div>
                     <div style={{ fontSize: '0.85rem', color: '#475569' }}>Property Unit: <strong>Unit {printableReceipt.booking?.unitCode}</strong></div>
                     <div style={{ fontSize: '0.85rem', color: '#475569' }}>Booking Reference: <strong>{printableReceipt.booking?.bookingReference}</strong></div>
-                    <div style={{ fontSize: '0.85rem', color: '#475569' }}>Agreement Value: ₹{Number(printableReceipt.booking?.agreementPrice).toLocaleString()}</div>
                   </div>
                 </div>
 
@@ -2988,7 +2898,6 @@ export default function CrmPage() {
                       <th>Description</th>
                       <th>Payment Instrument</th>
                       <th>Transaction UTR / Cheque Ref</th>
-                      <th style={{ textAlign: 'right' }}>Amount Paid</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2999,16 +2908,12 @@ export default function CrmPage() {
                       </td>
                       <td>{printableReceipt.transaction?.paymentMethod}</td>
                       <td>{printableReceipt.transaction?.transactionReference}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.05rem' }}>
-                        ₹{Number(printableReceipt.transaction?.amount).toLocaleString()}
-                      </td>
                     </tr>
                   </tbody>
                 </table>
 
                 <div className="crm-receipt-total-row">
-                  <span>TOTAL AMOUNT RECEIVED:</span>
-                  <span style={{ color: '#10b981' }}>₹{Number(printableReceipt.transaction?.amount).toLocaleString()}</span>
+                  <span>Payment recorded for this booking.</span>
                 </div>
 
                 <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '1.5rem', borderTop: '1px solid #e2e8f0' }}>
@@ -3106,26 +3011,6 @@ export default function CrmPage() {
                       <option value="Villa">Luxury Villa</option>
                     </select>
                   </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Budget Min (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      placeholder="e.g. 8000000"
-                      value={customerFormData.budgetMin}
-                      onChange={(e) => setCustomerFormData({ ...customerFormData, budgetMin: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Budget Max (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      placeholder="e.g. 14000000"
-                      value={customerFormData.budgetMax}
-                      onChange={(e) => setCustomerFormData({ ...customerFormData, budgetMax: e.target.value })}
-                    />
-                  </div>
                   <div className="crm-form-group full-width">
                     <label className="crm-form-label">Notes & Requirements</label>
                     <textarea
@@ -3201,16 +3086,6 @@ export default function CrmPage() {
                       <option value="Visit Scheduled">Visit Scheduled</option>
                       <option value="Negotiation">Negotiation</option>
                     </select>
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Budget (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      placeholder="e.g. 12000000"
-                      value={leadFormData.budget}
-                      onChange={(e) => setLeadFormData({ ...leadFormData, budget: e.target.value })}
-                    />
                   </div>
                   <div className="crm-form-group">
                     <label className="crm-form-label">Priority</label>
@@ -3293,63 +3168,15 @@ export default function CrmPage() {
                       className="crm-form-select"
                       required
                       value={bookingFormData.unitId}
-                      onChange={(e) => {
-                        const selectedU = units.find(u => u._id === e.target.value);
-                        setBookingFormData({
-                          ...bookingFormData,
-                          unitId: e.target.value,
-                          agreementPrice: selectedU ? (selectedU.askingPrice || selectedU.basePrice) : bookingFormData.agreementPrice
-                        });
-                      }}
+                      onChange={(e) => setBookingFormData({ ...bookingFormData, unitId: e.target.value })}
                     >
                       <option value="">-- Choose Available Unit --</option>
                       {units
                         .filter(u => !['Booked', 'Sold', 'Blocked'].includes(u.availabilityStatus))
                         .map(u => (
-                          <option key={u._id} value={u._id}>{u.unitCode} — {u.configuration} (₹{u.askingPrice?.toLocaleString()})</option>
+                          <option key={u._id} value={u._id}>{u.unitCode} — {u.configuration}</option>
                         ))}
                     </select>
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Agreed Price (₹) *</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      required
-                      placeholder="e.g. 9200000"
-                      value={bookingFormData.agreementPrice}
-                      onChange={(e) => setBookingFormData({ ...bookingFormData, agreementPrice: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Approved Concession / Discount (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      placeholder="e.g. 200000"
-                      value={bookingFormData.discountAmount}
-                      onChange={(e) => setBookingFormData({ ...bookingFormData, discountAmount: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Applicable Taxes (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      placeholder="e.g. 450000"
-                      value={bookingFormData.taxAmount}
-                      onChange={(e) => setBookingFormData({ ...bookingFormData, taxAmount: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Token Deposit Due (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      placeholder="e.g. 920000"
-                      value={bookingFormData.bookingDepositRequired}
-                      onChange={(e) => setBookingFormData({ ...bookingFormData, bookingDepositRequired: e.target.value })}
-                    />
                   </div>
                 </div>
               </div>
@@ -3542,24 +3369,6 @@ export default function CrmPage() {
                       onChange={(e) => setBlockFormData({ ...blockFormData, carpetAreaSqFt: e.target.value })}
                     />
                   </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Default Base Price (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      value={blockFormData.basePrice}
-                      onChange={(e) => setBlockFormData({ ...blockFormData, basePrice: e.target.value })}
-                    />
-                  </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Default Asking Price (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      value={blockFormData.askingPrice}
-                      onChange={(e) => setBlockFormData({ ...blockFormData, askingPrice: e.target.value })}
-                    />
-                  </div>
                   <div className="crm-form-group full-width">
                     <div style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: '8px', padding: '0.75rem 1rem' }}>
                       <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#60a5fa', marginBottom: '0.25rem' }}>
@@ -3666,15 +3475,6 @@ export default function CrmPage() {
                       onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, carpetAreaSqFt: e.target.value })}
                     />
                   </div>
-                  <div className="crm-form-group">
-                    <label className="crm-form-label">Asking Price (₹)</label>
-                    <input
-                      className="crm-form-input"
-                      type="number"
-                      value={singleUnitFormData.askingPrice}
-                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, askingPrice: e.target.value })}
-                    />
-                  </div>
                 </div>
               </div>
               <div className="crm-modal-footer">
@@ -3730,6 +3530,8 @@ export default function CrmPage() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

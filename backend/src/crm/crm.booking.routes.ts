@@ -94,8 +94,8 @@ export function createCrmBookingRouter(getDb: () => any, authMiddleware: any, lo
         notes
       } = req.body;
 
-      if (!customerId || !projectId || !unitId || !agreementPrice) {
-        return res.status(400).json({ message: 'Customer, project, unit, and agreement price are required.' });
+      if (!customerId || !projectId || !unitId) {
+        return res.status(400).json({ message: 'Customer, project, and unit are required.' });
       }
 
       const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24

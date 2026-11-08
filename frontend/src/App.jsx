@@ -452,7 +452,7 @@ function App() {
             {view === 'general-inventory' && (
               <GeneralInventoryPage />
             )}
-            {view === 'crm' && (
+            {(view === 'crm' || (typeof view === 'string' && view.startsWith('crm-'))) && (
               <CrmPage />
             )}
             {view === 'project-management' && (

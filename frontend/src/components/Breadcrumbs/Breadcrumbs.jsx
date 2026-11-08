@@ -20,7 +20,11 @@ const VIEW_TITLES = {
   'bbs-reports': 'BBS Reports',
   casting: 'Casting Management',
   'general-inventory': 'Site Inventory',
-  crm: 'Real Estate CRM',
+  crm: 'Today',
+  'crm-leads': 'Leads',
+  'crm-calendar': 'Calendar',
+  'crm-tasks': 'Tasks',
+  'crm-more': 'More',
   drawings: 'Drawings & Files',
   'petty-cash': 'Petty Cash',
   'project-management': 'Projects & Tasks',
@@ -115,6 +119,13 @@ export default function Breadcrumbs() {
       currentView === 'attendance-reports'
     ) {
       segments.push({ label: 'Attendance' });
+    }
+
+    if (currentView === 'crm' || String(currentView).startsWith('crm-')) {
+      segments.push({
+        label: 'Real Estate CRM',
+        onClick: () => navigate('crm'),
+      });
     }
 
     segments.push({

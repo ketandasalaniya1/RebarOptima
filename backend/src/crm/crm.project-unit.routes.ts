@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { reserveUnitSafely, releaseUnitSafely, evaluateUnitAvailability, generateBusinessReference } from './crm.reservation.service';
 import { calculateBookingFinancials } from './crm.calculation.service';
-import { resolveUserAndCompany, listAccessibleGlobalProjects } from '../projects/module-project-adapter';
+import { resolveUserAndCompany, listAccessibleGlobalProjects, resolveCanonicalProjectId } from '../projects/module-project-adapter';
+import { listProjectBlocks } from '../projects/project-blocks.service';
 
 export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
   const router = Router();
@@ -22,6 +23,7 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const companyId = ctx.companyId;
 
       let projects = await listAccessibleGlobalProjects(db, ctx);
+      // Keep legacy rows visible only when this company has no global projects yet.
       if (!projects || projects.length === 0) {
         projects = await db.collection('crm_projects').find({ companyId }).toArray();
       }
@@ -465,6 +467,27 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
             projectId: query.projectId,
             source: 'inferred'
           });
+        }
+      }
+
+      if (projectId) {
+        try {
+          const ctx = await resolveUserAndCompany(req, db);
+          const { projectId: canonical } = await resolveCanonicalProjectId(db, ctx, String(projectId));
+          const globalBlocks = await listProjectBlocks(db, canonical);
+          for (const b of globalBlocks) {
+            const name = b.name;
+            if (name && !map.has(String(name).toUpperCase())) {
+              map.set(String(name).toUpperCase(), {
+                _id: b._id,
+                blockName: name,
+                projectId: canonical,
+                source: 'project',
+              });
+            }
+          }
+        } catch (blockErr: any) {
+          console.warn('Global project blocks unavailable:', blockErr?.message || blockErr);
         }
       }
 

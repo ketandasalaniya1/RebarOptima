@@ -44,6 +44,9 @@ export const crmApi = {
     const qs = new URLSearchParams(params).toString();
     return apiRequest(`/crm/leads/pipeline-stats${qs ? `?${qs}` : ''}`);
   },
+  createLead: (data) => apiRequest('/crm/leads', { method: 'POST', body: data }),
+  importLeads: (data) => apiRequest('/crm/leads/import', { method: 'POST', body: data }),
+  logFollowUp: (id, data) => apiRequest(`/crm/leads/${id}/follow-up`, { method: 'POST', body: data }),
   getLeadDetail: (id) => apiRequest(`/crm/leads/${id}`),
   updateLeadStage: (id, data) => apiRequest(`/crm/leads/${id}/stage`, { method: 'PUT', body: data }),
   addLeadActivity: (id, data) => apiRequest(`/crm/leads/${id}/activities`, { method: 'POST', body: data }),
@@ -62,6 +65,12 @@ export const crmApi = {
   },
   createTask: (data) => apiRequest('/crm/tasks', { method: 'POST', body: data }),
   completeTask: (id, data = {}) => apiRequest(`/crm/tasks/${id}/complete`, { method: 'PUT', body: data }),
+  updateTaskStatus: (id, status) => apiRequest(`/crm/tasks/${id}/status`, { method: 'PUT', body: { status } }),
+  getToday: (projectId) => apiRequest(`/crm/today${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`),
+  getCalendar: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/calendar${qs ? `?${qs}` : ''}`);
+  },
 
   // Bookings
   getBookings: (params = {}) => {

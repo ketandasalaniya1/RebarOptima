@@ -4,3 +4,4 @@ dist/
 *.tsbuildinfo
 graphify-out/
 scratch/
+.DS_Store

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { generateBusinessReference } from './crm.reservation.service';
 import { roundCurrency } from './crm.calculation.service';
+import { loadProjectScope } from './crm.desk.service';
 
 export function createCrmPaymentRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
   const router = Router();
@@ -37,6 +38,15 @@ export function createCrmPaymentRouter(getDb: () => any, authMiddleware: any, lo
       if (paymentStatus) query.paymentStatus = paymentStatus;
 
       let txns = await db.collection('crm_payment_transactions').find(query).sort({ paymentDate: -1 }).toArray();
+      if (req.query.projectId) {
+        const scope = await loadProjectScope(db, req, String(req.query.projectId));
+        const bookings = await db.collection('crm_bookings').find({
+          companyId: scope.companyMatch,
+          projectId: { $in: scope.projectIds },
+        }).project({ _id: 1 }).toArray();
+        const ids = new Set(bookings.map((b: any) => String(b._id)));
+        txns = txns.filter((t: any) => ids.has(String(t.bookingId)));
+      }
 
       if (search) {
         const term = String(search).toLowerCase().trim();

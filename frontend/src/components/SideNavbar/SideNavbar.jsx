@@ -30,6 +30,10 @@ import {
   FileSpreadsheet,
   MessageSquare,
   Grid3X3,
+  Target,
+  Calendar,
+  CheckSquare,
+  LayoutGrid,
 } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import ProjectSelector from '../ProjectSelector/ProjectSelector';
@@ -58,12 +62,14 @@ const PARTNER_ALLOWED_MODULES = [
 const ATTENDANCE_VIEWS = ['attendance-mark', 'attendance-history', 'attendance-reports'];
 
 const STEEL_VIEWS = ['inventory', 'ledger', 'inputs', 'results', 'history'];
+const CRM_VIEWS = ['crm', 'crm-leads', 'crm-calendar', 'crm-tasks', 'crm-more'];
 const MANPOWER_VIEWS = ['manpower-labour', 'manpower-contractor-labour'];
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState(() => ({
     steel: STEEL_VIEWS.includes(currentView),
+    crm: CRM_VIEWS.includes(currentView),
     manpower: MANPOWER_VIEWS.includes(currentView),
     attendance: ATTENDANCE_VIEWS.includes(currentView),
     drawings: ['drawings', 'drawings-matrix', 'drawings-approvals', 'drawings-transmittals', 'drawings-activity', 'drawings-plan-pass', 'drawings-viewer'].includes(currentView),
@@ -75,6 +81,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     setOpenGroups((prev) => {
       const next = { ...prev };
       if (STEEL_VIEWS.includes(currentView)) next.steel = true;
+      if (CRM_VIEWS.includes(currentView)) next.crm = true;
       if (MANPOWER_VIEWS.includes(currentView)) next.manpower = true;
       if (ATTENDANCE_VIEWS.includes(currentView)) next.attendance = true;
       if (['drawings', 'drawings-matrix', 'drawings-approvals', 'drawings-transmittals', 'drawings-activity', 'drawings-plan-pass', 'drawings-viewer'].includes(currentView)) next.drawings = true;
@@ -163,7 +170,15 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       id: 'crm',
       label: 'Real Estate CRM',
       icon: <Home size={18} />,
+      isGroup: true,
       moduleKey: 'crm',
+      children: [
+        { id: 'crm', label: 'Today', icon: <LayoutGrid size={17} />, moduleKey: 'crm' },
+        { id: 'crm-leads', label: 'Leads', icon: <Target size={17} />, moduleKey: 'crm' },
+        { id: 'crm-calendar', label: 'Calendar', icon: <Calendar size={17} />, moduleKey: 'crm' },
+        { id: 'crm-tasks', label: 'Tasks', icon: <CheckSquare size={17} />, moduleKey: 'crm' },
+        { id: 'crm-more', label: 'More', icon: <Grid3X3 size={17} />, moduleKey: 'crm' },
+      ],
     },
     {
       id: 'project-management',

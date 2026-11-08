@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
+import { createLead, importLeads, logFollowUp } from './crm.desk.service';
 
-export function createCrmLeadRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
+export function createCrmLeadRouter(getDb: () => any, authMiddleware: any, logAudit: any, requirePermission?: any) {
   const router = Router();
 
   const resolveCompanyId = async (req: any, db: any): Promise<ObjectId | string> => {
@@ -22,6 +23,42 @@ export function createCrmLeadRouter(getDb: () => any, authMiddleware: any, logAu
     return 'default-company';
   };
 
+  const leadWrite = (req: any, res: any, next: any) => {
+    if (typeof requirePermission !== 'function') return next();
+    const sub = String(req.user?.sub || '');
+    if (!ObjectId.isValid(sub) || sub.length !== 24) return next();
+    return requirePermission('crm', 'leads')(req, res, next);
+  };
+
+  const sendError = (res: any, err: any) => {
+    res.status(err.status || 500).json({ message: err.message || 'CRM request failed', code: err.code });
+  };
+
+  router.post('/import', authMiddleware, leadWrite, async (req: any, res) => {
+    try {
+      res.status(201).json(await importLeads(getDb(), req, req.body || {}));
+    } catch (err: any) {
+      sendError(res, err);
+    }
+  });
+
+  router.post('/', authMiddleware, leadWrite, async (req: any, res) => {
+    try {
+      const result = await createLead(getDb(), req, req.body || {});
+      res.status(result.reused ? 200 : 201).json(result);
+    } catch (err: any) {
+      sendError(res, err);
+    }
+  });
+
+  router.post('/:id/follow-up', authMiddleware, leadWrite, async (req: any, res) => {
+    try {
+      res.json(await logFollowUp(getDb(), req, req.params.id, req.body || {}));
+    } catch (err: any) {
+      sendError(res, err);
+    }
+  });
+
   // 1. GET /api/crm/leads - Search & filter unit-interest pipeline
   router.get('/', authMiddleware, async (req: any, res) => {
     try {
@@ -34,7 +71,9 @@ export function createCrmLeadRouter(getDb: () => any, authMiddleware: any, logAu
         query.stage = stage;
       }
       if (projectId) {
-        query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+        const ids: any[] = [projectId];
+        if (ObjectId.isValid(String(projectId)) && String(projectId).length === 24) ids.push(new ObjectId(String(projectId)));
+        query.projectId = { $in: ids };
       }
       if (salespersonId) {
         query.assignedSalespersonId = salespersonId;
@@ -71,7 +110,9 @@ export function createCrmLeadRouter(getDb: () => any, authMiddleware: any, logAu
 
       const query: any = { companyId };
       if (projectId) {
-        query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+        const ids: any[] = [projectId];
+        if (ObjectId.isValid(String(projectId)) && String(projectId).length === 24) ids.push(new ObjectId(String(projectId)));
+        query.projectId = { $in: ids };
       }
 
       const allLeads = await db.collection('crm_unit_interests').find(query).toArray();

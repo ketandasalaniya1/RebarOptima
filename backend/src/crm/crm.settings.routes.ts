@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
+import { DEFAULT_MESSAGE_TEMPLATES } from './crm.desk.service';
 
 export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
   const router = Router();
@@ -57,6 +58,8 @@ export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
       'Duplex', 'Commercial Office', 'Retail Shop', 'Villa / Plot'
     ],
     defaultReservationHours: 48,
+    timezone: 'Asia/Kolkata',
+    messageTemplates: DEFAULT_MESSAGE_TEMPLATES,
     milestoneTemplates: [
       { name: 'Booking Token Amount', percentage: 10 },
       { name: 'Agreement Signing (Within 30 Days)', percentage: 15 },
@@ -78,6 +81,8 @@ export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
         settings = { companyId, ...DEFAULT_SETTINGS, updatedAt: new Date() };
         await db.collection('crm_settings').insertOne(settings);
       }
+      if (!settings.messageTemplates?.length) settings.messageTemplates = DEFAULT_MESSAGE_TEMPLATES;
+      if (!settings.timezone) settings.timezone = 'Asia/Kolkata';
 
       res.json(settings);
     } catch (err: any) {

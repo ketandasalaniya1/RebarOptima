@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { checkDuplicateCustomer, generateBusinessReference } from './crm.reservation.service';
+import { checkDuplicateCustomer, generateBusinessReference, normalizePhone } from './crm.reservation.service';
 import { calculateBookingFinancials } from './crm.calculation.service';
 
 export function createCrmCustomerRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
@@ -163,6 +163,7 @@ export function createCrmCustomerRouter(getDb: () => any, authMiddleware: any, l
         customerCode,
         fullName: fullName.trim(),
         phone: phone.trim(),
+        phoneKey: normalizePhone(phone) || undefined,
         altPhone: altPhone ? altPhone.trim() : '',
         email: email ? email.trim().toLowerCase() : '',
         address: address || '',

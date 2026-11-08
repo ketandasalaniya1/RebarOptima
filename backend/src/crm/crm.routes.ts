@@ -9,15 +9,17 @@ import { createCrmPaymentRouter } from './crm.payment.routes';
 import { createCrmReportRouter } from './crm.report.routes';
 import { createCrmSettingsRouter } from './crm.settings.routes';
 import { seedCrmSampleData } from './crm.seed.service';
+import { createCrmDeskRouter } from './crm.desk.routes';
 
-export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
+export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, logAudit: any, requirePermission?: any) {
   const router = Router();
 
   // Sub-routers mounted under master /api/crm
+  router.use('/', createCrmDeskRouter(getDb, authMiddleware, requirePermission));
   router.use('/customers', createCrmCustomerRouter(getDb, authMiddleware, logAudit));
   router.use('/', createCrmProjectUnitRouter(getDb, authMiddleware, logAudit));
-  router.use('/leads', createCrmLeadRouter(getDb, authMiddleware, logAudit));
-  router.use('/', createCrmVisitTaskRouter(getDb, authMiddleware, logAudit));
+  router.use('/leads', createCrmLeadRouter(getDb, authMiddleware, logAudit, requirePermission));
+  router.use('/', createCrmVisitTaskRouter(getDb, authMiddleware, logAudit, requirePermission));
   router.use('/bookings', createCrmBookingRouter(getDb, authMiddleware, logAudit));
   router.use('/payments', createCrmPaymentRouter(getDb, authMiddleware, logAudit));
   router.use('/reports', createCrmReportRouter(getDb, authMiddleware));
@@ -39,12 +41,17 @@ export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, log
       }
       companyId = companyId && ObjectId.isValid(companyId) ? new ObjectId(companyId) : (companyId || 'default-company');
 
-      const [customers, units, bookings, projects] = await Promise.all([
+      const companyMatch = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [companyId, String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
+      const [customers, units, bookings, legacyProjects, globalProjects] = await Promise.all([
         db.collection('crm_customers').find({ companyId }).toArray(),
         db.collection('crm_units').find({ companyId }).toArray(),
         db.collection('crm_bookings').find({ companyId }).toArray(),
-        db.collection('crm_projects').find({ companyId }).toArray()
+        db.collection('crm_projects').find({ companyId }).toArray(),
+        db.collection('projects').find({ companyId: companyMatch }).toArray()
       ]);
+      const projects = [...globalProjects, ...legacyProjects];
 
       const matchedCust = customers.filter((c: any) =>
         (c.fullName && c.fullName.toLowerCase().includes(term)) ||

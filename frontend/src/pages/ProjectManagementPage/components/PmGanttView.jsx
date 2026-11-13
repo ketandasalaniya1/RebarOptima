@@ -1,20 +1,28 @@
 import React, { useState, useMemo } from 'react';
-import { Clock, ShieldCheck, ZoomIn, ZoomOut, AlertCircle, Calendar, Flag, ArrowRight, Edit3 } from 'lucide-react';
+import { Clock, ShieldCheck, ZoomIn, ZoomOut, AlertCircle, Calendar, Flag, ArrowRight, Edit3, Layers, CornerDownRight } from 'lucide-react';
 import PmRescheduleModal from './PmRescheduleModal';
+import { isMainActivity } from './PmTasksView';
 
 export default function PmGanttView({ project, tasks, dependencies, onOpenDelayModal, onLockBaseline, onRefreshSchedule }) {
   const [zoomLevel, setZoomLevel] = useState('DAYS'); // 'DAYS' | 'WEEKS'
   const [filterCriticalOnly, setFilterCriticalOnly] = useState(false);
+  const [hierarchyFilter, setHierarchyFilter] = useState('ALL'); // 'ALL' | 'MAIN_ONLY' | 'SUB_ONLY'
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
 
-  // Filter tasks if critical path filter is active
+  // Filter tasks if critical path filter or hierarchy filter is active
   const displayedTasks = useMemo(() => {
     if (!tasks) return [];
+    let list = tasks;
     if (filterCriticalOnly) {
-      return tasks.filter(t => t.isCritical);
+      list = list.filter(t => t.isCritical);
     }
-    return tasks;
-  }, [tasks, filterCriticalOnly]);
+    if (hierarchyFilter === 'MAIN_ONLY') {
+      list = list.filter(t => isMainActivity(t, tasks));
+    } else if (hierarchyFilter === 'SUB_ONLY') {
+      list = list.filter(t => !isMainActivity(t, tasks));
+    }
+    return list;
+  }, [tasks, filterCriticalOnly, hierarchyFilter]);
 
   // Compute overall timeline bounds
   const { minDate, maxDate, totalDays, datesList } = useMemo(() => {
@@ -78,6 +86,10 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
       <div className="pm-gantt-toolbar">
         <div className="pm-gantt-legend">
           <div className="pm-legend-item">
+            <span className="pm-legend-bar" style={{ width: 14, height: 7, background: '#10b981', borderRadius: 2 }}></span>
+            <span>Main Package (Phase)</span>
+          </div>
+          <div className="pm-legend-item">
             <span className="pm-legend-dot pm-dot-critical"></span>
             <span>Critical Path (Float = 0)</span>
           </div>
@@ -96,6 +108,18 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
         </div>
 
         <div className="pm-gantt-controls">
+          <select
+            className="pm-toolbar-select"
+            value={hierarchyFilter}
+            onChange={(e) => setHierarchyFilter(e.target.value)}
+            style={{ padding: '4px 10px', fontSize: '12px' }}
+            title="Filter Gantt by Hierarchy"
+          >
+            <option value="ALL">All Hierarchy Levels</option>
+            <option value="MAIN_ONLY">Main Packages Only (1.0, 2.0...)</option>
+            <option value="SUB_ONLY">Sub-Activities Only (1.1, 1.2...)</option>
+          </select>
+
           <label className="pm-checkbox-label">
             <input
               type="checkbox"
@@ -161,28 +185,56 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
           </div>
 
           <div className="pm-gantt-tasklist-body">
-            {displayedTasks.map((t, idx) => (
-              <div
-                key={t._id}
-                className={`pm-gantt-task-row ${t.isCritical ? 'pm-row-critical' : ''} ${t.isMilestone ? 'pm-row-milestone' : ''}`}
-                style={{ height: rowHeight }}
-              >
-                <div className="pm-col-wbs">{t.wbsCode}</div>
-                <div className="pm-col-name" title={t.name}>
-                  {t.isMilestone ? <Flag size={13} className="pm-milestone-flag" /> : null}
-                  <span>{t.name}</span>
+            {displayedTasks.map((t, idx) => {
+              const isMain = isMainActivity(t, tasks);
+              return (
+                <div
+                  key={t._id}
+                  className={`pm-gantt-task-row ${isMain ? 'pm-gantt-row-main' : 'pm-gantt-row-sub'} ${t.isCritical ? 'pm-row-critical' : ''} ${t.isMilestone ? 'pm-row-milestone' : ''}`}
+                  style={{ height: rowHeight }}
+                >
+                  <div className="pm-col-wbs">
+                    {isMain ? (
+                      <span className="pm-wbs-badge-main" style={{ fontSize: '10px', padding: '1px 5px' }}>
+                        <Layers size={9} />
+                        {t.wbsCode}
+                      </span>
+                    ) : (
+                      <span className="pm-wbs-badge-sub" style={{ fontSize: '10px', padding: '1px 5px' }}>
+                        {t.wbsCode}
+                      </span>
+                    )}
+                  </div>
+                  <div className="pm-col-name" title={t.name}>
+                    {isMain ? (
+                      <div className="pm-main-name-cell" style={{ gap: '6px' }}>
+                        <span className="pm-main-phase-tag" style={{ fontSize: '9px', padding: '1px 4px' }}>Main</span>
+                        <strong className="pm-main-activity-title" style={{ fontSize: '12px' }}>{t.name}</strong>
+                      </div>
+                    ) : (
+                      <div className="pm-sub-name-cell" style={{ paddingLeft: '10px', gap: '5px' }}>
+                        <CornerDownRight size={11} className="pm-tree-branch" />
+                        {t.isMilestone ? <Flag size={11} className="pm-milestone-flag" /> : null}
+                        <span style={{ fontSize: '12px' }}>{t.name}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="pm-col-dur">
+                    {isMain ? <strong className="text-emerald-400">{t.durationDays}d</strong> : `${t.durationDays}d`}
+                  </div>
+                  <div className="pm-col-float">
+                    {t.isCritical ? (
+                      <span className="pm-badge pm-badge-danger">0d</span>
+                    ) : (
+                      <span className="pm-badge pm-badge-subtle">+{t.totalFloatDays ?? 0}d</span>
+                    )}
+                  </div>
+                  <div className="pm-col-prog">
+                    {isMain ? <strong className="text-emerald-400">{t.progressPercentage || 0}%</strong> : `${t.progressPercentage || 0}%`}
+                  </div>
                 </div>
-                <div className="pm-col-dur">{t.durationDays}d</div>
-                <div className="pm-col-float">
-                  {t.isCritical ? (
-                    <span className="pm-badge pm-badge-danger">0d</span>
-                  ) : (
-                    <span className="pm-badge pm-badge-subtle">{t.totalFloatDays ?? 0}d</span>
-                  )}
-                </div>
-                <div className="pm-col-prog">{t.progressPercentage || 0}%</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -274,7 +326,7 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
                       />
                     ) : (
                       <div
-                        className={`pm-gantt-task-bar ${t.isCritical ? 'pm-bar-critical' : 'pm-bar-normal'}`}
+                        className={`pm-gantt-task-bar ${isMainActivity(t, tasks) ? 'pm-bar-main-summary' : (t.isCritical ? 'pm-bar-critical' : 'pm-bar-normal')}`}
                         style={{
                           left: startX,
                           width: Math.max(16, width)
@@ -284,11 +336,16 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
                         {progressWidth > 0 && (
                           <div
                             className="pm-gantt-progress-fill"
-                            style={{ width: `${Math.min(100, t.progressPercentage || 0)}%` }}
+                            style={{
+                              width: `${Math.min(100, t.progressPercentage || 0)}%`,
+                              background: isMainActivity(t, tasks) ? 'rgba(255, 255, 255, 0.3)' : undefined
+                            }}
                           />
                         )}
                         <span className="pm-bar-inner-label">
-                          {t.progressPercentage > 0 ? `${t.progressPercentage}%` : `${t.durationDays}d`}
+                          {isMainActivity(t, tasks)
+                            ? `Phase: ${t.progressPercentage || 0}%`
+                            : (t.progressPercentage > 0 ? `${t.progressPercentage}%` : `${t.durationDays}d`)}
                         </span>
                       </div>
                     )}

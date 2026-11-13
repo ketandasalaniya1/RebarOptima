@@ -114,12 +114,13 @@ export default function InventoryPage() {
     try {
       setLoading(true)
       setError('')
+      const targetProjectId = projectId || selectedProject?._id || selectedProject?.id
       const [invData, rulesData, salesData, scrapRecordsData, ledgerData] = await Promise.all([
-        inventoryApi.getInventory(projectId),
+        inventoryApi.getInventory(targetProjectId),
         inventoryApi.getScrapRules(),
         inventoryApi.getScrapSales(),
-        batchesApi.getScrapRecords().catch(() => []),
-        inventoryApi.getLedger().catch(() => [])
+        batchesApi.getScrapRecords(targetProjectId).catch(() => []),
+        inventoryApi.getLedger(targetProjectId).catch(() => [])
       ])
       if (epochAtStart != null && isStale(epochAtStart)) return
       setInventory(invData)
@@ -411,6 +412,11 @@ export default function InventoryPage() {
         throw new Error('Please enter Weight (Tons) and Price/Ton for at least one diameter.')
       }
 
+      const targetProjectId = projectId || selectedProject?._id || selectedProject?.id
+      if (!targetProjectId) {
+        throw new Error('Please select an active project before submitting inward stock.')
+      }
+
       for (const row of filledRows) {
         const tons = parseFloat(row.weightInTons) || 0
         const price = parseFloat(row.pricePerTonWithoutGst) || 0
@@ -424,6 +430,7 @@ export default function InventoryPage() {
         const costPerKg = (price * 1.18) / 1000 // Rs. including 18% GST
 
         await inventoryApi.inward({
+          projectId: targetProjectId,
           diameter: Number(row.diameter),
           quantity,
           weightInKgs,
@@ -457,8 +464,7 @@ export default function InventoryPage() {
       setSuccess(`Voucher inward entry recorded successfully for ${filledRows.length} diameter${filledRows.length > 1 ? 's' : ''}!`)
       setVoucherRows(createDefaultVoucherRows())
       
-      const invData = await inventoryApi.getInventory(projectId)
-      setInventory(invData)
+      await fetchData(projectEpoch)
 
       setTimeout(() => {
         setActiveTab('list')

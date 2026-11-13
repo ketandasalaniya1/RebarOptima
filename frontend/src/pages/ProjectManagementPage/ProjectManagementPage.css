@@ -519,6 +519,27 @@
   background: var(--main-bg);
 }
 
+.pm-gantt-row-main {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.14) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border-left: 3px solid #10b981 !important;
+  font-weight: 700;
+}
+
+.pm-gantt-row-main:hover {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(30, 41, 59, 0.95) 100%) !important;
+}
+
+.pm-gantt-row-sub {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.pm-bar-main-summary {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+  border-radius: 4px;
+}
+
 .pm-row-critical {
   background: rgba(239, 68, 68, 0.03);
 }
@@ -729,6 +750,409 @@
 .pm-text-danger { color: var(--danger); }
 .pm-text-warning { color: var(--warning); }
 .pm-text-accent { color: var(--accent); }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   WBS & TASKS VIEW REDESIGN (MAIN ACTIVITY VS SUB-ACTIVITY)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Stats ribbon */
+.pm-tasks-stats-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.pm-stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--card-bg, #111827);
+  border: 1px solid var(--card-border, #1f2937);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary, #9ca3af);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.pm-stat-chip strong {
+  color: var(--text-primary, #f9fafb);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.pm-stat-chip-emerald {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+}
+.pm-stat-chip-emerald strong {
+  color: #10b981;
+}
+
+.pm-stat-chip-indigo {
+  border-color: rgba(99, 102, 241, 0.35);
+  background: rgba(99, 102, 241, 0.08);
+}
+.pm-stat-chip-indigo strong {
+  color: #818cf8;
+}
+
+.pm-stat-chip-danger {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+}
+.pm-stat-chip-danger strong {
+  color: #ef4444;
+}
+
+/* Tasks Toolbar */
+.pm-tasks-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.pm-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+  flex: 1;
+  max-width: 420px;
+}
+
+.pm-search-wrap input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  background: var(--input-bg, #0b1120);
+  border: 1px solid var(--card-border, #1f2937);
+  border-radius: 8px;
+  color: var(--text-primary, #f9fafb);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pm-search-wrap input:focus {
+  border-color: var(--accent, #10b981);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.pm-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-label, #6b7280);
+  pointer-events: none;
+}
+
+.pm-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pm-toolbar-select {
+  padding: 8px 12px;
+  background: var(--input-bg, #0b1120);
+  border: 1px solid var(--card-border, #1f2937);
+  border-radius: 8px;
+  color: var(--text-primary, #f9fafb);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.pm-toolbar-select:focus {
+  border-color: var(--accent, #10b981);
+}
+
+.pm-btn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--card-border, #1f2937);
+  background: var(--card-bg, #111827);
+  color: var(--text-primary, #f9fafb);
+  transition: all 0.15s ease;
+}
+
+.pm-btn-icon-text:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-label, #6b7280);
+}
+
+/* Main Activity Table Row */
+.pm-tr-main-activity {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border-left: 4px solid #10b981 !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.3) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.pm-tr-main-activity:hover {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(30, 41, 59, 0.9) 100%) !important;
+}
+
+.pm-tr-main-activity td {
+  padding-top: 13px !important;
+  padding-bottom: 13px !important;
+  color: #f8fafc !important;
+}
+
+/* Sub Activity Table Row */
+.pm-tr-sub-activity {
+  background: rgba(15, 23, 42, 0.45);
+  border-left: 4px solid transparent;
+  transition: background 0.15s ease;
+}
+
+.pm-tr-sub-activity:hover {
+  background: rgba(30, 41, 59, 0.55);
+}
+
+.pm-tr-sub-activity td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* WBS Badges */
+.pm-wbs-badge-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  font-size: 12px;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.pm-wbs-badge-sub {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  font-size: 12px;
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 5px;
+}
+
+/* Main Activity Hierarchy Cell */
+.pm-main-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pm-chevron-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.pm-chevron-toggle:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
+  transform: scale(1.05);
+}
+
+.pm-main-activity-title {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+}
+
+.pm-main-phase-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.pm-subtasks-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  background: rgba(51, 65, 85, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  border-radius: 12px;
+}
+
+/* Sub Activity Hierarchy Cell */
+.pm-sub-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 20px;
+  flex-wrap: wrap;
+}
+
+.pm-tree-branch {
+  color: rgba(148, 163, 184, 0.4);
+  flex-shrink: 0;
+}
+
+.pm-sub-activity-title {
+  font-weight: 500;
+  font-size: 13px;
+  color: #e2e8f0;
+}
+
+.pm-subtask-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+/* Tag Styles */
+.pm-tag-milestone {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 4px;
+}
+
+.pm-tag-qa {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.14);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  border-radius: 4px;
+}
+
+.pm-pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+  animation: pm-pulse 1.8s infinite;
+}
+
+@keyframes pm-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Quick Add Subtask Button */
+.pm-btn-add-subtask {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pm-btn-add-subtask:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+/* Segmented Control in Modal */
+.pm-segmented-control {
+  display: flex;
+  background: var(--input-bg, #0b1120);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #1f2937);
+  margin-bottom: 6px;
+}
+
+.pm-segmented-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #9ca3af);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pm-segmented-btn.active {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  font-weight: 600;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
 
 /* Modals */
 .pm-modal-overlay {

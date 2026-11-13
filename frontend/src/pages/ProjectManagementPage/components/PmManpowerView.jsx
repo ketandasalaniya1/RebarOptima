@@ -14,17 +14,22 @@ import {
   CheckCircle2,
   Layers,
   Clock,
-  ShieldAlert
+  ShieldAlert,
+  CornerDownRight,
+  Search
 } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { isMainActivity } from './PmTasksView';
 
-export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
+export default function PmManpowerView({ project, tasks = [], onRefreshTasks }) {
   const [manpower, setManpower] = useState([]);
   const [conflicts, setConflicts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [taskSearch, setTaskSearch] = useState('');
+  const [taskHierarchyFilter, setTaskHierarchyFilter] = useState('ALL'); // 'ALL' | 'MAIN_ONLY' | 'SUB_ONLY' | 'UNASSIGNED_ONLY'
 
   // New Resource Form
   const [name, setName] = useState('');
@@ -355,55 +360,150 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
 
       {/* TASK ALLOCATION MATRIX SECTION */}
       <div className="pm-card" style={{ marginTop: '20px' }}>
-        <div className="pm-card-header">
+        <div className="pm-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <h4>Activity Manpower Assignments</h4>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <div className="pm-search-wrap" style={{ minWidth: '220px', maxWidth: '300px' }}>
+              <Search size={14} className="pm-search-icon" />
+              <input
+                type="text"
+                placeholder="Search activity, role, gang..."
+                value={taskSearch}
+                onChange={(e) => setTaskSearch(e.target.value)}
+                style={{ padding: '6px 10px 6px 32px', fontSize: '12px' }}
+              />
+            </div>
+
+            <select
+              className="pm-toolbar-select"
+              value={taskHierarchyFilter}
+              onChange={(e) => setTaskHierarchyFilter(e.target.value)}
+              style={{ padding: '6px 10px', fontSize: '12px' }}
+            >
+              <option value="ALL">All Activities</option>
+              <option value="MAIN_ONLY">Main Packages Only (1.0, 2.0...)</option>
+              <option value="SUB_ONLY">Sub-Activities Only (1.1, 1.2...)</option>
+              <option value="UNASSIGNED_ONLY">Unassigned Only</option>
+            </select>
+          </div>
         </div>
+
         <div className="pm-card-body pm-no-pad">
           <div className="pm-table-responsive">
             <table className="pm-table">
               <thead>
                 <tr>
-                  <th>WBS</th>
-                  <th>Activity Description</th>
-                  <th>Duration</th>
-                  <th>Forecast Dates</th>
-                  <th>Assigned Resource / Gang</th>
-                  <th>Required Trade Role</th>
-                  <th>Actions</th>
+                  <th style={{ width: '90px' }}>WBS</th>
+                  <th>Activity Description & Hierarchy</th>
+                  <th style={{ width: '80px' }}>Duration</th>
+                  <th style={{ width: '180px' }}>Forecast Dates</th>
+                  <th style={{ width: '190px' }}>Assigned Resource / Gang</th>
+                  <th style={{ width: '170px' }}>Required Trade Role</th>
+                  <th style={{ width: '120px', textAlign: 'center' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {tasks.slice(0, 15).map(t => (
-                  <tr key={t._id}>
-                    <td><code>{t.wbsCode}</code></td>
-                    <td><strong>{t.name}</strong></td>
-                    <td><span className="pm-badge pm-badge-subtle">{t.durationDays}d</span></td>
-                    <td><small>{t.forecastStart || t.plannedStart} → {t.forecastFinish || t.plannedFinish}</small></td>
-                    <td>
-                      {t.assignedUserName ? (
-                        <span className="pm-badge pm-badge-accent">
-                          <UserCheck size={11} className="pm-mr-1" />
-                          {t.assignedUserName}
-                        </span>
-                      ) : (
-                        <span className="pm-badge pm-badge-warning">Unassigned</span>
-                      )}
-                    </td>
-                    <td>{t.assignedRole || 'Site Engineer'}</td>
-                    <td>
-                      <button
-                        className="pm-btn pm-btn-xs pm-btn-secondary"
-                        onClick={() => {
-                          setSelectedTask(t);
-                          setAssignResourceId(manpower[0]?._id || '');
-                          setIsAssignModalOpen(true);
-                        }}
-                      >
-                        Assign / Reassign
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {tasks
+                  .filter(t => {
+                    const matchesSearch =
+                      !taskSearch.trim() ||
+                      (t.name || '').toLowerCase().includes(taskSearch.toLowerCase()) ||
+                      (t.wbsCode || '').toLowerCase().includes(taskSearch.toLowerCase()) ||
+                      (t.assignedRole || '').toLowerCase().includes(taskSearch.toLowerCase()) ||
+                      (t.assignedUserName || '').toLowerCase().includes(taskSearch.toLowerCase());
+
+                    let matchesHierarchy = true;
+                    if (taskHierarchyFilter === 'MAIN_ONLY') {
+                      matchesHierarchy = isMainActivity(t, tasks);
+                    } else if (taskHierarchyFilter === 'SUB_ONLY') {
+                      matchesHierarchy = !isMainActivity(t, tasks);
+                    } else if (taskHierarchyFilter === 'UNASSIGNED_ONLY') {
+                      matchesHierarchy = !t.assignedUserName;
+                    }
+
+                    return matchesSearch && matchesHierarchy;
+                  })
+                  .map(t => {
+                    const isMain = isMainActivity(t, tasks);
+                    return (
+                      <tr key={t._id} className={isMain ? 'pm-tr-main-activity' : 'pm-tr-sub-activity'}>
+                        <td>
+                          {isMain ? (
+                            <span className="pm-wbs-badge-main" style={{ fontSize: '10.5px', padding: '1px 5px' }}>
+                              <Layers size={9} />
+                              {t.wbsCode}
+                            </span>
+                          ) : (
+                            <span className="pm-wbs-badge-sub" style={{ fontSize: '10.5px', padding: '1px 5px' }}>
+                              {t.wbsCode}
+                            </span>
+                          )}
+                        </td>
+
+                        <td>
+                          {isMain ? (
+                            <div className="pm-main-name-cell" style={{ gap: '6px' }}>
+                              <span className="pm-main-phase-tag" style={{ fontSize: '9px', padding: '1px 4px' }}>Main Activity</span>
+                              <strong className="pm-main-activity-title" style={{ fontSize: '13px' }}>{t.name}</strong>
+                            </div>
+                          ) : (
+                            <div className="pm-sub-name-cell" style={{ paddingLeft: '14px', gap: '6px' }}>
+                              <CornerDownRight size={12} className="pm-tree-branch" />
+                              <span className="pm-subtask-tag" style={{ fontSize: '9px' }}>Sub-Task</span>
+                              <span style={{ fontSize: '12.5px' }}>{t.name}</span>
+                            </div>
+                          )}
+                        </td>
+
+                        <td>
+                          {isMain ? (
+                            <strong className="text-emerald-400">{t.durationDays}d</strong>
+                          ) : (
+                            <span className="pm-badge pm-badge-subtle">{t.durationDays}d</span>
+                          )}
+                        </td>
+
+                        <td>
+                          <small className="pm-date-small">
+                            {t.forecastStart || t.plannedStart} → {t.forecastFinish || t.plannedFinish}
+                          </small>
+                        </td>
+
+                        <td>
+                          {t.assignedUserName ? (
+                            <span className={`pm-badge ${isMain ? 'pm-badge-success' : 'pm-badge-accent'}`}>
+                              <UserCheck size={11} className="pm-mr-1" />
+                              {t.assignedUserName} {isMain ? '(Lead)' : ''}
+                            </span>
+                          ) : (
+                            <span className="pm-badge pm-badge-warning">
+                              {isMain ? 'Lead Unassigned' : 'Unassigned'}
+                            </span>
+                          )}
+                        </td>
+
+                        <td>
+                          <span className="pm-text-sm text-slate-300">
+                            {t.assignedRole || (isMain ? 'Site Engineer' : 'Contractor Gang')}
+                          </span>
+                        </td>
+
+                        <td style={{ textAlign: 'center' }}>
+                          <button
+                            className={`pm-btn pm-btn-xs ${isMain ? 'pm-btn-primary' : 'pm-btn-secondary'}`}
+                            onClick={() => {
+                              setSelectedTask(t);
+                              setAssignResourceId(manpower[0]?._id || '');
+                              setIsAssignModalOpen(true);
+                            }}
+                          >
+                            {isMain ? 'Assign Lead' : 'Assign Crew'}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>

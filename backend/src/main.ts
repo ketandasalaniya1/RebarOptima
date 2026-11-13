@@ -2726,16 +2726,44 @@ app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view')
     if (!projectId) {
       return res.status(400).json({ message: 'Project context is required (X-Project-Id or projectId)', code: 'PROJECT_REQUIRED' });
     }
-    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+    const project = await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
 
     const companyId = ctx.companyId;
     const companyClause = ObjectId.isValid(companyId) && String(companyId).length === 24
       ? { $or: [{ companyId: new ObjectId(companyId) }, { companyId: String(companyId) }] }
       : { companyId: String(companyId) };
 
-    const pIdObj = toObjectId(projectId);
+    const canonicalProjectId = project?._id;
+    const pIdObj = toObjectId(canonicalProjectId) || toObjectId(projectId);
     const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (canonicalProjectId) projectOr.unshift({ projectId: String(canonicalProjectId) });
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    if (project?.id && project.id !== String(canonicalProjectId)) {
+      projectOr.push({ projectId: String(project.id) });
+    }
+
+    // Non-destructive adoption of unassigned legacy stock items & transactions for this company
+    if (canonicalProjectId) {
+      await db.collection('stockitems').updateMany(
+        {
+          $and: [
+            companyClause,
+            { $or: [{ projectId: null }, { projectId: { $exists: false } }] }
+          ]
+        },
+        { $set: { projectId: canonicalProjectId } }
+      );
+      await db.collection('inventorytransactions').updateMany(
+        {
+          $and: [
+            companyClause,
+            { $or: [{ projectId: null }, { projectId: { $exists: false } }] }
+          ]
+        },
+        { $set: { projectId: canonicalProjectId } }
+      );
+    }
+
     const query: any = {
       $and: [companyClause, { $or: projectOr }],
       quantity: { $gt: 0 },
@@ -2752,19 +2780,110 @@ app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view')
 app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory', 'inward'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '', projectId } = req.body;
+    const ctx = await resolveUserAndCompany(req, db);
+    const rawProjectId = req.body.projectId || req.headers['x-project-id'] || req.headers['X-Project-Id'] || req.query.projectId;
+    if (!rawProjectId) {
+      return res.status(400).json({ message: 'Project context is required (X-Project-Id or projectId)', code: 'PROJECT_REQUIRED' });
+    }
+    const project = await assertProjectAccess(db, ctx, String(rawProjectId), { requireActive: true });
+    const canonicalProjectId = project?._id;
+    const pIdObj = toObjectId(canonicalProjectId) || toObjectId(rawProjectId);
+
+    const companyId = ctx.companyId;
+    const compIdObj = ObjectId.isValid(companyId) && String(companyId).length === 24 ? new ObjectId(companyId) : companyId;
+    const companyClause = ObjectId.isValid(companyId) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(companyId) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+
+    const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '' } = req.body;
     let quantity = Number(rawQty), weightInKgs = Number(rawWeight);
     const singleWeight = getSingleBarWeight(Number(diameter), Number(length));
     if (weightInKgs > 0 && quantity === 0) quantity = Math.round(weightInKgs / singleWeight);
     else if (quantity > 0 && weightInKgs === 0) weightInKgs = quantity * singleWeight;
-    const filter: any = { companyId, diameter: Number(diameter), length: Number(length), costPerKg: Number(costPerKg), typeOfBar, brandName, vendorName, isRemnant: false };
-    if (projectId) {
-      filter.projectId = toObjectId(projectId) || projectId;
+
+    const projectOr: any[] = [{ projectId: String(rawProjectId) }];
+    if (canonicalProjectId) projectOr.unshift({ projectId: String(canonicalProjectId) });
+    if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    if (project?.id && project.id !== String(canonicalProjectId)) projectOr.push({ projectId: String(project.id) });
+
+    const matchQuery = {
+      $and: [
+        companyClause,
+        { $or: projectOr },
+        {
+          diameter: Number(diameter),
+          length: Number(length),
+          costPerKg: Number(costPerKg),
+          typeOfBar,
+          brandName,
+          vendorName,
+          isRemnant: false
+        }
+      ]
+    };
+
+    let result = await db.collection('stockitems').findOneAndUpdate(
+      matchQuery,
+      { $inc: { quantity, weightInKgs } },
+      { returnDocument: 'after' }
+    );
+
+    if (!result || !result._id) {
+      const docToInsert = {
+        companyId: compIdObj,
+        projectId: canonicalProjectId || pIdObj || rawProjectId,
+        diameter: Number(diameter),
+        length: Number(length),
+        quantity,
+        weightInKgs,
+        costPerKg: Number(costPerKg),
+        typeOfBar,
+        brandName,
+        vendorName,
+        isRemnant: false,
+        createdAt: new Date()
+      };
+      const insertRes = await db.collection('stockitems').insertOne(docToInsert);
+      result = { _id: insertRes.insertedId, ...docToInsert };
     }
-    const result = await db.collection('stockitems').findOneAndUpdate(filter, { $inc: { quantity, weightInKgs }, $setOnInsert: { createdAt: new Date() } }, { upsert: true, returnDocument: 'after' });
-    await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
+
+    await db.collection('inventorytransactions').insertOne({
+      companyId: compIdObj,
+      projectId: canonicalProjectId || pIdObj || rawProjectId,
+      type: 'INWARD',
+      diameter: Number(diameter),
+      length: Number(length),
+      quantity,
+      weightInKgs,
+      costPerKg: Number(costPerKg) || 0,
+      brandName,
+      vendorName,
+      typeOfBar: typeOfBar || 'TMT500',
+      referenceName: 'Manual Inward Entry',
+      createdAt: new Date()
+    });
+
+    // Non-destructive adoption of any unassigned legacy records for this company
+    if (canonicalProjectId) {
+      await db.collection('stockitems').updateMany(
+        {
+          $and: [
+            companyClause,
+            { $or: [{ projectId: null }, { projectId: { $exists: false } }] }
+          ]
+        },
+        { $set: { projectId: canonicalProjectId } }
+      );
+      await db.collection('inventorytransactions').updateMany(
+        {
+          $and: [
+            companyClause,
+            { $or: [{ projectId: null }, { projectId: { $exists: false } }] }
+          ]
+        },
+        { $set: { projectId: canonicalProjectId } }
+      );
+    }
 
     await logAudit(db, {
       actorId: req.user.sub,
@@ -2775,11 +2894,14 @@ app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory',
       resource: 'stockitems',
       resourceId: result?._id?.toString() || '',
       description: `Added inward stock of ${diameter}mm rebar (${quantity} pcs, ${weightInKgs.toFixed(1)} kg) - ${brandName || 'Standard'}${typeOfBar ? ` (${typeOfBar})` : ''}`,
-      newValue: { diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar }
+      newValue: { diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar, projectId: canonicalProjectId || rawProjectId }
     });
 
     res.json(result);
-  } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
+  } catch (e: any) {
+    console.error(e);
+    res.status(e.status || 500).json({ message: e.message, code: e.code });
+  }
 });
 
 app.get('/api/inventory/scrap-rules', authMiddleware, requirePermission('settings', 'view'), async (req: any, res) => {
@@ -2835,15 +2957,20 @@ app.get('/api/inventory/ledger', authMiddleware, requirePermission('ledger', 'vi
     if (!projectId) {
       return res.status(400).json({ message: 'Project context is required', code: 'PROJECT_REQUIRED' });
     }
-    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+    const project = await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
 
     const companyId = ctx.companyId;
     const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
       ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
       : { companyId: String(companyId) };
-    const pIdObj = toObjectId(projectId);
+
+    const canonicalProjectId = project?._id;
+    const pIdObj = toObjectId(canonicalProjectId) || toObjectId(projectId);
     const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (canonicalProjectId) projectOr.unshift({ projectId: String(canonicalProjectId) });
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    if (project?.id && project.id !== String(canonicalProjectId)) projectOr.push({ projectId: String(project.id) });
+
     const ledger = await db.collection('inventorytransactions')
       .find({ $and: [companyClause, { $or: projectOr }] })
       .sort({ createdAt: -1 })
@@ -2858,9 +2985,13 @@ app.get('/api/inventory/ledger', authMiddleware, requirePermission('ledger', 'vi
 app.delete('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'delete'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const result = await db.collection('stockitems').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+    const ctx = await resolveUserAndCompany(req, db);
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+
+    const result = await db.collection('stockitems').findOneAndDelete({ _id: new ObjectId(req.params.id), ...companyClause });
 
     if (result) {
       await logAudit(db, {
@@ -2883,15 +3014,19 @@ app.delete('/api/inventory/:id', authMiddleware, requirePermission('inventory', 
 app.put('/api/inventory/:id', authMiddleware, requirePermission('inventory', 'edit'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
+    const ctx = await resolveUserAndCompany(req, db);
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+
     const { quantity } = req.body;
 
     if (quantity === undefined || Number(quantity) < 0) {
       return res.status(400).json({ message: 'Quantity must be a non-negative number' });
     }
 
-    const item = await db.collection('stockitems').findOne({ _id: new ObjectId(req.params.id), companyId });
+    const item = await db.collection('stockitems').findOne({ _id: new ObjectId(req.params.id), ...companyClause });
     if (!item) return res.status(404).json({ message: 'Stock item not found' });
 
     const newQty = Number(quantity);
@@ -3242,12 +3377,27 @@ app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'del
 app.get('/api/batches/scrap-records', authMiddleware, requirePermission('history', 'view'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    if (!companyId) return res.json([]);
+    const ctx = await resolveUserAndCompany(req, db);
+    const companyId = ctx.companyId;
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
 
-    const batches = await db.collection('batches').find({ companyId }).sort({ createdAt: -1 }).toArray();
-    const scrapRules = await ensureScrapRules(db, companyId);
+    const projectId = req.query.projectId || req.headers['x-project-id'];
+    let query: any = companyClause;
+    if (projectId) {
+      const project = await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+      const canonicalProjectId = project?._id;
+      const pIdObj = toObjectId(canonicalProjectId) || toObjectId(projectId);
+      const projectOr: any[] = [{ projectId: String(projectId) }];
+      if (canonicalProjectId) projectOr.unshift({ projectId: String(canonicalProjectId) });
+      if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+      if (project?.id && project.id !== String(canonicalProjectId)) projectOr.push({ projectId: String(project.id) });
+      query = { $and: [companyClause, { $or: projectOr }] };
+    }
+
+    const batches = await db.collection('batches').find(query).sort({ createdAt: -1 }).toArray();
+    const scrapRules = await ensureScrapRules(db, companyId as any);
     const rulesMap = new Map(scrapRules.map((r: any) => [r.diameter, r.scrapLengthThreshold]));
 
     const records = batches.map((b: any) => {
@@ -3315,15 +3465,20 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
     if (!projectId) {
       return res.status(400).json({ message: 'Project context is required', code: 'PROJECT_REQUIRED' });
     }
-    await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
+    const project = await assertProjectAccess(db, ctx, String(projectId), { requireActive: true });
 
     const companyId = ctx.companyId;
     const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
       ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
       : { companyId: String(companyId) };
-    const pIdObj = toObjectId(projectId);
+
+    const canonicalProjectId = project?._id;
+    const pIdObj = toObjectId(canonicalProjectId) || toObjectId(projectId);
     const projectOr: any[] = [{ projectId: String(projectId) }];
+    if (canonicalProjectId) projectOr.unshift({ projectId: String(canonicalProjectId) });
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+    if (project?.id && project.id !== String(canonicalProjectId)) projectOr.push({ projectId: String(project.id) });
+
     const scoped: any = {
       $and: [
         companyClause,

@@ -26,6 +26,7 @@ import {
   listAccessibleGlobalProjects,
   resolveCanonicalProjectId,
 } from '../projects/module-project-adapter';
+import { normalizeBlockName } from '../projects/project-blocks.service';
 
 export function createCastingRouter(
   getDb: () => any,
@@ -145,6 +146,129 @@ export function createCastingRouter(
     });
   };
 
+  // Helper to sync and bridge blocks between canonical project_blocks and casting_blocks
+  const syncAndListCastingBlocks = async (db: any, companyId: string, projectId: string) => {
+    const pIdStr = String(projectId);
+    const pIdObj = toObjId(projectId);
+    const pIdFilter = pIdObj ? { $or: [{ projectId: pIdStr }, { projectId: pIdObj }] } : { projectId: pIdStr };
+
+    // 1. Fetch active blocks from project_blocks (canonical)
+    const pBlocks = await db.collection('project_blocks').find({
+      ...pIdFilter,
+      isDeleted: { $ne: true },
+      status: { $ne: 'inactive' }
+    }).sort({ displayOrder: 1, createdAt: 1 }).toArray().catch(() => []);
+
+    // 2. Fetch active blocks from casting_blocks
+    const cBlocks = await db.collection('casting_blocks').find({
+      ...pIdFilter,
+      isDeleted: { $ne: true }
+    }).sort({ displayOrder: 1, createdAt: 1 }).toArray().catch(() => []);
+
+    const now = new Date();
+
+    const cBlockIdMap = new Map<string, any>(cBlocks.map((b: any) => [String(b._id), b]));
+    const cBlockNameMap = new Map<string, any>(cBlocks.map((b: any) => [normalizeBlockName(b.name), b]));
+
+    // 3. For any block in project_blocks that isn't in casting_blocks (or differs), upsert into casting_blocks
+    for (const pb of pBlocks) {
+      const pbIdStr = String(pb._id);
+      const existing = cBlockIdMap.get(pbIdStr) || cBlockNameMap.get(normalizeBlockName(pb.name));
+
+      if (!existing) {
+        const newCastingBlock: ICastingBlock = {
+          _id: pb._id,
+          companyId: String(pb.companyId || companyId),
+          projectId: pIdStr,
+          name: pb.name,
+          code: pb.code || `BLK-${pb.displayOrder || 1}`,
+          description: pb.description || '',
+          displayOrder: pb.displayOrder || 1,
+          isDeleted: false,
+          createdAt: pb.createdAt || now,
+          updatedAt: pb.updatedAt || now
+        };
+        await db.collection('casting_blocks').updateOne(
+          { _id: pb._id },
+          { $set: newCastingBlock },
+          { upsert: true }
+        ).catch(() => {});
+        cBlocks.push(newCastingBlock);
+        cBlockIdMap.set(pbIdStr, newCastingBlock);
+        cBlockNameMap.set(normalizeBlockName(pb.name), newCastingBlock);
+      } else if (existing.name !== pb.name || existing.code !== pb.code || existing.displayOrder !== pb.displayOrder) {
+        await db.collection('casting_blocks').updateOne(
+          { _id: existing._id },
+          {
+            $set: {
+              name: pb.name,
+              code: pb.code || existing.code,
+              displayOrder: pb.displayOrder || existing.displayOrder,
+              description: pb.description !== undefined ? pb.description : existing.description,
+              updatedAt: now
+            }
+          }
+        ).catch(() => {});
+        existing.name = pb.name;
+        existing.code = pb.code || existing.code;
+        existing.displayOrder = pb.displayOrder || existing.displayOrder;
+      }
+    }
+
+    // 4. For any block in casting_blocks that isn't in project_blocks, sync to project_blocks
+    const pBlockIdMap = new Map<string, any>(pBlocks.map((b: any) => [String(b._id), b]));
+    const pBlockNameMap = new Map<string, any>(pBlocks.map((b: any) => [normalizeBlockName(b.name), b]));
+
+    let pBlocksUpdated = false;
+    for (const cb of cBlocks) {
+      const cbIdStr = String(cb._id);
+      const existingPb = pBlockIdMap.get(cbIdStr) || pBlockNameMap.get(normalizeBlockName(cb.name));
+
+      if (!existingPb) {
+        const newProjectBlock: any = {
+          _id: cb._id,
+          id: cb._id.toString(),
+          companyId: String(cb.companyId || companyId),
+          projectId: pIdStr,
+          name: cb.name,
+          nameLower: normalizeBlockName(cb.name),
+          code: cb.code || `BLK-${cb.displayOrder || 1}`,
+          description: cb.description || '',
+          displayOrder: cb.displayOrder || 1,
+          status: 'active',
+          isDeleted: false,
+          createdAt: cb.createdAt || now,
+          updatedAt: cb.updatedAt || now
+        };
+        await db.collection('project_blocks').updateOne(
+          { _id: cb._id },
+          { $set: newProjectBlock },
+          { upsert: true }
+        ).catch(() => {});
+        pBlocks.push(newProjectBlock);
+        pBlocksUpdated = true;
+      }
+    }
+
+    if (pBlocksUpdated) {
+      const activeCount = await db.collection('project_blocks').countDocuments({
+        ...pIdFilter,
+        isDeleted: { $ne: true },
+        status: { $ne: 'inactive' }
+      }).catch(() => 0);
+      await db.collection('projects').updateOne(
+        { $or: [{ _id: toObjId(projectId) }, { _id: pIdStr }].filter(Boolean) },
+        { $set: { blockCount: activeCount, updatedAt: now } }
+      ).catch(() => {});
+    }
+
+    // 5. Query final unified list from casting_blocks
+    return db.collection('casting_blocks').find({
+      ...pIdFilter,
+      isDeleted: { $ne: true }
+    }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
+  };
+
   // ════════════════════════════════════════════════════════════════════════════
   // 1. MEMBER TYPES LOOKUP
   // ════════════════════════════════════════════════════════════════════════════
@@ -166,12 +290,19 @@ export function createCastingRouter(
       const enriched = await Promise.all(
         projects.map(async (p: any) => {
           const pId = String(p._id || p.id);
-          const [blocks, levels, members, events] = await Promise.all([
-            db.collection('casting_blocks').find({ projectId: pId, isDeleted: { $ne: true } }).toArray(),
-            db.collection('casting_levels').find({ projectId: pId, isDeleted: { $ne: true } }).toArray(),
-            db.collection('casting_members').find({ projectId: pId, isDeleted: { $ne: true } }).toArray(),
-            db.collection('casting_events').find({ projectId: pId, isDeleted: { $ne: true } }).toArray()
+          const [blocks, pBlocks, levels, members, events] = await Promise.all([
+            db.collection('casting_blocks').find({ projectId: pId, isDeleted: { $ne: true } }).toArray().catch(() => []),
+            db.collection('project_blocks').find({ projectId: pId, isDeleted: { $ne: true }, status: { $ne: 'inactive' } }).toArray().catch(() => []),
+            db.collection('casting_levels').find({ projectId: pId, isDeleted: { $ne: true } }).toArray().catch(() => []),
+            db.collection('casting_members').find({ projectId: pId, isDeleted: { $ne: true } }).toArray().catch(() => []),
+            db.collection('casting_events').find({ projectId: pId, isDeleted: { $ne: true } }).toArray().catch(() => [])
           ]);
+
+          const uniqueBlockIds = new Set([
+            ...blocks.map((b: any) => String(b._id)),
+            ...pBlocks.map((b: any) => String(b._id))
+          ]);
+          const effectiveBlockCount = Math.max(uniqueBlockIds.size, Number(p.blockCount) || 0);
 
           const totalRequiredVolumeM3 = members.reduce((sum: number, m: any) => sum + (Number(m.totalRequiredVolumeM3) || 0), 0);
           const totalPouredVolumeM3 = members.reduce((sum: number, m: any) => sum + (Number(m.actualPouredM3) || 0), 0);
@@ -180,7 +311,7 @@ export function createCastingRouter(
             ...p,
             id: pId,
             code: p.code || p.projectCode || '',
-            blockCount: blocks.length,
+            blockCount: effectiveBlockCount,
             levelCount: levels.length,
             memberCount: members.length,
             eventCount: events.length,
@@ -208,38 +339,107 @@ export function createCastingRouter(
     }
   });
 
-  // POST create — unified to global projects
-  router.post('/projects', authMiddleware, async (_req: any, res: any) => {
-    return res.status(400).json({
-      message: 'Create projects via Company Projects (POST /api/projects). Module catalogs are unified.',
-      code: 'USE_GLOBAL_PROJECTS',
-    });
+  // POST create project — creates unified global project
+  router.post('/projects', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
+      const { name, code, location, clientName, contractorName } = req.body;
+
+      if (!name || !String(name).trim()) {
+        return res.status(400).json({ message: 'Project Name is required' });
+      }
+
+      const newId = new ObjectId();
+      const now = new Date();
+      const projectCode = (code || `PRJ-${Date.now().toString().slice(-4)}`).trim().toUpperCase();
+
+      const newProject = {
+        _id: newId,
+        id: newId.toString(),
+        companyId,
+        name: String(name).trim(),
+        code: projectCode,
+        projectCode,
+        address: typeof location === 'string' && location.trim() ? location.trim() : 'Site Location',
+        pincode: '000000',
+        location: { latitude: 0, longitude: 0 },
+        projectType: 'Residential',
+        clientName: clientName ? String(clientName).trim() : '',
+        contractorName: contractorName ? String(contractorName).trim() : '',
+        status: 'active',
+        geofences: [],
+        assignedPartnerAdminIds: [],
+        createdBy: ctx.userId,
+        createdAt: now,
+        updatedAt: now,
+        blockCount: 0,
+      };
+
+      await db.collection('projects').insertOne(newProject);
+
+      if (logAudit) {
+        await logAudit(db, {
+          actorId: req.user.sub,
+          actorType: req.user.accountType || 'user',
+          companyId,
+          module: 'casting',
+          action: 'PROJECT_CREATED_FROM_CASTING',
+          resource: 'projects',
+          resourceId: newId.toString(),
+          description: `Created global project '${newProject.name}' from Casting Management`
+        });
+      }
+
+      res.status(201).json(newProject);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error creating project' });
+    }
   });
 
   // PUT update project
   router.put('/projects/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
       const id = req.params.id;
       const { name, location, clientName, contractorName, status } = req.body;
 
-      const existing = await db.collection('casting_projects').findOne({
-        ...idQuery(id),
-        companyId,
-        isDeleted: { $ne: true }
-      });
-      if (!existing) return res.status(404).json({ message: 'Project not found' });
+      let project: any = null;
+      let isGlobal = false;
+
+      try {
+        const canonical = await resolveCanonicalProjectId(db, ctx, id);
+        project = canonical.project;
+        isGlobal = true;
+      } catch (_) {
+        project = await db.collection('casting_projects').findOne({
+          ...idQuery(id),
+          companyId,
+          isDeleted: { $ne: true }
+        });
+      }
+
+      if (!project) return res.status(404).json({ message: 'Project not found' });
 
       const updateData: any = { updatedAt: new Date() };
       if (name !== undefined) updateData.name = name.trim();
-      if (location !== undefined) updateData.location = location.trim();
+      if (location !== undefined) {
+        if (typeof location === 'string') {
+          updateData.address = location.trim();
+        } else {
+          updateData.location = location;
+        }
+      }
       if (clientName !== undefined) updateData.clientName = clientName.trim();
       if (contractorName !== undefined) updateData.contractorName = contractorName.trim();
       if (status !== undefined) updateData.status = status;
 
-      await db.collection('casting_projects').updateOne({ _id: existing._id }, { $set: updateData });
-      const updated = await db.collection('casting_projects').findOne({ _id: existing._id });
+      const collName = isGlobal ? 'projects' : 'casting_projects';
+      await db.collection(collName).updateOne({ _id: project._id }, { $set: updateData });
+      const updated = await db.collection(collName).findOne({ _id: project._id });
 
       res.json({ ...updated, id: updated._id.toString() });
     } catch (err: any) {
@@ -251,18 +451,32 @@ export function createCastingRouter(
   router.delete('/projects/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
       const id = req.params.id;
       const { reason } = req.body || {};
 
-      const project = await db.collection('casting_projects').findOne({
-        ...idQuery(id),
-        companyId,
-        isDeleted: { $ne: true }
-      });
+      let project: any = null;
+      let canonicalProjectId = id;
+      let isGlobal = false;
+
+      try {
+        const canonical = await resolveCanonicalProjectId(db, ctx, id);
+        project = canonical.project;
+        canonicalProjectId = canonical.projectId;
+        isGlobal = true;
+      } catch (_) {
+        project = await db.collection('casting_projects').findOne({
+          ...idQuery(id),
+          companyId,
+          isDeleted: { $ne: true }
+        });
+        if (project) canonicalProjectId = project._id.toString();
+      }
+
       if (!project) return res.status(404).json({ message: 'Project not found' });
 
-      const pId = project._id.toString();
+      const pId = canonicalProjectId;
 
       // Guard: Check if any active casting events exist
       const activeEventsCount = await db.collection('casting_events').countDocuments({
@@ -279,14 +493,18 @@ export function createCastingRouter(
 
       const now = new Date();
       const deletedBy = req.user.email || req.user.sub;
+      const collName = isGlobal ? 'projects' : 'casting_projects';
 
       // Soft delete project and cascade soft delete to child blocks, levels, members
       await Promise.all([
-        db.collection('casting_projects').updateOne({ _id: project._id }, {
-          $set: { isDeleted: true, deletedAt: now, deletedBy, deletionReason: reason || 'Deleted by user' }
+        db.collection(collName).updateOne({ _id: project._id }, {
+          $set: { isDeleted: true, status: 'inactive', deletedAt: now, deletedBy, deletionReason: reason || 'Deleted by user' }
         }),
         db.collection('casting_blocks').updateMany({ projectId: pId }, {
           $set: { isDeleted: true, deletedAt: now, deletedBy }
+        }),
+        db.collection('project_blocks').updateMany({ projectId: pId }, {
+          $set: { isDeleted: true, status: 'inactive', deletedAt: now, deletedBy }
         }),
         db.collection('casting_levels').updateMany({ projectId: pId }, {
           $set: { isDeleted: true, deletedAt: now, deletedBy }
@@ -303,13 +521,13 @@ export function createCastingRouter(
           companyId,
           module: 'casting',
           action: 'CASTING_PROJECT_SOFT_DELETED',
-          resource: 'casting_projects',
+          resource: collName,
           resourceId: pId,
-          description: `Soft-deleted casting project '${project.name}'`
+          description: `Soft-deleted project '${project.name}'`
         });
       }
 
-      res.json({ success: true, message: 'Casting project soft-deleted successfully' });
+      res.json({ success: true, message: 'Project soft-deleted successfully' });
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error deleting casting project' });
     }
@@ -323,13 +541,18 @@ export function createCastingRouter(
   router.get('/projects/:projectId/blocks', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const projectId = req.params.projectId;
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
 
-      const blocks = await db.collection('casting_blocks')
-        .find({ companyId, projectId, isDeleted: { $ne: true } })
-        .sort({ displayOrder: 1, createdAt: 1 })
-        .toArray();
+      let canonicalProjectId = req.params.projectId;
+      try {
+        const canonical = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
+        canonicalProjectId = canonical.projectId;
+      } catch (_) {
+        // Fallback to passed projectId
+      }
+
+      const blocks = await syncAndListCastingBlocks(db, companyId, canonicalProjectId);
 
       const enriched = await Promise.all(
         blocks.map(async (b: any) => {
@@ -357,30 +580,107 @@ export function createCastingRouter(
   router.post('/projects/:projectId/blocks', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const projectId = req.params.projectId;
+      const ctx = await resolveUserAndCompany(req, db);
+      const companyId = ctx.companyId;
+      const rawProjectId = req.params.projectId;
       const { name, code, description } = req.body;
 
       if (!name || !name.trim()) {
         return res.status(400).json({ message: 'Block Name is required' });
       }
 
-      // Verify project exists and belongs to company
-      const project = await db.collection('casting_projects').findOne({
-        ...idQuery(projectId),
-        companyId,
-        isDeleted: { $ne: true }
-      });
+      // Verify project exists and belongs to company (check canonical projects first, then legacy casting_projects)
+      let project: any = null;
+      let canonicalProjectId = rawProjectId;
+
+      try {
+        const canonical = await resolveCanonicalProjectId(db, ctx, rawProjectId);
+        project = canonical.project;
+        canonicalProjectId = canonical.projectId;
+      } catch (err: any) {
+        // Fallback: check casting_projects
+        project = await db.collection('casting_projects').findOne({
+          ...idQuery(rawProjectId),
+          companyId,
+          isDeleted: { $ne: true }
+        });
+        if (project) {
+          canonicalProjectId = project._id.toString();
+        }
+      }
+
       if (!project) return res.status(404).json({ message: 'Project not found' });
 
-      const blockCode = (code || `BLK-${Date.now().toString().slice(-3)}`).trim().toUpperCase();
-      const count = await db.collection('casting_blocks').countDocuments({ projectId, isDeleted: { $ne: true } });
+      const blockNameTrimmed = name.trim();
+      const lowerName = normalizeBlockName(blockNameTrimmed);
 
-      const now = new Date();
-      const newBlock: ICastingBlock = {
+      // Check duplicate in casting_blocks or project_blocks
+      const existingInCasting = await db.collection('casting_blocks').findOne({
+        projectId: canonicalProjectId,
         companyId,
-        projectId: project._id.toString(),
-        name: name.trim(),
+        isDeleted: { $ne: true },
+        name: { $regex: new RegExp(`^${blockNameTrimmed}$`, 'i') }
+      });
+      if (existingInCasting) {
+        return res.status(409).json({ message: `Duplicate block name "${blockNameTrimmed}"` });
+      }
+
+      const existingInProjectBlocks = await db.collection('project_blocks').findOne({
+        projectId: canonicalProjectId,
+        companyId,
+        isDeleted: { $ne: true },
+        status: { $ne: 'inactive' },
+        nameLower: lowerName
+      });
+      if (existingInProjectBlocks) {
+        return res.status(409).json({ message: `Duplicate block name "${blockNameTrimmed}"` });
+      }
+
+      const count = await db.collection('casting_blocks').countDocuments({
+        projectId: canonicalProjectId,
+        isDeleted: { $ne: true }
+      });
+
+      const blockCode = (code || `BLK-${Date.now().toString().slice(-3)}`).trim().toUpperCase();
+      const now = new Date();
+      const blockId = new ObjectId();
+
+      // 1. Insert into project_blocks (connected to Project module)
+      const projectBlockDoc: any = {
+        _id: blockId,
+        id: blockId.toString(),
+        companyId,
+        projectId: canonicalProjectId,
+        name: blockNameTrimmed,
+        nameLower: lowerName,
+        code: blockCode,
+        description: description ? description.trim() : '',
+        displayOrder: count + 1,
+        status: 'active',
+        isDeleted: false,
+        createdAt: now,
+        updatedAt: now,
+        createdBy: ctx.userId || null
+      };
+      await db.collection('project_blocks').insertOne(projectBlockDoc);
+
+      // Update blockCount on projects collection
+      const totalActiveBlocks = await db.collection('project_blocks').countDocuments({
+        projectId: canonicalProjectId,
+        isDeleted: { $ne: true },
+        status: { $ne: 'inactive' }
+      });
+      await db.collection('projects').updateOne(
+        { $or: [{ _id: toObjId(canonicalProjectId) }, { _id: canonicalProjectId }].filter(Boolean) },
+        { $set: { blockCount: totalActiveBlocks, updatedAt: now } }
+      ).catch(() => {});
+
+      // 2. Insert into casting_blocks
+      const newCastingBlock: ICastingBlock = {
+        _id: blockId,
+        companyId,
+        projectId: canonicalProjectId,
+        name: blockNameTrimmed,
         code: blockCode,
         description: description ? description.trim() : '',
         displayOrder: count + 1,
@@ -388,10 +688,9 @@ export function createCastingRouter(
         createdAt: now,
         updatedAt: now
       };
+      await db.collection('casting_blocks').insertOne(newCastingBlock);
 
-      const result = await db.collection('casting_blocks').insertOne(newBlock);
-      const created = await db.collection('casting_blocks').findOne({ _id: result.insertedId });
-      res.status(201).json({ ...created, id: created._id.toString() });
+      res.status(201).json({ ...newCastingBlock, id: blockId.toString() });
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error creating casting block' });
     }
@@ -405,21 +704,51 @@ export function createCastingRouter(
       const id = req.params.id;
       const { name, code, description, displayOrder } = req.body;
 
-      const block = await db.collection('casting_blocks').findOne({
+      let block = await db.collection('casting_blocks').findOne({
         ...idQuery(id),
         companyId,
         isDeleted: { $ne: true }
       });
+      if (!block) {
+        // Fallback: check project_blocks
+        const pb = await db.collection('project_blocks').findOne({
+          ...idQuery(id),
+          companyId,
+          isDeleted: { $ne: true }
+        });
+        if (pb) {
+          block = pb;
+        }
+      }
       if (!block) return res.status(404).json({ message: 'Block not found' });
 
-      const updateData: any = { updatedAt: new Date() };
+      const now = new Date();
+      const targetId = block._id;
+      const updateData: any = { updatedAt: now };
       if (name !== undefined) updateData.name = name.trim();
       if (code !== undefined) updateData.code = code.trim().toUpperCase();
       if (description !== undefined) updateData.description = description.trim();
       if (displayOrder !== undefined) updateData.displayOrder = Number(displayOrder);
 
-      await db.collection('casting_blocks').updateOne({ _id: block._id }, { $set: updateData });
-      const updated = await db.collection('casting_blocks').findOne({ _id: block._id });
+      const fullCastingDoc = {
+        _id: targetId,
+        companyId: String(block.companyId || companyId),
+        projectId: String(block.projectId),
+        name: updateData.name || block.name,
+        code: updateData.code || block.code || 'BLK-01',
+        description: updateData.description !== undefined ? updateData.description : (block.description || ''),
+        displayOrder: updateData.displayOrder !== undefined ? updateData.displayOrder : (block.displayOrder || 1),
+        isDeleted: false,
+        createdAt: block.createdAt || now,
+        updatedAt: now
+      };
+      await db.collection('casting_blocks').updateOne({ _id: targetId }, { $set: fullCastingDoc }, { upsert: true });
+
+      const pbUpdate: any = { ...updateData };
+      if (name !== undefined) pbUpdate.nameLower = normalizeBlockName(name.trim());
+      await db.collection('project_blocks').updateOne({ _id: targetId }, { $set: pbUpdate });
+
+      const updated = await db.collection('casting_blocks').findOne({ _id: targetId });
       res.json({ ...updated, id: updated._id.toString() });
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error updating casting block' });
@@ -433,13 +762,21 @@ export function createCastingRouter(
       const companyId = await resolveCompanyId(req, db);
       const id = req.params.id;
 
-      const block = await db.collection('casting_blocks').findOne({
+      let block = await db.collection('casting_blocks').findOne({
         ...idQuery(id),
         companyId,
         isDeleted: { $ne: true }
       });
+      if (!block) {
+        block = await db.collection('project_blocks').findOne({
+          ...idQuery(id),
+          companyId,
+          isDeleted: { $ne: true }
+        });
+      }
       if (!block) return res.status(404).json({ message: 'Block not found' });
 
+      const targetId = block._id;
       const bId = block._id.toString();
 
       // Guard: Check if active events reference members in this block
@@ -459,8 +796,18 @@ export function createCastingRouter(
       const deletedBy = req.user.email || req.user.sub;
 
       await Promise.all([
-        db.collection('casting_blocks').updateOne({ _id: block._id }, {
-          $set: { isDeleted: true, deletedAt: now, deletedBy }
+        db.collection('casting_blocks').updateOne({ _id: targetId }, {
+          $set: {
+            _id: targetId,
+            companyId: String(block.companyId || companyId),
+            projectId: String(block.projectId),
+            isDeleted: true,
+            deletedAt: now,
+            deletedBy
+          }
+        }, { upsert: true }),
+        db.collection('project_blocks').updateOne({ _id: targetId }, {
+          $set: { isDeleted: true, status: 'inactive', deletedAt: now, deletedBy }
         }),
         db.collection('casting_levels').updateMany({ blockId: bId }, {
           $set: { isDeleted: true, deletedAt: now, deletedBy }
@@ -469,6 +816,18 @@ export function createCastingRouter(
           $set: { isDeleted: true, deletedAt: now, deletedBy }
         })
       ]);
+
+      if (block.projectId) {
+        const totalActiveBlocks = await db.collection('project_blocks').countDocuments({
+          projectId: String(block.projectId),
+          isDeleted: { $ne: true },
+          status: { $ne: 'inactive' }
+        });
+        await db.collection('projects').updateOne(
+          { $or: [{ _id: toObjId(block.projectId) }, { _id: String(block.projectId) }].filter(Boolean) },
+          { $set: { blockCount: totalActiveBlocks, updatedAt: now } }
+        ).catch(() => {});
+      }
 
       res.json({ success: true, message: 'Block soft-deleted successfully' });
     } catch (err: any) {
@@ -522,12 +881,40 @@ export function createCastingRouter(
         return res.status(400).json({ message: 'Level Name is required' });
       }
 
-      // Verify block exists and get projectId
-      const block = await db.collection('casting_blocks').findOne({
+      // Verify block exists and get projectId (with fallback to project_blocks)
+      let block = await db.collection('casting_blocks').findOne({
         ...idQuery(blockId),
         companyId,
         isDeleted: { $ne: true }
       });
+      if (!block) {
+        const pb = await db.collection('project_blocks').findOne({
+          ...idQuery(blockId),
+          companyId,
+          isDeleted: { $ne: true },
+          status: { $ne: 'inactive' }
+        });
+        if (pb) {
+          const now = new Date();
+          block = {
+            _id: pb._id,
+            companyId: String(pb.companyId || companyId),
+            projectId: String(pb.projectId),
+            name: pb.name,
+            code: pb.code || 'BLK-01',
+            description: pb.description || '',
+            displayOrder: pb.displayOrder || 1,
+            isDeleted: false,
+            createdAt: pb.createdAt || now,
+            updatedAt: now
+          };
+          await db.collection('casting_blocks').updateOne(
+            { _id: pb._id },
+            { $set: block },
+            { upsert: true }
+          ).catch(() => {});
+        }
+      }
       if (!block) return res.status(404).json({ message: 'Block not found' });
 
       const targetProjectId = projectId || block.projectId;
@@ -663,13 +1050,15 @@ export function createCastingRouter(
       const companyId = await resolveCompanyId(req, db);
       const projectId = req.params.projectId;
 
-      const [members, blocks, levels] = await Promise.all([
-        db.collection('casting_members').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray(),
-        db.collection('casting_blocks').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray(),
-        db.collection('casting_levels').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray()
+      const [members, blocks, pBlocks, levels] = await Promise.all([
+        db.collection('casting_members').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray().catch(() => []),
+        db.collection('casting_blocks').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray().catch(() => []),
+        db.collection('project_blocks').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray().catch(() => []),
+        db.collection('casting_levels').find({ companyId, projectId, isDeleted: { $ne: true } }).toArray().catch(() => [])
       ]);
 
-      const blockMap = new Map(blocks.map((b: any) => [b._id.toString(), b.name]));
+      const allBlocks = [...blocks, ...pBlocks];
+      const blockMap = new Map(allBlocks.map((b: any) => [b._id.toString(), b.name]));
       const levelMap = new Map(levels.map((l: any) => [l._id.toString(), l.name]));
 
       const enriched = members.map((m: any) => ({

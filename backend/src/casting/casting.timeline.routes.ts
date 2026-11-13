@@ -345,10 +345,16 @@ export function createCastingTimelineRouter(
 
       const [blocks, levels, members, curingSchedules, cubeRegisters, consumptions] = await Promise.all([
         distinctBlockIds.length > 0
-          ? db.collection('casting_blocks').find({
-              companyId,
-              _id: { $in: distinctBlockIds.map(id => toObjId(id) || id) }
-            }).toArray()
+          ? Promise.all([
+              db.collection('casting_blocks').find({
+                companyId,
+                _id: { $in: distinctBlockIds.map(id => toObjId(id) || id) }
+              }).toArray().catch(() => []),
+              db.collection('project_blocks').find({
+                companyId,
+                _id: { $in: distinctBlockIds.map(id => toObjId(id) || id) }
+              }).toArray().catch(() => [])
+            ]).then(([cb, pb]) => [...cb, ...pb])
           : [],
         distinctLevelIds.length > 0
           ? db.collection('casting_levels').find({
@@ -386,7 +392,7 @@ export function createCastingTimelineRouter(
       ]);
 
       const blockMap = new Map<string, string>(
-        blocks.map((b: any) => [b._id.toString(), b.name || b.blockName || 'Block'])
+        (blocks as any[]).map((b: any): [string, string] => [b._id.toString(), b.name || b.blockName || 'Block'])
       );
       const levelMap = new Map<string, string>(
         levels.map((l: any) => [l._id.toString(), l.name || l.levelName || 'Level'])

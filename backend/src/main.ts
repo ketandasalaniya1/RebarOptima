@@ -482,6 +482,16 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
       create: 'Create PDF Reports',
       export: 'Export Excel Reports'
     }
+  },
+  bbs: {
+    displayName: 'Bar Bending Schedule (BBS)',
+    features: {
+      view: 'View BBS',
+      create: 'Create BBS Records & Shapes',
+      edit: 'Edit BBS Records & Shapes',
+      delete: 'Delete BBS Records & Shapes',
+      export: 'Export BBS Reports & Shapes'
+    }
   }
 };
 
@@ -524,6 +534,7 @@ const DEFAULT_SYSTEM_ROLES = [
       drawings: { view: true, upload: true, review: false, transmittals: false, settings: false },
       manpower: { view: true, create: true, edit: true, delete: false },
       attendance: { view: true, create: true, edit: true, delete: true, export: true },
+      bbs: { view: true, create: true, edit: true, delete: false, export: true },
     },
     dataScope: 'project'
   },
@@ -544,6 +555,7 @@ const DEFAULT_SYSTEM_ROLES = [
       casting: { view: true, create: true, edit: true, delete: true },
       manpower: { view: true, create: true, edit: true, delete: true },
       attendance: { view: true, create: true, edit: true, delete: true, export: true },
+      bbs: { view: true, create: true, edit: true, delete: true, export: true },
     },
     dataScope: 'organization'
   },
@@ -561,7 +573,8 @@ const DEFAULT_SYSTEM_ROLES = [
       settings: { view: true, edit: false },
       users: { view: false },
       roles: { view: false },
-      casting: { view: true, create: true, edit: true, delete: false }
+      casting: { view: true, create: true, edit: true, delete: false },
+      bbs: { view: true, create: true, edit: true, delete: false, export: true }
     },
     dataScope: 'project'
   },
@@ -579,7 +592,8 @@ const DEFAULT_SYSTEM_ROLES = [
       settings: { view: true, edit: false },
       users: { view: false },
       roles: { view: false },
-      casting: { view: true, create: true, edit: false, delete: false }
+      casting: { view: true, create: true, edit: false, delete: false },
+      bbs: { view: true, create: true, edit: false, delete: false, export: false }
     },
     dataScope: 'project'
   },
@@ -597,7 +611,8 @@ const DEFAULT_SYSTEM_ROLES = [
       settings: { view: false, edit: false },
       users: { view: false },
       roles: { view: false },
-      casting: { view: true, create: false, edit: false, delete: false }
+      casting: { view: true, create: false, edit: false, delete: false },
+      bbs: { view: true, create: false, edit: false, delete: false, export: false }
     },
     dataScope: 'project'
   },

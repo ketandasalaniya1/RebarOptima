@@ -1,0 +1,594 @@
+/* ==========================================================================
+   REBAROPTIMA BBS WORKSPACES — PRODUCTION DESIGN SYSTEM
+   ========================================================================== */
+
+.bbs-workspace-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+}
+
+/* Header */
+.bbs-workspace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.bbs-workspace-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bbs-workspace-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.bbs-breadcrumb-part {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.bbs-breadcrumb-sep {
+  color: #cbd5e1;
+}
+
+.bbs-breadcrumb-active {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.bbs-workspace-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 8px;
+}
+
+.bbs-member-mark-badge.large {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.bbs-workspace-h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.bbs-workspace-meta-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bbs-badge-type {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.bbs-badge-grade {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.bbs-badge-steel {
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.bbs-workspace-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Workspace Body */
+.bbs-workspace-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Summary Cards Grid */
+.bbs-summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.bbs-summary-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.bbs-summary-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bbs-summary-card-icon.weight {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.bbs-summary-card-icon.volume {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.bbs-summary-card-icon.ratio {
+  background: #faf5ff;
+  color: #9333ea;
+}
+
+.bbs-summary-card-icon.count {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.bbs-summary-card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.bbs-summary-card-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.bbs-summary-card-val .bbs-unit {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.bbs-summary-card-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Canvases Row */
+.bbs-workspace-canvases-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bbs-canvas-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bbs-canvas-badge {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  pointer-events: none;
+}
+
+/* Inputs Grid */
+.bbs-workspace-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.bbs-input-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.bbs-input-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px;
+}
+
+.bbs-card-icon {
+  color: #2563eb;
+}
+
+.bbs-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bbs-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bbs-form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.bbs-input-inline-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bbs-input-inline-pair .bbs-input {
+  flex: 1;
+}
+
+.bbs-input-inline-pair .bbs-select {
+  flex: 1;
+}
+
+.bbs-input-unit-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.bbs-input-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.bbs-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.bbs-checkbox-row label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+}
+
+.bbs-validation-alert {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #92400e;
+}
+
+.bbs-validation-alert p {
+  margin: 0 0 4px 0;
+}
+.bbs-validation-alert p:last-child {
+  margin-bottom: 0;
+}
+
+/* Schedule Table Card */
+.bbs-schedule-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.bbs-schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.bbs-schedule-h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.bbs-schedule-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+.bbs-schedule-totals-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  background: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.bbs-bullet {
+  color: #cbd5e1;
+}
+
+.bbs-schedule-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.bbs-schedule-empty .bbs-empty-icon {
+  margin-bottom: 12px;
+  color: #94a3b8;
+}
+
+/* Table Responsive */
+.bbs-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.bbs-bbs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.bbs-bbs-table th {
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #cbd5e1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.bbs-bbs-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.bbs-bbs-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.bbs-mark-pill {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #bfdbfe;
+}
+
+.bbs-desc-primary {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.bbs-desc-note {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.bbs-shape-code-tag {
+  font-family: monospace;
+  font-size: 11px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Rule Badges */
+.bbs-rule-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.bbs-rule-badge-code {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.bbs-rule-badge-designer {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.bbs-rule-badge-math {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}
+
+.bbs-rule-badge-assumption {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.bbs-rule-badge-spec {
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.bbs-rule-badge-unverified {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Table Totals Row */
+.bbs-table-total-row {
+  background: #f8fafc;
+  font-size: 13px;
+  border-top: 2px solid #cbd5e1;
+}
+
+.bbs-total-tonnage-tag {
+  font-size: 12px;
+  font-weight: 700;
+  background: #eff6ff;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #bfdbfe;
+}
+
+/* Trace Popover */
+.bbs-trace-popover {
+  margin: 14px 20px;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  position: relative;
+}
+
+.bbs-trace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.bbs-trace-header h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.bbs-close-btn-tiny {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.bbs-trace-body p {
+  font-size: 12px;
+  color: #334155;
+  margin: 4px 0;
+}
+
+.bbs-icon-btn-tiny {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bbs-icon-btn-tiny:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+

@@ -52,6 +52,16 @@ export const bbsApi = {
 
   // Shape Instances (Rebar Usages on Structural Members)
   getShapeInstances: (memberId) => apiRequest(`/bbs/shapes/instances/member/${memberId}`),
-  createShapeInstance: (data) => apiRequest('/bbs/shapes/instances', { method: 'POST', body: data })
+  createShapeInstance: (data) => apiRequest('/bbs/shapes/instances', { method: 'POST', body: data }),
+
+  // Structural Member Detailing & Schedule Lifecycle
+  getMemberDetailing: (memberId) => apiRequest(`/bbs/members/${memberId}/detailing`),
+  saveMemberSchedule: (memberId, data) => apiRequest(`/bbs/members/${memberId}/schedule`, { method: 'POST', body: data }),
+
+  // Consolidated Project Material Take-Off (MTO)
+  getProjectMTO: (projectId) => apiRequest(`/bbs/projects/${projectId}/mto`),
+
+  // Dynamic BBS Summary Dashboard Data (Blocks, Levels, Calculated Members & Active Revision Instances)
+  getSummaryDashboardData: (projectId) => apiRequest(`/bbs/projects/${projectId}/summary-dashboard`)
 };
 

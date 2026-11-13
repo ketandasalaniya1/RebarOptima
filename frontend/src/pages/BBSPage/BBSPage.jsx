@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setView } from '../../store/slices/routingSlice';
 import { 
   Building2, Plus, ArrowLeft, ChevronRight, Layers, LayoutGrid, 
   CheckCircle2, Clock, Trash2, Edit3, MoveUp, MoveDown, Search, 
   FolderPlus, PlusCircle, AlertCircle, Info, Hash, MapPin, 
-  ShieldCheck, RefreshCw, MoreVertical, X, Shapes, PenTool
+  ShieldCheck, RefreshCw, MoreVertical, X, Shapes, PenTool,
+  Calculator, Scale, BarChart3
 } from 'lucide-react';
 import { bbsApi } from './bbsApi';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
@@ -12,6 +15,19 @@ import CADEditor from './cad/CADEditor';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState, StatusBadge } from '../../components/ui';
 import './BBSPage.css';
+import './workspaces/Workspaces.css';
+import {
+  ColumnWorkspace,
+  BeamWorkspace,
+  SlabWorkspace,
+  FootingWorkspace,
+  RetainingWallWorkspace,
+  exportBbsToPrintPdf,
+  exportBbsToExcelCsv,
+  pushBbsToCuttingOptimizer
+} from './workspaces';
+import ProjectMtoView from './workspaces/common/ProjectMtoView';
+import BbsSummaryDashboard from './dashboard/BbsSummaryDashboard';
 
 const MEMBER_TYPE_OPTIONS = [
   'Footing',
@@ -47,7 +63,32 @@ const DEFAULT_PREFIX_MAP = {
   'Special Requirement': 'SR'
 };
 
+// Resilient location string formatter (handles both string addresses and {latitude, longitude} objects)
+const formatLocation = (loc) => {
+  if (!loc) return '';
+  if (typeof loc === 'string') return loc;
+  if (typeof loc === 'object') {
+    if (loc.address) return String(loc.address);
+    if (loc.city && loc.state) return `${loc.city}, ${loc.state}`;
+    if (loc.city) return String(loc.city);
+    if (loc.name) return String(loc.name);
+    const hasLat = loc.latitude !== undefined && loc.latitude !== null;
+    const hasLng = loc.longitude !== undefined && loc.longitude !== null;
+    if (hasLat && hasLng) {
+      const latNum = Number(loc.latitude);
+      const lngNum = Number(loc.longitude);
+      if (!isNaN(latNum) && !isNaN(lngNum)) {
+        return `${latNum.toFixed(4)}, ${lngNum.toFixed(4)}`;
+      }
+      return `${loc.latitude}, ${loc.longitude}`;
+    }
+    return '';
+  }
+  return String(loc);
+};
+
 export default function BBSPage() {
+  const dispatch = useDispatch();
   const { projectId: orgProjectId, selectedProject: orgProject, projectEpoch } = useActiveProject();
   // Main Module Tab State ('projects' | 'shapes' | 'cad')
   const [activeMainTab, setActiveMainTab] = useState('projects');
@@ -65,6 +106,12 @@ export default function BBSPage() {
   const [blocks, setBlocks] = useState([]);
   const [levels, setLevels] = useState([]);
   const [members, setMembers] = useState([]);
+
+  // Structural Member Workspaces & Project MTO State (Phases 1, 2, 3)
+  const [activeWorkspaceMember, setActiveWorkspaceMember] = useState(null);
+  const [showProjectMto, setShowProjectMto] = useState(false);
+  const [showSummaryDashboard, setShowSummaryDashboard] = useState(false);
+  const [savingWorkspace, setSavingWorkspace] = useState(false);
 
 
   // UI State
@@ -102,10 +149,103 @@ export default function BBSPage() {
     setTimeout(() => setToast(null), 4000);
   };
 
+  // Open Structural Member Detailing Workspace
+  const handleOpenMemberWorkspace = async (member) => {
+    try {
+      setSubLoading(true);
+      const memberId = member._id || member.id;
+      const res = await bbsApi.getMemberDetailing(memberId).catch(() => null);
+      if (res && res.member) {
+        setActiveWorkspaceMember({
+          ...member,
+          ...res.member,
+          detailingConfig: res.detailingConfig || member.detailingConfig || {}
+        });
+      } else {
+        setActiveWorkspaceMember(member);
+      }
+    } catch (err) {
+      console.warn('Could not load member detailing:', err);
+      setActiveWorkspaceMember(member);
+    } finally {
+      setSubLoading(false);
+    }
+  };
+
+  // Save Member Reinforcement Detailing & Schedule
+  const handleSaveSchedule = async (payload) => {
+    setSavingWorkspace(true);
+    try {
+      const res = await bbsApi.saveMemberSchedule(payload.memberId, payload);
+      showToast(`Bar Bending Schedule saved successfully for ${activeWorkspaceMember?.displayId || 'Member'}!`, 'success');
+
+      // Update local members list
+      setMembers(prev => prev.map(m => {
+        if ((m._id || m.id) === payload.memberId) {
+          return {
+            ...m,
+            detailingConfig: payload.detailingConfig,
+            total_steel_weight: payload.summary?.totalSteelWeight || m.total_steel_weight,
+            concrete_volume: payload.summary?.concreteVolume || m.concrete_volume,
+            completionPercentage: 100,
+            status: 'Calculated'
+          };
+        }
+        return m;
+      }));
+
+      // Update active workspace member
+      if (res?.member) {
+        setActiveWorkspaceMember(prev => ({
+          ...prev,
+          ...res.member,
+          completionPercentage: 100,
+          status: 'Calculated'
+        }));
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to save schedule', 'error');
+    } finally {
+      setSavingWorkspace(false);
+    }
+  };
+
+  // Export Member BBS to Print-Ready PDF
+  const handleExportMemberPDF = (member, rebarItems, summary) => {
+    const curBlock = blocks.find(b => (b._id || b.id) === selectedBlockId);
+    const curLevel = levels.find(l => (l._id || l.id) === selectedLevelId);
+    exportBbsToPrintPdf({
+      project: activeProject,
+      block: curBlock,
+      level: curLevel,
+      member,
+      rebarItems,
+      summary
+    });
+  };
+
+  // Push Member BBS to 1D Cutting Stock Problem Solver
+  const handlePushMemberOptimizer = (rebarItems, project) => {
+    pushBbsToCuttingOptimizer({
+      rebarItems,
+      project: activeProject,
+      member: activeWorkspaceMember,
+      onNavigate: (targetView) => dispatch(setView(targetView))
+    });
+  };
+
   // Bind to global active project — reload hierarchy on switch
   useEffect(() => {
     loadShapes();
-    if (!orgProjectId) return;
+    if (!orgProjectId) {
+      setLoading(false);
+      setSelectedProjectId(null);
+      setActiveProject(null);
+      setBlocks([]);
+      setLevels([]);
+      setMembers([]);
+      return;
+    }
     setSelectedBlockId(null);
     setSelectedLevelId(null);
     setBlocks([]);
@@ -289,10 +429,16 @@ export default function BBSPage() {
     setSubLoading(true);
     try {
       const [proj, blks] = await Promise.all([
-        bbsApi.getProjectById(projId),
-        bbsApi.getBlocks(projId)
+        bbsApi.getProjectById(projId).catch((err) => {
+          console.warn('Could not fetch BBS project details:', err);
+          return null;
+        }),
+        bbsApi.getBlocks(projId).catch((err) => {
+          console.warn('Could not fetch BBS blocks:', err);
+          return [];
+        })
       ]);
-      setActiveProject(proj);
+      if (proj) setActiveProject(proj);
       setBlocks(blks || []);
 
       if (blks && blks.length > 0) {
@@ -317,7 +463,10 @@ export default function BBSPage() {
   // Load Levels when block changes
   const loadLevels = async (blockId) => {
     try {
-      const lvls = await bbsApi.getLevels(blockId);
+      const lvls = await bbsApi.getLevels(blockId).catch((err) => {
+        console.warn('Could not fetch BBS levels:', err);
+        return [];
+      });
       setLevels(lvls || []);
       if (lvls && lvls.length > 0) {
         const targetLevel = lvls.find(l => (l._id || l.id) === selectedLevelId) || lvls[0];
@@ -336,7 +485,10 @@ export default function BBSPage() {
   // Load Members when level changes
   const loadMembers = async (levelId) => {
     try {
-      const mbrs = await bbsApi.getMembers(levelId);
+      const mbrs = await bbsApi.getMembers(levelId).catch((err) => {
+        console.warn('Could not fetch BBS members:', err);
+        return [];
+      });
       setMembers(mbrs || []);
     } catch (err) {
       showToast(err.message || 'Failed to load structural members', 'error');
@@ -362,7 +514,7 @@ export default function BBSPage() {
     if (mode === 'edit' && project) {
       setProjectForm({
         name: project.name || '',
-        location: project.location || '',
+        location: formatLocation(project.location),
         description: project.description || '',
         status: project.status || 'Active'
       });
@@ -710,7 +862,8 @@ export default function BBSPage() {
   // Filtered projects
   const filteredProjects = projects.filter(p => {
     const q = searchQuery.toLowerCase();
-    return (p.name || '').toLowerCase().includes(q) || (p.location || '').toLowerCase().includes(q);
+    const locStr = formatLocation(p.location).toLowerCase();
+    return (p.name || '').toLowerCase().includes(q) || locStr.includes(q);
   });
 
   // Computed summary metrics
@@ -748,14 +901,21 @@ export default function BBSPage() {
         <div className="bbs-nav-tabs">
           <button
             className={`bbs-nav-tab ${activeMainTab === 'projects' ? 'active' : ''}`}
-            onClick={() => setActiveMainTab('projects')}
+            onClick={() => { setActiveMainTab('projects'); setShowSummaryDashboard(false); }}
           >
             <Building2 size={16} />
             <span>Projects & Members</span>
           </button>
           <button
+            className={`bbs-nav-tab ${activeMainTab === 'summary' ? 'active' : ''}`}
+            onClick={() => { setActiveMainTab('summary'); setShowSummaryDashboard(true); }}
+          >
+            <BarChart3 size={16} />
+            <span>Dynamic Summary</span>
+          </button>
+          <button
             className={`bbs-nav-tab ${activeMainTab === 'shapes' ? 'active' : ''}`}
-            onClick={() => setActiveMainTab('shapes')}
+            onClick={() => { setActiveMainTab('shapes'); setShowSummaryDashboard(false); }}
           >
             <Shapes size={16} />
             <span>Shape Library & CAD</span>
@@ -827,14 +987,21 @@ export default function BBSPage() {
         <div className="bbs-nav-tabs">
           <button
             className={`bbs-nav-tab ${activeMainTab === 'projects' ? 'active' : ''}`}
-            onClick={() => setActiveMainTab('projects')}
+            onClick={() => { setActiveMainTab('projects'); setShowSummaryDashboard(false); }}
           >
             <Building2 size={16} />
             <span>Projects & Members</span>
           </button>
           <button
+            className={`bbs-nav-tab ${activeMainTab === 'summary' ? 'active' : ''}`}
+            onClick={() => { setActiveMainTab('summary'); setShowSummaryDashboard(true); }}
+          >
+            <BarChart3 size={16} />
+            <span>Dynamic Summary</span>
+          </button>
+          <button
             className={`bbs-nav-tab ${activeMainTab === 'shapes' ? 'active' : ''}`}
-            onClick={() => setActiveMainTab('shapes')}
+            onClick={() => { setActiveMainTab('shapes'); setShowSummaryDashboard(false); }}
           >
             <Shapes size={16} />
             <span>Shape Library & CAD</span>
@@ -913,10 +1080,10 @@ export default function BBSPage() {
                           {project.status || 'Active'}
                         </span>
                       </div>
-                      {project.location ? (
+                      {formatLocation(project.location) ? (
                         <div className="bbs-card-location">
                           <MapPin size={14} />
-                          <span>{project.location}</span>
+                          <span>{formatLocation(project.location)}</span>
                         </div>
                       ) : (
                         <div className="bbs-card-location bbs-card-location-muted">
@@ -1090,12 +1257,149 @@ export default function BBSPage() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
+  // RENDER: PROJECT MATERIAL TAKE-OFF (MTO) VIEW (PHASE 2 & 3)
+  // ════════════════════════════════════════════════════════════════════════════
+  if (showProjectMto) {
+    return (
+      <div className="bbs-container" style={{ width: '100%', maxWidth: '1680px', margin: '0 auto', flex: 1, minWidth: 0 }}>
+        {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
+        <ProjectMtoView
+          project={projects.find(p => (p._id || p.id) === selectedProjectId) || activeProject || { name: 'Current Project', id: selectedProjectId }}
+          onClose={() => setShowProjectMto(false)}
+          showToast={showToast}
+          onNavigate={(targetView) => dispatch(setView(targetView))}
+        />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // RENDER: DYNAMIC BBS SUMMARY DASHBOARD
+  // ════════════════════════════════════════════════════════════════════════════
+  if (showSummaryDashboard || activeMainTab === 'summary') {
+    const curProject = projects.find(p => (p._id || p.id) === selectedProjectId) || activeProject || projects[0] || { name: 'Current Project', id: selectedProjectId || orgProjectId };
+    return (
+      <div className="bbs-container" style={{ width: '100%', maxWidth: '1680px', margin: '0 auto', flex: 1, minWidth: 0 }}>
+        {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
+
+        {/* Main BBS Tabs */}
+        <div className="bbs-nav-tabs">
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'projects' && !showSummaryDashboard ? 'active' : ''}`}
+            onClick={() => { setActiveMainTab('projects'); setShowSummaryDashboard(false); }}
+          >
+            <Building2 size={16} />
+            <span>Projects & Members</span>
+          </button>
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'summary' || showSummaryDashboard ? 'active' : ''}`}
+            onClick={() => { setActiveMainTab('summary'); setShowSummaryDashboard(true); }}
+          >
+            <BarChart3 size={16} />
+            <span>Dynamic Summary</span>
+          </button>
+          <button
+            className={`bbs-nav-tab ${activeMainTab === 'shapes' ? 'active' : ''}`}
+            onClick={() => { setActiveMainTab('shapes'); setShowSummaryDashboard(false); }}
+          >
+            <Shapes size={16} />
+            <span>Shape Library & CAD</span>
+          </button>
+        </div>
+
+        <BbsSummaryDashboard
+          project={curProject}
+          onClose={() => { setShowSummaryDashboard(false); setActiveMainTab('projects'); }}
+          onNavigateToMember={(rawMember) => {
+            setShowSummaryDashboard(false);
+            setActiveMainTab('projects');
+            handleOpenMemberWorkspace(rawMember);
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // RENDER: DEDICATED STRUCTURAL MEMBER DETAILING WORKSPACES (PHASE 1)
+  // ════════════════════════════════════════════════════════════════════════════
+  if (activeWorkspaceMember) {
+    const curBlock = blocks.find(b => (b._id || b.id) === selectedBlockId);
+    const curLevel = levels.find(l => (l._id || l.id) === selectedLevelId);
+    const curProj = projects.find(p => (p._id || p.id) === selectedProjectId) || activeProject || {};
+
+    const commonProps = {
+      member: activeWorkspaceMember,
+      project: curProj,
+      block: curBlock || {},
+      level: curLevel || {},
+      onClose: () => setActiveWorkspaceMember(null),
+      onSaveSchedule: handleSaveSchedule,
+      onExportPDF: handleExportMemberPDF,
+      onPushOptimizer: handlePushMemberOptimizer,
+      showToast
+    };
+
+    const type = (activeWorkspaceMember.memberType || '').toUpperCase();
+
+    return (
+      <div className="bbs-container" style={{ width: '100%', maxWidth: '1720px', margin: '0 auto', flex: 1, minWidth: 0 }}>
+        {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
+        {type === 'COLUMN' && <ColumnWorkspace {...commonProps} />}
+        {type === 'BEAM' && <BeamWorkspace {...commonProps} />}
+        {type === 'SLAB' && <SlabWorkspace {...commonProps} />}
+        {type === 'FOOTING' && <FootingWorkspace {...commonProps} />}
+        {(type === 'RETAINING_WALL' || type === 'RETAINING WALL' || type === 'WALL') && (
+          <RetainingWallWorkspace {...commonProps} />
+        )}
+        {!['COLUMN', 'BEAM', 'SLAB', 'FOOTING', 'RETAINING_WALL', 'RETAINING WALL', 'WALL'].includes(type) && (
+          <div className="bbs-card" style={{ padding: '40px', textAlign: 'center', background: '#fff', borderRadius: '10px' }}>
+            <h3 style={{ color: '#0f172a', marginBottom: '8px' }}>Member Detailing Workspace</h3>
+            <p style={{ color: '#64748b', marginBottom: '20px' }}>
+              Standard dedicated workspaces are active for Column, Beam, Slab, Footing, and Retaining Wall.
+              <br />For <strong>{activeWorkspaceMember.memberType}</strong>, default detailing is being prepared.
+            </p>
+            <button className="bbs-btn bbs-btn-secondary" onClick={() => setActiveWorkspaceMember(null)}>
+              Return to Members
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
   // RENDER: PROJECT PROFILE & HIERARCHY WORKSPACE
   // ════════════════════════════════════════════════════════════════════════════
   return (
     <div className="bbs-container" style={{ width: '100%', maxWidth: '1680px', margin: '0 auto', flex: 1, minWidth: 0 }}>
       {/* Toast alert */}
       {toast && <div className={`bbs-toast bbs-toast-${toast.type}`}>{toast.message}</div>}
+
+      {/* Main BBS Tabs */}
+      <div className="bbs-nav-tabs">
+        <button
+          className={`bbs-nav-tab ${activeMainTab === 'projects' && !showSummaryDashboard ? 'active' : ''}`}
+          onClick={() => { setActiveMainTab('projects'); setShowSummaryDashboard(false); }}
+        >
+          <Building2 size={16} />
+          <span>Projects & Members</span>
+        </button>
+        <button
+          className={`bbs-nav-tab ${activeMainTab === 'summary' || showSummaryDashboard ? 'active' : ''}`}
+          onClick={() => { setActiveMainTab('summary'); setShowSummaryDashboard(true); }}
+        >
+          <BarChart3 size={16} />
+          <span>Dynamic Summary</span>
+        </button>
+        <button
+          className={`bbs-nav-tab ${activeMainTab === 'shapes' ? 'active' : ''}`}
+          onClick={() => { setActiveMainTab('shapes'); setShowSummaryDashboard(false); }}
+        >
+          <Shapes size={16} />
+          <span>Shape Library & CAD</span>
+        </button>
+      </div>
 
       {/* Breadcrumbs Navigation */}
       <div className="bbs-breadcrumbs">
@@ -1130,10 +1434,10 @@ export default function BBSPage() {
               <h1 className="bbs-banner-title">{activeProject?.name}</h1>
               <StatusBadge status={activeProject?.status || 'Active'} />
             </div>
-            {activeProject?.location && (
+            {formatLocation(activeProject?.location) && (
               <div className="bbs-banner-meta">
                 <MapPin size={14} />
-                <span>{activeProject.location}</span>
+                <span>{formatLocation(activeProject.location)}</span>
                 {activeProject?.description && (
                   <>
                     <span className="bbs-banner-dot">•</span>
@@ -1164,6 +1468,24 @@ export default function BBSPage() {
           >
             <Edit3 size={16} />
             <span>Edit Project</span>
+          </button>
+          <button 
+            className="bbs-btn bbs-btn-secondary" 
+            onClick={() => setShowProjectMto(true)}
+            title="Open Project-wide Material Take-Off Summary & Optimizer Export"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Scale size={16} />
+            <span>Project MTO</span>
+          </button>
+          <button 
+            className="bbs-btn bbs-btn-secondary" 
+            onClick={() => setShowSummaryDashboard(true)}
+            title="Open Dynamic Multi-Filter BBS Summary Dashboard"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <BarChart3 size={16} />
+            <span>Dynamic Summary</span>
           </button>
         </div>
       </div>
@@ -1443,6 +1765,15 @@ export default function BBSPage() {
                             </button>
                           </td>
                           <td className="bbs-td-actions">
+                            <button
+                              className="bbs-btn bbs-btn-sm bbs-btn-primary"
+                              onClick={() => handleOpenMemberWorkspace(member)}
+                              title={`Open Detailing Workspace for ${member.memberType} ${member.displayId}`}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 8px', fontSize: '12px' }}
+                            >
+                              <Calculator size={13} />
+                              <span>Open BBS</span>
+                            </button>
                             <button 
                               className="bbs-icon-btn" 
                               title="Edit Member"

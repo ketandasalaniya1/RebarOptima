@@ -10,7 +10,7 @@
  * Supports rule versioning, plug-in rule sets, traceability, and strict separation from geometry.
  */
 
-import { CANONICAL_UNITS, degToRad } from './calculationUnits';
+import { CANONICAL_UNITS, degToRad } from './calculationUnits.js';
 
 /**
  * Standard Steel Unit Weight Calculation (kg/m)

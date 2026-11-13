@@ -16,6 +16,90 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
     return ctx.companyId;
   };
 
+  const toObjId = (id: any): ObjectId | null => {
+    if (!id) return null;
+    if (id instanceof ObjectId) return id;
+    const str = String(id).trim();
+    if (ObjectId.isValid(str) && str.length === 24) {
+      try { return new ObjectId(str); } catch { return null; }
+    }
+    return null;
+  };
+
+  const normalizeBlockName = (name: string) => (name || '').trim().toLowerCase();
+
+  const syncAndListBbsBlocks = async (db: any, companyId: string, projectId: string) => {
+    const pIdStr = String(projectId);
+    const pIdObj = toObjId(projectId);
+    const pIdFilter = pIdObj
+      ? { $or: [{ projectId: pIdStr }, { projectId: pIdObj }] }
+      : { projectId: pIdStr };
+
+    // 1. Fetch active blocks from project_blocks (canonical)
+    const pBlocks = await db.collection('project_blocks').find({
+      ...pIdFilter,
+      isDeleted: { $ne: true },
+      status: { $ne: 'inactive' }
+    }).sort({ displayOrder: 1, createdAt: 1 }).toArray().catch(() => []);
+
+    // 2. Fetch active blocks from bbs_blocks
+    const bBlocks = await db.collection('bbs_blocks').find({
+      ...pIdFilter,
+      isDeleted: { $ne: true }
+    }).sort({ displayOrder: 1, createdAt: 1 }).toArray().catch(() => []);
+
+    const now = new Date();
+    const bBlockIdMap = new Map<string, any>(bBlocks.map((b: any) => [String(b._id), b]));
+    const bBlockNameMap = new Map<string, any>(bBlocks.map((b: any) => [normalizeBlockName(b.name), b]));
+
+    // 3. For any block in project_blocks that isn't in bbs_blocks (or differs), upsert into bbs_blocks
+    for (const pb of pBlocks) {
+      const pbIdStr = String(pb._id);
+      const existing = bBlockIdMap.get(pbIdStr) || bBlockNameMap.get(normalizeBlockName(pb.name));
+
+      if (!existing) {
+        const newBbsBlock = {
+          _id: pb._id,
+          companyId: String(pb.companyId || companyId),
+          projectId: pIdStr,
+          name: pb.name,
+          code: pb.code || `BLK-${pb.displayOrder || 1}`,
+          description: pb.description || '',
+          displayOrder: pb.displayOrder || 1,
+          isDeleted: false,
+          createdAt: pb.createdAt || now,
+          updatedAt: pb.updatedAt || now
+        };
+        await db.collection('bbs_blocks').updateOne(
+          { _id: pb._id },
+          { $set: newBbsBlock },
+          { upsert: true }
+        ).catch(() => { });
+        bBlocks.push(newBbsBlock);
+        bBlockIdMap.set(pbIdStr, newBbsBlock);
+        bBlockNameMap.set(normalizeBlockName(pb.name), newBbsBlock);
+      } else if (existing.name !== pb.name || existing.code !== pb.code || existing.displayOrder !== pb.displayOrder) {
+        await db.collection('bbs_blocks').updateOne(
+          { _id: existing._id },
+          {
+            $set: {
+              name: pb.name,
+              code: pb.code || existing.code,
+              displayOrder: pb.displayOrder || existing.displayOrder,
+              description: pb.description !== undefined ? pb.description : existing.description,
+              updatedAt: now
+            }
+          }
+        ).catch(() => { });
+        existing.name = pb.name;
+        existing.code = pb.code || existing.code;
+        existing.displayOrder = pb.displayOrder || existing.displayOrder;
+      }
+    }
+
+    return bBlocks.sort((a: any, b: any) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  };
+
   const enrichBbsStats = async (db: any, project: any) => {
     const projectId = String(project._id || project.id);
     // Include legacy module id if bridged
@@ -26,10 +110,11 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
     const ids = [projectId];
     if (legacy) ids.push(String(legacy._id));
 
-    const [blocks, levels, members] = await Promise.all([
-      db.collection('bbs_blocks').find({ projectId: { $in: ids } }).toArray(),
-      db.collection('bbs_levels').find({ projectId: { $in: ids } }).toArray(),
-      db.collection('bbs_members').find({ projectId: { $in: ids } }).toArray(),
+    const [blocks, levels, members, pBlocks] = await Promise.all([
+      db.collection('bbs_blocks').find({ projectId: { $in: ids }, isDeleted: { $ne: true } }).toArray().catch(() => []),
+      db.collection('bbs_levels').find({ projectId: { $in: ids } }).toArray().catch(() => []),
+      db.collection('bbs_members').find({ projectId: { $in: ids } }).toArray().catch(() => []),
+      db.collection('project_blocks').find({ projectId: { $in: ids }, isDeleted: { $ne: true }, status: { $ne: 'inactive' } }).toArray().catch(() => []),
     ]);
 
     let completionPercentage = 0;
@@ -38,10 +123,12 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       completionPercentage = Math.round(totalProgress / members.length);
     }
 
+    const blockCount = Math.max(blocks.length, pBlocks.length);
+
     return {
       ...project,
       id: projectId,
-      blockCount: blocks.length,
+      blockCount,
       levelCount: levels.length,
       memberCount: members.length,
       completionPercentage,
@@ -149,22 +236,22 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
   // 2. BBS BLOCKS
   // ════════════════════════════════════════════════════════════════════════════
 
-  // GET blocks for a project
+  // GET blocks for a project (synced with canonical project_blocks)
   router.get('/projects/:projectId/blocks', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const ctx = await resolveUserAndCompany(req, db);
       const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
 
-      const blocks = await db.collection('bbs_blocks').find({ projectId }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
+      const blocks = await syncAndListBbsBlocks(db, ctx.companyId, projectId);
 
       // Aggregate counts for each block
       const enriched = await Promise.all(
         blocks.map(async (b: any) => {
           const blockId = b._id.toString();
           const [levels, members] = await Promise.all([
-            db.collection('bbs_levels').find({ blockId }).toArray(),
-            db.collection('bbs_members').find({ blockId }).toArray()
+            db.collection('bbs_levels').find({ blockId }).toArray().catch(() => []),
+            db.collection('bbs_members').find({ blockId }).toArray().catch(() => [])
           ]);
           let completionPercentage = 0;
           if (members.length > 0) {
@@ -186,34 +273,59 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
     }
   });
 
-  // POST create a block
+  // POST create a block (persisted in bbs_blocks and synchronized to project_blocks)
   router.post('/projects/:projectId/blocks', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const ctx = await resolveUserAndCompany(req, db);
       const companyId = ctx.companyId;
       const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
-      const { name, code, description } = req.body;
+      const { name, code, description, displayOrder } = req.body;
 
       if (!name || !name.trim()) {
         return res.status(400).json({ message: 'Block Name is required' });
       }
 
-      const existingCount = await db.collection('bbs_blocks').countDocuments({ projectId });
+      const existingCount = await db.collection('bbs_blocks').countDocuments({ projectId }).catch(() => 0);
+      const nextOrder = displayOrder !== undefined ? Number(displayOrder) : existingCount + 1;
       const now = new Date();
+      const blockId = new ObjectId();
       const newBlock = {
+        _id: blockId,
         projectId,
         companyId,
         name: name.trim(),
-        code: code ? code.trim() : '',
+        code: code ? code.trim() : `BLK-${nextOrder}`,
         description: description ? description.trim() : '',
-        displayOrder: existingCount + 1,
+        displayOrder: nextOrder,
+        isDeleted: false,
         createdAt: now,
         updatedAt: now
       };
 
-      const result = await db.collection('bbs_blocks').insertOne(newBlock);
-      const created = await db.collection('bbs_blocks').findOne({ _id: result.insertedId });
+      await db.collection('bbs_blocks').insertOne(newBlock);
+
+      // Also synchronize into canonical project_blocks
+      const projectBlockDoc = {
+        _id: blockId,
+        companyId,
+        projectId,
+        name: name.trim(),
+        code: newBlock.code,
+        description: newBlock.description,
+        displayOrder: nextOrder,
+        isDeleted: false,
+        status: 'active',
+        createdAt: now,
+        updatedAt: now
+      };
+      await db.collection('project_blocks').updateOne(
+        { _id: blockId },
+        { $set: projectBlockDoc },
+        { upsert: true }
+      ).catch(() => { });
+
+      const created = await db.collection('bbs_blocks').findOne({ _id: blockId });
       res.status(201).json(created);
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error creating block' });
@@ -233,36 +345,39 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       if (description !== undefined) updateData.description = description.trim();
       if (displayOrder !== undefined) updateData.displayOrder = Number(displayOrder);
 
-      await db.collection('bbs_blocks').updateOne(
-        { $or: [{ _id: new ObjectId(id) }, { _id: id }] },
-        { $set: updateData }
-      );
+      const blockOid = toObjId(id);
+      const idFilter = blockOid ? { $or: [{ _id: blockOid }, { _id: id }] } : { _id: id };
 
-      const updated = await db.collection('bbs_blocks').findOne({
-        $or: [{ _id: new ObjectId(id) }, { _id: id }]
-      });
+      await Promise.all([
+        db.collection('bbs_blocks').updateOne(idFilter, { $set: updateData }),
+        db.collection('project_blocks').updateOne(idFilter, { $set: updateData }).catch(() => { })
+      ]);
+
+      const updated = await db.collection('bbs_blocks').findOne(idFilter);
       res.json(updated);
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error updating block' });
     }
   });
 
-  // DELETE a block (cascades to levels, members)
+  // DELETE a block (cascades to levels, members, and soft-deletes in project_blocks)
   router.delete('/blocks/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
       const id = req.params.id;
 
-      const block = await db.collection('bbs_blocks').findOne({
-        $or: [{ _id: new ObjectId(id) }, { _id: id }]
-      });
+      const blockOid = toObjId(id);
+      const idFilter = blockOid ? { $or: [{ _id: blockOid }, { _id: id }] } : { _id: id };
+
+      const block = await db.collection('bbs_blocks').findOne(idFilter);
 
       if (!block) return res.status(404).json({ message: 'Block not found' });
 
       const blockId = block._id.toString();
 
       await Promise.all([
-        db.collection('bbs_blocks').deleteMany({ $or: [{ _id: new ObjectId(id) }, { _id: id }] }),
+        db.collection('bbs_blocks').deleteMany(idFilter),
+        db.collection('project_blocks').updateOne(idFilter, { $set: { isDeleted: true, status: 'inactive', updatedAt: new Date() } }).catch(() => { }),
         db.collection('bbs_levels').deleteMany({ blockId }),
         db.collection('bbs_members').deleteMany({ blockId })
       ]);
@@ -444,7 +559,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       const levelId = req.params.levelId;
 
       const rawMembers = await db.collection('bbs_members').find({ levelId }).toArray();
-      const members = rawMembers.sort((a: any, b: any) => 
+      const members = rawMembers.sort((a: any, b: any) =>
         (a.displayId || '').localeCompare(b.displayId || '', undefined, { numeric: true, sensitivity: 'base' })
       );
       res.json(members);
@@ -557,7 +672,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       await db.collection('bbs_members').insertMany(newDocs);
 
       const rawAll = await db.collection('bbs_members').find({ levelId }).toArray();
-      const allLevelMembers = rawAll.sort((a: any, b: any) => 
+      const allLevelMembers = rawAll.sort((a: any, b: any) =>
         (a.displayId || '').localeCompare(b.displayId || '', undefined, { numeric: true, sensitivity: 'base' })
       );
       res.status(201).json(allLevelMembers);
@@ -1212,6 +1327,397 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       res.status(201).json({ ...newInstance, _id: result.insertedId });
     } catch (err: any) {
       res.status(500).json({ message: err.message || 'Error creating shape instance' });
+    }
+  });
+
+  // GET member detailing configuration & active schedule instances
+  router.get('/members/:memberId/detailing', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const memberId = req.params.memberId;
+      const memFilter = ObjectId.isValid(memberId) && memberId.length === 24
+        ? { $or: [{ _id: new ObjectId(memberId) }, { _id: memberId }] }
+        : { _id: memberId };
+      const member = await db.collection('bbs_members').findOne(memFilter);
+      if (!member) {
+        return res.status(404).json({ message: 'Structural member not found' });
+      }
+
+      // STRICT REVISION FILTERING: Return only instances matching the committed activeRevision
+      const activeRevision = member.activeRevision;
+      let instances: any[] = [];
+      if (activeRevision) {
+        instances = await db.collection('bbs_shape_instances').find({
+          memberId: String(memberId),
+          revisionId: activeRevision
+        }).toArray();
+      }
+
+      res.json({
+        member,
+        detailingConfig: member.detailingConfig || {},
+        instances: instances || [],
+        activeRevision: activeRevision || null
+      });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error loading member detailing' });
+    }
+  });
+
+  // POST save member schedule atomically (Staged revision write protocol)
+  router.post('/members/:memberId/schedule', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const memberId = req.params.memberId;
+      const { detailingConfig, dimensions, rebarItems, summary } = req.body;
+
+      const memFilter = ObjectId.isValid(memberId) && memberId.length === 24
+        ? { $or: [{ _id: new ObjectId(memberId) }, { _id: memberId }] }
+        : { _id: memberId };
+      const member = await db.collection('bbs_members').findOne(memFilter);
+      if (!member) {
+        return res.status(404).json({ message: 'Structural member not found' });
+      }
+
+      const revisionId = `rev_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const now = new Date();
+
+      // Prepare instances with explicit revisionId
+      const instanceDocs = Array.isArray(rebarItems) ? rebarItems.map((item: any, idx: number) => ({
+        companyId,
+        memberId: String(memberId),
+        projectId: String(member.projectId || ''),
+        blockId: String(member.blockId || ''),
+        levelId: String(member.levelId || ''),
+        revisionId,
+        barMark: item.barMark || String(idx + 1).padStart(2, '0'),
+        label: item.description || item.label || 'Rebar',
+        description: item.description || item.label || 'Rebar',
+        shapeCode: item.shapeCode || 'Shape 00',
+        shapeId: item.shapeId || item.shapeCode || 'Shape 00',
+        shapeVersion: '1.0',
+        barDiameter: Number(item.diameter || item.barDiameter || 16),
+        quantity: Number(item.quantity || item.bar_count || 1),
+        spacing: Number(item.spacing || 0),
+        cut_length: Number(item.cut_length || 0),
+        total_length: Number(item.total_length || 0),
+        unit_weight: Number(item.unit_weight || 0),
+        total_weight: Number(item.total_weight || 0),
+        parameterValues: item.parameterValues || item.part_dimensions || {},
+        calculationSnapshot: item.calculationTrace || item.calculationSnapshot || {},
+        ruleClassification: item.ruleClassification || 'DESIGNER_PROVIDED_VALUE',
+        createdAt: now,
+        updatedAt: now
+      })) : [];
+
+      // 1. Stage new instances under unique revisionId
+      if (instanceDocs.length > 0) {
+        await db.collection('bbs_shape_instances').insertMany(instanceDocs);
+      }
+
+      // 2. Commit member update with activeRevision
+      const totalWeight = summary?.totalSteelWeight !== undefined
+        ? Number(summary.totalSteelWeight)
+        : instanceDocs.reduce((sum: number, doc: any) => sum + (doc.total_weight || 0), 0);
+
+      const concVolume = summary?.concreteVolume !== undefined
+        ? Number(summary.concreteVolume)
+        : (member.concrete_volume || 0);
+
+      const updatePayload: any = {
+        detailingConfig: detailingConfig || {},
+        total_steel_weight: Math.round(totalWeight * 100) / 100,
+        concrete_volume: Math.round(concVolume * 1000) / 1000,
+        completionPercentage: 100,
+        status: 'Calculated',
+        activeRevision: revisionId,
+        updatedAt: now
+      };
+      if (dimensions) {
+        updatePayload.dimensions = dimensions;
+      }
+
+      await db.collection('bbs_members').updateOne(memFilter, { $set: updatePayload });
+
+      // 3. Clean up prior superseded revisions safely
+      await db.collection('bbs_shape_instances').deleteMany({
+        memberId: String(memberId),
+        revisionId: { $ne: revisionId }
+      }).catch((cleanErr: any) => {
+        console.warn('Non-fatal cleanup note:', cleanErr?.message);
+      });
+
+      const updatedMember = await db.collection('bbs_members').findOne(memFilter);
+
+      res.status(200).json({
+        success: true,
+        member: updatedMember,
+        revisionId,
+        instancesCount: instanceDocs.length,
+        totalSteelWeight: updatePayload.total_steel_weight
+      });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error saving member schedule' });
+    }
+  });
+
+  // GET Project Material Take-Off (MTO) Roll-Up
+  router.get('/projects/:projectId/mto', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const { projectId, project } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
+
+      // Fetch active members
+      const members = await db.collection('bbs_members').find({ projectId }).toArray();
+
+      // STRICT MTO ISOLATION: Build exact pairs of { memberId, revisionId: member.activeRevision }
+      const activeMemberRevisions = members
+        .filter((m: any) => m.activeRevision && String(m.activeRevision).trim() !== '')
+        .map((m: any) => ({
+          memberId: String(m._id || m.id),
+          revisionId: String(m.activeRevision)
+        }));
+
+      let instances: any[] = [];
+      if (activeMemberRevisions.length > 0) {
+        instances = await db.collection('bbs_shape_instances').find({
+          $or: activeMemberRevisions
+        }).toArray();
+      }
+
+      // Aggregate by diameter
+      const diameterMap: Record<number, { diameter: number; totalPieces: number; totalLengthM: number; totalWeightKg: number }> = {};
+      const STANDARD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32, 40];
+      STANDARD_DIAMETERS.forEach(d => {
+        diameterMap[d] = { diameter: d, totalPieces: 0, totalLengthM: 0, totalWeightKg: 0 };
+      });
+
+      let grandTotalPieces = 0;
+      let grandTotalLengthM = 0;
+      let grandTotalWeightKg = 0;
+
+      instances.forEach((inst: any) => {
+        const d = Number(inst.barDiameter || inst.diameter || 16);
+        const pcs = Number(inst.quantity || inst.bar_count || 0);
+        const cutMm = Number(inst.cut_length || 0);
+        const lenM = (pcs * cutMm) / 1000;
+        const wtKg = Number(inst.total_weight || 0) || (lenM * (Math.pow(d, 2) / 162.28));
+
+        if (!diameterMap[d]) {
+          diameterMap[d] = { diameter: d, totalPieces: 0, totalLengthM: 0, totalWeightKg: 0 };
+        }
+        diameterMap[d].totalPieces += pcs;
+        diameterMap[d].totalLengthM += lenM;
+        diameterMap[d].totalWeightKg += wtKg;
+
+        grandTotalPieces += pcs;
+        grandTotalLengthM += lenM;
+        grandTotalWeightKg += wtKg;
+      });
+
+      const mtoSummary = Object.values(diameterMap)
+        .filter((row: any) => row.totalPieces > 0 || STANDARD_DIAMETERS.slice(0, 6).includes(row.diameter))
+        .map((row: any) => ({
+          ...row,
+          totalLengthM: Math.round(row.totalLengthM * 100) / 100,
+          totalWeightKg: Math.round(row.totalWeightKg * 100) / 100,
+          totalWeightMT: Math.round((row.totalWeightKg / 1000) * 1000) / 1000
+        }));
+
+      res.json({
+        project,
+        mto: mtoSummary,
+        summary: {
+          totalMembers: members.length,
+          calculatedMembers: members.filter((m: any) => m.completionPercentage === 100 || m.status === 'Calculated').length,
+          totalPieces: grandTotalPieces,
+          totalLengthM: Math.round(grandTotalLengthM * 100) / 100,
+          totalWeightKg: Math.round(grandTotalWeightKg * 100) / 100,
+          totalTonnageMT: Math.round((grandTotalWeightKg / 1000) * 1000) / 1000
+        }
+      });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error generating project MTO' });
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // 7. COMPATIBILITY & DASHBOARD MATRIX ENDPOINTS
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // Compatibility: GET all levels for a project
+  router.get('/projects/:projectId/levels', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
+      const blocks = await syncAndListBbsBlocks(db, ctx.companyId, projectId);
+      const blockIds = blocks.map((b: any) => String(b._id));
+      const levels = await db.collection('bbs_levels').find({
+        $or: [{ projectId }, { blockId: { $in: blockIds } }]
+      }).toArray().catch(() => []);
+      res.json(levels);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching project levels' });
+    }
+  });
+
+  // Compatibility: GET dashboard matrix for a project
+  router.get('/projects/:projectId/matrix', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const { projectId, project } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
+      const blocks = await syncAndListBbsBlocks(db, ctx.companyId, projectId);
+      const blockIds = blocks.map((b: any) => String(b._id));
+      const [levels, members] = await Promise.all([
+        db.collection('bbs_levels').find({
+          $or: [{ projectId }, { blockId: { $in: blockIds } }]
+        }).toArray().catch(() => []),
+        db.collection('bbs_members').find({
+          $or: [{ projectId }, { blockId: { $in: blockIds } }]
+        }).toArray().catch(() => [])
+      ]);
+
+      const totalSteelWeight = members.reduce((sum: number, m: any) => sum + (Number(m.total_steel_weight) || 0), 0);
+      const totalConcreteVolume = members.reduce((sum: number, m: any) => sum + (Number(m.concrete_volume) || 0), 0);
+      const totalMembers = members.length;
+      const calculatedMembers = members.filter((m: any) => m.completionPercentage === 100 || m.status === 'Calculated').length;
+
+      res.json({
+        project,
+        blocks,
+        levels,
+        members,
+        kpis: {
+          totalSteelWeight: Math.round(totalSteelWeight * 100) / 100,
+          totalSteelWeightMT: Math.round((totalSteelWeight / 1000) * 100) / 100,
+          totalConcreteVolume: Math.round(totalConcreteVolume * 100) / 100,
+          totalMembers,
+          calculatedMembers,
+          remainingMembers: totalMembers - calculatedMembers,
+          progressPercent: totalMembers > 0 ? Math.round((calculatedMembers / totalMembers) * 100) : 0,
+        }
+      });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching dashboard matrix' });
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // DYNAMIC BBS SUMMARY DASHBOARD ENDPOINT
+  // Returns synchronized blocks, levels, calculated members and strictly active revision shape instances
+  // ════════════════════════════════════════════════════════════════════════════
+  router.get('/projects/:projectId/summary-dashboard', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const { projectId, project } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
+      const blocks = await syncAndListBbsBlocks(db, ctx.companyId, projectId);
+      const blockIds = blocks.map((b: any) => String(b._id));
+
+      const [levels, members] = await Promise.all([
+        db.collection('bbs_levels').find({
+          $or: [{ projectId }, { blockId: { $in: blockIds } }]
+        }).sort({ order: 1, createdAt: 1 }).toArray().catch(() => []),
+        db.collection('bbs_members').find({
+          $or: [{ projectId }, { blockId: { $in: blockIds } }]
+        }).toArray().catch(() => [])
+      ]);
+
+      // Strict activeRevision resolution
+      const memberMap = new Map();
+      members.forEach((m: any) => {
+        memberMap.set(String(m._id || m.id), m);
+      });
+
+      const activeMemberRevisions = members
+        .filter((m: any) => m.activeRevision && String(m.activeRevision).trim() !== '')
+        .map((m: any) => ({
+          memberId: String(m._id || m.id),
+          revisionId: String(m.activeRevision)
+        }));
+
+      let rawInstances: any[] = [];
+      if (activeMemberRevisions.length > 0) {
+        rawInstances = await db.collection('bbs_shape_instances').find({
+          $or: activeMemberRevisions
+        }).toArray();
+      }
+
+      // Format and enrich instances with blockId and levelId from member if missing
+      const instances = rawInstances.map((inst: any) => {
+        const mem = memberMap.get(String(inst.memberId));
+        return {
+          _id: String(inst._id),
+          memberId: String(inst.memberId),
+          blockId: String(inst.blockId || mem?.blockId || ''),
+          levelId: String(inst.levelId || mem?.levelId || ''),
+          revisionId: String(inst.revisionId),
+          barMark: inst.barMark || '',
+          description: inst.description || inst.label || 'Rebar',
+          shapeCode: inst.shapeCode || 'Shape 00',
+          shapeId: inst.shapeId || '',
+          diameter: Number(inst.barDiameter || inst.diameter || 16),
+          quantity: Number(inst.quantity || inst.bar_count || 1),
+          spacing: Number(inst.spacing || 0),
+          cut_length: Number(inst.cut_length || 0),
+          total_length: Number(inst.total_length || 0),
+          unit_weight: Number(inst.unit_weight || 0),
+          total_weight: Number(inst.total_weight || 0),
+          ruleClassification: inst.ruleClassification || 'DESIGNER_PROVIDED_VALUE',
+          ruleSource: inst.ruleSource || '',
+          parameterValues: inst.parameterValues || {}
+        };
+      });
+
+      res.json({
+        project,
+        blocks: blocks.map((b: any) => ({
+          _id: String(b._id),
+          id: String(b._id),
+          name: b.name,
+          description: b.description || ''
+        })),
+        levels: levels.map((l: any) => ({
+          _id: String(l._id),
+          id: String(l._id),
+          blockId: String(l.blockId),
+          name: l.name,
+          floorNumber: l.floorNumber,
+          order: l.order ?? 0
+        })),
+        members: members.map((m: any) => ({
+          _id: String(m._id || m.id),
+          id: String(m._id || m.id),
+          blockId: String(m.blockId || ''),
+          levelId: String(m.levelId || ''),
+          displayId: m.displayId || m.member_id || 'M1',
+          memberType: m.memberType || 'Member',
+          status: m.status || 'Pending',
+          completionPercentage: m.completionPercentage || 0,
+          activeRevision: m.activeRevision || null,
+          total_steel_weight: Number(m.total_steel_weight) || 0,
+          concrete_volume: Number(m.concrete_volume) || 0,
+          dimensions: m.dimensions || {}
+        })),
+        instances
+      });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching BBS Summary Dashboard data' });
+    }
+  });
+
+  // Compatibility: GET templates
+  router.get('/templates', authMiddleware, async (_req: any, res: any) => {
+    try {
+      const db = getDb();
+      const templates = await db.collection('bbs_templates').find({}).toArray().catch(() => []);
+      res.json(templates);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message || 'Error fetching templates' });
     }
   });
 

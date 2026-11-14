@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Building2, MapPin, Calendar, Clock, DollarSign, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { formatLocation } from '../../../utils/formatLocation';
 
 export default function PmProjectsView({ projects, selectedProjectId, onSelectProject, onRefreshProjects }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -88,7 +89,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
               <div className="pm-p-meta">
                 <div className="pm-meta-line">
                   <MapPin size={14} className="pm-text-label" />
-                  <span>{p.location || 'Site Location Unspecified'}</span>
+                  <span>{formatLocation(p.location, 'Site Location Unspecified')}</span>
                 </div>
                 <div className="pm-meta-line">
                   <Calendar size={14} className="pm-text-label" />

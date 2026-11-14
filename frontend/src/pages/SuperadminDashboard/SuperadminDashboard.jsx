@@ -9,6 +9,7 @@ import {
   Plus, Edit3, Eye, Layers, Trash2, Bell, Mail
 } from 'lucide-react';
 import { developerApi } from '../../utils/api';
+import { formatLocation } from '../../utils/formatLocation';
 import './SuperadminDashboard.css';
 import WebPushPanel from './components/WebPushPanel';
 import SmtpPanel from './components/SmtpPanel';
@@ -394,7 +395,7 @@ export default function SuperadminDashboard() {
                                       <div className="dev-detail-grid">
                                         <div><span className="dev-lbl">Name:</span> {companyDetail.company?.name}</div>
                                         <div><span className="dev-lbl">Project:</span> {companyDetail.company?.projectName || '—'}</div>
-                                        <div><span className="dev-lbl">Location:</span> {companyDetail.company?.location || '—'}</div>
+                                        <div><span className="dev-lbl">Location:</span> {formatLocation(companyDetail.company?.location, '—')}</div>
                                         <div><span className="dev-lbl">Status:</span> {companyDetail.company?.status || 'active'}</div>
                                       </div>
                                     </div>

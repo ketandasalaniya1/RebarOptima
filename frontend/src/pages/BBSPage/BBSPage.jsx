@@ -14,6 +14,7 @@ import ShapeLibrary from './ShapeLibrary';
 import CADEditor from './cad/CADEditor';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState, StatusBadge } from '../../components/ui';
+import { formatLocation } from '../../utils/formatLocation';
 import './BBSPage.css';
 import './workspaces/Workspaces.css';
 import {
@@ -63,29 +64,7 @@ const DEFAULT_PREFIX_MAP = {
   'Special Requirement': 'SR'
 };
 
-// Resilient location string formatter (handles both string addresses and {latitude, longitude} objects)
-const formatLocation = (loc) => {
-  if (!loc) return '';
-  if (typeof loc === 'string') return loc;
-  if (typeof loc === 'object') {
-    if (loc.address) return String(loc.address);
-    if (loc.city && loc.state) return `${loc.city}, ${loc.state}`;
-    if (loc.city) return String(loc.city);
-    if (loc.name) return String(loc.name);
-    const hasLat = loc.latitude !== undefined && loc.latitude !== null;
-    const hasLng = loc.longitude !== undefined && loc.longitude !== null;
-    if (hasLat && hasLng) {
-      const latNum = Number(loc.latitude);
-      const lngNum = Number(loc.longitude);
-      if (!isNaN(latNum) && !isNaN(lngNum)) {
-        return `${latNum.toFixed(4)}, ${lngNum.toFixed(4)}`;
-      }
-      return `${loc.latitude}, ${loc.longitude}`;
-    }
-    return '';
-  }
-  return String(loc);
-};
+
 
 export default function BBSPage() {
   const dispatch = useDispatch();

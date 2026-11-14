@@ -9,6 +9,7 @@ import {
   Settings,
   X
 } from 'lucide-react';
+import { formatLocation } from '../../../utils/formatLocation';
 
 export default function InternalProjectsView({
   projects,
@@ -83,7 +84,7 @@ export default function InternalProjectsView({
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
                 <MapPin size={14} color="#64748b" />
-                <span>{p.location || 'Site Location'}</span>
+                <span>{formatLocation(p.location, 'Site Location')}</span>
               </div>
 
               <p style={{ fontSize: '0.78rem', color: 'var(--text-label)', margin: 0, lineHeight: 1.45, minHeight: '38px' }}>

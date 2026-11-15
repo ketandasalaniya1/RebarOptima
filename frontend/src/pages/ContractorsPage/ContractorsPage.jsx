@@ -14,7 +14,7 @@ import {
 import { contractorsApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState } from '../../components/ui';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import './ContractorsPage.css';
 
 const ATTENDANCE_OPTIONS = [
@@ -61,6 +61,7 @@ export default function ContractorsPage() {
   const [mode, setMode] = useState('list'); // list | form
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -362,7 +363,8 @@ export default function ContractorsPage() {
   }
 
   if (loading && mode === 'list') {
-    return <LoadingSpinner message="Loading contractors…" minHeight="50vh" />;
+    if (showSkeleton) return <TableSkeleton rows={6} cols={5} />;
+    if (loading) return null;
   }
 
   return (

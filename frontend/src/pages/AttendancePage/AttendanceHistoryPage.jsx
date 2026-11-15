@@ -4,7 +4,7 @@ import { AlertTriangle } from 'lucide-react';
 import { attendanceApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState } from '../../components/ui';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { selectHasFeature } from '../../store/slices/permissionsSlice';
 import { SOURCES, sourceLabel, todayISO } from './attendanceConstants';
 import './AttendancePage.css';
@@ -19,6 +19,7 @@ export default function AttendanceHistoryPage() {
   const [sessions, setSessions] = useState([]);
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -125,7 +126,7 @@ export default function AttendanceHistoryPage() {
       </div>
 
       {loading ? (
-        <LoadingSpinner message="Loading history…" minHeight="30vh" />
+        showSkeleton ? <TableSkeleton rows={6} cols={4} /> : null
       ) : (
         <div className="att-card att-table-wrap">
           {sessions.length === 0 ? (

@@ -4,7 +4,7 @@ import { AlertTriangle, Download, RefreshCw } from 'lucide-react';
 import { attendanceApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState } from '../../components/ui';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { selectHasFeature } from '../../store/slices/permissionsSlice';
 import AttendanceReportPreview from './AttendanceReportPreview';
 import {
@@ -24,6 +24,7 @@ export default function AttendanceReportsPage() {
   const [report, setReport] = useState(null);
   const [loadingMeta, setLoadingMeta] = useState(false);
   const [loading, setLoading] = useState(false);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [error, setError] = useState('');
 
   const visible = useMemo(
@@ -367,7 +368,7 @@ export default function AttendanceReportsPage() {
       </div>
 
       {loading ? (
-        <LoadingSpinner message="Building report…" minHeight="30vh" />
+        showSkeleton ? <TableSkeleton rows={6} cols={4} /> : null
       ) : (
         <AttendanceReportPreview
           report={report}

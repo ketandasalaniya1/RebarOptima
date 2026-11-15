@@ -34,8 +34,7 @@
 }
 
 .bc-separator {
-  color: var(--text-muted, #9ca3af);
-  opacity: 0.5;
+  color: var(--text-label);
 }
 
 .bc-link {
@@ -66,7 +65,7 @@
   font-size: 0.84rem;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--table-row-hover);
 }
 
 .bc-project-badge {
@@ -75,10 +74,10 @@
   gap: 6px;
   padding: 3px 10px;
   border-radius: 9999px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent-border);
   font-size: 0.78rem;
-  color: #34d399;
+  color: var(--accent-text);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -97,8 +96,8 @@
 }
 
 .bc-project-type {
-  opacity: 0.75;
   font-size: 0.74rem;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

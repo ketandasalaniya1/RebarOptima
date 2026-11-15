@@ -12,7 +12,7 @@ import {
 import { contractorsApi, manpowerApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState } from '../../components/ui';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { CardSkeleton, TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { SalaryControl, formatSalary } from './salaryUnits';
 import './ManpowerPage.css';
 
@@ -69,6 +69,8 @@ export default function ContractorLabourPage() {
   const [mode, setMode] = useState(null); // named | workforce
   const [loadingContractors, setLoadingContractors] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
+  const showContractorSkeleton = useDelayedSkeleton(loadingContractors);
+  const showDataSkeleton = useDelayedSkeleton(loadingData);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -348,7 +350,8 @@ export default function ContractorLabourPage() {
   }
 
   if (loadingContractors) {
-    return <LoadingSpinner message="Loading contractors…" minHeight="50vh" />;
+    if (showContractorSkeleton) return <CardSkeleton />;
+    return null;
   }
 
   return (
@@ -393,7 +396,7 @@ export default function ContractorLabourPage() {
           </div>
 
           {loadingData ? (
-            <LoadingSpinner message="Loading labour…" minHeight="30vh" />
+            showDataSkeleton ? <TableSkeleton rows={5} cols={4} /> : null
           ) : effectiveMode === 'named' ? (
             workerMode === 'list' ? (
               <>

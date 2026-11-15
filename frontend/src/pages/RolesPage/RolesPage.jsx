@@ -9,7 +9,7 @@ import RoleList from './components/RoleList';
 import RoleDrawer from './components/RoleDrawer';
 import AssignMemberDrawer from './components/AssignMemberDrawer';
 import PermissionMatrix from './components/PermissionMatrix';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import {
   emptyPermissionsFromModules,
   permissionsFromRole,
@@ -318,9 +318,9 @@ export default function RolesPage() {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner message="Loading custom roles & permission matrix..." minHeight="65vh" />;
-  }
+  const showSkeleton = useDelayedSkeleton(loading);
+  if (showSkeleton) return <TableSkeleton rows={8} cols={4} />;
+  if (loading) return null;
 
   const headerActions = (
     <button

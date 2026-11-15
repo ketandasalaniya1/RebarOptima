@@ -375,7 +375,7 @@
 
 .drawings-big-btn-sub {
   font-size: 0.75rem;
-  opacity: 0.8;
+  color: var(--text-secondary);
   margin-top: 2px;
 }
 

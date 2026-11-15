@@ -59,7 +59,6 @@ export default function StickyHeader({
             type="button"
             className="drawings-project-pill"
             onClick={() => setShowProjectDropdown((prev) => !prev)}
-            aria-label="Switch active project"
           >
             <span className="drawings-project-badge-dot" />
             <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
@@ -153,7 +152,6 @@ export default function StickyHeader({
           className="drawings-sync-btn"
           onClick={onRefresh}
           disabled={refreshing}
-          aria-label="Refresh drawings data"
         >
           <RefreshCw size={14} className={refreshing ? 'spin' : ''} style={{ color: 'var(--accent)' }} />
           <span>{lastSyncedText}</span>

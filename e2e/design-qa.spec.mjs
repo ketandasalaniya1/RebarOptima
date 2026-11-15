@@ -17,6 +17,7 @@ test('design-qa routes against the local app', async ({ page, request }) => {
   await openAs(page, request, fixtures.admin.email, fixtures.password, 'light');
   const rows = [];
   const axeRules = new Map();
+  const samples = [];
 
   for (const theme of ['light', 'dark']) {
     await page.evaluate((next) => {
@@ -46,12 +47,15 @@ test('design-qa routes against the local app', async ({ page, request }) => {
       }
       const scroll = {};
       const targets = {};
+      if (surface.wrongTheme) samples.push(`${route} ${theme} theme ${surface.wrongSample.join(' | ')}`);
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 800 });
         await page.waitForTimeout(80);
         const sized = await readSurface(page);
         scroll[width] = sized.pageScroll ? 1 : 0;
         targets[width] = sized.smallTargets;
+        if (sized.pageScroll) samples.push(`${route} ${theme} ${width} overflow ${sized.overflowers.join(' | ')}`);
+        if (sized.smallTargets) samples.push(`${route} ${theme} ${width} target ${sized.smallSample.join(' | ')}`);
       }
       if (KEY_ROUTES.includes(route)) {
         for (const width of [1440, 390]) {
@@ -102,6 +106,7 @@ test('design-qa routes against the local app', async ({ page, request }) => {
     ['horizontal scroll', totals.scroll],
     ['small touch targets', totals.smallTargets],
   ].filter(([, count]) => count > 0);
+  if (samples.length) console.log(`SAMPLES\t${samples.slice(0, 25).join('\n')}`);
   if (failed.length) {
     throw new Error(failed.map(([name, count]) => `${name}=${count}`).join(', '));
   }

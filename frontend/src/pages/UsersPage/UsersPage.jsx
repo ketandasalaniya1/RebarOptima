@@ -10,7 +10,7 @@ import GovernanceHeader from '../../components/Shared/GovernanceHeader';
 import UserCard from './components/UserCard';
 import UserDrawer from './components/UserDrawer';
 import ConfirmStatusDrawer from './components/ConfirmStatusDrawer';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import './UsersPage.css';
 
 /**
@@ -199,9 +199,11 @@ export default function UsersPage() {
     ? users.filter((u) => (u.assignedProjects || []).map(String).includes(String(activeProjectId))).length
     : 0;
 
-  if (loading) {
-    return <LoadingSpinner message="Loading team members & access controls..." minHeight="65vh" />;
+  const showSkeleton = useDelayedSkeleton(loading);
+  if (showSkeleton) {
+    return <div className="users-page-container"><TableSkeleton rows={6} cols={6} /></div>;
   }
+  if (loading) return null;
 
   const headerActions = (
     <button

@@ -191,10 +191,10 @@
 
 .pp-filter-select {
   padding: 6px 10px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 6px;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-primary);
   font-size: 0.82rem;
   outline: none;
 }
@@ -364,8 +364,8 @@
   text-transform: uppercase;
   padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  background: var(--info-subtle);
+  color: var(--info-text);
   letter-spacing: 0.03em;
 }
 
@@ -544,5 +544,5 @@
 }
 
 .text-emerald {
-  color: #34d399;
+  color: var(--accent-text);
 }

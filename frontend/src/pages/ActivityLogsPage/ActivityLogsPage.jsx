@@ -9,7 +9,7 @@ import GovernanceHeader from '../../components/Shared/GovernanceHeader';
 import LogRow from './components/LogRow';
 import DiffDrawer from './components/DiffDrawer';
 import LogFilters from './components/LogFilters';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import './ActivityLogsPage.css';
 
 /**
@@ -25,6 +25,7 @@ export default function ActivityLogsPage() {
   const [logs, setLogs] = useState([]);
   const [usersList, setUsersList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState('');
@@ -266,11 +267,9 @@ export default function ActivityLogsPage() {
 
       {/* ── AUDIT LOG LIST (DESKTOP TABLE) ── */}
       <div className="activity-desktop-table-card">
-        {loading ? (
-          <div style={{ padding: '48px 0' }}>
-            <LoadingSpinner message="Querying security audit logs..." minHeight="200px" />
-          </div>
-        ) : (
+        {showSkeleton ? (
+          <TableSkeleton rows={6} cols={5} />
+        ) : loading ? null : (
           <div className="ro-table-scroll">
             <table className="activity-table">
               <thead>
@@ -343,9 +342,9 @@ export default function ActivityLogsPage() {
 
       {/* ── AUDIT LOG LIST (MOBILE CARDS STACK) ── */}
       <div className="activity-mobile-stack">
-        {loading ? (
-          <LoadingSpinner message="Querying security audit logs..." minHeight="200px" />
-        ) : (
+        {showSkeleton ? (
+          <TableSkeleton rows={4} cols={1} />
+        ) : loading ? null : (
           <>
             {logs.map((log) => (
               <LogRow

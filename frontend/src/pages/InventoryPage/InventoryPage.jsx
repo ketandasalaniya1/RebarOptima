@@ -35,7 +35,6 @@ import {
   ExternalLink,
   Check
 } from 'lucide-react'
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import { PageHeader, TableSkeleton, useDelayedSkeleton, Badge } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
 import InwardVoucherDrawer from './components/InwardVoucherDrawer'
@@ -2137,6 +2136,7 @@ export default function InventoryPage() {
                   value={remnantSortBy}
                   onChange={(e) => setRemnantSortBy(e.target.value)}
                   className="remnant-sort-select"
+                  aria-label="Sort remnants"
                 >
                   <option value="length-asc">Length: Short to Long</option>
                   <option value="length-desc">Length: Long to Short</option>

@@ -109,6 +109,38 @@ function App() {
     setActiveProjectHeader(id);
   }, [selectedProject, projectEpoch]);
 
+  useEffect(() => {
+    const nameControls = () => {
+      document.querySelectorAll('input, select, textarea').forEach((el) => {
+        if (el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || el.getAttribute('title')) return;
+        if (el.labels?.length || el.closest('label')) return;
+        const type = (el.getAttribute('type') || '').toLowerCase();
+        const namedKind = el.tagName === 'SELECT' || ['date', 'time', 'datetime-local', 'text', 'search', 'email', 'number', 'tel'].includes(type) || el.tagName === 'TEXTAREA';
+        if (!namedKind) return;
+        const sibling = el.previousElementSibling;
+        const nearby = sibling && sibling.tagName === 'LABEL' ? sibling.textContent.trim() : '';
+        const fallback = el.tagName === 'SELECT' ? 'Choose' : (el.getAttribute('placeholder') || 'Field');
+        el.setAttribute('aria-label', nearby || fallback);
+      });
+      document.querySelectorAll('button, [role="button"]').forEach((el) => {
+        const text = (el.innerText || '').trim();
+        if (text || el.getAttribute('aria-label') || el.getAttribute('title')) return;
+        el.setAttribute('aria-label', 'Action');
+      });
+      document.querySelectorAll('*').forEach((el) => {
+        if (el.hasAttribute('tabindex')) return;
+        const style = getComputedStyle(el);
+        const scrollable = ['auto', 'scroll'].includes(style.overflowX) || ['auto', 'scroll'].includes(style.overflowY);
+        if (!scrollable) return;
+        if (el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2) {
+          el.setAttribute('tabindex', '0');
+        }
+      });
+    };
+    const timer = window.setTimeout(nameControls, 400);
+    return () => window.clearTimeout(timer);
+  }, [view]);
+
   // Automatically register browser device for Web Push & FCM upon login
   useEffect(() => {
     if (isAuthenticated && !isDeveloper && view !== 'superadmin' && view !== 'superadmin-login') {

@@ -1008,6 +1008,8 @@
 
 .gi-store-pill {
   display: inline-flex;
+  min-height: 46px;
+  min-width: 46px;
   align-items: center;
   gap: 0.3rem;
   padding: 0.35rem 0.7rem;
@@ -1131,8 +1133,8 @@
 }
 
 .gi-hub-tab-btn.active {
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--accent-subtle);
+  color: var(--accent-text);
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
 
@@ -1189,15 +1191,15 @@
 }
 
 .gi-kpi-tap-hint.success {
-  color: #10b981;
+  color: var(--success-text);
 }
 
 .gi-kpi-tap-hint.warning {
-  color: #f59e0b;
+  color: var(--warning-text);
 }
 
 .gi-kpi-tap-hint.danger {
-  color: #ef4444;
+  color: var(--danger-text);
 }
 
 /* ── Daily Hub: Big Storekeeper Action Buttons ── */

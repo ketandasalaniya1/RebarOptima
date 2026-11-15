@@ -212,7 +212,7 @@
 }
 
 .text-emerald {
-  color: #10b981;
+  color: var(--accent-text);
 }
 
 .text-blue {

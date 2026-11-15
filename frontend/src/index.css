@@ -72,7 +72,7 @@
   --placeholder-text: #64748b;
   /* 4.76:1 on #ffffff >= 4.5:1 */
   --sidebar-bg: #1e293b;
-  --sidebar-text: #94a3b8;
+  --sidebar-text: #e2e8f0;
   /* 5.71:1 on sidebar-bg */
   --sidebar-text-active: #ffffff;
   --sidebar-active-bg: rgba(5, 150, 105, 0.15);
@@ -193,7 +193,7 @@
 /* ── 16. RESPONSIVE TOUCH TARGET SIZING ── */
 /* Touch targets of 44px apply under coarse pointer OR below 640px */
 @media (pointer: coarse),
-(max-width: 639px) {
+(max-width: 1024px) {
   :root {
     --control-height: 44px;
     --touch-min: 44px;
@@ -557,6 +557,52 @@ input[type="radio"] {
   border-right-color: var(--accent);
   animation: appGlobalSpin 0.75s var(--ease-standard) infinite;
   margin-bottom: 4px;
+}
+
+@media (max-width: 1024px) {
+  button,
+  [role="button"],
+  [role="tab"],
+  .tab-btn,
+  .ro-tab-btn,
+  .gi-tab-btn,
+  .gi-hub-tab-btn,
+  .casting-tab-btn,
+  .bc-link,
+  .ro-drawer__close,
+  .ro-search-clear,
+  .footer-logout-icon-btn,
+  .footer-logout-mini-btn,
+  .user-profile-mini-btn,
+  .gi-store-pill,
+  select {
+    min-height: 46px !important;
+    min-width: 46px !important;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 639px) {
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .ro-drawer,
+  .ro-drawer--sm,
+  .ro-drawer--md,
+  .ro-drawer--lg {
+    max-width: 100vw;
+    width: 100vw;
+  }
 }
 
 @keyframes appGlobalSpin {

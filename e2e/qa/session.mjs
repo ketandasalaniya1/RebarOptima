@@ -173,12 +173,13 @@ export async function readSurface(page) {
       if (!visible(el)) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width < 2 || rect.height < 2) continue;
-      if (rect.left >= -1 && rect.right <= window.innerWidth + 1) continue;
+      if (rect.right <= window.innerWidth + 1) continue;
+      if (el.closest('.sidenav, .sidebar, .mobile-header')) continue;
       let parent = el.parentElement;
       let clipped = false;
       while (parent) {
         const overflow = getComputedStyle(parent).overflowX;
-        if (overflow === 'auto' || overflow === 'scroll' || overflow === 'hidden') {
+        if (parent !== document.body && parent !== document.documentElement && (overflow === 'auto' || overflow === 'scroll' || overflow === 'hidden')) {
           const box = parent.getBoundingClientRect();
           if (box.left >= -1 && box.right <= window.innerWidth + 1) {
             clipped = true;

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Plus, Pencil, Trash2, Search, AlertTriangle, Image as ImageIcon, UserRound } from 'lucide-react';
 import { manpowerApi } from '../../utils/api';
 import { PageHeader, Button, EmptyState } from '../../components/ui';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { SalaryControl, formatSalary } from './salaryUnits';
 import './ManpowerPage.css';
 
@@ -20,6 +20,7 @@ export default function CompanyLabourPage() {
   const [mode, setMode] = useState('list');
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -161,7 +162,8 @@ export default function CompanyLabourPage() {
   };
 
   if (loading && mode === 'list') {
-    return <LoadingSpinner message="Loading labour…" minHeight="50vh" />;
+    if (showSkeleton) return <TableSkeleton rows={6} cols={4} />;
+    if (loading) return null;
   }
 
   return (

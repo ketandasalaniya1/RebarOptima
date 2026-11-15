@@ -478,8 +478,8 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(227, 140, 34, 0.08);
-  color: #e38c22;
+  background: var(--warning-subtle);
+  color: var(--warning-text);
   border: 1px solid #e38c22;
   padding: 6px 12px;
   border-radius: 6px;

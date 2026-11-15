@@ -6,7 +6,7 @@ import {
   ShieldCheck, RefreshCw, MoreVertical, X, Shapes, PenTool
 } from 'lucide-react';
 import { bbsApi } from './bbsApi';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { CardSkeleton, useDelayedSkeleton } from '../../components/ui';
 import ShapeLibrary from './ShapeLibrary';
 import CADEditor from './cad/CADEditor';
 import { useActiveProject } from '../../hooks/useActiveProject';
@@ -30,6 +30,18 @@ const MEMBER_TYPE_OPTIONS = [
 ];
 
 const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
+
+function projectPlaceText(project) {
+  if (!project) return '';
+  const address = typeof project.address === 'string' ? project.address.trim() : '';
+  if (address) return address;
+  const location = project.location;
+  if (typeof location === 'string' && location.trim()) return location.trim();
+  if (location && typeof location === 'object' && location.latitude != null && location.longitude != null) {
+    return `${location.latitude}, ${location.longitude}`;
+  }
+  return '';
+}
 
 const DEFAULT_PREFIX_MAP = {
   'Column': 'C',
@@ -69,6 +81,7 @@ export default function BBSPage() {
 
   // UI State
   const [loading, setLoading] = useState(true);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [subLoading, setSubLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [memberTypeFilter, setMemberTypeFilter] = useState('ALL');
@@ -878,12 +891,11 @@ export default function BBSPage() {
         </div>
 
         {/* Project Cards Grid */}
-        {loading ? (
+        {showSkeleton ? (
           <div className="bbs-loading-state">
-            <LoadingSpinner />
-            <p>Loading BBS Projects...</p>
+            <CardSkeleton /><CardSkeleton /><CardSkeleton />
           </div>
-        ) : filteredProjects.length === 0 ? (
+        ) : loading ? null : filteredProjects.length === 0 ? (
           <EmptyState
             icon={<Building2 size={24} />}
             title="No BBS Projects Found"
@@ -912,10 +924,10 @@ export default function BBSPage() {
                           {project.status || 'Active'}
                         </span>
                       </div>
-                      {project.location ? (
+                      {projectPlaceText(project) ? (
                         <div className="bbs-card-location">
                           <MapPin size={14} />
-                          <span>{project.location}</span>
+                          <span>{projectPlaceText(project)}</span>
                         </div>
                       ) : (
                         <div className="bbs-card-location bbs-card-location-muted">
@@ -1129,10 +1141,10 @@ export default function BBSPage() {
               <h1 className="bbs-banner-title">{activeProject?.name}</h1>
               <StatusBadge status={activeProject?.status || 'Active'} />
             </div>
-            {activeProject?.location && (
+            {projectPlaceText(activeProject) && (
               <div className="bbs-banner-meta">
                 <MapPin size={14} />
-                <span>{activeProject.location}</span>
+                <span>{projectPlaceText(activeProject)}</span>
                 {activeProject?.description && (
                   <>
                     <span className="bbs-banner-dot">•</span>

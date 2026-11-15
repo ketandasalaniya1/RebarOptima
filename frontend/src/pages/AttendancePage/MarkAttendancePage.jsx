@@ -3,7 +3,7 @@ import { AlertTriangle } from 'lucide-react';
 import { attendanceApi, contractorsApi, manpowerApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { PageHeader, Button, EmptyState } from '../../components/ui';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { SOURCES, STATUSES, summarizeStatuses, todayISO } from './attendanceConstants';
 import './AttendancePage.css';
 
@@ -47,6 +47,7 @@ export default function MarkAttendancePage() {
   const [selectedAssign, setSelectedAssign] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const showSkeleton = useDelayedSkeleton(loading);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -433,7 +434,7 @@ export default function MarkAttendancePage() {
       </div>
 
       {loading ? (
-        <LoadingSpinner message="Loading…" minHeight="30vh" />
+        showSkeleton ? <TableSkeleton rows={6} cols={4} /> : null
       ) : source === 'contractor_workforce' ? (
         <div className="att-card att-table-wrap">
           {workforceRows.length === 0 ? (

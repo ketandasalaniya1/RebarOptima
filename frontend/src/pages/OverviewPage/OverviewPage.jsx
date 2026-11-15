@@ -19,7 +19,7 @@ import {
   Building2,
   FolderPlus
 } from 'lucide-react'
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import { KpiSkeleton, useDelayedSkeleton } from '../../components/ui'
 import { PageHeader, Button, EmptyState } from '../../components/ui'
 import './OverviewPage.css'
 
@@ -35,6 +35,7 @@ export default function OverviewPage({ onNavigate }) {
   const [error, setError] = useState('')
   const statsRef = useRef(stats)
   statsRef.current = stats
+  const showSkeleton = useDelayedSkeleton(loading)
 
   const fetchStats = async (isManual = false, epochAtStart = projectEpoch) => {
     if (!projectId) return
@@ -186,9 +187,14 @@ export default function OverviewPage({ onNavigate }) {
     );
   }
 
-  if (loading) {
-    return <LoadingSpinner message="Loading Dashboard Overview..." minHeight="65vh" />
+  if (showSkeleton) {
+    return (
+      <div className="equal-kpi-grid">
+        <KpiSkeleton /><KpiSkeleton /><KpiSkeleton /><KpiSkeleton />
+      </div>
+    )
   }
+  if (loading) return null
 
   const {
     liveStandardKg = 0,
@@ -266,7 +272,7 @@ export default function OverviewPage({ onNavigate }) {
         {/* 6 Equal-Sized Primary Metric Cards Grid — each KPI navigates to related module */}
         <div className="equal-kpi-grid">
           {/* Card 1: Live Stock → Inventory */}
-          <button type="button" className="equal-kpi-card card-purple-accent kpi-actionable" onClick={() => go('inventory')} aria-label="View live stock in Steel Inventory">
+          <button type="button" className="equal-kpi-card card-purple-accent kpi-actionable" onClick={() => go('inventory')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Live Stock</span>
               <div className="kpi-icon-pill icon-purple">
@@ -295,7 +301,7 @@ export default function OverviewPage({ onNavigate }) {
           </button>
 
           {/* Card 2: Scrap Stock → Inventory */}
-          <button type="button" className="equal-kpi-card card-rose-accent kpi-actionable" onClick={() => go('inventory')} aria-label="View scrap stock in Steel Inventory">
+          <button type="button" className="equal-kpi-card card-rose-accent kpi-actionable" onClick={() => go('inventory')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Scrap Stock</span>
               <div className="kpi-icon-pill icon-rose">
@@ -324,7 +330,7 @@ export default function OverviewPage({ onNavigate }) {
           </button>
 
           {/* Card 3: Scrap Percentage → Batch History */}
-          <button type="button" className="equal-kpi-card card-amber-accent kpi-actionable" onClick={() => go('history')} aria-label="View scrap percentage in Batch History">
+          <button type="button" className="equal-kpi-card card-amber-accent kpi-actionable" onClick={() => go('history')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Scrap Percentage</span>
               <div className="kpi-icon-pill icon-amber">
@@ -345,7 +351,7 @@ export default function OverviewPage({ onNavigate }) {
           </button>
 
           {/* Card 4: Total Steel Purchased → Ledger */}
-          <button type="button" className="equal-kpi-card card-blue-accent kpi-actionable" onClick={() => go('ledger')} aria-label="View steel purchases in Ledger">
+          <button type="button" className="equal-kpi-card card-blue-accent kpi-actionable" onClick={() => go('ledger')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Total Steel Purchased</span>
               <div className="kpi-icon-pill icon-blue">
@@ -367,7 +373,7 @@ export default function OverviewPage({ onNavigate }) {
           </button>
 
           {/* Card 5: Total Scrap Sold → Ledger */}
-          <button type="button" className="equal-kpi-card card-cyan-accent kpi-actionable" onClick={() => go('ledger')} aria-label="View scrap sales in Ledger">
+          <button type="button" className="equal-kpi-card card-cyan-accent kpi-actionable" onClick={() => go('ledger')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Total Scrap Sold</span>
               <div className="kpi-icon-pill icon-cyan">
@@ -398,7 +404,7 @@ export default function OverviewPage({ onNavigate }) {
           </button>
 
           {/* Card 6: Lost Material Value → Batch History */}
-          <button type="button" className="equal-kpi-card card-crimson-accent kpi-actionable" onClick={() => go('history')} aria-label="View lost material in Batch History">
+          <button type="button" className="equal-kpi-card card-crimson-accent kpi-actionable" onClick={() => go('history')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Lost Material Value</span>
               <div className="kpi-icon-pill icon-crimson">

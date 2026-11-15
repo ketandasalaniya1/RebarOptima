@@ -120,7 +120,6 @@ export default function HeaderBar({
             className="pc-btn-action-header pc-btn-credit-hdr"
             onClick={onOpenCredit}
             title="Record Money Received (Shortcut: R)"
-            aria-label="Record Money Received"
           >
             <ArrowDownLeft size={16} />
             <span>Money Received</span>

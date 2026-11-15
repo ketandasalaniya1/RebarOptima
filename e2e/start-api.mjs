@@ -5,16 +5,22 @@
  * Run it directly only after local Mongo is up: node e2e/start-api.mjs
  */
 import { spawn } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { evaluateLogChunk, resolveMongoUri } from './seed/guard.mjs';
+import { evaluateLogChunk, resolveMongoUri, assertSafeMongoUri } from './seed/guard.mjs';
+import { startMemoryMongo, stopMemoryMongo } from './seed/memory-mongo.mjs';
 
 const TEST_JWT_ACCESS = 'e2e-test-access-secret';
 const TEST_JWT_REFRESH = 'e2e-test-refresh-secret';
+const TEST_DEVELOPER_EMAIL = 'dev@gmail.com';
+const TEST_DEVELOPER_PASSWORD = 'e2e-developer-password';
+const TEST_SUPERADMIN_EMAIL = 'superadmin@rebaroptima.io';
+const TEST_SUPERADMIN_PASSWORD = 'e2e-superadmin-password';
 
 export function buildApiEnv(base = {}) {
   const uri = resolveMongoUri(base);
-  const env = { ...base, MONGODB_URI: uri, PORT: '3100' };
+  const env = { ...base, MONGODB_URI: uri, PORT: '3100', E2E_SKIP_DOTENV: '1' };
   env.JWT_ACCESS_SECRET = TEST_JWT_ACCESS;
   env.JWT_REFRESH_SECRET = TEST_JWT_REFRESH;
   delete env.VAPID_PUBLIC_KEY;
@@ -48,6 +54,36 @@ export function spawnGuardedApi({ env = process.env, spawnImpl = spawn, command 
   return { child, env: safeEnv };
 }
 
+const FORBIDDEN_ENV_TEXT = ['mongodb.net', 'mongodb+srv', 'cluster0.aghjxtj.mongodb.net'];
+
+/** Env passed to the API. Does not copy the parent environment or backend/.env. */
+export function buildCleanApiEnv(mongoUri) {
+  const checked = assertSafeMongoUri(mongoUri);
+  return {
+    PATH: process.env.PATH || '',
+    HOME: process.env.HOME || '',
+    TMPDIR: process.env.TMPDIR || '/tmp',
+    MONGODB_URI: checked.uri,
+    PORT: '3100',
+    E2E_SKIP_DOTENV: '1',
+    JWT_ACCESS_SECRET: TEST_JWT_ACCESS,
+    JWT_REFRESH_SECRET: TEST_JWT_REFRESH,
+    DEVELOPER_EMAIL: TEST_DEVELOPER_EMAIL,
+    DEVELOPER_PASSWORD: TEST_DEVELOPER_PASSWORD,
+    SUPERADMIN_EMAIL: TEST_SUPERADMIN_EMAIL,
+    SUPERADMIN_PASSWORD: TEST_SUPERADMIN_PASSWORD,
+  };
+}
+
+export function reportEnv(env) {
+  const names = Object.keys(env).sort();
+  const atlasHostnamePresent = Object.values(env).some((value) => {
+    const text = String(value).toLowerCase();
+    return FORBIDDEN_ENV_TEXT.some((item) => text.includes(item));
+  });
+  return { names, atlasHostnamePresent };
+}
+
 export function redactSecrets(text) {
   return String(text).replace(/mongodb(\+srv)?:\/\/[^/\s]+@/gi, 'mongodb$1://[redacted]@');
 }
@@ -58,25 +94,70 @@ function isDirectRun() {
   return import.meta.url === pathToFileURL(path.resolve(entry)).href;
 }
 
-if (isDirectRun()) {
-  const backendDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../backend');
-  const nestBin = path.join(backendDir, 'node_modules/@nestjs/cli/bin/nest.js');
-  const safeEnv = buildApiEnv(process.env);
-  const child = spawn(process.execPath, [nestBin, 'start'], { cwd: backendDir, env: safeEnv });
+async function runGuardedStack() {
+  const repoDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const backendDir = path.join(repoDir, 'backend');
+  const frontendDir = path.join(repoDir, 'frontend');
+  const memory = await startMemoryMongo();
+  const safeEnv = buildCleanApiEnv(memory.uri);
+  const report = reportEnv(safeEnv);
+  if (report.atlasHostnamePresent) {
+    await stopMemoryMongo(memory);
+    throw new Error('Refusing to start. An Atlas hostname is present in the API environment.');
+  }
+  process.stdout.write(`API_ENV_NAMES=${report.names.join(',')}\n`);
+  process.stdout.write('ATLAS_HOSTNAME_IN_ENV=no\n');
+  fs.writeFileSync(path.join(repoDir, 'e2e/.run-uri'), `${safeEnv.MONGODB_URI}\n`, { mode: 0o600 });
+
+  const api = spawn(process.execPath, [path.join(repoDir, 'node_modules/@nestjs/cli/bin/nest.js'), 'start'], {
+    cwd: backendDir,
+    env: safeEnv,
+  });
+  const web = spawn(process.execPath, [
+    path.join(repoDir, 'node_modules/vite/bin/vite.js'),
+    '--port', '5174',
+    '--host', '127.0.0.1',
+    '--strictPort',
+  ], {
+    cwd: frontendDir,
+    env: {
+      PATH: safeEnv.PATH,
+      HOME: safeEnv.HOME,
+      TMPDIR: safeEnv.TMPDIR,
+      VITE_API_URL: 'http://127.0.0.1:3100/api',
+    },
+  });
+
+  const uriFile = path.join(repoDir, 'e2e/.run-uri');
+  const shutdown = async (code) => {
+    api.kill();
+    web.kill();
+    await stopMemoryMongo(memory);
+    fs.rmSync(uriFile, { force: true });
+    process.exit(code);
+  };
   let tail = '';
   const forward = (buf) => {
     const text = redactSecrets(buf);
     process.stdout.write(text);
     tail = (tail + text).slice(-8000);
     try {
-      superviseLogs(child, tail);
+      superviseLogs(api, tail);
     } catch (err) {
       process.stderr.write(`${err.message}\n`);
-      child.kill();
-      process.exit(1);
+      shutdown(1);
     }
   };
-  child.stdout?.on('data', forward);
-  child.stderr?.on('data', forward);
-  child.on('exit', (code) => process.exit(code ?? 1));
+  api.stdout?.on('data', forward);
+  api.stderr?.on('data', forward);
+  web.stdout?.on('data', (buf) => process.stdout.write(redactSecrets(buf)));
+  web.stderr?.on('data', (buf) => process.stdout.write(redactSecrets(buf)));
+  api.on('exit', () => shutdown(1));
+}
+
+if (isDirectRun()) {
+  runGuardedStack().catch(async (err) => {
+    process.stderr.write(`${err.message}\n`);
+    process.exit(1);
+  });
 }

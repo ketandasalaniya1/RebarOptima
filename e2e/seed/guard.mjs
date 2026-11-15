@@ -26,6 +26,10 @@ export function assertSafeMongoUri(uri) {
   if (lower.includes('mongodb.net')) {
     throw new Error('Refusing mongodb.net URI.');
   }
+  const hostList = raw.split('://')[1]?.split('/')[0] || '';
+  if (hostList.includes(',')) {
+    throw new Error('Refusing multiple Mongo hosts.');
+  }
 
   let parsed;
   try {
@@ -43,6 +47,23 @@ export function assertSafeMongoUri(uri) {
   const db = decodeURIComponent(parsed.pathname.replace(/^\//, '').split('/')[0] || '');
   if (db !== ALLOWED_DB) {
     throw new Error(`Refusing database ${db || '(none)'}.`);
+  }
+  const allowedQuery = new Set(['replicaset', 'directconnection']);
+  for (const [key, value] of parsed.searchParams) {
+    const normalized = key.toLowerCase();
+    if (!allowedQuery.has(normalized)) {
+      throw new Error(`Refusing query parameter ${key}.`);
+    }
+    const text = String(value).toLowerCase();
+    if (text.includes('mongodb.net') || text.includes('mongodb+srv')) {
+      throw new Error(`Refusing query parameter ${key}.`);
+    }
+    if (normalized === 'replicaset' && !/^[a-z0-9_-]+$/i.test(value)) {
+      throw new Error('Refusing replicaSet value.');
+    }
+    if (normalized === 'directconnection' && value !== 'true' && value !== 'false') {
+      throw new Error('Refusing directConnection value.');
+    }
   }
   return { uri: raw, host, db };
 }

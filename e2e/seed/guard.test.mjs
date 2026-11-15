@@ -39,6 +39,30 @@ test('refuses a host other than 127.0.0.1 or localhost', () => {
   }
 });
 
+test('accepts a local single-node replica set URI', () => {
+  const uri = 'mongodb://127.0.0.1:27017/rebaroptima_e2e?replicaSet=testset&directConnection=true';
+  assert.deepEqual(assertSafeMongoUri(uri), {
+    uri,
+    host: '127.0.0.1',
+    db: 'rebaroptima_e2e',
+  });
+});
+
+test('refuses replica set URIs that add hosts or other query parameters', () => {
+  assert.throws(
+    () => assertSafeMongoUri('mongodb://127.0.0.1:27017/rebaroptima_e2e?authSource=admin'),
+    /query parameter/,
+  );
+  assert.throws(
+    () => assertSafeMongoUri('mongodb://127.0.0.1:27017/rebaroptima_e2e?replicaSet=cluster0.example.mongodb.net'),
+    /mongodb\.net/,
+  );
+  assert.throws(
+    () => assertSafeMongoUri('mongodb://127.0.0.1:27017,10.0.0.8:27018/rebaroptima_e2e?replicaSet=testset'),
+    /multiple Mongo hosts/,
+  );
+});
+
 test('accepts only the local rebaroptima_e2e database', () => {
   assert.deepEqual(assertSafeMongoUri(ALLOWED_URI), {
     uri: ALLOWED_URI,

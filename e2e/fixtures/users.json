@@ -1,0 +1,16 @@
+{
+  "comment": "Test-only accounts for the local rebaroptima_e2e database. These are not production credentials.",
+  "password": "E2e-Test-1!",
+  "admin": {
+    "email": "e2e-admin@example.test",
+    "firstName": "E2E",
+    "lastName": "Admin"
+  },
+  "users": [
+    { "role": "Project Manager", "email": "e2e-pm@example.test", "firstName": "E2E", "lastName": "Manager" },
+    { "role": "Site Supervisor", "email": "e2e-supervisor@example.test", "firstName": "E2E", "lastName": "Supervisor" },
+    { "role": "Store Keeper", "email": "e2e-store@example.test", "firstName": "E2E", "lastName": "Store" },
+    { "role": "Accountant", "email": "e2e-accountant@example.test", "firstName": "E2E", "lastName": "Accountant" },
+    { "role": "Sales Executive", "email": "e2e-sales@example.test", "firstName": "E2E", "lastName": "Sales" }
+  ]
+}

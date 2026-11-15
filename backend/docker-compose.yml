@@ -3,9 +3,9 @@ services:
   mongodb:
     image: mongo:6-jammy
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     volumes:
-      - mongodata:/data/db
+      - rebaroptima_e2e_data:/data/db
 
   redis:
     image: redis:7-alpine
@@ -29,5 +29,5 @@ services:
       - redis
 
 volumes:
-  mongodata:
+  rebaroptima_e2e_data:
 

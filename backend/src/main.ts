@@ -278,6 +278,18 @@ let isInMemoryActive = false;
 let client: MongoClient | null = null;
 let db: Db | null = null;
 
+function mongoConnectionLabel(uri: string, dbName: string): string {
+  let host = 'unknown';
+  try {
+    const parsed = new URL(uri.replace(/^mongodb(\+srv)?:\/\//, 'http://'));
+    host = parsed.hostname || 'unknown';
+  } catch {
+    host = 'unknown';
+  }
+  const kind = host.endsWith('mongodb.net') ? 'MongoDB Atlas' : 'MongoDB';
+  return `${kind} (${host}/${dbName})`;
+}
+
 async function connectDB(): Promise<Db> {
   if (db) return db;
   const uri = process.env.MONGODB_URI;
@@ -295,7 +307,8 @@ async function connectDB(): Promise<Db> {
       await client.connect();
       const connectedDb = client.db();
       db = connectedDb;
-      console.log('✅ Connected to MongoDB Atlas');
+      const connectionLabel = mongoConnectionLabel(uri, connectedDb.databaseName);
+      console.log(`✅ Connected to ${connectionLabel}`);
       try {
         await verifyMultiDocumentTransactionRollback(client, connectedDb);
         console.log('✅ Multi-Document Transaction Rollback Probe Verified');
@@ -304,7 +317,7 @@ async function connectDB(): Promise<Db> {
       }
       try {
         await seedDefaults(connectedDb);
-        console.log('✅ MongoDB Atlas seeded/synced successfully!');
+        console.log(`✅ ${connectionLabel} seeded/synced successfully`);
       } catch (err) {
         console.error('MongoDB seed error:', err);
       }

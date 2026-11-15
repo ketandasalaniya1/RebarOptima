@@ -377,10 +377,11 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--main-bg);
   border-radius: 8px;
   padding: 6px 9px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
 }
 
 .kpi-sub-item {
@@ -611,8 +612,9 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
   border-radius: 8px;
   padding: 6px 12px;
   transition: background 0.15s ease;
@@ -800,7 +802,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 639px) {
   .equal-kpi-grid {
     grid-template-columns: 1fr;
   }

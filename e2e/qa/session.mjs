@@ -205,3 +205,76 @@ export async function readSurface(page) {
     };
   });
 }
+
+export async function measureShell(page) {
+  return page.evaluate(() => {
+    const width = window.innerWidth;
+    const token = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')) || 0;
+    const nav = document.querySelector('.sidenav');
+    const navStyle = nav ? getComputedStyle(nav) : null;
+    const navRect = nav ? nav.getBoundingClientRect() : null;
+    const collapsed = Boolean(nav?.classList.contains('collapsed'));
+    const navWidth = navRect ? Math.round(navRect.width) : 0;
+    const shellMismatch = width > 1024 && nav && !collapsed && Math.abs(navWidth - token) > 2;
+    let strip = 0;
+    if (width <= 1024 && nav && navStyle.visibility !== 'hidden') {
+      const right = Math.min(60, navRect.right);
+      const left = Math.max(0, navRect.left);
+      if (right > left) strip = Math.round(right - left);
+    }
+    const hidden = !nav || width > 1024 || (
+      navStyle.visibility === 'hidden' &&
+      nav.hasAttribute('inert') &&
+      navStyle.pointerEvents === 'none'
+    );
+    const main = document.querySelector('.main-viewport');
+    const mainLeft = main ? Math.round(main.getBoundingClientRect().left) : null;
+    const pageScroll = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+      || (main && main.scrollWidth > main.clientWidth + 1);
+    let clipped = 0;
+    const clippedSample = [];
+    for (const el of document.querySelectorAll('h1, h2, .bc-current, .bc-link, .page-title')) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 2 || rect.height < 2) continue;
+      if (el.closest('.gi-pdf-document, .batch-print-portal, .ledger-print-template')) continue;
+      const style = getComputedStyle(el);
+      if (style.visibility === 'hidden' || style.display === 'none') continue;
+      const onScreen = rect.right > 0 && rect.left < width && rect.bottom > 0 && rect.top < window.innerHeight;
+      if (onScreen && (rect.left < -1 || rect.right > width + 1)) {
+        clipped += 1;
+        if (clippedSample.length < 3) {
+          clippedSample.push(`${Math.round(rect.left)}..${Math.round(rect.right)} ${(el.innerText || el.className || '').toString().slice(0, 40)}`);
+        }
+      }
+    }
+    const natives = [];
+    for (const el of document.querySelectorAll('input, select, textarea')) {
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 2 || rect.height < 2) continue;
+      const type = (el.getAttribute('type') || '').toLowerCase();
+      if (['checkbox', 'radio', 'hidden', 'range', 'color'].includes(type)) continue;
+      if (el.classList.contains('ro-search-input')) continue;
+      const border = parseFloat(style.borderTopWidth) || 0;
+      const radius = parseFloat(style.borderTopLeftRadius) || 0;
+      const bareSelect = el.tagName === 'SELECT' && style.appearance !== 'none';
+      if (border < 1 || radius < 1 || bareSelect) natives.push((el.className || el.tagName).toString().slice(0, 40));
+    }
+    const money = /₹|\bRs\.?\b/.test(document.body.innerText) && document.body.innerText.includes('Rs');
+    return {
+      shellMismatch,
+      navWidth,
+      token,
+      strip,
+      hidden,
+      mainLeft,
+      pageScroll,
+      clipped,
+      clippedSample,
+      natives: natives.length,
+      nativeSample: natives.slice(0, 3),
+      money,
+    };
+  });
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Edit2, CheckCircle2, Clock, ShieldAlert, Flag, Search, Filter } from 'lucide-react';
+import { Plus, Trash2, Edit2, CheckCircle2, Clock, ShieldAlert, Flag } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { SearchInput } from '../../../components/ui';
 
 export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDelayModal }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,15 +90,12 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
     <div className="pm-tasks-container">
       {/* HEADER & FILTERS */}
       <div className="pm-tasks-toolbar">
-        <div className="pm-search-wrap">
-          <Search size={16} className="pm-search-icon" />
-          <input
-            type="text"
-            placeholder="Search by activity name or WBS..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          onClear={() => setSearchTerm('')}
+          placeholder="Search by activity name or WBS..."
+        />
 
         <div className="pm-toolbar-actions">
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>

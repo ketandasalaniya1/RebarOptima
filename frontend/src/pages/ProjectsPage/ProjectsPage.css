@@ -449,10 +449,10 @@
   gap: 14px;
   padding: 8px 10px;
   border-radius: 6px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+  background: var(--main-bg);
+  border: 1px solid var(--card-border);
   font-size: 0.76rem;
-  color: var(--text-secondary, #cbd5e1);
+  color: var(--text-primary);
 }
 
 .pp-card-stat {
@@ -490,10 +490,10 @@
 }
 
 .pp-action-select.is-selected {
-  background: rgba(16, 185, 129, 0.25);
-  color: #6ee7b7;
+  background: var(--success-subtle);
+  color: var(--success-text);
   cursor: default;
-  border-color: transparent;
+  border-color: var(--card-border);
 }
 
 .pp-action-icon-buttons {
@@ -506,8 +506,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));

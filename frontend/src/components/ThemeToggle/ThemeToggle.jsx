@@ -4,9 +4,26 @@ import { Sun, Moon, Laptop } from 'lucide-react';
 import { setThemeMode } from '../../store/slices/settingsSlice';
 import './ThemeToggle.css';
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ compact = false }) {
   const dispatch = useDispatch();
   const themeMode = useSelector((state) => state.settings?.themeMode) || 'system';
+
+  if (compact) {
+    const order = ['light', 'dark', 'system'];
+    const next = order[(order.indexOf(themeMode) + 1) % order.length];
+    const Icon = themeMode === 'dark' ? Moon : themeMode === 'light' ? Sun : Laptop;
+    return (
+      <button
+        type="button"
+        className="ro-theme-compact"
+        aria-label={`Theme is ${themeMode}. Change theme`}
+        title="Change theme"
+        onClick={() => dispatch(setThemeMode(next))}
+      >
+        <Icon size={18} />
+      </button>
+    );
+  }
 
   return (
     <div className="ro-theme-pill" role="radiogroup" aria-label="Theme mode selector">

@@ -20,9 +20,8 @@ import {
   RotateCcw,
   AlertCircle
 } from 'lucide-react'
-import { PageHeader, EmptyState, CardSkeleton, useDelayedSkeleton } from '../../components/ui'
+import { PageHeader, EmptyState, CardSkeleton, useDelayedSkeleton, SearchInput } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
-import { Search } from 'lucide-react'
 import './BatchHistoryPage.css'
 
 const getTextStyle = (hex) => {
@@ -222,21 +221,12 @@ export default function BatchHistoryPage({ onEditBatch }) {
 
       {/* Filter and Search Bar (Step 0 inventory) */}
       <div className="history-filter-bar card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 16px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '220px' }}>
-          <Search size={15} style={{ color: 'var(--text-secondary)' }} />
-          <input
-            type="text"
-            placeholder="Search by batch name or date..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: '0.88rem' }}
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-              <X size={14} />
-            </button>
-          )}
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onClear={() => setSearchQuery('')}
+          placeholder="Search by batch name or date..."
+        />
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Diameter:</span>
           <select

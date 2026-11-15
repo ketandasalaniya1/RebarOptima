@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Layers, Warehouse, Boxes, FileStack, Menu } from 'lucide-react';
 import './BottomNavBar.css';
 
@@ -6,6 +6,16 @@ const STEEL_VIEWS = ['inventory', 'ledger', 'inputs', 'results', 'history'];
 const DRAWINGS_VIEWS = ['drawings', 'drawings-matrix', 'drawings-versions', 'drawings-viewer'];
 
 export default function BottomNavBar({ currentView, onViewChange }) {
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return undefined;
+    const onResize = () => {
+      const keyboard = window.innerHeight - viewport.height > 120;
+      document.documentElement.classList.toggle('keyboard-open', keyboard);
+    };
+    viewport.addEventListener('resize', onResize);
+    return () => viewport.removeEventListener('resize', onResize);
+  }, []);
   const isSteelActive = STEEL_VIEWS.includes(currentView);
   const isDrawingsActive = DRAWINGS_VIEWS.includes(currentView);
   const isSiteInvActive = currentView === 'general-inventory';

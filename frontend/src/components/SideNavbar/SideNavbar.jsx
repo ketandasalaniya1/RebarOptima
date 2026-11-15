@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Menu,
@@ -89,6 +89,8 @@ const CRM_VIEWS = [
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 1024px)').matches);
+  const sidenavRef = useRef(null);
   const [isCollapsed, setIsCollapsed] = useState(() => {
     try {
       return localStorage.getItem('cravetobuild_sidebar_collapsed') === 'true';
@@ -117,6 +119,49 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       return next;
     });
   };
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const onChange = () => setNarrow(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [currentView]);
+
+  useEffect(() => {
+    if (!narrow || !isOpen) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const root = sidenavRef.current;
+    const focusable = root?.querySelector('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    focusable?.focus();
+    const onKey = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab' || !root) return;
+      const items = [...root.querySelectorAll('button, a, input, select, textarea')].filter((el) => !el.disabled);
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [narrow, isOpen]);
 
   useEffect(() => {
     const handleToggleEvent = () => setIsOpen((prev) => !prev);
@@ -177,7 +222,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       ],
     },
     {
-      sectionTitle: 'STEEL & BBS',
+      sectionTitle: 'Steel & BBS',
       items: [
         {
           id: 'steel',
@@ -201,7 +246,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       ],
     },
     {
-      sectionTitle: 'SITE OPERATIONS',
+      sectionTitle: 'Site operations',
       items: [
         {
           id: 'general-inventory',
@@ -300,7 +345,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       ],
     },
     {
-      sectionTitle: 'MANPOWER & LABOUR',
+      sectionTitle: 'Manpower & labour',
       items: [
         {
           id: 'contractors',
@@ -361,7 +406,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       ],
     },
     {
-      sectionTitle: 'ADMINISTRATION',
+      sectionTitle: 'Administration',
       items: [
         {
           id: 'chat',
@@ -431,13 +476,15 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
         <div className="mobile-logo-wrapper">
           <img src={brandLogo} alt="CraveToBuild" className="mobile-brand-img" />
         </div>
-        <ThemeToggle />
+        <ThemeToggle compact />
       </div>
 
       {/* Main Sidenav (Dual Mode: Full vs Mini) */}
       <aside
+        ref={sidenavRef}
         className={`sidenav ${isCollapsed ? 'collapsed' : ''} ${isOpen ? 'open' : ''}`}
         aria-label="Main navigation"
+        inert={narrow && !isOpen ? true : undefined}
       >
         {/* Mobile Close Button */}
         <button

@@ -37,6 +37,32 @@
   color: var(--text-label);
 }
 
+@media (max-width: 640px) {
+  .rebar-breadcrumbs {
+    padding: 8px 12px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .bc-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .bc-item:not(:nth-last-child(-n + 2)) {
+    display: none;
+  }
+
+  .bc-current,
+  .bc-link {
+    max-width: 46vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .bc-link {
   display: inline-flex;
   align-items: center;

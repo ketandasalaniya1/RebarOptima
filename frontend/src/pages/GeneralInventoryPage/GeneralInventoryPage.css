@@ -958,21 +958,24 @@
 .gi-header-label {
   font-size: 0.7rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--text-label);
   flex-shrink: 0;
 }
 
 .gi-project-select {
-  background: transparent;
-  border: none;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
   outline: none;
   cursor: pointer;
   max-width: 200px;
+  appearance: none;
+  padding-right: 28px;
 }
 
 .gi-store-pills-bar {
@@ -3058,11 +3061,21 @@
 
 /* ── PDF Export Printable Document Styles (Off-screen / Print) ── */
 .gi-pdf-document {
+  position: absolute;
+  left: -10000px;
+  top: 0;
   padding: 24px;
   background: #ffffff;
   color: #0f172a;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   width: 100%;
+}
+
+@media print {
+  .gi-pdf-document {
+    position: static;
+    left: auto;
+  }
 }
 
 .gi-pdf-header {

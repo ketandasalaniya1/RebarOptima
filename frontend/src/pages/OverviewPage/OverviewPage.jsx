@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { batchesApi } from '../../utils/api'
+import { SHOW_FINANCIALS } from '../../utils/steelFinancials'
 import { useActiveProject } from '../../hooks/useActiveProject'
 import { openCreateModal } from '../../store/slices/projectSlice'
 import {
@@ -359,6 +360,7 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
             <div className="kpi-card-body single-metric-body">
+              {SHOW_FINANCIALS && (
               <div className="kpi-purchased-block">
                 <span className="kpi-sub-label">Till Date :</span>
                 <div className="kpi-purchased-amount">
@@ -366,6 +368,7 @@ export default function OverviewPage({ onNavigate }) {
                   <span className="kpi-currency">Rs.</span>
                 </div>
               </div>
+              )}
               <div className="kpi-pill-badge blue-badge">
                 Inward: {formatTons(totalSteelPurchasedKg)} ({formatKg(totalSteelPurchasedKg)} Kg)
               </div>
@@ -389,6 +392,8 @@ export default function OverviewPage({ onNavigate }) {
                     <span className="kpi-unit">Kg</span>
                   </div>
                 </div>
+                {SHOW_FINANCIALS && (
+                <>
                 <div className="kpi-sub-divider"></div>
                 <div className="kpi-sub-item">
                   <span className="kpi-sub-label">Till Date :</span>
@@ -399,6 +404,8 @@ export default function OverviewPage({ onNavigate }) {
                     <span className="kpi-currency">Rs.</span>
                   </div>
                 </div>
+                </>
+                )}
               </div>
             </div>
           </button>
@@ -413,8 +420,17 @@ export default function OverviewPage({ onNavigate }) {
             </div>
             <div className="kpi-card-body single-metric-body">
               <div className="kpi-main-metric">
-                <span className="kpi-hero-val text-crimson">{formatCurrency(lostMaterialValue)}</span>
-                <span className="kpi-currency">Rs.</span>
+                {SHOW_FINANCIALS ? (
+                  <>
+                    <span className="kpi-hero-val text-crimson">{formatCurrency(lostMaterialValue)}</span>
+                    <span className="kpi-currency">Rs.</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="kpi-hero-val text-crimson">{formatKg(totalScrapKg)}</span>
+                    <span className="kpi-hero-unit">Kg</span>
+                  </>
+                )}
               </div>
               <div className="kpi-pill-badge crimson-badge">
                 <span className="badge-dot"></span> Unrecovered Scrap Loss

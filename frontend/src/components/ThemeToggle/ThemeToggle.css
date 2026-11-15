@@ -42,3 +42,16 @@
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+
+.ro-theme-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  cursor: pointer;
+}

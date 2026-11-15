@@ -21,6 +21,13 @@
 @media (max-width: 639px) {
   .ro-bottom-nav {
     display: flex;
+    height: calc(58px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html.keyboard-open .ro-bottom-nav,
+  body:has(.ro-drawer) .ro-bottom-nav,
+  body:has([role="dialog"]) .ro-bottom-nav {
+    display: none;
   }
 
   /* Add bottom padding to viewport so content is never obscured by the bottom bar */

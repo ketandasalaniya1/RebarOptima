@@ -576,15 +576,15 @@
 }
 
 .ledger-table th {
-  font-size: 11.5px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-secondary);
   padding: 12px 10px;
   border-bottom: 2px solid var(--card-border);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none; /* Sentence case, not all caps */
+  letter-spacing: normal;
   white-space: nowrap;
-  background: var(--main-bg);
+  background: var(--table-header-bg, var(--main-bg));
   text-align: center;
 }
 
@@ -1603,5 +1603,42 @@
   .batch-subitems-wrapper {
     margin-left: 10px;
     margin-right: 10px;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT MEDIA STYLES FOR LEDGER (CHANGE 4)
+   ═══════════════════════════════════════════════════════════════════ */
+@media print {
+  .steel-header-wrapper,
+  .breadcrumbs-container,
+  .ledger-header,
+  .ledger-stats-grid,
+  .table-card,
+  .side-navbar,
+  .app-header,
+  .navbar,
+  .sidebar,
+  .topbar,
+  .no-print,
+  .alert {
+    display: none !important;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ledger-print-template {
+    display: block !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 10mm 12mm !important;
   }
 }

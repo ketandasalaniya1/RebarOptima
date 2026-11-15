@@ -263,7 +263,13 @@ export default function BbsWizardPage() {
                   type="number"
                   className="bbs-input"
                   value={member.clear_cover}
-                  onChange={e => setMember({ ...member, clear_cover: parseInt(e.target.value) || 0 })}
+                  onFocus={e => {
+                    if (e.target.value === '0') e.target.select();
+                  }}
+                  onChange={e => setMember({ ...member, clear_cover: e.target.value === '' ? '' : parseInt(e.target.value, 10) })}
+                  onBlur={() => {
+                    if (member.clear_cover === '') setMember(prev => ({ ...prev, clear_cover: 0 }));
+                  }}
                 />
               </div>
             </div>

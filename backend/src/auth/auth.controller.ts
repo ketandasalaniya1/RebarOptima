@@ -15,8 +15,8 @@ export class AuthController {
       lastName: string;
       role: string;
       companyName: string;
-      projectName: string;
-      location: string;
+      projectName?: string;
+      location?: string;
       mobileNumber: string;
       promoConsent?: boolean;
       newsletterConsent?: boolean;

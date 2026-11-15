@@ -21,6 +21,8 @@ export default function GeofenceConfigModal() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const layersMapRef = useRef(new Map());
+  const activeGfIndexRef = useRef(activeGfIndex);
+  activeGfIndexRef.current = activeGfIndex;
 
   // Initialize geofences from project
   useEffect(() => {
@@ -80,8 +82,10 @@ export default function GeofenceConfigModal() {
 
         setGeofences((prev) => {
           if (prev.length === 0) return prev;
+          const targetIdx = activeGfIndexRef.current;
+          if (targetIdx < 0 || targetIdx >= prev.length) return prev;
           const updated = [...prev];
-          const curr = { ...updated[activeGfIndex] };
+          const curr = { ...updated[targetIdx] };
 
           if (curr.boundaryType === 'circle') {
             curr.center = { latitude: lat, longitude: lng };
@@ -89,7 +93,7 @@ export default function GeofenceConfigModal() {
             curr.coordinates = [...(curr.coordinates || []), [lng, lat]];
           }
 
-          updated[activeGfIndex] = curr;
+          updated[targetIdx] = curr;
           return updated;
         });
       });

@@ -9,7 +9,6 @@ import {
   Package,
   ClipboardList,
   BookOpen,
-  Settings as SettingsIcon,
   Users,
   Shield,
   Layers,
@@ -27,12 +26,22 @@ import {
   UsersRound,
   UserRound,
   CalendarCheck2,
-  FileSpreadsheet,
   MessageSquare,
-  Grid3X3,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Calendar,
+  Kanban,
+  CheckSquare,
+  CalendarDays,
+  Clock,
+  Building,
+  FileText,
+  Upload,
 } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import ProjectSelector from '../ProjectSelector/ProjectSelector';
+import cravetobuildMark from '../../assets/cravetobuild-mark.png';
+import brandLogo from '../../assets/logo.png';
 import './SideNavbar.css';
 
 /**
@@ -56,28 +65,81 @@ const PARTNER_ALLOWED_MODULES = [
 ];
 
 const ATTENDANCE_VIEWS = ['attendance-mark', 'attendance-history', 'attendance-reports'];
-
 const STEEL_VIEWS = ['inventory', 'ledger', 'inputs', 'results', 'history'];
 const MANPOWER_VIEWS = ['manpower-labour', 'manpower-contractor-labour'];
+const DRAWINGS_VIEWS = [
+  'drawings',
+  'drawings-matrix',
+  'drawings-versions',
+  'drawings-viewer',
+];
+const CRM_VIEWS = [
+  'crm',
+  'crm-dashboard',
+  'crm-today',
+  'crm-leads',
+  'crm-pipeline',
+  'crm-tasks',
+  'crm-calendar',
+  'crm-followups',
+  'crm-inventory',
+  'crm-templates',
+  'crm-import',
+];
 
 export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('cravetobuild_sidebar_collapsed') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
   const [openGroups, setOpenGroups] = useState(() => ({
     steel: STEEL_VIEWS.includes(currentView),
+    crm: CRM_VIEWS.includes(currentView),
     manpower: MANPOWER_VIEWS.includes(currentView),
     attendance: ATTENDANCE_VIEWS.includes(currentView),
-    drawings: ['drawings', 'drawings-matrix', 'drawings-approvals', 'drawings-transmittals', 'drawings-activity', 'drawings-plan-pass', 'drawings-viewer'].includes(currentView),
+    drawings: DRAWINGS_VIEWS.includes(currentView),
   }));
+
   const user = useSelector((state) => state.auth.user);
   const permissions = useSelector((state) => state.permissions.modules);
+
+  const toggleCollapsed = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('cravetobuild_sidebar_collapsed', String(next));
+      } catch (e) { }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const handleToggleEvent = () => setIsOpen((prev) => !prev);
+    const handleOpenEvent = () => setIsOpen(true);
+    const handleCloseEvent = () => setIsOpen(false);
+    window.addEventListener('toggle-mobile-menu', handleToggleEvent);
+    window.addEventListener('open-mobile-menu', handleOpenEvent);
+    window.addEventListener('close-mobile-menu', handleCloseEvent);
+    return () => {
+      window.removeEventListener('toggle-mobile-menu', handleToggleEvent);
+      window.removeEventListener('open-mobile-menu', handleOpenEvent);
+      window.removeEventListener('close-mobile-menu', handleCloseEvent);
+    };
+  }, []);
 
   useEffect(() => {
     setOpenGroups((prev) => {
       const next = { ...prev };
       if (STEEL_VIEWS.includes(currentView)) next.steel = true;
+      if (CRM_VIEWS.includes(currentView)) next.crm = true;
       if (MANPOWER_VIEWS.includes(currentView)) next.manpower = true;
       if (ATTENDANCE_VIEWS.includes(currentView)) next.attendance = true;
-      if (['drawings', 'drawings-matrix', 'drawings-approvals', 'drawings-transmittals', 'drawings-activity', 'drawings-plan-pass', 'drawings-viewer'].includes(currentView)) next.drawings = true;
+      if (DRAWINGS_VIEWS.includes(currentView)) next.drawings = true;
       return next;
     });
   }, [currentView]);
@@ -97,240 +159,266 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     return permissions[moduleKey] !== false;
   };
 
-  const MENU_STRUCTURE = [
+  const MENU_SECTIONS = [
     {
-      id: 'overview',
-      label: 'Overview',
-      icon: <LayoutDashboard size={18} />,
-    },
-    {
-      id: 'projects',
-      label: 'Projects',
-      icon: <Building2 size={18} />,
-      moduleKey: 'projects',
-    },
-    {
-      id: 'steel',
-      label: 'Steel',
-      icon: <Layers size={18} />,
-      isGroup: true,
-      children: [
+      sectionTitle: null,
+      items: [
         {
-          id: 'inventory',
-          label: 'Inventory',
-          icon: <Package size={17} />,
+          id: 'overview',
+          label: 'Dashboard',
+          icon: <LayoutDashboard size={18} />,
+        },
+        {
+          id: 'projects',
+          label: 'Projects',
+          icon: <Building2 size={18} />,
+          moduleKey: 'projects',
+        },
+      ],
+    },
+    {
+      sectionTitle: 'STEEL & BBS',
+      items: [
+        {
+          id: 'steel',
+          label: 'Steel',
+          icon: <Layers size={18} />,
+          targetView: 'inventory',
           moduleKey: 'inventory',
         },
+        // {
+        //   id: 'bbs',
+        //   label: 'BBS Schedule',
+        //   icon: <Ruler size={18} />,
+        //   moduleKey: 'bbs',
+        // },
         {
-          id: 'ledger',
-          label: 'Ledger & Procurement',
-          icon: <BookOpen size={17} />,
-          moduleKey: 'ledger',
-        },
-        {
-          id: 'inputs',
-          label: 'Run Optimizer',
-          icon: <PlusSquare size={17} />,
-          moduleKey: 'optimizer',
-        },
-        {
-          id: 'history',
-          label: 'Batch History',
-          icon: <ClipboardList size={17} />,
-          moduleKey: 'history',
+          id: 'casting',
+          label: 'Casting Management',
+          icon: <Boxes size={18} />,
+          moduleKey: 'casting',
         },
       ],
     },
     {
-      id: 'bbs',
-      label: 'BBS',
-      icon: <Ruler size={18} />,
-      moduleKey: 'bbs',
-    },
-    {
-      id: 'casting',
-      label: 'Casting Management',
-      icon: <Boxes size={18} />,
-      moduleKey: 'casting',
-    },
-    {
-      id: 'general-inventory',
-      label: 'Site Inventory',
-      icon: <Warehouse size={18} />,
-      moduleKey: 'generalInventory',
-    },
-    {
-      id: 'crm',
-      label: 'Real Estate CRM',
-      icon: <Home size={18} />,
-      moduleKey: 'crm',
-    },
-    {
-      id: 'project-management',
-      label: 'Projects & Tasks',
-      icon: <CalendarRange size={18} />,
-      moduleKey: 'projectManagement',
-    },
-    {
-      id: 'drawings',
-      label: 'Drawings',
-      icon: <FileStack size={18} />,
-      isGroup: true,
-      moduleKey: 'drawings',
-      children: [
+      sectionTitle: 'SITE OPERATIONS',
+      items: [
+        {
+          id: 'general-inventory',
+          label: 'Site Inventory',
+          icon: <Warehouse size={18} />,
+          moduleKey: 'generalInventory',
+        },
+        {
+          id: 'crm',
+          label: 'Real Estate CRM',
+          icon: <Home size={18} />,
+          isGroup: true,
+          moduleKey: 'crm',
+          defaultView: 'crm-today',
+          children: [
+            {
+              id: 'crm-dashboard',
+              label: 'Dashboard',
+              icon: <LayoutDashboard size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-today',
+              label: 'Today',
+              icon: <Calendar size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-leads',
+              label: 'Leads',
+              icon: <Users size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-pipeline',
+              label: 'Pipeline',
+              icon: <Kanban size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-tasks',
+              label: 'Tasks',
+              icon: <CheckSquare size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-calendar',
+              label: 'Calendar',
+              icon: <CalendarDays size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-followups',
+              label: 'Follow-ups',
+              icon: <Clock size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-inventory',
+              label: 'Unit Inventory',
+              icon: <Building size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-templates',
+              label: 'Templates',
+              icon: <FileText size={17} />,
+              moduleKey: 'crm',
+            },
+            {
+              id: 'crm-import',
+              label: 'Import',
+              icon: <Upload size={17} />,
+              moduleKey: 'crm',
+            },
+          ],
+        },
+        {
+          id: 'project-management',
+          label: 'Projects & Tasks',
+          icon: <CalendarRange size={18} />,
+          moduleKey: 'projectManagement',
+        },
         {
           id: 'drawings',
-          label: 'All Drawings',
-          icon: <FileStack size={17} />,
+          label: 'Drawings',
+          icon: <FileStack size={18} />,
           moduleKey: 'drawings',
         },
         {
-          id: 'drawings-matrix',
-          label: 'Drawing Matrix',
-          icon: <Grid3X3 size={17} />,
-          moduleKey: 'drawings',
+          id: 'petty-cash',
+          label: 'Petty Cash',
+          icon: <Wallet size={18} />,
+          moduleKey: 'pettyCash',
+        },
+      ],
+    },
+    {
+      sectionTitle: 'MANPOWER & LABOUR',
+      items: [
+        {
+          id: 'contractors',
+          label: 'Contractors',
+          icon: <HardHat size={18} />,
+          moduleKey: 'contractors',
         },
         {
-          id: 'drawings-approvals',
-          label: 'Approvals',
-          icon: <Shield size={17} />,
-          moduleKey: 'drawings',
+          id: 'manpower',
+          label: 'Manpower',
+          icon: <UsersRound size={18} />,
+          isGroup: true,
+          moduleKey: 'manpower',
+          defaultView: 'manpower-labour',
+          children: [
+            {
+              id: 'manpower-labour',
+              label: 'Labour',
+              icon: <UserRound size={17} />,
+              moduleKey: 'manpower',
+            },
+            {
+              id: 'manpower-contractor-labour',
+              label: 'Contractor Labour',
+              icon: <HardHat size={17} />,
+              moduleKey: 'manpower',
+            },
+          ],
         },
         {
-          id: 'drawings-transmittals',
-          label: 'Transmittals',
-          icon: <ClipboardList size={17} />,
-          moduleKey: 'drawings',
+          id: 'attendance',
+          label: 'Attendance',
+          icon: <CalendarCheck2 size={18} />,
+          isGroup: true,
+          moduleKey: 'attendance',
+          defaultView: 'attendance-mark',
+          children: [
+            {
+              id: 'attendance-mark',
+              label: 'Mark Attendance',
+              icon: <CalendarCheck2 size={17} />,
+              moduleKey: 'attendance',
+            },
+            {
+              id: 'attendance-history',
+              label: 'History',
+              icon: <History size={17} />,
+              moduleKey: 'attendance',
+            },
+            {
+              id: 'attendance-reports',
+              label: 'Reports',
+              icon: <ClipboardList size={17} />,
+              moduleKey: 'attendance',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      sectionTitle: 'ADMINISTRATION',
+      items: [
+        {
+          id: 'chat',
+          label: 'Project Chat',
+          icon: <MessageSquare size={18} />,
+          moduleKey: 'chat',
         },
         {
-          id: 'drawings-activity',
+          id: 'users',
+          label: 'User Management',
+          icon: <Users size={18} />,
+          moduleKey: 'users',
+        },
+        {
+          id: 'roles',
+          label: 'Roles & Permissions',
+          icon: <Shield size={18} />,
+          moduleKey: 'roles',
+        },
+        {
+          id: 'activity-logs',
           label: 'Activity Logs',
-          icon: <History size={17} />,
-          moduleKey: 'drawings',
+          icon: <History size={18} />,
+          moduleKey: 'activityLogs',
         },
       ],
-    },
-    {
-      id: 'petty-cash',
-      label: 'Petty Cash',
-      icon: <Wallet size={18} />,
-      moduleKey: 'pettyCash',
-    },
-    {
-      id: 'contractors',
-      label: 'Contractors',
-      icon: <HardHat size={18} />,
-      moduleKey: 'contractors',
-    },
-    {
-      id: 'manpower',
-      label: 'Manpower',
-      icon: <UsersRound size={18} />,
-      isGroup: true,
-      moduleKey: 'manpower',
-      children: [
-        {
-          id: 'manpower-labour',
-          label: 'Labour',
-          icon: <UserRound size={17} />,
-          moduleKey: 'manpower',
-        },
-        {
-          id: 'manpower-contractor-labour',
-          label: 'Contractor Labour',
-          icon: <HardHat size={17} />,
-          moduleKey: 'manpower',
-        },
-      ],
-    },
-    {
-      id: 'attendance',
-      label: 'Attendance',
-      icon: <CalendarCheck2 size={18} />,
-      isGroup: true,
-      moduleKey: 'attendance',
-      children: [
-        {
-          id: 'attendance-mark',
-          label: 'Mark Attendance',
-          icon: <CalendarCheck2 size={17} />,
-          moduleKey: 'attendance',
-        },
-        {
-          id: 'attendance-history',
-          label: 'History',
-          icon: <History size={17} />,
-          moduleKey: 'attendance',
-        },
-        {
-          id: 'attendance-reports',
-          label: 'Reports',
-          icon: <ClipboardList size={17} />,
-          moduleKey: 'attendance',
-        },
-      ],
-    },
-    {
-      id: 'reports',
-      label: 'Reports',
-      icon: <FileSpreadsheet size={18} />,
-      moduleKey: 'reports',
-    },
-    {
-      id: 'chat',
-      label: 'Project Chat',
-      icon: <MessageSquare size={18} />,
-      moduleKey: 'chat',
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      icon: <SettingsIcon size={18} />,
-      moduleKey: 'settings',
-    },
-    {
-      id: 'users',
-      label: 'User Management',
-      icon: <Users size={18} />,
-      moduleKey: 'users',
-    },
-    {
-      id: 'roles',
-      label: 'Roles & Permissions',
-      icon: <Shield size={18} />,
-      moduleKey: 'roles',
-    },
-    {
-      id: 'activity-logs',
-      label: 'Activity Logs',
-      icon: <History size={18} />,
-      moduleKey: 'activityLogs',
     },
   ];
 
-  const menuItems = MENU_STRUCTURE.map((item) => {
-    if (item.isGroup && item.children) {
-      if (item.moduleKey && !checkPermission(item.moduleKey)) return null;
-      const allowedChildren = item.children.filter((child) => checkPermission(child.moduleKey));
-      if (allowedChildren.length === 0) return null;
-      return { ...item, children: allowedChildren };
-    }
-    if (!checkPermission(item.moduleKey)) return null;
-    return item;
-  }).filter(Boolean);
+  // Filter allowed items in each section
+  const sections = MENU_SECTIONS.map((section) => {
+    const filteredItems = section.items
+      .map((item) => {
+        if (item.isGroup && item.children) {
+          if (item.moduleKey && !checkPermission(item.moduleKey)) return null;
+          const allowedChildren = item.children.filter((child) => checkPermission(child.moduleKey));
+          if (allowedChildren.length === 0) return null;
+          return { ...item, children: allowedChildren };
+        }
+        if (!checkPermission(item.moduleKey)) return null;
+        return item;
+      })
+      .filter(Boolean);
 
-  const groupChildViews = {
-    steel: STEEL_VIEWS,
-    manpower: MANPOWER_VIEWS,
-    attendance: ATTENDANCE_VIEWS,
-  };
+    if (filteredItems.length === 0) return null;
+    return { ...section, items: filteredItems };
+  }).filter(Boolean);
 
   const initials = user
     ? ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase()
-    : 'U';
+    : 'CT';
+
+  const isBbsActive = (currentView || '').startsWith('bbs-') || currentView === 'bbs';
 
   return (
     <>
+      {/* Mobile Top Header */}
       <div className="mobile-header">
         <button
           type="button"
@@ -340,177 +428,300 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
         >
           <Menu size={24} />
         </button>
-        <div className="mobile-logo-wrapper brand-logo-text">
-          <span className="brand-rebar">Rebar</span>
-          <span className="brand-optima">Optima</span>
+        <div className="mobile-logo-wrapper">
+          <img src={brandLogo} alt="CraveToBuild" className="mobile-brand-img" />
         </div>
         <ThemeToggle />
       </div>
 
-      <div className={`sidenav ${isOpen ? 'open' : ''}`} aria-label="Main navigation">
+      {/* Main Sidenav (Dual Mode: Full vs Mini) */}
+      <aside
+        className={`sidenav ${isCollapsed ? 'collapsed' : ''} ${isOpen ? 'open' : ''}`}
+        aria-label="Main navigation"
+      >
+        {/* Mobile Close Button */}
         <button
           type="button"
           className="sidenav-close-btn"
           onClick={() => setIsOpen(false)}
           aria-label="Close navigation menu"
         >
-          <X size={24} />
+          <X size={20} />
         </button>
 
-        <div className="sidenav-logo-container">
-          <div className="brand-logo-text">
-            <span className="brand-rebar">Rebar</span>
-            <span className="brand-optima">Optima</span>
+        {/* ── Top Header ── */}
+        {!isCollapsed ? (
+          <div className="sidenav-header-expanded">
+            <div className="sidenav-brand-row">
+              <div className="sidenav-brand-mark-box" title="CraveToBuild">
+                <img src={cravetobuildMark} alt="CraveToBuild" className="sidenav-brand-mark-img" />
+              </div>
+              <div className="sidenav-brand-titles">
+                <span className="sidenav-brand-title">CraveToBuild</span>
+                <span className="sidenav-brand-subtitle">
+                  {user?.accountType === 'developer' ? 'Developer Portal' : 'Admin Portal'}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="sidenav-collapse-btn"
+              onClick={toggleCollapsed}
+              title="Collapse sidebar"
+              aria-label="Collapse sidebar"
+            >
+              <PanelLeftClose size={18} />
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="sidenav-header-collapsed">
+            <div className="sidenav-brand-mark-box mini" title="CraveToBuild">
+              <img src={cravetobuildMark} alt="CraveToBuild" className="sidenav-brand-mark-img" />
+            </div>
+            <button
+              type="button"
+              className="sidenav-expand-btn"
+              onClick={toggleCollapsed}
+              title="Expand sidebar"
+              aria-label="Expand sidebar"
+            >
+              <PanelLeftOpen size={18} />
+            </button>
+          </div>
+        )}
 
-        <ProjectSelector />
+        {/* Active Project Selector */}
+        <ProjectSelector isCollapsed={isCollapsed} />
 
+        {/* ── Scrollable Menu List ── */}
         <nav className="sidenav-menu">
-          {menuItems.map((item) => {
-            if (item.isGroup) {
-              const isGroupOpen = !!openGroups[item.id];
-              const toggleGroup = () => {
-                setOpenGroups((prev) => ({ ...prev, [item.id]: !prev[item.id] }));
-              };
-              const isGroupActive = item.children.some(
-                (child) => currentView === child.id ||
-                  (item.id === 'steel' && currentView === 'results' && child.id === 'inputs') ||
-                  (item.id === 'drawings' && (currentView === 'drawings-plan-pass' || currentView === 'drawings-viewer'))
-              );
+          {
+            sections.map((section, secIdx) => (
+              <div key={secIdx} className="sidenav-section-container">
+                {!isCollapsed && section.sectionTitle && (
+                  <div className="sidenav-section-heading">{section.sectionTitle}</div>
+                )}
 
-              return (
-                <div key={item.id} className="sidenav-group-container">
-                  <button
-                    type="button"
-                    className={`sidenav-item sidenav-group-header ${isGroupActive && !isGroupOpen ? 'active-parent' : ''}`}
-                    onClick={toggleGroup}
-                    aria-expanded={isGroupOpen}
-                  >
-                    <span className="sidenav-icon">{item.icon}</span>
-                    <span className="sidenav-label">{item.label}</span>
-                    <ChevronDown size={16} className={`sidenav-chevron ${isGroupOpen ? 'open' : ''}`} />
-                  </button>
-                  <div className={`sidenav-submenu-wrapper ${isGroupOpen ? 'open' : ''}`}>
-                    <div className="sidenav-submenu">
-                      <div className="sidenav-submenu-content">
-                        {item.children.map((child) => (
-                          <button
-                            type="button"
-                            key={child.id}
-                            className={`sidenav-item sidenav-subitem ${currentView === child.id ||
-                              (currentView === 'results' && child.id === 'inputs')
-                              ? 'active'
-                              : ''
-                              }`}
-                            onClick={() => {
-                              onViewChange(child.id);
-                              setIsOpen(false);
-                            }}
-                            tabIndex={isGroupOpen ? 0 : -1}
-                            aria-hidden={!isGroupOpen}
-                          >
-                            <span className="sidenav-icon">{child.icon}</span>
-                            <span className="sidenav-label">{child.label}</span>
-                          </button>
-                        ))}
+                {section.items.map((item) => {
+                  if (item.isGroup) {
+                    const isGroupOpen = !!openGroups[item.id];
+                    const toggleGroup = () => {
+                      setOpenGroups((prev) => ({ ...prev, [item.id]: !prev[item.id] }));
+                    };
+
+                    const isGroupActive = item.children.some(
+                      (child) =>
+                        currentView === child.id ||
+                        (item.id === 'crm' && (currentView === 'crm' || currentView === child.id)) ||
+                        (item.id === 'drawings' &&
+                          (currentView === 'drawings-plan-pass' || currentView === 'drawings-viewer'))
+                    );
+
+                    // In collapsed mode: render clean icon button
+                    if (isCollapsed) {
+                      return (
+                        <button
+                          type="button"
+                          key={item.id}
+                          className={`sidenav-item icon-only ${isGroupActive ? 'active' : ''}`}
+                          onClick={() => {
+                            const targetView = item.defaultView || item.children[0]?.id;
+                            if (targetView) onViewChange(targetView);
+                            setIsOpen(false);
+                          }}
+                          data-tooltip={item.label}
+                          aria-label={item.label}
+                        >
+                          <span className="sidenav-icon">{item.icon}</span>
+                        </button>
+                      );
+                    }
+
+                    // In expanded mode: render accordion
+                    return (
+                      <div key={item.id} className="sidenav-group-container">
+                        <button
+                          type="button"
+                          className={`sidenav-item sidenav-group-header ${isGroupActive && !isGroupOpen ? 'active-parent' : ''
+                            }`}
+                          onClick={toggleGroup}
+                          aria-expanded={isGroupOpen}
+                        >
+                          <span className="sidenav-icon">{item.icon}</span>
+                          <span className="sidenav-label">{item.label}</span>
+                          <ChevronDown
+                            size={15}
+                            className={`sidenav-chevron ${isGroupOpen ? 'open' : ''}`}
+                          />
+                        </button>
+
+                        <div className={`sidenav-submenu-wrapper ${isGroupOpen ? 'open' : ''}`}>
+                          <div className="sidenav-submenu">
+                            <div className="sidenav-submenu-content">
+                              {item.children.map((child) => {
+                                const isChildActive =
+                                  currentView === child.id ||
+                                  (currentView === 'results' && child.id === 'inputs');
+
+                                return (
+                                  <button
+                                    type="button"
+                                    key={child.id}
+                                    className={`sidenav-item sidenav-subitem ${isChildActive ? 'active' : ''
+                                      }`}
+                                    onClick={() => {
+                                      onViewChange(child.id);
+                                      setIsOpen(false);
+                                    }}
+                                    tabIndex={isGroupOpen ? 0 : -1}
+                                    aria-hidden={!isGroupOpen}
+                                  >
+                                    <span className="sidenav-icon">{child.icon}</span>
+                                    <span className="sidenav-label">{child.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
+                    );
+                  }
 
-            const isBbsChild = (currentView || '').startsWith('bbs-') && item.id === 'bbs';
+                  // Regular single item
+                  const isActive =
+                    currentView === item.id ||
+                    (item.id === 'steel' && STEEL_VIEWS.includes(currentView)) ||
+                    (item.id === 'bbs' && isBbsActive) ||
+                    (item.id === 'drawings' && DRAWINGS_VIEWS.includes(currentView)) ||
+                    (currentView === 'results' && item.id === 'inputs');
 
-            return (
-              <button
-                type="button"
-                key={item.id}
-                className={`sidenav-item ${currentView === item.id ||
-                  isBbsChild ||
-                  (currentView === 'results' && item.id === 'inputs')
-                  ? 'active'
-                  : ''
-                  }`}
-                onClick={() => {
-                  onViewChange(item.id);
-                  setIsOpen(false);
-                }}
-              >
-                <span className="sidenav-icon">{item.icon}</span>
-                <span className="sidenav-label">{item.label}</span>
-              </button>
-            );
-          })}
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      className={`sidenav-item ${isCollapsed ? 'icon-only' : ''} ${isActive ? 'active' : ''
+                        }`}
+                      onClick={() => {
+                        onViewChange(item.targetView || item.id);
+                        setIsOpen(false);
+                      }}
+                      data-tooltip={item.label}
+                      aria-label={item.label}
+                    >
+                      <span className="sidenav-icon">{item.icon}</span>
+                      {!isCollapsed && <span className="sidenav-label">{item.label}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
         </nav>
 
-        <div className="sidenav-footer">
-          <div className="theme-toggle-row">
-            <span className="sidenav-footer-lbl">Theme</span>
-            <ThemeToggle />
-          </div>
-
-          {user && (
-            <button
-              type="button"
-              className={`user-profile-badge ${currentView === 'profile' ? 'active' : ''}`}
-              onClick={() => {
-                onViewChange('profile');
-                setIsOpen(false);
-              }}
-              title="View & Edit Profile"
-            >
-              {user.avatar ? (
-                <img src={user.avatar} alt="" className="profile-avatar-img" />
-              ) : (
-                <div className="profile-initials">{initials}</div>
-              )}
-              <div className="profile-details">
-                <div className="profile-name">
-                  {user.firstName} {user.lastName}
-                </div>
-                <div className="profile-role-company">
-                  <span className="profile-role">{user.role}</span>
-                  <span className="profile-divider">•</span>
-                  <span
-                    className="profile-company"
-                    title={`${user.companyName || 'Standard Firm'}${user.projectName ? ` (${user.projectName})` : ''}`}
-                  >
-                    {user.companyName || 'Standard Firm'}
-                    {user.projectName ? ` • ${user.projectName}` : ''}
-                  </span>
-                </div>
+        {/* ── Bottom User Footer ── */}
+        {
+          !isCollapsed ? (
+            <div className="sidenav-footer-expanded">
+              <div className="theme-toggle-row">
+                <span className="sidenav-footer-lbl">Theme</span>
+                <ThemeToggle />
               </div>
-            </button>
-          )}
 
-          {onLogout && (
-            <button
-              type="button"
-              className="sidenav-item logout-btn"
-              onClick={() => {
-                setIsOpen(false);
-                onLogout();
-              }}
-            >
-              <span className="sidenav-icon">
-                <LogOut size={18} />
-              </span>
-              <span className="sidenav-label">Logout</span>
-            </button>
-          )}
-        </div>
-      </div>
+              {user && (
+                <div className="user-profile-row">
+                  <button
+                    type="button"
+                    className={`user-profile-badge-btn ${currentView === 'profile' ? 'active' : ''}`}
+                    onClick={() => {
+                      onViewChange('profile');
+                      setIsOpen(false);
+                    }}
+                    title="View Profile"
+                  >
+                    {user.avatar ? (
+                      <img src={user.avatar} alt="" className="profile-avatar-img" />
+                    ) : (
+                      <div className="profile-avatar-circle">{initials}</div>
+                    )}
+                    <div className="profile-text-group">
+                      <div className="profile-name-text">
+                        {user.firstName} {user.lastName}
+                      </div>
+                      <div className="profile-sub-text" title={user.email || user.role}>
+                        {user.email || user.role}
+                      </div>
+                    </div>
+                  </button>
 
-      {isOpen && (
-        <div
-          className="sidenav-backdrop"
-          onClick={() => setIsOpen(false)}
-          role="presentation"
-          aria-hidden="true"
-        />
-      )}
+                  {
+                    onLogout && (
+                      <button
+                        type="button"
+                        className="footer-logout-icon-btn"
+                        onClick={() => {
+                          setIsOpen(false);
+                          onLogout();
+                        }}
+                        title="Sign Out"
+                        aria-label="Sign Out"
+                      >
+                        <LogOut size={17} />
+                      </button>
+                    )
+                  }
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="sidenav-footer-collapsed">
+              {user && (
+                <button
+                  type="button"
+                  className={`user-profile-mini-btn ${currentView === 'profile' ? 'active' : ''}`}
+                  onClick={() => {
+                    onViewChange('profile');
+                    setIsOpen(false);
+                  }}
+                  data-tooltip={`${user.firstName} ${user.lastName}`}
+                  aria-label="View Profile"
+                >
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="" className="profile-avatar-img mini" />
+                  ) : (
+                    <div className="profile-avatar-circle mini">{initials}</div>
+                  )}
+                </button>
+              )}
+
+              {onLogout && (
+                <button
+                  type="button"
+                  className="footer-logout-mini-btn"
+                  onClick={() => {
+                    setIsOpen(false);
+                    onLogout();
+                  }}
+                  data-tooltip="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <LogOut size={18} />
+                </button>
+              )}
+            </div>
+          )}
+      </aside>
+
+      {/* Mobile Drawer Overlay Backdrop */}
+      {
+        isOpen && (
+          <div
+            className="sidenav-backdrop"
+            onClick={() => setIsOpen(false)}
+            role="presentation"
+            aria-hidden="true"
+          />
+        )
+      }
     </>
   );
 }

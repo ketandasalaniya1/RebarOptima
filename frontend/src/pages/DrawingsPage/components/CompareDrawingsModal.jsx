@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './CompareDrawingsModal.css';
 import AppModal from '../../../components/ui/AppModal';
+import CADViewer from './CADViewer';
 import DxfViewerComponent from './DxfViewerComponent';
 import PDFViewer from './PDFViewer';
 import { GitCompare, ZoomIn, ZoomOut, Maximize2, SplitSquareVertical } from 'lucide-react';
@@ -10,17 +11,19 @@ export default function CompareDrawingsModal({
   open,
   onClose,
   drawing,
-  revisions = []
+  revisions = [],
+  initialLeftRevId,
+  initialRightRevId,
 }) {
   if (!isOpen || !drawing) return null;
 
   const revList = revisions.length > 0 ? revisions : [drawing.currentRevision].filter(Boolean);
 
   const [leftRevId, setLeftRevId] = useState(
-    revList.length > 1 ? revList[1]._id : revList[0]?._id
+    initialLeftRevId || (revList.length > 1 ? revList[1]._id : revList[0]?._id)
   );
   const [rightRevId, setRightRevId] = useState(
-    revList[0]?._id
+    initialRightRevId || revList[0]?._id
   );
 
   const leftRev = revList.find((r) => String(r._id) === String(leftRevId)) || revList[0];
@@ -32,9 +35,10 @@ export default function CompareDrawingsModal({
 
     if (ext === 'dwg' || ext === 'dxf') {
       return (
-        <DxfViewerComponent
-          dxfUrl={`/api/drawings/drawings/${drawing._id}/dxf`}
-          originalFileName={rev.fileName}
+        <CADViewer
+          fileData={rev.fileData || drawing?.fileData}
+          fileUrl={rev.fileUrl || drawing?.fileUrl}
+          fileName={rev.fileName || `${drawing.drawingNumber}.${ext}`}
         />
       );
     }

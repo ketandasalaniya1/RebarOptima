@@ -1,0 +1,87 @@
+/* Commit Batch Drawer Styles */
+
+.commit-drawer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.commit-field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.commit-text-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--card-border, #cbd5e1);
+  border-radius: 6px;
+  font-size: 0.92rem;
+  color: var(--text-primary, #0f172a);
+  background: var(--card-bg, #ffffff);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.commit-text-input:focus {
+  border-color: var(--accent, #059669);
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15);
+}
+
+.commit-field-hint {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #64748b);
+  margin-top: 5px;
+  display: block;
+}
+
+.commit-audit-card {
+  padding: 14px 16px;
+  background: var(--input-bg, #f8fafc);
+  border: 1px solid var(--card-border, #e2e8f0);
+  border-radius: 8px;
+}
+
+.audit-card-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary, #475569);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 12px 0;
+}
+
+.audit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.audit-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.audit-lbl {
+  font-size: 0.76rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.audit-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.commit-drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+

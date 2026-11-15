@@ -6,7 +6,7 @@ import { setView } from '../../store/slices/routingSlice';
 import { setActiveProjectHeader } from '../../utils/api';
 import './ProjectSelector.css';
 
-export default function ProjectSelector() {
+export default function ProjectSelector({ isCollapsed = false }) {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,6 +71,20 @@ export default function ProjectSelector() {
 
   // Empty state: no projects exist
   if (!loading && projects.length === 0) {
+    if (isCollapsed) {
+      return (
+        <div className="project-selector-container-mini">
+          <button
+            type="button"
+            className="project-selector-trigger-mini"
+            onClick={() => canCreateProject && dispatch(openCreateModal())}
+            title={canCreateProject ? "Create Project" : "No Projects Found"}
+          >
+            <Building2 size={18} className="ps-trigger-icon" />
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="project-selector-container">
         <div className="project-selector-empty">
@@ -97,6 +111,99 @@ export default function ProjectSelector() {
     );
   }
 
+  const renderDropdownBody = () => (
+    <div className={`project-selector-dropdown ${isCollapsed ? 'mini-flyout' : ''}`} role="listbox">
+      {projects.length > 3 && (
+        <div className="ps-search-bar">
+          <Search size={14} className="ps-search-icon" />
+          <input
+            type="text"
+            placeholder="Search projects..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            autoFocus
+            className="ps-search-input"
+          />
+        </div>
+      )}
+
+      <div className="ps-list">
+        {filteredProjects.length === 0 ? (
+          <div className="ps-no-matches">
+            <AlertCircle size={14} />
+            <span>No matching projects</span>
+          </div>
+        ) : (
+          filteredProjects.map((p) => {
+            const isSelected = selectedProject && (selectedProject._id || selectedProject.id) === (p._id || p.id);
+            return (
+              <button
+                key={p._id || p.id}
+                type="button"
+                className={`ps-item ${isSelected ? 'selected' : ''}`}
+                onClick={() => handleSelect(p)}
+                role="option"
+                aria-selected={isSelected}
+              >
+                <div className="ps-item-content">
+                  <div className="ps-item-top">
+                    <span className="ps-item-name">{p.name}</span>
+                    <span className={`ps-item-status ${p.status === 'active' ? 'active' : 'inactive'}`}>
+                      {p.status || 'active'}
+                    </span>
+                  </div>
+                  <div className="ps-item-bottom">
+                    <span className="ps-item-type">{p.projectType || 'Residential'}</span>
+                    {p.pincode && <span className="ps-item-pin">• {p.pincode}</span>}
+                  </div>
+                </div>
+                {isSelected && <Check size={16} className="ps-item-check" />}
+              </button>
+            );
+          })
+        )}
+      </div>
+
+      <div className="ps-footer">
+        {canCreateProject && (
+          <button
+            type="button"
+            className="ps-footer-action ps-action-create"
+            onClick={handleCreateNew}
+          >
+            <Plus size={14} />
+            <span>Create New Project</span>
+          </button>
+        )}
+        <button
+          type="button"
+          className="ps-footer-action ps-action-manage"
+          onClick={handleManageProjects}
+        >
+          <FolderKanban size={14} />
+          <span>All Projects</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  if (isCollapsed) {
+    return (
+      <div className="project-selector-container-mini" ref={dropdownRef}>
+        <button
+          type="button"
+          className={`project-selector-trigger-mini ${isOpen ? 'active' : ''}`}
+          onClick={() => setIsOpen(!isOpen)}
+          title={`Active Project: ${selectedProject ? selectedProject.name : 'Select a project...'}`}
+          aria-label="Active Project"
+        >
+          <Building2 size={18} className="ps-trigger-icon" />
+        </button>
+        {isOpen && renderDropdownBody()}
+      </div>
+    );
+  }
+
   return (
     <div className="project-selector-container" ref={dropdownRef}>
       <button
@@ -118,81 +225,7 @@ export default function ProjectSelector() {
         <ChevronDown size={16} className={`ps-chevron ${isOpen ? 'rotated' : ''}`} />
       </button>
 
-      {isOpen && (
-        <div className="project-selector-dropdown" role="listbox">
-          {projects.length > 3 && (
-            <div className="ps-search-bar">
-              <Search size={14} className="ps-search-icon" />
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                autoFocus
-                className="ps-search-input"
-              />
-            </div>
-          )}
-
-          <div className="ps-list">
-            {filteredProjects.length === 0 ? (
-              <div className="ps-no-matches">
-                <AlertCircle size={14} />
-                <span>No matching projects</span>
-              </div>
-            ) : (
-              filteredProjects.map((p) => {
-                const isSelected = selectedProject && (selectedProject._id || selectedProject.id) === (p._id || p.id);
-                return (
-                  <button
-                    key={p._id || p.id}
-                    type="button"
-                    className={`ps-item ${isSelected ? 'selected' : ''}`}
-                    onClick={() => handleSelect(p)}
-                    role="option"
-                    aria-selected={isSelected}
-                  >
-                    <div className="ps-item-content">
-                      <div className="ps-item-top">
-                        <span className="ps-item-name">{p.name}</span>
-                        <span className={`ps-item-status ${p.status === 'active' ? 'active' : 'inactive'}`}>
-                          {p.status || 'active'}
-                        </span>
-                      </div>
-                      <div className="ps-item-bottom">
-                        <span className="ps-item-type">{p.projectType || 'Residential'}</span>
-                        {p.pincode && <span className="ps-item-pin">• {p.pincode}</span>}
-                      </div>
-                    </div>
-                    {isSelected && <Check size={16} className="ps-item-check" />}
-                  </button>
-                );
-              })
-            )}
-          </div>
-
-          <div className="ps-footer">
-            {canCreateProject && (
-              <button
-                type="button"
-                className="ps-footer-action ps-action-create"
-                onClick={handleCreateNew}
-              >
-                <Plus size={14} />
-                <span>Create New Project</span>
-              </button>
-            )}
-            <button
-              type="button"
-              className="ps-footer-action ps-action-manage"
-              onClick={handleManageProjects}
-            >
-              <FolderKanban size={14} />
-              <span>All Projects</span>
-            </button>
-          </div>
-        </div>
-      )}
+      {isOpen && renderDropdownBody()}
     </div>
   );
 }

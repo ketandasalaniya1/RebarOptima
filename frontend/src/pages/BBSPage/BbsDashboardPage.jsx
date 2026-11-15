@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   ChevronDown, ChevronLeft, Plus, Download,
-  FileSpreadsheet, Scissors, Weight, Box, Users2, TrendingUp,
+  FileSpreadsheet, Scissors, Weight, Box, Users2, TrendingUp, Layers,
 } from 'lucide-react';
 import { bbsApi } from '../../utils/api';
 import {

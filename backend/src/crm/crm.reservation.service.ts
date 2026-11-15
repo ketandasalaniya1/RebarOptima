@@ -1,8 +1,8 @@
 import { ObjectId, Db } from 'mongodb';
-import { ICrmUnit, UnitAvailabilityStatus } from './crm.types';
+import { UnitAvailabilityStatus } from './crm.types';
 
 /**
- * Normalizes phone numbers for collision detection (removes spaces, hyphens, parentheses, country code +91)
+ * Normalizes phone numbers for collision detection (removes spaces, hyphens, parentheses, country code +91, leading 0)
  */
 export function normalizePhone(phone: string): string {
   if (!phone) return '';
@@ -26,7 +26,7 @@ export function normalizeEmail(email: string): string {
 }
 
 /**
- * Generates collision-resistant business references
+ * Legacy business reference fallback generator (prefer getNextSequence from crm.sequence.service.ts)
  */
 export async function generateBusinessReference(
   db: Db,
@@ -36,21 +36,22 @@ export async function generateBusinessReference(
   field: string = 'bookingReference'
 ): Promise<string> {
   const currentYear = new Date().getFullYear();
-  const count = await db.collection(collectionName).countDocuments({ companyId });
-  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const cId = companyId && ObjectId.isValid(String(companyId)) ? new ObjectId(String(companyId)) : companyId;
+  const count = await db.collection(collectionName).countDocuments({ companyId: cId });
   const sequence = String(count + 1).padStart(4, '0');
   const candidate = `${prefix}-${currentYear}-${sequence}`;
 
   // Collision check
-  const exists = await db.collection(collectionName).findOne({ [field]: candidate, companyId });
+  const exists = await db.collection(collectionName).findOne({ [field]: candidate, companyId: cId });
   if (exists) {
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     return `${prefix}-${currentYear}-${sequence}-${randomSuffix}`;
   }
   return candidate;
 }
 
 /**
- * Checks for existing customer by phone or email
+ * Checks for existing customer by phone, normalized phone, or email
  */
 export async function checkDuplicateCustomer(
   db: Db,
@@ -58,19 +59,37 @@ export async function checkDuplicateCustomer(
   phone: string,
   email?: string,
   excludeCustomerId?: any
-): Promise<{ isDuplicate: boolean; matches: any[]; reason?: string }> {
+): Promise<{ isDuplicate: boolean; matches: any[]; existingCustomerSummary?: any; reason?: string }> {
   const normPhone = normalizePhone(phone);
   const normEmail = email ? normalizeEmail(email) : '';
 
-  const query: any = { companyId };
+  const cMatcher = toCompanyMatch(companyId);
+  const query: any = { companyId: cMatcher };
   if (excludeCustomerId) {
     query._id = { $ne: excludeCustomerId instanceof ObjectId ? excludeCustomerId : new ObjectId(excludeCustomerId) };
   }
 
-  const allCustomers = await db.collection('crm_customers').find(query).toArray();
-  const matches = allCustomers.filter((c: any) => {
-    const p = normalizePhone(c.phone);
-    const altP = normalizePhone(c.altPhone || '');
+  // Fast direct query on normalized phone or email if indexed
+  const orConditions: any[] = [];
+  if (normPhone) {
+    orConditions.push({ phoneNormalized: normPhone });
+    orConditions.push({ phone: phone });
+    orConditions.push({ altPhoneNormalized: normPhone });
+  }
+  if (normEmail) {
+    orConditions.push({ email: normEmail });
+  }
+
+  if (orConditions.length > 0) {
+    query.$or = orConditions;
+  }
+
+  const matches = await db.collection('crm_customers').find(query).toArray();
+
+  // In-memory verification for edge cases
+  const verifiedMatches = matches.filter((c: any) => {
+    const p = normalizePhone(c.phoneNormalized || c.phone);
+    const altP = normalizePhone(c.altPhoneNormalized || c.altPhone || '');
     const e = normalizeEmail(c.email || '');
 
     const phoneMatches = normPhone && (p === normPhone || altP === normPhone);
@@ -78,14 +97,25 @@ export async function checkDuplicateCustomer(
     return phoneMatches || emailMatches;
   });
 
-  if (matches.length > 0) {
+  if (verifiedMatches.length > 0) {
+    const primary = verifiedMatches[0];
     const reasons: string[] = [];
-    if (matches.some((m: any) => normalizePhone(m.phone) === normPhone)) reasons.push('primary phone number');
-    if (matches.some((m: any) => normalizeEmail(m.email) === normEmail)) reasons.push('email address');
+    if (normalizePhone(primary.phoneNormalized || primary.phone) === normPhone) reasons.push('primary phone number');
+    if (primary.email && normalizeEmail(primary.email) === normEmail) reasons.push('email address');
+
     return {
       isDuplicate: true,
-      matches,
-      reason: `Customer with identical ${reasons.join(' and ')} already exists.`
+      matches: verifiedMatches,
+      existingCustomerSummary: {
+        customerId: primary._id,
+        customerCode: primary.customerCode,
+        fullName: primary.fullName,
+        phone: primary.phone,
+        email: primary.email,
+        assignedSalespersonName: primary.assignedSalespersonName,
+        createdAt: primary.createdAt
+      },
+      reason: `Customer with identical ${reasons.join(' and ') || 'contact details'} already exists (${primary.customerCode}: ${primary.fullName}).`
     };
   }
 
@@ -93,7 +123,7 @@ export async function checkDuplicateCustomer(
 }
 
 /**
- * Safely evaluates unit availability, accounting for expired temporary holds
+ * Safely evaluates unit availability, accounting for expired temporary holds at read-time
  */
 export function evaluateUnitAvailability(unit: any): {
   isAvailable: boolean;
@@ -132,7 +162,8 @@ function toCompanyMatch(companyId: any) {
 }
 
 /**
- * Atomic reservation validation and transition
+ * Atomic reservation validation and transition using conditional findOneAndUpdate.
+ * Returns 409 conflict if another user held or booked the unit concurrently.
  */
 export async function reserveUnitSafely(
   db: Db,
@@ -140,59 +171,63 @@ export async function reserveUnitSafely(
   unitId: any,
   customerId: any,
   holdDurationHours: number = 48
-): Promise<{ success: boolean; message: string; unit?: any }> {
-  const uId = toIdMatch(unitId);
+): Promise<{ success: boolean; message: string; unit?: any; conflict?: boolean }> {
+  const now = new Date();
+  const heldUntil = new Date(now.getTime() + holdDurationHours * 60 * 60 * 1000);
+  const uId = ObjectId.isValid(String(unitId)) ? new ObjectId(String(unitId)) : unitId;
   const cMatcher = toCompanyMatch(companyId);
-  let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
-  if (!unit) {
-    unit = await db.collection('crm_units').findOne({ _id: uId });
-  }
+  const custIdStr = String(customerId);
 
-  if (!unit) {
-    return { success: false, message: 'Target property unit not found.' };
-  }
+  // Atomic condition: Unit must be Available, OR Held by the same customer, OR Held but expired
+  const filter = {
+    _id: uId,
+    companyId: cMatcher,
+    $or: [
+      { availabilityStatus: 'Available' },
+      { availabilityStatus: 'Held', heldByCustomerId: custIdStr },
+      { availabilityStatus: 'Held', heldUntil: { $lt: now } }
+    ]
+  };
 
-  const { isAvailable, isHoldExpired } = evaluateUnitAvailability(unit);
+  const update = {
+    $set: {
+      availabilityStatus: 'Held' as UnitAvailabilityStatus,
+      heldUntil,
+      heldByCustomerId: custIdStr,
+      updatedAt: now
+    }
+  };
 
-  // If already held by the same customer, refresh hold
-  const isSameCustomerHold = unit.availabilityStatus === 'Held' && String(unit.heldByCustomerId) === String(customerId);
+  const updatedUnit = await db.collection('crm_units').findOneAndUpdate(
+    filter,
+    update,
+    { returnDocument: 'after' }
+  );
 
-  if (!isAvailable && !isSameCustomerHold) {
+  if (!updatedUnit) {
+    // Determine the current state to return an accurate 409 conflict message
+    const currentUnit = await db.collection('crm_units').findOne({ _id: uId });
+    if (!currentUnit) {
+      return { success: false, message: 'Target property unit not found.', conflict: false };
+    }
+
     return {
       success: false,
-      message: `Unit ${unit.unitCode} is currently in '${unit.availabilityStatus}' status and cannot be reserved.`
+      conflict: true,
+      message: `Conflict: Unit ${currentUnit.unitCode} is currently in '${currentUnit.availabilityStatus}' status and cannot be reserved.`
     };
   }
 
-  const heldUntil = new Date();
-  heldUntil.setHours(heldUntil.getHours() + holdDurationHours);
-
-  const updateResult = await db.collection('crm_units').updateOne(
-    { _id: unit._id },
-    {
-      $set: {
-        availabilityStatus: 'Reserved',
-        heldUntil,
-        heldByCustomerId: String(customerId),
-        updatedAt: new Date()
-      }
-    }
-  );
-
-  if (updateResult.modifiedCount === 0 && !isSameCustomerHold) {
-    return { success: false, message: 'Concurrent reservation conflict detected. Please refresh inventory.' };
-  }
-
-  const updatedUnit = await db.collection('crm_units').findOne({ _id: unit._id });
   return {
     success: true,
-    message: `Unit ${unit.unitCode} successfully reserved until ${heldUntil.toLocaleString()}.`,
+    message: `Unit ${updatedUnit.unitCode} successfully reserved on hold until ${heldUntil.toLocaleString()}.`,
     unit: updatedUnit
   };
 }
 
 /**
- * Confirms booking on a unit, changing its status to 'Booked'
+ * Atomically commits booking on a unit, changing its status to 'Booked'.
+ * Returns 409 conflict if unit was booked/sold or locked by someone else.
  */
 export async function commitUnitBooking(
   db: Db,
@@ -200,72 +235,181 @@ export async function commitUnitBooking(
   unitId: any,
   bookingId: any,
   customerId: any
-): Promise<{ success: boolean; message: string; unit?: any }> {
-  const uId = toIdMatch(unitId);
+): Promise<{ success: boolean; message: string; unit?: any; conflict?: boolean }> {
+  const now = new Date();
+  const uId = ObjectId.isValid(String(unitId)) ? new ObjectId(String(unitId)) : unitId;
   const cMatcher = toCompanyMatch(companyId);
-  let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
-  if (!unit) {
-    unit = await db.collection('crm_units').findOne({ _id: uId });
-  }
+  const custIdStr = String(customerId);
 
-  if (!unit) {
-    return { success: false, message: 'Target property unit not found.' };
-  }
+  // Unit can be booked if: Available, OR Held by this customer, OR Held but expired, OR Reserved by this customer
+  const filter = {
+    _id: uId,
+    companyId: cMatcher,
+    $or: [
+      { availabilityStatus: 'Available' },
+      { availabilityStatus: 'Held', heldByCustomerId: custIdStr },
+      { availabilityStatus: 'Held', heldUntil: { $lt: now } },
+      { availabilityStatus: 'Reserved', heldByCustomerId: custIdStr }
+    ]
+  };
 
-  // Unit must be Available, Held by this customer, or Reserved
-  if (['Booked', 'Sold', 'Blocked'].includes(unit.availabilityStatus)) {
+  const update = {
+    $set: {
+      availabilityStatus: 'Booked' as UnitAvailabilityStatus,
+      activeBookingId: bookingId ? (ObjectId.isValid(String(bookingId)) ? new ObjectId(String(bookingId)) : String(bookingId)) : null,
+      heldByCustomerId: custIdStr,
+      heldUntil: null,
+      updatedAt: now
+    }
+  };
+
+  const updatedUnit = await db.collection('crm_units').findOneAndUpdate(
+    filter,
+    update,
+    { returnDocument: 'after' }
+  );
+
+  if (!updatedUnit) {
+    const currentUnit = await db.collection('crm_units').findOne({ _id: uId });
+    if (!currentUnit) {
+      return { success: false, message: 'Target property unit not found.', conflict: false };
+    }
     return {
       success: false,
-      message: `Unit ${unit.unitCode} is already ${unit.availabilityStatus}. Duplicate booking prevented.`
+      conflict: true,
+      message: `Conflict: Unit ${currentUnit.unitCode} is currently '${currentUnit.availabilityStatus}' and cannot be booked.`
     };
   }
 
-  await db.collection('crm_units').updateOne(
-    { _id: unit._id },
-    {
-      $set: {
-        availabilityStatus: 'Booked',
-        activeBookingId: String(bookingId),
-        heldByCustomerId: String(customerId),
-        heldUntil: null,
-        updatedAt: new Date()
-      }
-    }
-  );
-
-  const updatedUnit = await db.collection('crm_units').findOne({ _id: unit._id });
-  return { success: true, message: `Unit ${unit.unitCode} committed to booking successfully.`, unit: updatedUnit };
+  return {
+    success: true,
+    message: `Unit ${updatedUnit.unitCode} committed to booking successfully.`,
+    unit: updatedUnit
+  };
 }
 
 /**
- * Releases unit when a booking or hold is cancelled
+ * Releases unit when a booking or hold is cancelled back to 'Available'
  */
 export async function releaseUnitSafely(
   db: Db,
   companyId: any,
   unitId: any
-): Promise<{ success: boolean; message: string }> {
-  const uId = toIdMatch(unitId);
+): Promise<{ success: boolean; message: string; unit?: any; conflict?: boolean }> {
+  const now = new Date();
+  const uId = ObjectId.isValid(String(unitId)) ? new ObjectId(String(unitId)) : unitId;
   const cMatcher = toCompanyMatch(companyId);
-  let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
-  if (!unit) {
-    unit = await db.collection('crm_units').findOne({ _id: uId });
-  }
 
-  if (!unit) return { success: false, message: 'Unit not found.' };
+  const filter = {
+    _id: uId,
+    companyId: cMatcher,
+    availabilityStatus: { $in: ['Held', 'Reserved', 'Booked'] }
+  };
 
-  await db.collection('crm_units').updateOne(
-    { _id: unit._id },
-    {
-      $set: {
-        availabilityStatus: 'Available',
-        activeBookingId: null,
-        heldByCustomerId: null,
-        heldUntil: null,
-        updatedAt: new Date()
-      }
+  const update = {
+    $set: {
+      availabilityStatus: 'Available' as UnitAvailabilityStatus,
+      activeBookingId: null,
+      heldByCustomerId: null,
+      heldUntil: null,
+      updatedAt: now
     }
+  };
+
+  const updatedUnit = await db.collection('crm_units').findOneAndUpdate(
+    filter,
+    update,
+    { returnDocument: 'after' }
   );
 
-  return { success: true, message: `Unit ${unit.unitCode} released back to Available status.` };
+  if (!updatedUnit) {
+    return { success: false, message: 'Unit is not currently in a releasable state or not found.', conflict: true };
+  }
+
+  return { success: true, message: `Unit ${updatedUnit.unitCode} released back to Available status.`, unit: updatedUnit };
+}
+
+/**
+ * Blocks unit for management hold
+ */
+export async function blockUnitSafely(
+  db: Db,
+  companyId: any,
+  unitId: any,
+  blockReason: string
+): Promise<{ success: boolean; message: string; unit?: any; conflict?: boolean }> {
+  const now = new Date();
+  const uId = ObjectId.isValid(String(unitId)) ? new ObjectId(String(unitId)) : unitId;
+  const cMatcher = toCompanyMatch(companyId);
+
+  // Can only block Available or Held units (cannot block if already Booked or Sold)
+  const filter = {
+    _id: uId,
+    companyId: cMatcher,
+    availabilityStatus: { $in: ['Available', 'Held', 'Reserved'] }
+  };
+
+  const update = {
+    $set: {
+      availabilityStatus: 'Blocked' as UnitAvailabilityStatus,
+      notes: blockReason ? `[Blocked]: ${blockReason}` : '[Blocked by Management]',
+      heldUntil: null,
+      heldByCustomerId: null,
+      updatedAt: now
+    }
+  };
+
+  const updatedUnit = await db.collection('crm_units').findOneAndUpdate(
+    filter,
+    update,
+    { returnDocument: 'after' }
+  );
+
+  if (!updatedUnit) {
+    return {
+      success: false,
+      conflict: true,
+      message: 'Conflict: Unit cannot be blocked because it is already booked or sold.'
+    };
+  }
+
+  return { success: true, message: `Unit ${updatedUnit.unitCode} blocked successfully.`, unit: updatedUnit };
+}
+
+/**
+ * Unblocks a previously blocked unit
+ */
+export async function unblockUnitSafely(
+  db: Db,
+  companyId: any,
+  unitId: any
+): Promise<{ success: boolean; message: string; unit?: any; conflict?: boolean }> {
+  const now = new Date();
+  const uId = ObjectId.isValid(String(unitId)) ? new ObjectId(String(unitId)) : unitId;
+  const cMatcher = toCompanyMatch(companyId);
+
+  const filter = {
+    _id: uId,
+    companyId: cMatcher,
+    availabilityStatus: 'Blocked'
+  };
+
+  const update = {
+    $set: {
+      availabilityStatus: 'Available' as UnitAvailabilityStatus,
+      updatedAt: now
+    }
+  };
+
+  const updatedUnit = await db.collection('crm_units').findOneAndUpdate(
+    filter,
+    update,
+    { returnDocument: 'after' }
+  );
+
+  if (!updatedUnit) {
+    return { success: false, conflict: true, message: 'Unit is not currently blocked or not found.' };
+  }
+
+  return { success: true, message: `Unit ${updatedUnit.unitCode} unblocked and returned to Available.`, unit: updatedUnit };
 }

@@ -175,8 +175,8 @@
 /* Left Vertical Thumbnail Strip */
 .ro-thumb-strip {
   width: 140px;
-  background-color: #0b111e;
-  border-right: 1px solid #1e293b;
+  background-color: var(--card-bg);
+  border-right: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
   padding: 12px 8px;
@@ -204,8 +204,8 @@
 .ro-thumb-box {
   width: 110px;
   height: 80px;
-  background-color: #1e293b;
-  border: 2px solid #334155;
+  background-color: var(--input-bg);
+  border: 2px solid var(--card-border);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -230,7 +230,7 @@
   color: #94a3b8;
 }
 
-.ro-thumb-box.active + .ro-thumb-page-num {
+.ro-thumb-box.active+.ro-thumb-page-num {
   color: #38bdf8;
 }
 
@@ -453,4 +453,3 @@
   font-weight: 600;
   color: var(--text-primary, #0f172a);
 }
-

@@ -1,0 +1,233 @@
+/* Role List Panel Styles */
+
+.role-list-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  min-width: 290px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e2e8f0);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  height: fit-content;
+  max-height: calc(100vh - 180px);
+}
+
+.rl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--card-border, #e2e8f0);
+  background: var(--input-bg, #f8fafc);
+}
+
+.rl-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rl-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin: 0;
+}
+
+.rl-count-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #cbd5e1);
+  color: var(--text-secondary, #64748b);
+}
+
+.rl-create-btn {
+  font-size: 0.78rem !important;
+  padding: 0 10px !important;
+}
+
+.rl-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--card-border, #e2e8f0);
+}
+
+.rl-search-icon {
+  position: absolute;
+  left: 24px;
+  color: var(--text-secondary, #94a3b8);
+  pointer-events: none;
+}
+
+.rl-search-input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;
+  border-radius: 6px;
+  border: 1px solid var(--input-border, #cbd5e1);
+  background: var(--input-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.82rem;
+  outline: none;
+}
+
+.rl-search-input:focus {
+  border-color: var(--accent, #059669);
+}
+
+.rl-scrollable-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rl-group-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-label, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px;
+}
+
+.rl-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rl-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-primary, #0f172a);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.rl-item:hover {
+  background: var(--input-bg, #f8fafc);
+  border-color: var(--card-border, #e2e8f0);
+}
+
+.rl-item.active {
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.08));
+  border-color: var(--accent, #059669);
+  color: var(--accent, #059669);
+}
+
+.rl-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.rl-item-icon.system {
+  background: rgba(14, 165, 233, 0.08);
+  color: #0284c7;
+}
+
+.rl-item-icon.custom {
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.08));
+  color: var(--accent, #059669);
+}
+
+.rl-item-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rl-item-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rl-item-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-custom-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.15));
+  color: var(--accent, #059669);
+}
+
+.rl-item-desc {
+  font-size: 0.74rem;
+  color: var(--text-secondary, #64748b);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-item-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--input-bg, #f1f5f9);
+}
+
+.rl-empty-custom {
+  padding: 12px;
+  font-size: 0.78rem;
+  color: var(--text-secondary, #94a3b8);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+  border: 1px dashed var(--card-border, #cbd5e1);
+  border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+  .role-list-sidebar {
+    width: 100%;
+    max-height: none;
+  }
+}
+

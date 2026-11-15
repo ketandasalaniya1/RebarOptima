@@ -17,6 +17,22 @@ import {
   assertBlockInProject,
   ensureProjectBlocksIndexes,
 } from './project-blocks.service';
+import {
+  listProjectFloors,
+  createFloorForBlock,
+  updateFloorForBlock,
+  deleteFloorForBlock,
+  reorderFloorsForBlock,
+  ensureProjectFloorsIndexes,
+} from './project-floors.service';
+import {
+  listUnitsForFloor,
+  createUnitForFloor,
+  updateUnitForFloor,
+  deleteUnitForFloor,
+  ensureProjectUnitsIndexes,
+} from './project-units.service';
+import { getCompanyUnitMasterData } from './unit-master-data';
 
 export function createProjectsRouter(
   getDb: () => any,
@@ -30,7 +46,11 @@ export function createProjectsRouter(
   let indexesReady = false;
   const readyIndexes = async (db: any) => {
     if (indexesReady) return;
-    await ensureProjectBlocksIndexes(db);
+    await Promise.all([
+      ensureProjectBlocksIndexes(db),
+      ensureProjectFloorsIndexes(db),
+      ensureProjectUnitsIndexes(db),
+    ]).catch(() => {});
     indexesReady = true;
   };
 
@@ -130,6 +150,19 @@ export function createProjectsRouter(
       res.json(projects);
     } catch (e: any) {
       console.error('List projects error:', e);
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  // 1b. GET /api/projects/unit-master-data - Unified global master data for units
+  router.get('/unit-master-data', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      const masterData = await getCompanyUnitMasterData(db, ctx.companyId);
+      res.json(masterData);
+    } catch (e: any) {
+      console.error('Unit master data error:', e);
       res.status(500).json({ message: e.message });
     }
   });
@@ -402,6 +435,275 @@ export function createProjectsRouter(
         requireActive: false,
       });
       res.json(block);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // ─── Project Floors / Levels ──────────────────────────────────────────────
+
+  // GET /api/projects/:id/floors - List all floors across blocks for this project
+  router.get('/:id/floors', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const includeInactive = String(req.query.includeInactive || '') === 'true';
+      await assertProjectAccess(db, ctx, req.params.id, { requireActive: false });
+      const blockId = req.query.blockId;
+      const floors = await listProjectFloors(db, req.params.id, blockId, {
+        includeInactive,
+      });
+      res.json(floors);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // GET /api/projects/:id/blocks/:blockId/floors
+  router.get('/:id/blocks/:blockId/floors', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const includeInactive = String(req.query.includeInactive || '') === 'true';
+      await assertProjectAccess(db, ctx, req.params.id, { requireActive: false });
+      const floors = await listProjectFloors(db, req.params.id, req.params.blockId, {
+        includeInactive,
+      });
+      res.json(floors);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // POST /api/projects/:id/blocks/:blockId/floors
+  router.post('/:id/blocks/:blockId/floors', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      if (!(await canCreateProjects(db, ctx))) {
+        return res.status(403).json({
+          message: 'You are not authorized to manage project floors',
+          code: 'FLOOR_CREATE_DENIED',
+        });
+      }
+      await readyIndexes(db);
+      const created = await createFloorForBlock({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        input: {
+          name: req.body?.name,
+          floorNumber: req.body?.floorNumber,
+          displayOrder: req.body?.displayOrder,
+          description: req.body?.description,
+        },
+      });
+      if (logAudit) {
+        await logAudit(db, {
+          actorId: ctx.userId,
+          actorType: 'user',
+          companyId: ctx.companyId,
+          action: 'PROJECT_FLOOR_CREATED',
+          resource: 'project_floors',
+          resourceId: String(created._id),
+          projectId: String(created.projectId),
+          newValue: { name: created.name, floorNumber: created.floorNumber },
+        });
+      }
+      res.status(201).json(created);
+    } catch (e: any) {
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate floor name in this block' : e.message,
+        code: e.code === 11000 ? 'FLOOR_NAME_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // PUT /api/projects/:id/blocks/:blockId/floors/reorder
+  router.put('/:id/blocks/:blockId/floors/reorder', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const result = await reorderFloorsForBlock({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        floorIds: req.body?.floorIds,
+      });
+      res.json(result);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // PUT /api/projects/:id/blocks/:blockId/floors/:floorId
+  router.put('/:id/blocks/:blockId/floors/:floorId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const updated = await updateFloorForBlock({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        floorId: req.params.floorId,
+        patch: {
+          name: req.body?.name,
+          floorNumber: req.body?.floorNumber,
+          displayOrder: req.body?.displayOrder,
+          description: req.body?.description,
+          status: req.body?.status,
+        },
+      });
+      res.json(updated);
+    } catch (e: any) {
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate floor name in this block' : e.message,
+        code: e.code === 11000 ? 'FLOOR_NAME_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // DELETE /api/projects/:id/blocks/:blockId/floors/:floorId
+  router.delete('/:id/blocks/:blockId/floors/:floorId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const hardDelete = String(req.query.hard || '') === 'true';
+      const result = await deleteFloorForBlock({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        floorId: req.params.floorId,
+        hardDelete,
+      });
+      res.json(result);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // ─── Project Units on Floors ──────────────────────────────────────────────
+
+  // GET /api/projects/:id/blocks/:blockId/floors/:floorId/units
+  router.get('/:id/blocks/:blockId/floors/:floorId/units', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const units = await listUnitsForFloor(
+        db,
+        ctx,
+        req.params.id,
+        req.params.blockId,
+        req.params.floorId,
+      );
+      res.json(units);
+    } catch (e: any) {
+      const status = e.status || 500;
+      res.status(status).json({ message: e.message, code: e.code });
+    }
+  });
+
+  // POST /api/projects/:id/blocks/:blockId/floors/:floorId/units
+  router.post('/:id/blocks/:blockId/floors/:floorId/units', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      if (!(await canCreateProjects(db, ctx))) {
+        return res.status(403).json({
+          message: 'You are not authorized to create units',
+          code: 'UNIT_CREATE_DENIED',
+        });
+      }
+      await readyIndexes(db);
+      const created = await createUnitForFloor({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        floorId: req.params.floorId,
+        input: req.body,
+      });
+      if (logAudit) {
+        await logAudit(db, {
+          actorId: ctx.userId,
+          actorType: 'user',
+          companyId: ctx.companyId,
+          action: 'PROJECT_UNIT_CREATED',
+          resource: 'crm_units',
+          resourceId: String(created._id),
+          projectId: String(created.projectId),
+          newValue: { unitCode: created.unitCode, configuration: created.configuration },
+        });
+      }
+      res.status(201).json(created);
+    } catch (e: any) {
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate unit code in this project' : e.message,
+        code: e.code === 11000 ? 'UNIT_CODE_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // PUT /api/projects/:id/blocks/:blockId/floors/:floorId/units/:unitId
+  router.put('/:id/blocks/:blockId/floors/:floorId/units/:unitId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const updated = await updateUnitForFloor({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        floorId: req.params.floorId,
+        unitId: req.params.unitId,
+        patch: req.body,
+      });
+      res.json(updated);
+    } catch (e: any) {
+      const status = e.status || (e.code === 11000 ? 409 : 500);
+      res.status(status).json({
+        message: e.code === 11000 ? 'Duplicate unit code in this project' : e.message,
+        code: e.code === 11000 ? 'UNIT_CODE_DUPLICATE' : e.code,
+      });
+    }
+  });
+
+  // DELETE /api/projects/:id/blocks/:blockId/floors/:floorId/units/:unitId
+  router.delete('/:id/blocks/:blockId/floors/:floorId/units/:unitId', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const ctx = await resolveUserAndCompany(req, db);
+      await readyIndexes(db);
+      const hardDelete = String(req.query.hard || '') === 'true';
+      const result = await deleteUnitForFloor({
+        db,
+        ctx,
+        projectId: req.params.id,
+        blockId: req.params.blockId,
+        floorId: req.params.floorId,
+        unitId: req.params.unitId,
+        hardDelete,
+      });
+      res.json(result);
     } catch (e: any) {
       const status = e.status || 500;
       res.status(status).json({ message: e.message, code: e.code });

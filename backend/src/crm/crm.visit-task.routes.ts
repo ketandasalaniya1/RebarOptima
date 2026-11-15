@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
+import { requireCrmRole } from './crm.security.service';
+import { parsePagination, crmRateLimiter } from './crm.validation';
 
 export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
   const router = Router();
@@ -25,7 +27,7 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
   // ── SITE VISITS ──────────────────────────────────────────────────────────
 
   // GET /api/crm/visits - List site visits
-  router.get('/visits', authMiddleware, async (req: any, res) => {
+  router.get('/visits', authMiddleware, requireCrmRole('admin', 'sales_manager', 'sales_rep'), async (req: any, res) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
@@ -35,6 +37,10 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       if (status) query.status = status;
       if (salespersonId) query.assignedSalespersonId = salespersonId;
       if (projectId) query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
+
+      if (req.crmRole === 'sales_rep' && req.user?.sub) {
+        query.assignedSalespersonId = req.user.sub;
+      }
 
       let visits = await db.collection('crm_site_visits').find(query).sort({ visitDateTime: 1 }).toArray();
 
@@ -190,15 +196,21 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
   // ── FOLLOW-UP TASKS ──────────────────────────────────────────────────────
 
   // GET /api/crm/tasks - List follow-up tasks with filter for today, overdue, upcoming
-  router.get('/tasks', authMiddleware, async (req: any, res) => {
+  router.get('/tasks', authMiddleware, requireCrmRole('admin', 'sales_manager', 'sales_rep'), async (req: any, res) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
       const { filter, assignedTo, priority } = req.query;
 
       const query: any = { companyId };
-      if (assignedTo) query.assignedTo = assignedTo;
+      if (assignedTo) {
+        query.$or = [{ assignedTo: assignedTo }, { assignedToId: assignedTo }];
+      }
       if (priority) query.priority = priority;
+
+      if (req.crmRole === 'sales_rep' && req.user?.sub) {
+        query.$or = [{ assignedTo: req.user.sub }, { assignedToId: req.user.sub }];
+      }
 
       const tasks = await db.collection('crm_follow_ups').find(query).sort({ dueDateTime: 1 }).toArray();
 
@@ -247,35 +259,53 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       const {
         customerId,
         unitInterestId,
+        leadId,
+        bookingId,
+        unitId,
         title,
         dueDateTime,
         priority = 'Medium',
         taskType = 'Phone Call',
+        status = 'Pending',
+        repeat_rule = 'none',
+        reminder_at,
+        checklist = [],
         assignedTo,
         assignedToName,
         notes
       } = req.body;
 
-      if (!customerId || !title || !dueDateTime) {
-        return res.status(400).json({ message: 'Customer, task title, and due date/time are required.' });
+      if (!title || !dueDateTime) {
+        return res.status(400).json({ message: 'Task title and due date/time are required.' });
       }
 
-      const custId = ObjectId.isValid(customerId) ? new ObjectId(customerId) : customerId;
-      const customer = await db.collection('crm_customers').findOne({ _id: custId, companyId });
-      if (!customer) return res.status(404).json({ message: 'Customer not found.' });
+      let customerName = '';
+      let custId = null;
+      if (customerId) {
+        custId = ObjectId.isValid(customerId) ? new ObjectId(customerId) : customerId;
+        const customer = await db.collection('crm_customers').findOne({ _id: custId, companyId });
+        if (customer) customerName = customer.fullName;
+      }
 
       const newTask: any = {
         companyId,
         customerId: custId,
-        customerName: customer.fullName,
-        unitInterestId: unitInterestId ? (ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId) : null,
+        customerName: customerName || req.body.customerName || '',
+        unitInterestId: unitInterestId ? (ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId) : (leadId ? (ObjectId.isValid(leadId) ? new ObjectId(leadId) : leadId) : null),
+        leadId: leadId ? (ObjectId.isValid(leadId) ? new ObjectId(leadId) : leadId) : null,
+        bookingId: bookingId ? (ObjectId.isValid(bookingId) ? new ObjectId(bookingId) : bookingId) : null,
+        unitId: unitId ? (ObjectId.isValid(unitId) ? new ObjectId(unitId) : unitId) : null,
         title: title.trim(),
         dueDateTime: new Date(dueDateTime),
         priority,
         taskType,
-        status: 'Pending',
-        assignedTo: assignedTo || customer.assignedSalespersonId || req.user?.sub,
-        assignedToName: assignedToName || customer.assignedSalespersonName || req.user?.name || 'Sales Rep',
+        status,
+        repeat_rule,
+        reminder_at: reminder_at ? new Date(reminder_at) : null,
+        checklist: Array.isArray(checklist) ? checklist : [],
+        assignedTo: assignedTo || req.user?.sub,
+        assignedToId: assignedTo || req.user?.sub,
+        assignedToName: assignedToName || req.user?.name || 'Sales Rep',
         notes: notes || '',
         completedAt: null,
         completedBy: null,
@@ -286,10 +316,11 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       const result = await db.collection('crm_follow_ups').insertOne(newTask);
 
       // Update nextFollowUpDate on unit interest if applicable
-      if (unitInterestId) {
+      const targetLeadId = newTask.unitInterestId || newTask.leadId;
+      if (targetLeadId) {
         await db.collection('crm_unit_interests').updateOne(
-          { _id: ObjectId.isValid(unitInterestId) ? new ObjectId(unitInterestId) : unitInterestId, companyId },
-          { $set: { nextFollowUpDate: dueDateTime, updatedAt: new Date() } }
+          { _id: ObjectId.isValid(targetLeadId) ? new ObjectId(targetLeadId) : targetLeadId, companyId },
+          { $set: { nextFollowUpDate: dueDateTime, next_followup_at: dueDateTime, updatedAt: new Date() } }
         );
       }
 
@@ -300,7 +331,63 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
     }
   });
 
-  // PUT /api/crm/tasks/:id/complete - Quick mark task as completed
+  // PUT /api/crm/tasks/:id - Full update of task
+  router.put('/tasks/:id', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const tId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
+      const { title, priority, status, dueDateTime, reminder_at, repeat_rule, checklist, notes } = req.body;
+
+      const updateData: any = { updatedAt: new Date() };
+      if (title) updateData.title = title.trim();
+      if (priority) updateData.priority = priority;
+      if (status) {
+        updateData.status = status;
+        if (status === 'Completed') {
+          updateData.completedAt = new Date();
+          updateData.completedBy = req.user?.name || 'User';
+        }
+      }
+      if (dueDateTime) updateData.dueDateTime = new Date(dueDateTime);
+      if (reminder_at !== undefined) updateData.reminder_at = reminder_at ? new Date(reminder_at) : null;
+      if (repeat_rule) updateData.repeat_rule = repeat_rule;
+      if (checklist) updateData.checklist = checklist;
+      if (notes !== undefined) updateData.notes = notes;
+
+      const filter = {
+        companyId,
+        $or: [{ _id: tId }, { _id: String(tId) }]
+      };
+
+      await db.collection('crm_follow_ups').updateOne(filter, { $set: updateData });
+      const updated = await db.collection('crm_follow_ups').findOne(filter);
+      res.json(updated);
+    } catch (err: any) {
+      console.error('Error updating task:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // DELETE /api/crm/tasks/:id - Delete task
+  router.delete('/tasks/:id', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const tId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
+
+      await db.collection('crm_follow_ups').deleteOne({
+        companyId,
+        $or: [{ _id: tId }, { _id: String(tId) }]
+      });
+      res.json({ message: 'Task deleted successfully' });
+    } catch (err: any) {
+      console.error('Error deleting task:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // PUT /api/crm/tasks/:id/complete - Quick mark task as completed (with repeat rule support)
   router.put('/tasks/:id/complete', authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
@@ -308,11 +395,16 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
       const tId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
       const { notes } = req.body;
 
-      const task = await db.collection('crm_follow_ups').findOne({ _id: tId, companyId });
+      const filter = {
+        companyId,
+        $or: [{ _id: tId }, { _id: String(tId) }]
+      };
+
+      const task = await db.collection('crm_follow_ups').findOne(filter);
       if (!task) return res.status(404).json({ message: 'Task not found.' });
 
       await db.collection('crm_follow_ups').updateOne(
-        { _id: tId, companyId },
+        filter,
         {
           $set: {
             status: 'Completed',
@@ -324,20 +416,50 @@ export function createCrmVisitTaskRouter(getDb: () => any, authMiddleware: any, 
         }
       );
 
-      // Record activity
-      await db.collection('crm_activities').insertOne({
-        companyId,
-        customerId: task.customerId,
-        unitInterestId: task.unitInterestId,
-        activityType: 'Note',
-        title: `Task Completed: ${task.title}`,
-        description: `Follow-up (${task.taskType}) marked completed by ${req.user?.name || 'Sales Rep'}.${notes ? ` Note: ${notes}` : ''}`,
-        performedBy: req.user?.sub || 'system',
-        performedByName: req.user?.name || 'Sales Team',
-        createdAt: new Date()
-      });
+      // Auto-schedule next occurrence if repeat_rule is set
+      if (task.repeat_rule && task.repeat_rule !== 'none') {
+        const curDue = new Date(task.dueDateTime || Date.now());
+        let nextDue = new Date(curDue);
+        if (task.repeat_rule === 'daily') {
+          nextDue.setDate(nextDue.getDate() + 1);
+        } else if (task.repeat_rule === 'weekly') {
+          nextDue.setDate(nextDue.getDate() + 7);
+        } else if (task.repeat_rule === 'monthly') {
+          nextDue.setMonth(nextDue.getMonth() + 1);
+        }
 
-      const updated = await db.collection('crm_follow_ups').findOne({ _id: tId });
+        const nextTaskDoc: any = {
+          ...task,
+          status: 'Pending',
+          dueDateTime: nextDue,
+          checklist: Array.isArray(task.checklist)
+            ? task.checklist.map((item: any) => ({ ...item, done: false }))
+            : [],
+          completedAt: null,
+          completedBy: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        delete nextTaskDoc._id;
+        await db.collection('crm_follow_ups').insertOne(nextTaskDoc);
+      }
+
+      // Record activity
+      if (task.customerId) {
+        await db.collection('crm_activities').insertOne({
+          companyId,
+          customerId: task.customerId,
+          unitInterestId: task.unitInterestId,
+          activityType: 'Note',
+          title: `Task Completed: ${task.title}`,
+          description: `Follow-up (${task.taskType}) marked completed by ${req.user?.name || 'Sales Rep'}.${notes ? ` Note: ${notes}` : ''}`,
+          performedBy: req.user?.sub || 'system',
+          performedByName: req.user?.name || 'Sales Team',
+          createdAt: new Date()
+        });
+      }
+
+      const updated = await db.collection('crm_follow_ups').findOne(filter);
       res.json(updated);
     } catch (err: any) {
       console.error('Error completing task:', err);

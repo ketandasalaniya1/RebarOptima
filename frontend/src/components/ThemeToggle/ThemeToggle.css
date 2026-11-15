@@ -1,92 +1,44 @@
-.theme-switch {
-  position: relative;
-  display: inline-block;
-  width: 56px;
-  height: 28px;
+/* ═══════════════════════════════════════════════════════════════
+   3-WAY THEME PILL TOGGLE (Light / System / Dark)
+   ═══════════════════════════════════════════════════════════════ */
+
+.ro-theme-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--input-bg, #0b1120);
+  border: 1px solid var(--input-border, #334155);
+  border-radius: var(--radius-full, 9999px);
+  padding: 2px;
+  gap: 2px;
   user-select: none;
 }
 
-/* Hide default HTML checkbox */
-.theme-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The track */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccd0db; /* Light track background */
-  border: 1px solid var(--card-border);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 7px;
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-/* Icons inside the track */
-.slider-icon {
-  display: flex;
+.ro-theme-pill-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #8d86b8;
-  z-index: 1;
-  transition: color 0.3s ease;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full, 9999px);
+  color: var(--text-label, #94a3b8);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--duration-fast, 120ms) var(--ease-standard, ease);
 }
 
-.light-sun {
-  color: #e89b00; /* Amber Sun */
+.ro-theme-pill-btn:hover {
+  color: var(--text-primary, #ffffff);
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.12));
 }
 
-.dark-moon {
-  color: #8d86b8;
+.ro-theme-pill-btn.active {
+  background: var(--accent, #047857);
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* The thumb/knob */
-.slider-thumb {
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  z-index: 2;
-}
-
-/* Dark Mode specific track styles */
-[data-theme="dark"] .slider {
-  background-color: #1d1833; /* Dark track background */
-  border-color: #282142;
-}
-
-[data-theme="dark"] .light-sun {
-  color: #5c567a;
-}
-
-[data-theme="dark"] .dark-moon {
-  color: #a468eb; /* Purple Moon */
-}
-
-/* Thumb motion on toggle (checked state) */
-.theme-switch input:checked + .slider .slider-thumb {
-  transform: translateX(28px);
-  background-color: var(--accent); /* Purple thumb in dark mode */
-}
-
-/* Focus styling */
-.theme-switch input:focus-visible + .slider {
-  box-shadow: 0 0 0 3px rgba(112, 22, 210, 0.25);
+.ro-theme-pill-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }

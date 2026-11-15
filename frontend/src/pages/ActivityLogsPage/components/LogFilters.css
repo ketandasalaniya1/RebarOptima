@@ -1,0 +1,140 @@
+/* Log Filters Styles */
+
+.log-filters-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  flex-wrap: wrap;
+}
+
+.lf-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 260px;
+  max-width: 440px;
+}
+
+.lf-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary, #94a3b8);
+  pointer-events: none;
+}
+
+.lf-search-input {
+  width: 100%;
+  padding: 8px 34px 8px 36px;
+  min-height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border, #cbd5e1);
+  background: var(--input-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.lf-search-input:focus {
+  border-color: var(--accent, #059669);
+}
+
+.lf-search-clear {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.lf-dropdowns-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lf-select {
+  padding: 8px 12px;
+  min-height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border, #cbd5e1);
+  background: var(--input-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.82rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.lf-select:focus {
+  border-color: var(--accent, #059669);
+}
+
+.lf-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #e2e8f0);
+  background: var(--input-bg, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lf-action-btn:hover {
+  border-color: var(--accent, #059669);
+  color: var(--accent, #059669);
+  background: var(--card-bg, #ffffff);
+}
+
+.lf-export-btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .log-filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lf-search-wrap {
+    max-width: 100%;
+  }
+
+  .lf-dropdowns-row {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .lf-dropdowns-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lf-select {
+    width: 100%;
+  }
+
+  .lf-export-btn {
+    width: 100%;
+  }
+}
+

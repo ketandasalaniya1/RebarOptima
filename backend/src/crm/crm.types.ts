@@ -49,13 +49,17 @@ export type TaskPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
 
 export type TaskStatus = 'Pending' | 'In Progress' | 'Completed' | 'Deferred' | 'Cancelled';
 
+export type CrmRole = 'sales_rep' | 'sales_manager' | 'accountant' | 'admin';
+
 export interface ICrmCustomer {
   _id?: ObjectId | string;
   companyId: ObjectId | string;
   customerCode: string; // e.g. CUST-1001
   fullName: string;
   phone: string;
+  phoneNormalized?: string;
   altPhone?: string;
+  altPhoneNormalized?: string;
   email?: string;
   address?: string;
   city?: string;
@@ -63,13 +67,19 @@ export interface ICrmCustomer {
   leadSource?: string; // 'Website', 'Referral', 'Walk-in', 'Channel Partner', 'Social Media', etc.
   campaign?: string;
   budgetMin?: number;
+  budgetMinPaise?: number;
   budgetMax?: number;
+  budgetMaxPaise?: number;
   preferredLocation?: string;
   preferredPropertyType?: string; // '1BHK', '2BHK', '3BHK', 'Villa', 'Commercial'
   assignedSalespersonId?: string;
   assignedSalespersonName?: string;
   notes?: string;
   communicationConsent?: boolean;
+  encryptedPan?: string;
+  maskedPan?: string;
+  encryptedAadhaar?: string;
+  aadhaarLast4?: string;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -110,11 +120,13 @@ export interface ICrmUnit {
   carpetAreaSqFt: number;
   saleableAreaSqFt: number;
   basePrice: number;
+  basePricePaise?: number;
   askingPrice: number;
+  askingPricePaise?: number;
   availabilityStatus: UnitAvailabilityStatus;
   heldUntil?: Date | string | null;
   heldByCustomerId?: string | null;
-  activeBookingId?: string | null;
+  activeBookingId?: ObjectId | string | null;
   facing?: string; // North, East, Garden, Pool
   notes?: string;
   createdAt: Date;
@@ -136,11 +148,22 @@ export interface ICrmUnitInterest {
   assignedSalespersonName?: string;
   leadSource?: string;
   budget?: number;
+  budgetPaise?: number;
   expectedDecisionDate?: string;
   priority: TaskPriority;
   lastContactDate?: string | Date;
   nextFollowUpDate?: string | Date;
+  followup_count?: number;
+  next_followup_at?: string | Date;
+  last_contacted_at?: string | Date;
+  lost_reason_id?: string;
   lostReason?: string;
+  purpose?: 'self_use' | 'investment';
+  loan_needed?: boolean;
+  preferred_floor?: string;
+  preferred_facing?: string;
+  tags?: string[];
+  assigned_to?: string;
   notes?: string;
   bookingId?: ObjectId | string | null;
   createdAt: Date;
@@ -189,16 +212,56 @@ export interface ICrmFollowUpTask {
   customerId: ObjectId | string;
   customerName: string;
   unitInterestId?: ObjectId | string | null;
+  leadId?: ObjectId | string | null;
+  bookingId?: ObjectId | string | null;
+  unitId?: ObjectId | string | null;
   title: string;
   dueDateTime: string | Date;
+  reminder_at?: string | Date;
+  repeat_rule?: 'none' | 'daily' | 'weekly' | 'monthly';
+  checklist?: { id?: string; text: string; done: boolean }[];
   priority: TaskPriority;
   taskType: 'Phone Call' | 'WhatsApp' | 'Email' | 'Document Collection' | 'Site Visit Prep' | 'Contract Review' | 'Payment Follow-up';
   status: TaskStatus;
   assignedTo: string;
+  assignedToId?: string;
   assignedToName: string;
   notes?: string;
   completedAt?: Date | null;
   completedBy?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type AppointmentType = 'site_visit' | 'meeting' | 'call' | 'registration' | 'handover';
+
+export interface ICrmAppointment {
+  _id?: ObjectId | string;
+  companyId: ObjectId | string;
+  projectId?: ObjectId | string;
+  leadId?: ObjectId | string;
+  customerId?: ObjectId | string;
+  customerName?: string;
+  type: AppointmentType;
+  title: string;
+  start: Date | string;
+  end: Date | string;
+  location?: string;
+  assignedTo?: string;
+  assignedToName?: string;
+  outcomeNotes?: string;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICrmTemplate {
+  _id?: ObjectId | string;
+  companyId: ObjectId | string;
+  name: string;
+  category: 'follow_up_1' | 'follow_up_2' | 'follow_up_3' | 'site_visit_confirmation' | 'unit_quote' | 'booking_confirmation' | 'payment_reminder' | 'handover' | 'general';
+  body: string;
+  variables: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -217,10 +280,15 @@ export interface ICrmBooking {
   unitCode: string;
   unitInterestId?: ObjectId | string | null;
   agreementPrice: number;
+  agreementPricePaise?: number;
   discountAmount: number;
+  discountAmountPaise?: number;
   taxAmount: number;
+  taxAmountPaise?: number;
   netBookingValue: number;
+  netBookingValuePaise?: number;
   bookingDepositRequired: number;
+  bookingDepositRequiredPaise?: number;
   bookingDate: string | Date;
   status: BookingStatus;
   cancellationReason?: string;
@@ -245,8 +313,10 @@ export interface ICrmPaymentSchedule {
   milestoneName: string; // 'Token Amount', 'Agreement Signing', 'Foundation Level', 'Slab 1', 'Finishing', 'Possession'
   milestonePercentage: number; // e.g. 10%, 20%
   dueAmount: number;
+  dueAmountPaise?: number;
   dueDate: string | Date;
   paidAmount: number;
+  paidAmountPaise?: number;
   status: PaymentStatus;
   sortOrder: number;
   createdAt: Date;
@@ -264,6 +334,7 @@ export interface ICrmPaymentTransaction {
   customerName: string;
   milestoneScheduleId?: ObjectId | string | null;
   amount: number;
+  amountPaise?: number;
   currency: string;
   paymentMethod: 'Bank Transfer (NEFT/RTGS)' | 'Cheque' | 'UPI' | 'Demand Draft' | 'Credit/Debit Card' | 'Cash';
   transactionReference: string; // UTR or Cheque No
@@ -273,6 +344,8 @@ export interface ICrmPaymentTransaction {
   paymentStatus: 'Paid' | 'Reversed' | 'Refunded';
   reversalReason?: string;
   reversalDate?: Date | null;
+  isReversalEntry?: boolean;
+  reversalOfPaymentId?: ObjectId | string | null;
   receiptNotes?: string;
   createdAt: Date;
   createdBy: string;

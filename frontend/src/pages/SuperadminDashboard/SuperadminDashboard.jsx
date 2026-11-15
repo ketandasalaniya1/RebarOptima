@@ -9,6 +9,7 @@ import {
   Plus, Edit3, Eye, Layers, Trash2, Bell, Mail
 } from 'lucide-react';
 import { developerApi } from '../../utils/api';
+import markIcon from '../../assets/cravetobuild-mark.png';
 import './SuperadminDashboard.css';
 import WebPushPanel from './components/WebPushPanel';
 import SmtpPanel from './components/SmtpPanel';
@@ -216,8 +217,8 @@ export default function SuperadminDashboard() {
       {/* Top Nav */}
       <header className="dev-nav">
         <div className="dev-nav-brand">
-          <ShieldAlert size={20} color="#dc2626" />
-          <span className="dev-brand-txt">RebarOptima Developer Console</span>
+          <img src={markIcon} alt="CraveToBuild" style={{ height: '24px', width: 'auto', objectFit: 'contain' }} />
+          <span className="dev-brand-txt">CraveToBuild Developer Console</span>
           <span className="dev-badge-version">Platform Admin</span>
         </div>
         <div className="dev-nav-actions">

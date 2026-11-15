@@ -11,6 +11,7 @@ import {
   Pentagon,
   RefreshCw,
   Building2,
+  Undo2,
 } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -85,6 +86,16 @@ export default function ProjectFormModal() {
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
   const layerRef = useRef(null);
+  const polylineLayerRef = useRef(null);
+  const vertexMarkersRef = useRef([]);
+
+  // Refs to eliminate stale closure bugs in Leaflet event callbacks
+  const boundaryTypeRef = useRef(boundaryType);
+  boundaryTypeRef.current = boundaryType;
+  const enableGeofenceRef = useRef(enableGeofence);
+  enableGeofenceRef.current = enableGeofence;
+  const polygonPointsRef = useRef(polygonPoints);
+  polygonPointsRef.current = polygonPoints;
 
   // Initialize form with editingProject data if available
   useEffect(() => {
@@ -134,6 +145,12 @@ export default function ProjectFormModal() {
         mapInstanceRef.current = null;
         markerRef.current = null;
         layerRef.current = null;
+        if (polylineLayerRef.current) {
+          polylineLayerRef.current.remove();
+          polylineLayerRef.current = null;
+        }
+        vertexMarkersRef.current.forEach((m) => m.remove());
+        vertexMarkersRef.current = [];
       }
       if (!enableGeofence || !mapContainerRef.current) {
         return;
@@ -159,11 +176,26 @@ export default function ProjectFormModal() {
         const clickedLat = Number(e.latlng.lat.toFixed(6));
         const clickedLng = Number(e.latlng.lng.toFixed(6));
 
-        if (boundaryType === 'circle' || !enableGeofence) {
+        const isGf = enableGeofenceRef.current;
+        const bType = boundaryTypeRef.current;
+
+        if (isGf && bType === 'polygon') {
+          setPolygonPoints((prev) => {
+            const next = [...prev, [clickedLng, clickedLat]];
+            polygonPointsRef.current = next;
+            return next;
+          });
+          setValidationErrors((prev) => {
+            if (!prev.polygon) return prev;
+            const copy = { ...prev };
+            delete copy.polygon;
+            return copy;
+          });
+          setLatitude((curLat) => (!curLat ? clickedLat.toString() : curLat));
+          setLongitude((curLng) => (!curLng ? clickedLng.toString() : curLng));
+        } else {
           setLatitude(clickedLat.toString());
           setLongitude(clickedLng.toString());
-        } else if (boundaryType === 'polygon') {
-          setPolygonPoints((prev) => [...prev, [clickedLng, clickedLat]]);
         }
       });
 
@@ -172,6 +204,12 @@ export default function ProjectFormModal() {
 
     const map = mapInstanceRef.current;
     if (!map) return;
+
+    // Adjust container cursor style
+    if (mapContainerRef.current) {
+      mapContainerRef.current.style.cursor =
+        enableGeofence && boundaryType === 'polygon' ? 'crosshair' : '';
+    }
 
     const validLat = parseFloat(latitude);
     const validLng = parseFloat(longitude);
@@ -197,10 +235,17 @@ export default function ProjectFormModal() {
       markerRef.current = null;
     }
 
+    // Clear old polygon/circle layers and vertex markers
     if (layerRef.current) {
       layerRef.current.remove();
       layerRef.current = null;
     }
+    if (polylineLayerRef.current) {
+      polylineLayerRef.current.remove();
+      polylineLayerRef.current = null;
+    }
+    vertexMarkersRef.current.forEach((m) => m.remove());
+    vertexMarkersRef.current = [];
 
     if (boundaryType === 'circle' && hasValidCoords && radius > 0) {
       layerRef.current = L.circle([validLat, validLng], {
@@ -210,14 +255,76 @@ export default function ProjectFormModal() {
         fillOpacity: 0.2,
         weight: 2,
       }).addTo(map);
-    } else if (boundaryType === 'polygon' && polygonPoints.length >= 3) {
+    } else if (boundaryType === 'polygon') {
       const latLngs = polygonPoints.map((pt) => [pt[1], pt[0]]);
-      layerRef.current = L.polygon(latLngs, {
-        color: '#3b82f6',
-        fillColor: '#3b82f6',
-        fillOpacity: 0.25,
-        weight: 2,
-      }).addTo(map);
+
+      // When exactly 2 points, render dashed polyline connecting them
+      if (polygonPoints.length === 2) {
+        polylineLayerRef.current = L.polyline(latLngs, {
+          color: '#3b82f6',
+          weight: 2.5,
+          dashArray: '6, 6',
+        }).addTo(map);
+      } else if (polygonPoints.length >= 3) {
+        // Automatically connects all points into a closed polygon
+        layerRef.current = L.polygon(latLngs, {
+          color: '#10b981',
+          fillColor: '#10b981',
+          fillOpacity: 0.25,
+          weight: 2.5,
+        }).addTo(map);
+      }
+
+      // Render interactive draggable vertex handles for every corner
+      polygonPoints.forEach((pt, idx) => {
+        const vLat = pt[1];
+        const vLng = pt[0];
+
+        const marker = L.marker([vLat, vLng], {
+          draggable: true,
+          icon: L.divIcon({
+            className: 'pm-poly-vertex-icon',
+            html: `<div class="pm-vertex-dot" title="Corner #${idx + 1} — Drag to adjust"><span>${idx + 1}</span></div>`,
+            iconSize: [22, 22],
+            iconAnchor: [11, 11],
+          }),
+        }).addTo(map);
+
+        // Real-time update of polygon/polyline while dragging
+        marker.on('drag', (e) => {
+          const newPos = e.target.getLatLng();
+          const newPts = polygonPointsRef.current.map((p, i) =>
+            i === idx ? [Number(newPos.lng.toFixed(6)), Number(newPos.lat.toFixed(6))] : p
+          );
+          const newLatLngs = newPts.map((p) => [p[1], p[0]]);
+          if (layerRef.current && newPts.length >= 3) {
+            layerRef.current.setLatLngs(newLatLngs);
+          } else if (polylineLayerRef.current && newPts.length === 2) {
+            polylineLayerRef.current.setLatLngs(newLatLngs);
+          }
+        });
+
+        // Commit updated coordinate on dragend
+        marker.on('dragend', (e) => {
+          const newPos = e.target.getLatLng();
+          const updatedLat = Number(newPos.lat.toFixed(6));
+          const updatedLng = Number(newPos.lng.toFixed(6));
+
+          setPolygonPoints((prev) => {
+            const next = [...prev];
+            next[idx] = [updatedLng, updatedLat];
+            polygonPointsRef.current = next;
+            return next;
+          });
+        });
+
+        marker.bindTooltip(`Corner #${idx + 1}<br/><span style="font-size:10px;color:#94a3b8">Drag to adjust</span>`, {
+          direction: 'top',
+          offset: [0, -10],
+        });
+
+        vertexMarkersRef.current.push(marker);
+      });
     }
 
     setTimeout(() => {
@@ -230,6 +337,14 @@ export default function ProjectFormModal() {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
+        markerRef.current = null;
+        layerRef.current = null;
+        if (polylineLayerRef.current) {
+          polylineLayerRef.current.remove();
+          polylineLayerRef.current = null;
+        }
+        vertexMarkersRef.current.forEach((m) => m.remove());
+        vertexMarkersRef.current = [];
       }
     };
   }, []);
@@ -290,11 +405,27 @@ export default function ProjectFormModal() {
   };
 
   const handleBlockCountChange = (raw) => {
-    let n = parseInt(raw, 10);
-    if (Number.isNaN(n) || n < 0) n = 0;
-    if (n > MAX_BLOCKS_PER_PROJECT) n = MAX_BLOCKS_PER_PROJECT;
+    if (raw === '') {
+      setBlockCount('');
+      setBlockNames([]);
+      return;
+    }
+    const parsed = parseInt(raw, 10);
+    if (Number.isNaN(parsed)) {
+      setBlockCount('');
+      setBlockNames([]);
+      return;
+    }
+    const n = Math.max(0, Math.min(MAX_BLOCKS_PER_PROJECT, parsed));
     setBlockCount(n);
     setBlockNames((prev) => resizeBlockNames(prev, n));
+  };
+
+  const handleBlockCountBlur = () => {
+    if (blockCount === '') {
+      setBlockCount(0);
+      setBlockNames([]);
+    }
   };
 
   const handleBlockNameChange = (index, value) => {
@@ -354,11 +485,12 @@ export default function ProjectFormModal() {
 
   const validateBlocks = () => {
     const errors = {};
-    if (blockCount < 0 || blockCount > MAX_BLOCKS_PER_PROJECT) {
+    const count = blockCount === '' ? 0 : Number(blockCount);
+    if (isNaN(count) || count < 0 || count > MAX_BLOCKS_PER_PROJECT) {
       errors.blockCount = `Number of blocks must be between 0 and ${MAX_BLOCKS_PER_PROJECT}`;
     }
     const seen = new Set();
-    for (let i = 0; i < blockCount; i += 1) {
+    for (let i = 0; i < count; i += 1) {
       const trimmed = String(blockNames[i] || '').trim();
       if (!trimmed) {
         errors[`block_${i}`] = 'Block name is required';
@@ -396,9 +528,9 @@ export default function ProjectFormModal() {
           center:
             boundaryType === 'circle'
               ? {
-                  latitude: parseFloat(latitude),
-                  longitude: parseFloat(longitude),
-                }
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+              }
               : undefined,
           radius: boundaryType === 'circle' ? Number(radius) : undefined,
           coordinates: boundaryType === 'polygon' ? polygonPoints : undefined,
@@ -408,7 +540,8 @@ export default function ProjectFormModal() {
     }
 
     if (!isEdit) {
-      payload.blocks = blockNames.slice(0, blockCount).map((n) => ({ name: String(n).trim() }));
+      const count = blockCount === '' ? 0 : Math.max(0, parseInt(blockCount, 10) || 0);
+      payload.blocks = blockNames.slice(0, count).map((n) => ({ name: String(n).trim() }));
     }
 
     return payload;
@@ -460,7 +593,7 @@ export default function ProjectFormModal() {
         let validated = created;
         try {
           validated = await projectsApi.getById(created._id || created.id);
-        } catch (_) {}
+        } catch (_) { }
         dispatch(addProject(validated || created));
         dispatch(setView('overview'));
       }
@@ -473,8 +606,17 @@ export default function ProjectFormModal() {
     }
   };
 
+  const handleUndoPolygonPoint = () => {
+    setPolygonPoints((prev) => {
+      const next = prev.slice(0, -1);
+      polygonPointsRef.current = next;
+      return next;
+    });
+  };
+
   const handleClearPolygon = () => {
     setPolygonPoints([]);
+    polygonPointsRef.current = [];
   };
 
   const stepIndex = CREATE_STEPS.indexOf(step);
@@ -764,20 +906,40 @@ export default function ProjectFormModal() {
                         <div className="pm-polygon-controls">
                           <div className="pm-poly-header">
                             <span className="pm-poly-count">
-                              Points captured: <strong>{polygonPoints.length}</strong> (min. 3)
+                              Points captured: <strong>{polygonPoints.length}</strong>{' '}
+                              {polygonPoints.length < 3 ? '(min. 3)' : '✓ Closed boundary'}
                             </span>
-                            <button
-                              type="button"
-                              className="pm-poly-clear-btn"
-                              onClick={handleClearPolygon}
-                              disabled={polygonPoints.length === 0}
-                            >
-                              <RefreshCw size={12} />
-                              <span>Clear Polygon</span>
-                            </button>
+                            <div className="pm-poly-actions">
+                              <button
+                                type="button"
+                                className="pm-poly-undo-btn"
+                                onClick={handleUndoPolygonPoint}
+                                disabled={polygonPoints.length === 0}
+                                title="Remove last corner"
+                              >
+                                <Undo2 size={12} />
+                                <span>Undo</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="pm-poly-clear-btn"
+                                onClick={handleClearPolygon}
+                                disabled={polygonPoints.length === 0}
+                                title="Clear all points"
+                              >
+                                <RefreshCw size={12} />
+                                <span>Clear All</span>
+                              </button>
+                            </div>
                           </div>
                           <p className="pm-poly-hint">
-                            Click on the map preview below to add boundary vertices.
+                            {polygonPoints.length === 0
+                              ? 'Click anywhere on the map to add the first corner of your site boundary.'
+                              : polygonPoints.length === 1
+                                ? 'Click on the map to add the second corner.'
+                                : polygonPoints.length === 2
+                                  ? 'Click a third corner to automatically connect and close the polygon perimeter.'
+                                  : 'Boundary closed! Click to add more corners, or drag any numbered vertex to adjust.'}
                           </p>
                           {validationErrors.polygon && (
                             <span className="pm-error-text">{validationErrors.polygon}</span>
@@ -795,13 +957,6 @@ export default function ProjectFormModal() {
 
           {showBlocks && (
             <div className="pm-blocks-step">
-              <div className="pm-blocks-intro">
-                <Building2 size={18} />
-                <p>
-                  Enter how many construction blocks (towers / wings) this site has. Zero is allowed —
-                  you can add blocks later from Project Management. Maximum {MAX_BLOCKS_PER_PROJECT}.
-                </p>
-              </div>
 
               <div className="pm-field pm-block-count-field">
                 <label className="pm-label" htmlFor="pm-block-count">
@@ -814,16 +969,23 @@ export default function ProjectFormModal() {
                   max={MAX_BLOCKS_PER_PROJECT}
                   className={`pm-input ${validationErrors.blockCount ? 'has-error' : ''}`}
                   value={blockCount}
+                  placeholder="0"
+                  onFocus={(e) => {
+                    if (e.target.value === '0') {
+                      e.target.select();
+                    }
+                  }}
                   onChange={(e) => handleBlockCountChange(e.target.value)}
+                  onBlur={handleBlockCountBlur}
                 />
                 {validationErrors.blockCount && (
                   <span className="pm-error-text">{validationErrors.blockCount}</span>
                 )}
               </div>
 
-              {blockCount > 0 && (
+              {Number(blockCount || 0) > 0 && (
                 <div className="pm-block-names-grid">
-                  {Array.from({ length: blockCount }).map((_, i) => (
+                  {Array.from({ length: Number(blockCount || 0) }).map((_, i) => (
                     <div className="pm-field" key={`block-name-${i}`}>
                       <label className="pm-label">
                         Block {i + 1} name <span className="text-red">*</span>
@@ -879,13 +1041,13 @@ export default function ProjectFormModal() {
                   </dd>
                 </div>
                 <div>
-                  <dt>Blocks ({blockCount})</dt>
+                  <dt>Blocks ({blockCount === '' ? 0 : blockCount})</dt>
                   <dd>
-                    {blockCount === 0 ? (
+                    {Number(blockCount || 0) === 0 ? (
                       <span className="pm-review-muted">None — can be added later</span>
                     ) : (
                       <ul className="pm-review-blocks">
-                        {blockNames.slice(0, blockCount).map((n, i) => (
+                        {blockNames.slice(0, Number(blockCount || 0)).map((n, i) => (
                           <li key={`rev-${i}`}>{String(n).trim()}</li>
                         ))}
                       </ul>

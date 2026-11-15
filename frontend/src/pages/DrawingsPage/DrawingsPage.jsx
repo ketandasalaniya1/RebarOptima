@@ -1,132 +1,285 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setView } from '../../store/slices/routingSlice';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { drawingsApi } from '../../utils/drawingsApi';
 import RoleGate from '../../components/RoleGate';
-import AppModal from '../../components/ui/AppModal';
-import SimpleDrawingViewer from './components/SimpleDrawingViewer';
 import DrawingViewerScreen from './screens/DrawingViewerScreen';
-import DrawingsListScreen from './screens/DrawingsListScreen';
-import DrawingMatrixScreen from './screens/DrawingMatrixScreen';
-import ApprovalsInboxScreen from './screens/ApprovalsInboxScreen';
-import PlanPassScreen from './screens/PlanPassScreen';
-import TransmittalsScreen from './screens/TransmittalsScreen';
-import DrawingActivityScreen from './screens/DrawingActivityScreen';
-import UploadVersionModal from './components/UploadVersionModal';
-import { Upload, RefreshCw, AlertCircle, FileText, FolderPlus, Layers } from 'lucide-react';
-import './DrawingsPage.css';
+import StickyHeader from './components/StickyHeader';
+import DrawingsHub from './hubs/DrawingsHub';
+import MatrixHub from './hubs/MatrixHub';
+import VersionsHub from './hubs/VersionsHub';
+import UploadDrawingDrawer from './drawers/UploadDrawingDrawer';
+import CompareDrawingsModal from './components/CompareDrawingsModal';
+import { Layers } from 'lucide-react';
+import './DrawingsRedesign.css';
 
 export default function DrawingsPage({ subView = 'drawings' }) {
   const dispatch = useDispatch();
   const { projectId: activeProjectId, selectedProject } = useActiveProject();
 
-  // Internal tab state ('drawings' | 'plan-pass' | 'matrix')
+  // Active Tab: 'drawings' | 'matrix' | 'versions'
   const [activeTab, setActiveTab] = useState(() => {
     if (subView === 'drawings-matrix') return 'matrix';
-    if (subView === 'drawings-plan-pass') return 'plan-pass';
+    if (subView === 'drawings-versions') return 'versions';
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'drawings';
   });
 
-  // Selected Drawing for Viewer (Screen 2)
+  // URL Filters State
+  const [filters, setFilters] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      discipline: params.get('discipline') || 'all',
+      block: params.get('block') || 'all',
+      level: params.get('level') || 'all',
+      status: params.get('status') || 'all',
+      search: params.get('q') || params.get('search') || '',
+    };
+  });
+
+  // Selected drawing for Versions Hub or CAD Viewer
+  const [selectedDrawingId, setSelectedDrawingId] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('drawing') || null;
+  });
   const [selectedDrawingDetail, setSelectedDrawingDetail] = useState(null);
   const [viewerLoading, setViewerLoading] = useState(false);
 
-  // Upload Modal State (Phase 1 version 1 creation flow)
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadFile, setUploadFile] = useState(null);
-  const [uploadFileData, setUploadFileData] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState('');
-  const [uploadMeta, setUploadMeta] = useState({
-    title: '',
-    drawingNumber: '',
-    blockName: 'Block A',
-    disciplineCode: 'ARCH',
-    level: 'L1'
+  // Data & Facets State
+  const [drawings, setDrawings] = useState([]);
+  const [facets, setFacets] = useState({ kpi: { total: 0, gfc: 0, draft: 0, updatedThisWeek: 0 }, disciplines: [], blocks: [] });
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastSyncedText, setLastSyncedText] = useState('Synced just now');
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+
+  // Upload Drawer State
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [drawerInitialData, setDrawerInitialData] = useState(null);
+
+  // Compare Modal State
+  const [compareState, setCompareState] = useState({
+    isOpen: false,
+    drawing: null,
+    revisions: [],
+    leftRevId: null,
+    rightRevId: null,
   });
 
-  // Sync activeTab and clear viewer when subView prop changes from navigation
+  // Synchronize URL query params whenever filters, activeTab, or selectedDrawingId changes
+  const updateUrlParams = useCallback(
+    (newFilters, newTab, newDrawingId) => {
+      const sp = new URLSearchParams(window.location.search);
+      const tabToUse = newTab !== undefined ? newTab : activeTab;
+      const filtersToUse = newFilters !== undefined ? newFilters : filters;
+      const dwIdToUse = newDrawingId !== undefined ? newDrawingId : selectedDrawingId;
+
+      sp.set('tab', tabToUse);
+      if (filtersToUse.discipline && filtersToUse.discipline !== 'all') sp.set('discipline', filtersToUse.discipline);
+      else sp.delete('discipline');
+
+      if (filtersToUse.block && filtersToUse.block !== 'all') sp.set('block', filtersToUse.block);
+      else sp.delete('block');
+
+      if (filtersToUse.level && filtersToUse.level !== 'all') sp.set('level', filtersToUse.level);
+      else sp.delete('level');
+
+      if (filtersToUse.status && filtersToUse.status !== 'all') sp.set('status', filtersToUse.status);
+      else sp.delete('status');
+
+      if (filtersToUse.search && filtersToUse.search.trim()) sp.set('q', filtersToUse.search.trim());
+      else sp.delete('q');
+
+      if (dwIdToUse) sp.set('drawing', dwIdToUse);
+      else sp.delete('drawing');
+
+      const newUrl = `${window.location.pathname}?${sp.toString()}`;
+      window.history.replaceState({}, '', newUrl);
+    },
+    [activeTab, filters, selectedDrawingId]
+  );
+
+  // Fetch Drawings from API
+  const fetchDrawingsData = useCallback(
+    async (currentPage = 1, append = false) => {
+      const pId = activeProjectId || selectedProject?._id || selectedProject?.id;
+      if (!pId) return;
+
+      if (currentPage === 1 && !append) setLoading(true);
+
+      try {
+        const params = {
+          projectId: pId,
+          page: currentPage,
+          limit: 50,
+        };
+        if (filters.discipline && filters.discipline !== 'all') params.disciplineId = filters.discipline;
+        if (filters.block && filters.block !== 'all') params.block = filters.block;
+        if (filters.level && filters.level !== 'all') params.level = filters.level;
+        if (filters.status && filters.status !== 'all') params.status = filters.status;
+        if (filters.search && filters.search.trim()) params.search = filters.search.trim();
+
+        const res = await drawingsApi.getDrawings(params);
+
+        const dwList = res.drawings || (Array.isArray(res) ? res : []);
+        if (append) {
+          setDrawings((prev) => [...prev, ...dwList]);
+        } else {
+          setDrawings(dwList);
+        }
+
+        if (res.pagination) {
+          setTotalCount(res.pagination.total || dwList.length);
+          setHasMore(res.pagination.page < res.pagination.totalPages);
+        } else {
+          setTotalCount(dwList.length);
+          setHasMore(false);
+        }
+
+        if (res.facets) {
+          setFacets(res.facets);
+        }
+
+        setLastSyncedText('Synced just now');
+      } catch (err) {
+        console.error('Failed to fetch drawings:', err);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [activeProjectId, selectedProject, filters]
+  );
+
+  // Load drawings on mount and whenever activeProjectId or filters change
   useEffect(() => {
-    if (subView !== 'drawings-viewer') {
-      setSelectedDrawingDetail(null);
-    }
+    setPage(1);
+    fetchDrawingsData(1, false);
+  }, [fetchDrawingsData]);
+
+  // Sync subView prop from router
+  useEffect(() => {
     if (subView === 'drawings-matrix') setActiveTab('matrix');
-    else if (subView === 'drawings-plan-pass') setActiveTab('plan-pass');
+    else if (subView === 'drawings-versions') setActiveTab('versions');
     else if (subView === 'drawings') setActiveTab('drawings');
-    else setActiveTab('');
+    else if (subView !== 'drawings-viewer') setSelectedDrawingDetail(null);
   }, [subView]);
 
-  // Restore drawing if path is /drawings/:id on page load or refresh
+  // Restore drawing if path is /drawings/:id
   useEffect(() => {
     const path = window.location.pathname;
     if (path.startsWith('/drawings/') && !selectedDrawingDetail) {
       const parts = path.split('/');
       const dId = parts[2];
-      if (dId && !['matrix', 'approvals', 'transmittals', 'activity', 'plan-pass'].includes(dId)) {
-        drawingsApi.getDrawingDetail(dId).then((detail) => {
-          if (detail && (detail.drawing || detail._id)) {
-            setSelectedDrawingDetail(detail);
-          }
-        }).catch((err) => {
-          console.warn('Auto-restore drawing failed:', err);
-        });
+      if (dId && !['matrix', 'versions', 'approvals', 'transmittals', 'activity', 'plan-pass'].includes(dId)) {
+        drawingsApi
+          .getDrawingDetail(dId)
+          .then((detail) => {
+            if (detail && (detail.drawing || detail._id)) {
+              setSelectedDrawingDetail(detail);
+            }
+          })
+          .catch((err) => console.warn('Auto-restore drawing failed:', err));
       }
     }
-  }, []);
+  }, [selectedDrawingDetail]);
 
-  // Handle Tab Switch (updates URL and Redux view state)
+  // Handle Tab Switch
   const handleTabChange = (newTab) => {
     setActiveTab(newTab);
-    const sp = new URLSearchParams(window.location.search);
-    sp.set('tab', newTab);
+    updateUrlParams(undefined, newTab, undefined);
 
     if (newTab === 'matrix') {
       dispatch(setView('drawings-matrix'));
-    } else if (newTab === 'plan-pass') {
-      dispatch(setView('drawings-plan-pass'));
+    } else if (newTab === 'versions') {
+      dispatch(setView('drawings-versions'));
     } else {
       dispatch(setView('drawings'));
     }
   };
 
-  // Open Drawing in Viewer
-  const handleViewDrawing = async (dw) => {
-    const drawingId = dw._id || dw.id;
+  // Handle Filter Change
+  const handleFilterChange = (updates) => {
+    const nextFilters = { ...filters, ...updates };
+    setFilters(nextFilters);
+    updateUrlParams(nextFilters, undefined, undefined);
+  };
+
+  // Handle Refresh / Sync
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchDrawingsData(1, false);
+  };
+
+  // Handle Load More
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchDrawingsData(nextPage, true);
+  };
+
+  // View Drawing in CAD/PDF viewer
+  const handleViewDrawing = async (dw, targetRev = null) => {
+    const drawingId = dw?.drawingId || dw?._id || dw?.id;
     if (!drawingId) return;
 
     setViewerLoading(true);
     try {
       const detail = await drawingsApi.getDrawingDetail(drawingId);
-      setSelectedDrawingDetail(detail);
-      dispatch(setView('drawings-viewer'));
-      window.history.pushState({ drawingId }, '', `/drawings/${drawingId}`);
+      if (detail) {
+        // If viewing a specific revision, set it as currentRevision
+        const specificRev =
+          targetRev ||
+          (dw?.revisionNumber && detail.revisions?.find((r) => r.revisionNumber === dw.revisionNumber));
+        if (specificRev) {
+          detail.currentRevision = specificRev;
+        }
+        setSelectedDrawingDetail(detail);
+        dispatch(setView('drawings-viewer'));
+        window.history.pushState({ drawingId }, '', `/drawings/${drawingId}`);
+      }
     } catch (err) {
       console.error('Failed to load drawing details:', err);
-      alert('Could not load drawing details.');
     } finally {
       setViewerLoading(false);
     }
   };
 
-  // Close Viewer and return to List
+  // Compare versions side by side
+  const handleCompareVersions = (revA, revB, dw = null, allRevisions = []) => {
+    const targetDrawing =
+      dw ||
+      selectedDrawingDetail?.drawing ||
+      drawings.find((d) => (d._id || d.id) === selectedDrawingId) ||
+      drawings[0];
+    const revList = allRevisions.length > 0 ? allRevisions : [revA, revB].filter(Boolean);
+    setCompareState({
+      isOpen: true,
+      drawing: targetDrawing,
+      revisions: revList,
+      leftRevId: revB?._id || revB?.id, // older version on left
+      rightRevId: revA?._id || revA?.id, // newer version on right
+    });
+  };
+
+  // Close CAD Viewer
   const handleCloseViewer = () => {
     setSelectedDrawingDetail(null);
     if (activeTab === 'matrix') {
       dispatch(setView('drawings-matrix'));
+    } else if (activeTab === 'versions') {
+      dispatch(setView('drawings-versions'));
     } else {
       dispatch(setView('drawings'));
     }
   };
 
-  // Download drawing
-  const handleDownloadDrawing = (dwOrIds) => {
-    if (Array.isArray(dwOrIds)) {
-      alert(`Downloading ${dwOrIds.length} drawings...`);
-      return;
-    }
-    const dw = dwOrIds;
+  // Download Drawing file
+  const handleDownloadDrawing = (dw) => {
+    if (!dw) return;
     if (dw.fileData) {
       const link = document.createElement('a');
       link.href = dw.fileData;
@@ -135,7 +288,8 @@ export default function DrawingsPage({ subView = 'drawings' }) {
       link.click();
       document.body.removeChild(link);
     } else {
-      drawingsApi.getDrawingDetail(dw._id).then((detail) => {
+      const dwId = dw._id || dw.id;
+      drawingsApi.getDrawingDetail(dwId).then((detail) => {
         const rev = detail.currentRevision || detail.revisions?.[0];
         if (rev?.fileData) {
           const link = document.createElement('a');
@@ -151,106 +305,71 @@ export default function DrawingsPage({ subView = 'drawings' }) {
     }
   };
 
-  // Handle New Drawing modal kickoff
-  const handleOpenUploadFromInitial = (initialMeta) => {
-    setUploadMeta((prev) => ({
-      ...prev,
-      ...initialMeta,
-      projectId: activeProjectId || selectedProject?._id || selectedProject?.id
-    }));
-    setShowUploadModal(true);
-    setUploadFile(null);
-    setUploadFileData(null);
-    setUploadError('');
+  // Open Drawer in New Drawing Mode
+  const handleOpenUpload = (initial = null) => {
+    setDrawerInitialData(initial);
+    setIsDrawerOpen(true);
   };
 
-  const handleFileSelect = (file) => {
-    if (!file) return;
-    setUploadFile(file);
-    setUploadError('');
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadFileData(e.target.result);
-    };
-    reader.readAsDataURL(file);
+  // Open Drawer in New Revision Mode
+  const handleOpenNewRevision = (dw = null) => {
+    if (dw) {
+      setDrawerInitialData({
+        drawingNumber: dw.drawingNumber,
+        title: dw.title,
+        disciplineCode: dw.disciplineCode,
+        blockName: dw.blockName,
+        level: dw.level,
+        existingDrawing: dw,
+      });
+      setIsDrawerOpen(true);
+    } else if (drawings.length > 0) {
+      // Pick first drawing or active selected
+      const target = drawings[0];
+      setDrawerInitialData({
+        drawingNumber: target.drawingNumber,
+        title: target.title,
+        disciplineCode: target.disciplineCode,
+        blockName: target.blockName,
+        level: target.level,
+        existingDrawing: target,
+      });
+      setIsDrawerOpen(true);
+    } else {
+      handleOpenUpload();
+    }
   };
 
-  const handleUploadSubmit = async (e) => {
-    e.preventDefault();
-    if (!uploadFile && !uploadFileData) {
-      setUploadError('Please select a DWG, DXF, PDF, or image file to upload.');
-      return;
-    }
-    if (!uploadMeta.title.trim()) {
-      setUploadError('Please enter a drawing title.');
-      return;
-    }
-
-    setUploading(true);
-    setUploadError('');
-
-    try {
-      const targetProjectId = activeProjectId || selectedProject?._id;
-      const fileExt = (uploadFile?.name.split('.').pop() || 'dwg').toLowerCase();
-
-      const payload = {
-        projectId: targetProjectId,
-        blockName: uploadMeta.blockName || 'Block A',
-        disciplineCode: uploadMeta.disciplineCode || 'ARCH',
-        level: uploadMeta.level || 'L1',
-        title: uploadMeta.title.trim(),
-        drawingNumber: uploadMeta.drawingNumber.trim() || undefined,
-        drawingType: 'General Arrangement',
-        initialChangeDescription: 'Initial drawing version 1 upload',
-        fileData: uploadFileData,
-        fileName: uploadFile ? uploadFile.name : `drawing.${fileExt}`,
-        fileSize: uploadFile ? uploadFile.size : 0,
-        fileType: fileExt
-      };
-
-      const res = await drawingsApi.createDrawing(payload);
-      setShowUploadModal(false);
-      setUploadFile(null);
-      setUploadFileData(null);
-
-      // Open new drawing directly in viewer
-      if (res?._id) {
-        const detail = await drawingsApi.getDrawingDetail(res._id);
-        setSelectedDrawingDetail(detail);
-      }
-    } catch (err) {
-      console.error('Upload error:', err);
-      setUploadError(err.message || 'Failed to upload drawing.');
-    } finally {
-      setUploading(false);
-    }
+  // Navigate to Versions Hub with selected drawing
+  const handleGoToVersions = (dwId) => {
+    setSelectedDrawingId(dwId);
+    handleTabChange('versions');
+    updateUrlParams(undefined, 'versions', dwId);
   };
 
   // ─────────────────────────────────────────────────────────────────────────
-  // GUARD 1: Active Project Required
+  // GUARD: Active Project Required
   // ─────────────────────────────────────────────────────────────────────────
   if (!activeProjectId && !selectedProject) {
     return (
-      <div className="drawings-module-root" style={{ padding: '2rem' }}>
+      <div className="drawings-redesign-root" style={{ padding: '2rem' }}>
         <div
           style={{
             maxWidth: '520px',
             margin: '3rem auto',
             textAlign: 'center',
             padding: '2.5rem 2rem',
-            backgroundColor: 'var(--card-bg, #ffffff)',
+            backgroundColor: 'var(--card-bg)',
             borderRadius: '12px',
-            border: '1px solid var(--border-color, #e2e8f0)',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            border: '1px solid var(--card-border)',
           }}
         >
-          <Layers size={44} style={{ color: 'var(--accent, #059669)', margin: '0 auto 12px' }} />
-          <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary, #0f172a)', marginBottom: '8px' }}>
-            Select an Active Project
+          <Layers size={44} style={{ color: 'var(--accent)', margin: '0 auto 12px' }} />
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+            Select an active project
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary, #64748b)', lineHeight: 1.6 }}>
-            The Drawings module and drawing matrices are scoped per project. Please choose or switch an active project using the project selector in the top bar or left sidebar to proceed.
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            The drawings module and drawing matrices are scoped per project. Please choose an active project using the project selector in the top bar to proceed.
           </p>
         </div>
       </div>
@@ -258,7 +377,7 @@ export default function DrawingsPage({ subView = 'drawings' }) {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // RENDER 1: VIEWER MODE (SCREEN 2)
+  // RENDER 1: FULLSCREEN CAD / PDF VIEWER MODE
   // ─────────────────────────────────────────────────────────────────────────
   if (selectedDrawingDetail && (subView === 'drawings-viewer' || subView === 'drawings')) {
     return (
@@ -266,113 +385,125 @@ export default function DrawingsPage({ subView = 'drawings' }) {
         drawingData={selectedDrawingDetail}
         onBack={handleCloseViewer}
         onUploadNewVersion={(dw) => {
-          handleOpenUploadFromInitial({
-            title: dw?.title || '',
-            drawingNumber: dw?.drawingNumber || '',
-            blockName: dw?.blockName || 'Block A',
-            disciplineCode: dw?.disciplineCode || 'ARCH',
-            level: dw?.level || 'L1'
-          });
-        }}
-        onCreateTransmittal={(dw) => {
-          setSelectedDrawingDetail(null);
-          dispatch(setView('drawings-transmittals'));
+          handleOpenNewRevision(dw);
         }}
         onDownloadDrawing={handleDownloadDrawing}
-        onCompareDrawing={(dw) => alert(`Comparing drawing ${dw?.drawingNumber || ''} with previous revision`)}
+        onCompareDrawing={(dw) => {
+          if (selectedDrawingDetail?.revisions?.length > 1) {
+            handleCompareVersions(
+              selectedDrawingDetail.revisions[0],
+              selectedDrawingDetail.revisions[1],
+              selectedDrawingDetail.drawing || dw,
+              selectedDrawingDetail.revisions
+            );
+          } else {
+            handleCompareVersions(
+              selectedDrawingDetail?.currentRevision,
+              selectedDrawingDetail?.currentRevision,
+              selectedDrawingDetail?.drawing || dw,
+              selectedDrawingDetail?.revisions || []
+            );
+          }
+        }}
         onVoidDrawing={(dw) => alert(`Void drawing ${dw?.drawingNumber || ''}`)}
       />
     );
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // RENDER 2: MAIN SCREENS DISPATCHER (WRAPPED IN ROLE GATE)
+  // RENDER 2: DRAWINGS REDESIGN - 3 HUBS WITH SHARED STICKY HEADER
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <RoleGate permission="drawing:read">
-      <div className="drawings-module-root" style={{ padding: '1.25rem 1.5rem', width: '100%' }}>
-        {/* Subview Dispatcher */}
-        {subView === 'drawings-approvals' ? (
-          <ApprovalsInboxScreen
-            activeProject={selectedProject}
+      <div className="drawings-redesign-root">
+        {/* Sticky Context Header (Shared across all 3 hubs) */}
+        <StickyHeader
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          facets={facets}
+          onRefresh={handleRefresh}
+          refreshing={refreshing}
+          lastSyncedText={lastSyncedText}
+        />
+
+        {/* Hub 1: Drawings Register */}
+        {activeTab === 'drawings' && (
+          <DrawingsHub
+            drawings={drawings}
+            totalCount={totalCount}
+            facets={facets}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onOpenUpload={handleOpenUpload}
+            onOpenNewRevision={handleOpenNewRevision}
+            onGoToVersions={handleGoToVersions}
             onViewDrawing={handleViewDrawing}
-          />
-        ) : subView === 'drawings-transmittals' ? (
-          <TransmittalsScreen
-            activeProject={selectedProject}
-          />
-        ) : subView === 'drawings-activity' ? (
-          <DrawingActivityScreen
-            activeProject={selectedProject}
-          />
-        ) : subView === 'drawings-matrix' || (subView === 'drawings' && activeTab === 'matrix') ? (
-          <DrawingMatrixScreen
-            activeProject={selectedProject}
-            onSelectDrawing={(cell) => handleViewDrawing(cell)}
-            onEmptyCellClick={(row, level) => {
-              handleOpenUploadFromInitial({
-                title: `${row.title} - ${level}`,
-                level: level,
-                disciplineCode: row.disciplineCode || 'ARCH'
-              });
-            }}
-          />
-        ) : subView === 'drawings-plan-pass' || (subView === 'drawings' && activeTab === 'plan-pass') ? (
-          <PlanPassScreen
-            activeProject={selectedProject}
-            onViewDrawing={handleViewDrawing}
-            onUploadDocument={(initialMeta) => {
-              handleOpenUploadFromInitial({
-                ...initialMeta,
-                title: 'Sanctioned Plan',
-                disciplineCode: 'PASS',
-                level: 'GENERAL'
-              });
-            }}
-          />
-        ) : (
-          /* Screen 1: Drawings Register */
-          <DrawingsListScreen
-            activeProject={selectedProject}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            onViewDrawing={handleViewDrawing}
-            onUploadNewVersion={(dw) => {
-              handleOpenUploadFromInitial({
-                _id: dw._id || dw.id,
-                title: dw.title,
-                drawingNumber: dw.drawingNumber,
-                blockName: dw.blockName || 'Block A',
-                disciplineCode: dw.disciplineCode || 'ARCH',
-                level: dw.level || 'L1'
-              });
-            }}
-            onVersionHistory={(dw) => handleViewDrawing(dw)}
-            onCreateTransmittal={(dw) => dispatch(setView('drawings-transmittals'))}
             onDownloadDrawing={handleDownloadDrawing}
-            onVoidDrawing={(dw) => alert(`Voiding drawing ${dw.drawingNumber}`)}
-            onOpenUploadModal={handleOpenUploadFromInitial}
+            onStartFromMatrix={() => handleTabChange('matrix')}
+            loading={loading}
+            onLoadMore={handleLoadMore}
+            hasMore={hasMore}
           />
         )}
 
-        {/* Phase 3 Screen 3 Upload Modal */}
-        <UploadVersionModal
-          isOpen={showUploadModal}
-          onClose={() => setShowUploadModal(false)}
-          drawing={uploadMeta}
-          onSuccess={async (res) => {
-            const targetId = res?.drawingId || res?._id || uploadMeta?._id;
-            if (targetId) {
-              try {
-                const detail = await drawingsApi.getDrawingDetail(targetId);
-                setSelectedDrawingDetail(detail);
-                dispatch(setView('drawings-viewer'));
-              } catch (err) {
-                console.warn('Could not load drawing after upload:', err);
-              }
-            }
+        {/* Hub 2: Matrix View */}
+        {activeTab === 'matrix' && (
+          <MatrixHub
+            drawings={drawings}
+            activeBlock={filters.block || 'All blocks'}
+            onCellClick={(dw) => handleGoToVersions(dw._id || dw.id)}
+            onEmptyCellClick={(lvl, disc, blk) => {
+              handleOpenUpload({
+                level: lvl,
+                discipline: disc,
+                blockName: blk !== 'All blocks' ? blk : 'Block A',
+              });
+            }}
+          />
+        )}
+
+        {/* Hub 3: Versions History */}
+        {activeTab === 'versions' && (
+          <VersionsHub
+            drawings={drawings}
+            selectedDrawingId={selectedDrawingId}
+            onSelectDrawing={(dwId) => {
+              setSelectedDrawingId(dwId);
+              updateUrlParams(undefined, 'versions', dwId);
+            }}
+            onOpenNewRevision={handleOpenNewRevision}
+            onViewDrawing={handleViewDrawing}
+            onDownloadDrawing={handleDownloadDrawing}
+            onCompareVersions={handleCompareVersions}
+            onRefresh={handleRefresh}
+          />
+        )}
+
+        {/* Shared Slide-Over Upload Drawer (~520px) */}
+        <UploadDrawingDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          activeProjectId={activeProjectId || selectedProject?._id || selectedProject?.id}
+          initialData={drawerInitialData}
+          onSuccess={() => {
+            fetchDrawingsData(1, false);
           }}
         />
+
+        {/* Side-by-side Revision Compare Modal */}
+        {compareState.isOpen && (
+          <CompareDrawingsModal
+            isOpen={compareState.isOpen}
+            open={compareState.isOpen}
+            onClose={() => setCompareState((prev) => ({ ...prev, isOpen: false }))}
+            drawing={compareState.drawing}
+            revisions={compareState.revisions}
+            initialLeftRevId={compareState.leftRevId}
+            initialRightRevId={compareState.rightRevId}
+          />
+        )}
       </div>
     </RoleGate>
   );

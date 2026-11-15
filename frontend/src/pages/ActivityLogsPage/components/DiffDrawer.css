@@ -1,0 +1,285 @@
+/* Diff Drawer Styles */
+
+.dd-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dd-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dd-meta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--input-bg, #f8fafc);
+  border: 1px solid var(--card-border, #e2e8f0);
+}
+
+.dd-meta-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-label, #64748b);
+  letter-spacing: 0.04em;
+}
+
+.dd-meta-val {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.dd-meta-val.primary {
+  color: var(--text-primary, #0f172a);
+}
+
+.dd-meta-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.dd-meta-val.role-pill {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #cbd5e1);
+  font-size: 0.78rem;
+}
+
+.dd-meta-val.action-pill {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  color: #0284c7;
+  font-size: 0.78rem;
+}
+
+.dd-meta-val.date-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+}
+
+/* Summary Box */
+.dd-summary-box {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e2e8f0);
+}
+
+.dd-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-label, #64748b);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.dd-summary-text {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.5;
+}
+
+/* Field-by-Field Diff Section */
+.dd-diff-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dd-diff-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dd-diff-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.dd-diff-count {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.dd-diff-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dd-diff-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #e2e8f0);
+  background: var(--card-bg, #ffffff);
+}
+
+.dd-diff-row.changed {
+  border-left: 3px solid #0284c7;
+}
+
+.dd-diff-row.added {
+  border-left: 3px solid #10b981;
+}
+
+.dd-diff-row.removed {
+  border-left: 3px solid #ef4444;
+}
+
+.dd-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dd-field-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  font-family: monospace;
+}
+
+.dd-diff-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.dd-diff-tag.changed {
+  background: rgba(14, 165, 233, 0.08);
+  color: #0284c7;
+}
+
+.dd-diff-tag.added {
+  background: var(--success-subtle, rgba(16, 185, 129, 0.08));
+  color: #10b981;
+}
+
+.dd-diff-tag.removed {
+  background: var(--danger-subtle, rgba(239, 68, 68, 0.08));
+  color: #ef4444;
+}
+
+.dd-diff-values {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dd-val-box {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.dd-val-box.old {
+  background: var(--danger-subtle, rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.dd-val-box.new {
+  background: var(--success-subtle, rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.dd-val-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.dd-val-text {
+  font-family: monospace;
+  word-break: break-all;
+  color: var(--text-primary, #0f172a);
+}
+
+.dd-val-text.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.8;
+  color: #ef4444;
+}
+
+.dd-val-box.new .dd-val-text {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.diff-val-empty {
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.diff-array-item {
+  display: inline-block;
+  padding: 1px 5px;
+  margin: 1px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.diff-nested-obj {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diff-obj-entry strong {
+  color: var(--text-secondary, #64748b);
+}
+
+.dd-diff-arrow {
+  color: var(--text-secondary, #94a3b8);
+  flex-shrink: 0;
+}
+
+.dd-diff-empty {
+  padding: 24px;
+  font-size: 0.82rem;
+  color: var(--text-secondary, #94a3b8);
+  font-style: italic;
+  text-align: center;
+  border: 1px dashed var(--card-border, #cbd5e1);
+  border-radius: 8px;
+}
+
+.dd-footer {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+

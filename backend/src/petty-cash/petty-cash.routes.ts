@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Db, ObjectId } from 'mongodb';
+import { Db, ObjectId, GridFSBucket } from 'mongodb';
 
 // Helper to normalize queries for string / ObjectId
 export function idQuery(id: string | any): any {
@@ -35,6 +35,109 @@ export function companyFilter(companyId: any): any {
   return { companyId: String(companyId) };
 }
 
+/**
+ * Atomic Sequential Voucher Number Generator
+ * Generates human-readable voucher IDs per company, site, and year.
+ * Format: PC-[SITE_CODE]-[YY]-[0001] (e.g. PC-DASH-26-0001)
+ */
+async function generateVoucherNo(db: Db, companyId: string, siteName: string, dateStr: string): Promise<string> {
+  try {
+    const cleanCode = (siteName || 'SITE').replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() || 'SITE';
+    const yearStr = (dateStr ? new Date(dateStr).getFullYear() : new Date().getFullYear()).toString().slice(-2);
+    const counterKey = `${cleanCode}_${yearStr}`;
+
+    const counterResult = await db.collection('petty_cash_counters').findOneAndUpdate(
+      { companyId: String(companyId), key: counterKey },
+      { $inc: { seq: 1 }, $setOnInsert: { createdAt: new Date() }, $set: { updatedAt: new Date() } },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    const seq = (counterResult as any)?.seq || (counterResult as any)?.value?.seq || 1;
+    const seqStr = String(seq).padStart(4, '0');
+    return `PC-${cleanCode}-${yearStr}-${seqStr}`;
+  } catch (err) {
+    console.error('Error generating voucher number, falling back:', err);
+    const fallbackSeq = Math.floor(1000 + Math.random() * 9000);
+    return `PC-SITE-${new Date().getFullYear().toString().slice(-2)}-${fallbackSeq}`;
+  }
+}
+
+/**
+ * Process and Store Receipt Photographs into GridFS
+ * If an image exceeds 60KB base64, stores in GridFS bucket to keep BSON documents small
+ * and avoid MongoDB 16MB document size limits.
+ */
+async function processReceiptPhotos(db: Db, companyId: string, photos: any[]): Promise<any[]> {
+  if (!Array.isArray(photos) || photos.length === 0) return [];
+
+  const sanitized: any[] = [];
+  const bucket = new GridFSBucket(db, { bucketName: 'petty_cash_receipts' });
+
+  for (const p of photos) {
+    const rawData = p.dataUrl || p.url;
+    if (!rawData) continue;
+
+    let buf: Buffer | null = null;
+    let contentType = 'image/jpeg';
+
+    if (typeof rawData === 'string' && rawData.startsWith('data:')) {
+      const match = rawData.match(/^data:([^;]+);base64,/);
+      if (match) contentType = match[1];
+      const commaIdx = rawData.indexOf(',');
+      try {
+        buf = Buffer.from(rawData.slice(commaIdx + 1), 'base64');
+      } catch { }
+    } else if (typeof rawData === 'string' && !rawData.startsWith('http') && !rawData.startsWith('/')) {
+      try {
+        buf = Buffer.from(rawData, 'base64');
+      } catch { }
+    }
+
+    // If buffer extracted and larger than 60KB, store in GridFS
+    if (buf && buf.length > 60 * 1024) {
+      try {
+        const uploadStream = bucket.openUploadStream(p.name || 'receipt.jpg', {
+          metadata: {
+            companyId: String(companyId),
+            contentType,
+            sizeBytes: buf.length,
+            uploadedAt: new Date()
+          }
+        });
+
+        await new Promise<void>((resolve, reject) => {
+          uploadStream.on('finish', () => resolve());
+          uploadStream.on('error', reject);
+          uploadStream.end(buf);
+        });
+
+        const gridId = uploadStream.id.toString();
+        sanitized.push({
+          gridFsId: gridId,
+          url: `/api/petty-cash/receipts/${gridId}`,
+          name: p.name || 'receipt.jpg',
+          size: buf.length,
+          uploadedAt: new Date()
+        });
+        continue;
+      } catch (err) {
+        console.error('GridFS receipt upload failed, saving inline:', err);
+      }
+    }
+
+    // Retain inline dataUrl if small or if already a URL
+    sanitized.push({
+      dataUrl: rawData.startsWith('http') || rawData.startsWith('/') ? undefined : rawData,
+      url: rawData.startsWith('http') || rawData.startsWith('/') ? rawData : undefined,
+      name: p.name || 'receipt.jpg',
+      size: p.size || (buf ? buf.length : undefined),
+      uploadedAt: new Date()
+    });
+  }
+
+  return sanitized;
+}
+
 export function createPettyCashRouter(
   getDb: () => any,
   authMiddleware: any,
@@ -53,7 +156,7 @@ export function createPettyCashRouter(
       try {
         const u = await db.collection('users').findOne(idQuery(userId));
         if (u && u.companyId) return String(u.companyId);
-      } catch {}
+      } catch { }
     }
     return req.user?.companyId || 'default-company';
   };
@@ -190,7 +293,7 @@ export function createPettyCashRouter(
           resource: 'petty_cash_sites',
           resourceId: siteId,
           description: `Created new petty cash site "${trimmedName}"`
-        }).catch(() => {});
+        }).catch(() => { });
       }
 
       return res.status(201).json({
@@ -332,7 +435,7 @@ export function createPettyCashRouter(
           updatedAt: new Date()
         }));
 
-        await db.collection('petty_cash_categories').insertMany(docsToInsert).catch(() => {});
+        await db.collection('petty_cash_categories').insertMany(docsToInsert).catch(() => { });
         categories = await db.collection('petty_cash_categories').find(compFilter).sort({ name: 1 }).toArray();
       }
 
@@ -421,7 +524,7 @@ export function createPettyCashRouter(
   });
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 4. TRANSACTIONS & STATEMENT REPORTING WITH OPENING/CLOSING BALANCE
+  // 4. TRANSACTIONS & STATEMENT REPORTING WITH VOUCHER NUMBERS & AUDIT STATUS
   // ════════════════════════════════════════════════════════════════════════════
   router.get('/transactions', authMiddleware, async (req: any, res: any) => {
     try {
@@ -429,7 +532,7 @@ export function createPettyCashRouter(
       const companyId = await resolveCompanyId(req, db);
       const compFilter = companyFilter(companyId);
 
-      const { siteId, siteName, startDate, endDate, type, personName, category } = req.query;
+      const { siteId, siteName, startDate, endDate, type, personName, category, status } = req.query;
 
       // Base query for this company
       const query: any = { ...compFilter };
@@ -454,6 +557,13 @@ export function createPettyCashRouter(
       const filteredTransactions: any[] = [];
       const personCreditTotalsMap = new Map<string, { totalAmount: number; count: number }>();
 
+      let statusCounts = {
+        all: 0,
+        pending: 0,
+        verified: 0,
+        rejected: 0
+      };
+
       // Populate overall person credits breakdown for this site
       allSiteTransactions.forEach((tx: any) => {
         if (tx.type === 'CREDIT' && tx.personName) {
@@ -470,6 +580,7 @@ export function createPettyCashRouter(
       for (const tx of allSiteTransactions) {
         const txDate = tx.date; // string 'YYYY-MM-DD'
         const amt = Number(tx.amount) || 0;
+        const txStatus = tx.status || 'VERIFIED'; // backward compatibility
 
         // If a startDate is requested and this transaction is strictly prior to startDate:
         if (startDate && txDate < String(startDate)) {
@@ -486,9 +597,20 @@ export function createPettyCashRouter(
           continue; // Past reporting window
         }
 
+        // Track status counters for the reporting window
+        statusCounts.all += 1;
+        if (txStatus === 'PENDING') statusCounts.pending += 1;
+        else if (txStatus === 'REJECTED') statusCounts.rejected += 1;
+        else statusCounts.verified += 1;
+
         // Filter by entry type (CREDIT or DEBIT)
         if (type && type !== 'ALL' && tx.type !== type) {
           continue;
+        }
+
+        // Filter by status (ALL, PENDING, VERIFIED, REJECTED)
+        if (status && status !== 'ALL') {
+          if (txStatus !== status) continue;
         }
 
         // Filter by person
@@ -509,7 +631,9 @@ export function createPettyCashRouter(
 
         filteredTransactions.push({
           ...tx,
-          id: tx._id.toString()
+          id: tx._id.toString(),
+          status: txStatus,
+          voucherNo: tx.voucherNo || undefined
         });
       }
 
@@ -530,7 +654,8 @@ export function createPettyCashRouter(
           closingBalance: Math.round(closingBalance * 100) / 100,
           count: filteredTransactions.length,
           transactions: filteredTransactions,
-          personCreditBreakdown
+          personCreditBreakdown,
+          statusCounts
         }
       });
     } catch (err: any) {
@@ -588,22 +713,28 @@ export function createPettyCashRouter(
         return res.status(400).json({ success: false, message: `${fieldLabel} is required` });
       }
 
-      // Process photos if any
-      const sanitizedPhotos = Array.isArray(photos)
-        ? photos.map((p: any) => ({
-            dataUrl: p.dataUrl || p.url,
-            name: p.name || 'receipt.jpg',
-            size: p.size || undefined,
-            uploadedAt: new Date()
-          })).filter(p => !!p.dataUrl)
-        : [];
+      // Generate sequential voucher number
+      const voucherNo = await generateVoucherNo(db, companyId, siteName, date);
+
+      // Store photos: automatically store large/binary photos in GridFS
+      const sanitizedPhotos = await processReceiptPhotos(db, companyId, photos);
 
       const now = new Date();
-      const newTx = {
+      const userRole = String(req.user?.role || '').toUpperCase();
+      const isPrivileged = userRole === 'ADMIN' || userRole === 'OWNER' || req.user?.accountType === 'developer';
+      const initialStatus = isPrivileged ? 'VERIFIED' : 'PENDING';
+
+      const newTx: any = {
         companyId,
         siteId: siteId ? String(siteId).trim() : 'site-default',
         siteName: String(siteName).trim(),
+        voucherNo,
         type,
+        status: initialStatus,
+        verifiedBy: initialStatus === 'VERIFIED' ? (req.user?.sub || 'user') : undefined,
+        verifiedByName: initialStatus === 'VERIFIED' ? (req.user?.name || req.user?.email || 'Admin') : undefined,
+        verifiedAt: initialStatus === 'VERIFIED' ? now : undefined,
+        rejectionReason: '',
         date,
         amount: Math.round(parsedAmount * 100) / 100,
         category: String(category).trim(),
@@ -637,7 +768,7 @@ export function createPettyCashRouter(
             isActive: true,
             createdAt: now,
             updatedAt: now
-          }).catch(() => {});
+          }).catch(() => { });
         }
       }
 
@@ -651,9 +782,9 @@ export function createPettyCashRouter(
           action: type === 'CREDIT' ? 'PETTY_CASH_CREDIT' : 'PETTY_CASH_DEBIT',
           resource: 'petty_cash_transactions',
           resourceId: insertedId,
-          description: `Recorded ₹${newTx.amount} ${type} for ${newTx.siteName} (${newTx.category}: ${newTx.description})`,
-          newValue: { type, amount: newTx.amount, siteName: newTx.siteName, personName: newTx.personName }
-        }).catch(() => {});
+          description: `Recorded ₹${newTx.amount} ${type} [${voucherNo}] for ${newTx.siteName} (${newTx.category}: ${newTx.description})`,
+          newValue: { voucherNo, type, amount: newTx.amount, siteName: newTx.siteName, personName: newTx.personName, status: initialStatus }
+        }).catch(() => { });
       }
 
       return res.status(201).json({
@@ -669,7 +800,124 @@ export function createPettyCashRouter(
     }
   });
 
-  // DELETE transaction (with audit log)
+  // ════════════════════════════════════════════════════════════════════════════
+  // 5. UPDATE TRANSACTION AUDIT / VERIFICATION STATUS
+  // ════════════════════════════════════════════════════════════════════════════
+  router.patch('/transactions/:id/status', authMiddleware, async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const targetQuery = idQuery(req.params.id);
+      const { status, rejectionReason } = req.body;
+
+      if (!['VERIFIED', 'REJECTED', 'PENDING'].includes(status)) {
+        return res.status(400).json({ success: false, message: 'Status must be VERIFIED, REJECTED, or PENDING' });
+      }
+
+      const existing = await db.collection('petty_cash_transactions').findOne({
+        ...targetQuery,
+        ...companyFilter(companyId)
+      });
+
+      if (!existing) {
+        return res.status(404).json({ success: false, message: 'Transaction not found' });
+      }
+
+      const now = new Date();
+      const updateDoc: any = {
+        status,
+        updatedAt: now
+      };
+
+      if (status === 'VERIFIED') {
+        updateDoc.verifiedBy = req.user?.sub || 'user';
+        updateDoc.verifiedByName = req.user?.name || req.user?.email || 'Admin';
+        updateDoc.verifiedAt = now;
+        updateDoc.rejectionReason = '';
+      } else if (status === 'REJECTED') {
+        updateDoc.verifiedBy = req.user?.sub || 'user';
+        updateDoc.verifiedByName = req.user?.name || req.user?.email || 'Admin';
+        updateDoc.verifiedAt = now;
+        updateDoc.rejectionReason = rejectionReason ? String(rejectionReason).trim() : 'Rejected during audit';
+      } else {
+        updateDoc.verifiedBy = null;
+        updateDoc.verifiedByName = null;
+        updateDoc.verifiedAt = null;
+        updateDoc.rejectionReason = '';
+      }
+
+      await db.collection('petty_cash_transactions').updateOne(
+        { _id: existing._id },
+        { $set: updateDoc }
+      );
+
+      if (logAudit) {
+        await logAudit(db, {
+          actorId: req.user?.sub,
+          actorType: req.user?.accountType || 'user',
+          companyId,
+          module: 'pettyCash',
+          action: status === 'VERIFIED' ? 'PETTY_CASH_VERIFIED' : status === 'REJECTED' ? 'PETTY_CASH_REJECTED' : 'PETTY_CASH_STATUS_UPDATED',
+          resource: 'petty_cash_transactions',
+          resourceId: existing._id.toString(),
+          description: `Marked voucher ${existing.voucherNo || existing._id} as ${status}${updateDoc.rejectionReason ? ` (${updateDoc.rejectionReason})` : ''}`,
+          previousValue: { status: existing.status || 'VERIFIED' },
+          newValue: updateDoc
+        }).catch(() => { });
+      }
+
+      return res.json({
+        success: true,
+        message: `Transaction marked as ${status}`,
+        data: {
+          id: existing._id.toString(),
+          ...updateDoc
+        }
+      });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // 6. STREAM / DOWNLOAD RECEIPT PHOTOGRAPH (GRIDFS)
+  // ════════════════════════════════════════════════════════════════════════════
+  router.get('/receipts/:id', async (req: any, res: any) => {
+    try {
+      const db = getDb();
+      const fileId = toObjectId(req.params.id);
+      if (!fileId) {
+        return res.status(400).json({ success: false, message: 'Invalid receipt file ID' });
+      }
+
+      const bucket = new GridFSBucket(db, { bucketName: 'petty_cash_receipts' });
+      const files = await db.collection('petty_cash_receipts.files').find({ _id: fileId }).toArray();
+      if (!files || files.length === 0) {
+        return res.status(404).json({ success: false, message: 'Receipt not found' });
+      }
+
+      const fileDoc = files[0];
+      const contentType = fileDoc.metadata?.contentType || 'image/jpeg';
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days cache
+      res.setHeader('Content-Disposition', `inline; filename="${fileDoc.filename || 'receipt.jpg'}"`);
+
+      const downloadStream = bucket.openDownloadStream(fileId);
+      downloadStream.on('error', (err: any) => {
+        console.error('Error streaming receipt:', err);
+        if (!res.headersSent) {
+          res.status(500).json({ success: false, message: 'Failed to stream receipt' });
+        }
+      });
+      downloadStream.pipe(res);
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // 7. DELETE TRANSACTION (WITH CLEANUP OF GRIDFS ASSETS)
+  // ════════════════════════════════════════════════════════════════════════════
   router.delete('/transactions/:id', authMiddleware, async (req: any, res: any) => {
     try {
       const db = getDb();
@@ -685,6 +933,21 @@ export function createPettyCashRouter(
         return res.status(404).json({ success: false, message: 'Transaction not found' });
       }
 
+      // Clean up any GridFS receipt photos associated with this transaction
+      if (Array.isArray(existing.photos)) {
+        const bucket = new GridFSBucket(db, { bucketName: 'petty_cash_receipts' });
+        for (const p of existing.photos) {
+          if (p.gridFsId) {
+            try {
+              const pId = toObjectId(p.gridFsId);
+              if (pId) await bucket.delete(pId);
+            } catch (err) {
+              console.warn('Could not clean up GridFS receipt:', p.gridFsId, err);
+            }
+          }
+        }
+      }
+
       await db.collection('petty_cash_transactions').deleteOne({ _id: existing._id });
 
       if (logAudit) {
@@ -696,9 +959,9 @@ export function createPettyCashRouter(
           action: 'PETTY_CASH_DELETED',
           resource: 'petty_cash_transactions',
           resourceId: existing._id.toString(),
-          description: `Deleted ${existing.type} entry of ₹${existing.amount} (${existing.siteName}: ${existing.description})`,
+          description: `Deleted ${existing.type} [${existing.voucherNo || existing._id}] of ₹${existing.amount} (${existing.siteName}: ${existing.description})`,
           previousValue: existing
-        }).catch(() => {});
+        }).catch(() => { });
       }
 
       return res.json({ success: true, message: 'Transaction deleted successfully' });

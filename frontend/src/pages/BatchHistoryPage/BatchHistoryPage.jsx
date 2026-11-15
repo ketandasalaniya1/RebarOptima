@@ -21,7 +21,9 @@ import {
   AlertCircle
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
-import { PageHeader, EmptyState } from '../../components/ui'
+import { PageHeader, EmptyState, CardSkeleton, useDelayedSkeleton } from '../../components/ui'
+import SteelHeader from '../../components/Shared/SteelHeader'
+import { Search } from 'lucide-react'
 import './BatchHistoryPage.css'
 
 const getTextStyle = (hex) => {
@@ -30,14 +32,15 @@ const getTextStyle = (hex) => {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return lum < 135 
-    ? { color: '#ffffff' } 
+  return lum < 135
+    ? { color: '#ffffff' }
     : { color: '#111827' };
 };
 
 export default function BatchHistoryPage({ onEditBatch }) {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
+  const isDelayedLoading = useDelayedSkeleton(loading)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [expandedBatchId, setExpandedBatchId] = useState(null)
@@ -53,14 +56,52 @@ export default function BatchHistoryPage({ onEditBatch }) {
   const [printOption, setPrintOption] = useState('foreman')
   const [activePrintBatch, setActivePrintBatch] = useState(null)
 
-  const triggerBatchPrint = (batch, mode) => {
+  // Search & Filter states (Step 0 inventory)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterDia, setFilterDia] = useState('ALL')
+
+  const printableBatch = activePrintBatch || (expandedBatchId ? history.find(b => b._id === expandedBatchId) : history[0]) || null;
+
+  const triggerBatchPrint = (batch, mode = 'foreman') => {
+    const targetBatch = batch || printableBatch
+    if (!targetBatch) return
     setPrintOption(mode)
-    setActivePrintBatch(batch)
+    setActivePrintBatch(targetBatch)
     setPrintMenuBatchId(null)
-    setTimeout(() => {
-      window.print()
-    }, 120)
+    document.body.classList.add('has-active-print')
+
+    // Wait 2 animation frames + 150ms so React mounts the portal and browser paints it
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.print()
+        }, 150)
+      })
+    })
   }
+
+  // Reliable Native Print Teardown Sync
+  useEffect(() => {
+    const handleAfterPrint = () => {
+      // Clean up body print class, but KEEP activePrintBatch in DOM (hidden by CSS on screen)
+      // so Chrome print preview engine never rasterizes a destroyed DOM tree!
+      document.body.classList.remove('has-active-print')
+    }
+
+    window.addEventListener('afterprint', handleAfterPrint)
+    return () => {
+      window.removeEventListener('afterprint', handleAfterPrint)
+      document.body.classList.remove('has-active-print')
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleGlobalClick = () => {
+      setPrintMenuBatchId(null)
+    }
+    window.addEventListener('click', handleGlobalClick)
+    return () => window.removeEventListener('click', handleGlobalClick)
+  }, [])
 
   const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
 
@@ -155,46 +196,58 @@ export default function BatchHistoryPage({ onEditBatch }) {
     }
   }
 
-  const handlePrintBatch = (e, batch) => {
-    e.stopPropagation(); // Prevent toggling accordion expand
-    const element = document.getElementById(`batch-print-content-${batch._id}`);
-    if (!element) return;
-    
-    element.classList.remove('no-screen');
-    
-    const opt = {
-      margin: [15, 10, 15, 10],
-      filename: `${batch.batchName.toLowerCase().replace(/[^a-z0-9]/g, '_')}_report.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
-        useCORS: true, 
-        logging: false,
-        windowWidth: 794
-      },
-      pagebreak: { mode: ['css', 'legacy'], after: '.pdf-page-break' },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save().then(() => {
-      element.classList.add('no-screen');
-    }).catch(err => {
-      console.error('PDF Generation Error:', err);
-      element.classList.add('no-screen');
-    });
-  };
-
-  if (loading) {
-    return <LoadingSpinner message="Loading batch history..." minHeight="65vh" />
-  }
+  const filteredHistory = history.filter((b) => {
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = !q ||
+      b.batchName?.toLowerCase().includes(q) ||
+      (b.createdAt && new Date(b.createdAt).toLocaleDateString('en-GB').includes(q));
+    const matchesDia = filterDia === 'ALL' ||
+      (b.layouts || []).some((l) => String(l.diameter) === String(filterDia));
+    return matchesSearch && matchesDia;
+  });
 
   return (
     <div className="history-page">
-      <PageHeader
-        title="Batch History"
-        subtitle="View and audit all previously committed cutting stock optimizations."
-        projectName={selectedProject?.name}
+      <SteelHeader
+        activeTab="history"
+        title="Optimization Batch History"
+        subtitle="View and audit previously committed cutting stock optimizations, print cutting sheets, or re-run batches."
       />
+
+      {/* Filter and Search Bar (Step 0 inventory) */}
+      <div className="history-filter-bar card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 16px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '220px' }}>
+          <Search size={15} style={{ color: 'var(--text-secondary)' }} />
+          <input
+            type="text"
+            placeholder="Search by batch name or date..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: '0.88rem' }}
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Diameter:</span>
+          <select
+            value={filterDia}
+            onChange={(e) => setFilterDia(e.target.value)}
+            style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', background: 'var(--card-bg)', color: 'var(--text-primary)', fontSize: '0.84rem' }}
+          >
+            <option value="ALL">All Diameters</option>
+            {[8, 10, 12, 16, 20, 25, 32].map((d) => (
+              <option key={d} value={d}>Ø {d} mm</option>
+            ))}
+          </select>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginLeft: '6px' }}>
+            {filteredHistory.length} of {history.length} batches
+          </span>
+        </div>
+      </div>
 
       {error && (
         <div className="alert alert-error">
@@ -208,15 +261,32 @@ export default function BatchHistoryPage({ onEditBatch }) {
         </div>
       )}
 
-      {history.length === 0 ? (
+      {isDelayedLoading ? (
+        <div className="batch-cards-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <CardSkeleton height="180px" />
+          <CardSkeleton height="180px" />
+          <CardSkeleton height="180px" />
+        </div>
+      ) : history.length === 0 ? (
         <EmptyState
           icon={<Layers size={24} />}
           title="No History Found"
           description="You haven't saved or committed any optimization batches yet."
         />
+      ) : filteredHistory.length === 0 ? (
+        <div className="card" style={{ textAlign: 'center', padding: '36px 16px', color: 'var(--text-secondary)' }}>
+          <p>No batches match your search criteria.</p>
+          <button
+            className="btn-secondary"
+            onClick={() => { setSearchQuery(''); setFilterDia('ALL'); }}
+            style={{ marginTop: '8px', fontSize: '0.82rem' }}
+          >
+            Clear Filters
+          </button>
+        </div>
       ) : (
         <div className="history-list">
-          {history.map((batch) => {
+          {filteredHistory.map((batch) => {
             const isExpanded = expandedBatchId === batch._id
             const date = `${new Date(batch.createdAt).toLocaleDateString('en-GB', {
               day: '2-digit',
@@ -291,8 +361,8 @@ export default function BatchHistoryPage({ onEditBatch }) {
                   <div className="batch-meta-right">
                     {/* Print Options Dropdown */}
                     <div className="print-menu-wrapper" style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-                      <button 
-                        className="btn-print-batch animate-hover" 
+                      <button
+                        className="btn-print-batch animate-hover"
                         onClick={() => setPrintMenuBatchId(prev => prev === batch._id ? null : batch._id)}
                         title="Choose Print Mode & Report Layout"
                       >
@@ -375,14 +445,14 @@ export default function BatchHistoryPage({ onEditBatch }) {
                       </div>
                     ) : (
                       <>
-                        <button 
+                        <button
                           className="btn-edit-batch animate-hover"
                           onClick={() => onEditBatch(batch)}
                           title="Edit Batch optimization input parameters"
                         >
                           <Pencil size={13} style={{ marginRight: '4px' }} /> Edit Batch
                         </button>
-                        <button 
+                        <button
                           className="btn-delete-batch animate-hover"
                           onClick={(e) => handleDeleteBatch(e, batch._id)}
                           title="Delete Batch Record"
@@ -451,7 +521,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
                         };
                         const cutsCount = layout.cutsCount ?? (layout.parts?.length > 0 ? (layout.waste > 0.1 ? layout.parts.length : layout.parts.length - 1) : 0);
                         const utilization = layout.utilization ?? (layout.parts?.length > 0 ? (layout.parts.reduce((s, p) => s + p.length, 0) / layout.stockLength) * 100 : 0);
-                        
+
                         return (
                           <div
                             key={lIdx}
@@ -499,7 +569,8 @@ export default function BatchHistoryPage({ onEditBatch }) {
                                   </div>
                                   {layout.isVirtual && (
                                     <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                                      ⚠️ STOCK UNAVAILABLE (NEEDS PURCHASE)
+                                      <AlertCircle size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+                                      STOCK UNAVAILABLE (NEEDS PURCHASE)
                                     </span>
                                   )}
                                 </div>
@@ -584,21 +655,21 @@ export default function BatchHistoryPage({ onEditBatch }) {
       )}
 
       {/* ── Native Browser A4 Printable Engine ── */}
-      {activePrintBatch && (
+      {printableBatch && (
         <div className={`batch-print-portal print-content-root print-mode-${printOption}`}>
           {/* Print Header */}
           <div className="print-header">
             <div>
               <h2 className="print-title">RebarOptima Cutting Optimization Report</h2>
               <div className="print-badge-row">
-                <span className="print-batch-name">{activePrintBatch.batchName}</span>
+                <span className="print-batch-name">{printableBatch.batchName || 'Cutting Batch'}</span>
                 <span className="print-mode-indicator">
-                  {printOption === 'foreman' ? '👷 Steel Foreman Cut-Sheet' : printOption === 'summary' ? '📊 1-Page Summary' : '📄 Full A4 Report'}
+                  {printOption === 'foreman' ? 'Steel Foreman Cut-Sheet' : printOption === 'summary' ? '1-Page Summary Sheet' : 'Full Executive A4 Report'}
                 </span>
               </div>
             </div>
             <div className="print-date">
-              Generated: {new Date(activePrintBatch.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+              Generated: {printableBatch.createdAt ? new Date(printableBatch.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('en-GB')}
             </div>
           </div>
 
@@ -606,23 +677,23 @@ export default function BatchHistoryPage({ onEditBatch }) {
           <div className="print-kpi-grid">
             <div className="print-kpi-card">
               <span className="kpi-title">Average Utilization</span>
-              <span className="kpi-data text-emerald">{activePrintBatch.summary?.avgUtilization?.toFixed(2)}%</span>
+              <span className="kpi-data text-emerald">{(printableBatch.summary?.avgUtilization ?? 0).toFixed(2)}%</span>
             </div>
             <div className="print-kpi-card">
               <span className="kpi-title">Total Cuts / Parts</span>
-              <span className="kpi-data">{(activePrintBatch.summary?.totalPartsLength / 1000).toFixed(1)} m</span>
+              <span className="kpi-data">{((printableBatch.summary?.totalPartsLength || 0) / 1000).toFixed(1)} m</span>
             </div>
             <div className="print-kpi-card">
               <span className="kpi-title">Yield Stock</span>
-              <span className="kpi-data">{(activePrintBatch.summary?.totalUsedStockLength / 1000).toFixed(1)} m</span>
+              <span className="kpi-data">{((printableBatch.summary?.totalUsedStockLength || 0) / 1000).toFixed(1)} m</span>
             </div>
             <div className="print-kpi-card">
               <span className="kpi-title">Scrap Generated</span>
-              <span className="kpi-data text-rose">{activePrintBatch.summary?.totalScrapKg?.toFixed(2)} kg</span>
+              <span className="kpi-data text-rose">{(printableBatch.summary?.totalScrapKg || 0).toFixed(2)} kg</span>
             </div>
             <div className="print-kpi-card">
               <span className="kpi-title">Remnants Saved</span>
-              <span className="kpi-data text-cyan">{activePrintBatch.summary?.totalRemnantKg?.toFixed(2)} kg</span>
+              <span className="kpi-data text-cyan">{(printableBatch.summary?.totalRemnantKg || 0).toFixed(2)} kg</span>
             </div>
           </div>
 
@@ -630,13 +701,17 @@ export default function BatchHistoryPage({ onEditBatch }) {
           <div className="print-layouts-section">
             <h3 className="print-section-title">Cutting Layouts & Offcut Map</h3>
             <div className="print-layouts-list">
-              {activePrintBatch.layouts?.map((rawLayout, lIdx) => {
+              {(printableBatch.layouts || []).map((rawLayout, lIdx) => {
+                const stockLen = Number(rawLayout.stockLength) || 12000;
+                const wasteLen = Number(rawLayout.waste) || 0;
                 const layout = {
                   ...rawLayout,
+                  stockLength: stockLen,
+                  waste: wasteLen,
                   parts: rawLayout.parts && rawLayout.parts.length > 0
                     ? rawLayout.parts
-                    : (rawLayout.stockLength > rawLayout.waste
-                      ? [{ length: rawLayout.stockLength - rawLayout.waste, color: '#71797E', label: 'Utilized' }]
+                    : (stockLen > wasteLen
+                      ? [{ length: stockLen - wasteLen, color: '#71797E', label: 'Utilized' }]
                       : [])
                 };
                 const cutsCount = layout.cutsCount ?? (layout.parts?.length > 0 ? (layout.waste > 0.1 ? layout.parts.length : layout.parts.length - 1) : 0);

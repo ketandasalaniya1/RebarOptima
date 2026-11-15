@@ -7,14 +7,13 @@ import { useDispatch } from 'react-redux';
 import { setPermissions } from '../../store/slices/permissionsSlice';
 import './SignUpPage.css';
 
-const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
+const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [companyName, setCompanyName] = useState('');
-  const [projectName, setProjectName] = useState('');
   const [location, setLocation] = useState('');
   const [email, setEmail] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
@@ -57,16 +56,17 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
         firstName,
         lastName,
         companyName,
-        projectName,
         location,
         mobileNumber,
         promoConsent,
         newsletterConsent
       });
-      if (data.permissions) {
-        dispatch(setPermissions(data.permissions));
-      }
-      if (onSignUp) {
+      if (onSignUpSuccess) {
+        onSignUpSuccess({ email, companyName, firstName });
+      } else if (onSignUp) {
+        if (data.permissions) {
+          dispatch(setPermissions(data.permissions));
+        }
         onSignUp(data);
       }
     } catch (err) {
@@ -90,8 +90,8 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
           <div className="signup-left">
             <div className="signup-left-content">
               <div className="logo-container">
-                <div className="logo-img-wrapper">
-                  <img src={logo} alt="RebarOptima" className="logo-img" />
+                <div className="logo-img-wrapper" title="CraveToBuild">
+                  <img src={logo} alt="CraveToBuild" className="logo-img" />
                 </div>
               </div>
 
@@ -131,8 +131,8 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
           {/* Right Section */}
           <div className="signup-right">
             <div className="signup-form-container">
-              <div className="mobile-logo">
-                  <img src={logo} alt="RebarOptima" className="logo-img" />
+              <div className="mobile-logo" title="CraveToBuild">
+                  <img src={logo} alt="CraveToBuild" className="logo-img" />
               </div>
 
               <div className="form-header">
@@ -192,35 +192,20 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                   </div>
 
                   <div className="input-group">
-                    <label>Initial Project Name</label>
+                    <label>Location</label>
                     <div className="input-wrapper">
-                      <Building2 size={18} className="input-icon" color="#8d86b8" />
+                      <MapPin size={18} className="input-icon" color="#8d86b8" />
                       <input 
                         type="text" 
-                        placeholder="e.g. Sector-62 Site" 
-                        required 
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
+                        placeholder="e.g. Noida, India" 
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="form-row">
-                  <div className="input-group">
-                    <label>Project Location</label>
-                    <div className="input-wrapper">
-                      <MapPin size={18} className="input-icon" color="#8d86b8" />
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Noida, India" 
-                        required 
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
                   <div className="input-group">
                     <label>Email Address</label>
                     <div className="input-wrapper">
@@ -234,9 +219,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="form-row">
                   <div className="input-group">
                     <label>Mobile Number</label>
                     <div className="input-wrapper">
@@ -251,9 +234,6 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn }) => {
                       />
                     </div>
                   </div>
-                  
-                  {/* Empty group for layout balance */}
-                  <div className="input-group"></div>
                 </div>
 
                 <div className="form-row">

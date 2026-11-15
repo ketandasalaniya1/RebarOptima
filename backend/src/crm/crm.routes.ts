@@ -8,10 +8,30 @@ import { createCrmBookingRouter } from './crm.booking.routes';
 import { createCrmPaymentRouter } from './crm.payment.routes';
 import { createCrmReportRouter } from './crm.report.routes';
 import { createCrmSettingsRouter } from './crm.settings.routes';
+import { createCrmTodayRouter } from './crm.today.routes';
+import { createCrmTemplateRouter } from './crm.template.routes';
 import { seedCrmSampleData } from './crm.seed.service';
+import { ensureCrmIndexes } from './crm.sequence.service';
+import { startCrmScheduler } from './crm.scheduler';
+
+let crmInitialized = false;
 
 export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
   const router = Router();
+
+  // Lazy startup initialization (Indexes & Hold-expiry background worker)
+  setTimeout(() => {
+    try {
+      if (!crmInitialized) {
+        const db = getDb();
+        if (db) {
+          ensureCrmIndexes(db).catch(() => {});
+          startCrmScheduler(getDb);
+          crmInitialized = true;
+        }
+      }
+    } catch {}
+  }, 1000);
 
   // Sub-routers mounted under master /api/crm
   router.use('/customers', createCrmCustomerRouter(getDb, authMiddleware, logAudit));
@@ -22,6 +42,8 @@ export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, log
   router.use('/payments', createCrmPaymentRouter(getDb, authMiddleware, logAudit));
   router.use('/reports', createCrmReportRouter(getDb, authMiddleware));
   router.use('/settings', createCrmSettingsRouter(getDb, authMiddleware));
+  router.use('/templates', createCrmTemplateRouter(getDb, authMiddleware, logAudit));
+  router.use('/', createCrmTodayRouter(getDb, authMiddleware, logAudit));
 
   // Global search across CRM (Customers, Units, Projects, Bookings)
   router.get('/search', authMiddleware, async (req: any, res) => {
@@ -49,9 +71,10 @@ export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, log
       const matchedCust = customers.filter((c: any) =>
         (c.fullName && c.fullName.toLowerCase().includes(term)) ||
         (c.phone && c.phone.includes(term)) ||
+        (c.phoneNormalized && c.phoneNormalized.includes(term)) ||
         (c.email && c.email.toLowerCase().includes(term)) ||
         (c.customerCode && c.customerCode.toLowerCase().includes(term))
-      ).slice(0, 5);
+      ).slice(0, 5).map(({ encryptedPan, encryptedAadhaar, ...safe }: any) => safe);
 
       const matchedUnits = units.filter((u: any) =>
         (u.unitCode && u.unitCode.toLowerCase().includes(term)) ||
@@ -81,9 +104,22 @@ export function createCrmMasterRouter(getDb: () => any, authMiddleware: any, log
     }
   });
 
-  // Seed sample enterprise CRM data (non-destructive; only adds sample projects & customers if empty)
+  // Seed sample enterprise CRM data (guarded by ENABLE_CRM_SEED and admin role)
   router.post('/seed-sample-data', authMiddleware, async (req: any, res) => {
     try {
+      if (process.env.ENABLE_CRM_SEED !== 'true') {
+        return res.status(403).json({
+          message: 'Sample CRM data seeding is disabled in production. Set ENABLE_CRM_SEED=true in backend environment to enable.'
+        });
+      }
+
+      const userRole = (req.user?.role || req.user?.crmRole || '').toLowerCase();
+      if (userRole !== 'admin' && !req.user?.isAdmin && userRole !== 'superadmin') {
+        return res.status(403).json({
+          message: 'Access denied: Only administrators are authorized to run sample data seeding.'
+        });
+      }
+
       const db = getDb();
       let companyId: any = req.user?.companyId;
       if (!companyId && req.user?.sub) {

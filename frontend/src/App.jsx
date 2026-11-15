@@ -41,7 +41,10 @@ import BbsShapesPage from './pages/BBSPage/BbsShapesPage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import NoProjectPage from './pages/NoProjectPage/NoProjectPage';
 import PublicTransmittalPage from './pages/PublicTransmittalPage/PublicTransmittalPage';
+import DesignSystemPage from './pages/DesignSystemPage/DesignSystemPage';
 import Breadcrumbs from './components/Breadcrumbs/Breadcrumbs';
+import BottomNavBar from './components/BottomNavBar/BottomNavBar';
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 import ProjectFormModal from './components/ProjectModals/ProjectFormModal';
 import GeofenceConfigModal from './components/ProjectModals/GeofenceConfigModal';
 import AssignPartnerModal from './components/ProjectModals/AssignPartnerModal';
@@ -58,6 +61,7 @@ import {
   fetchProjectsStart,
   fetchProjectsFailure,
   clearProjectContext,
+  openCreateModal,
   ACTIVE_PROJECT_KEY,
 } from './store/slices/projectSlice';
 
@@ -71,6 +75,8 @@ const NO_PROJECT_SAFE_VIEWS = new Set([
   'superadmin-login',
   'superadmin',
   'no-project',
+  'overview',
+  'projects',
   'profile',
   'chat',
   'manpower-labour',
@@ -90,6 +96,8 @@ function App() {
   const assignPartnerModalProject = useSelector((state) => state.project?.assignPartnerModalProject);
   const projectEpoch = useSelector((state) => state.project.projectEpoch);
 
+  const [authNotice, setAuthNotice] = useState(null);
+  const [prefilledEmail, setPrefilledEmail] = useState('');
   const [optimizationData, setOptimizationData] = useState(null);
   const [editBatchParams, setEditBatchParams] = useState(null);
   const [projectBootstrapping, setProjectBootstrapping] = useState(false);
@@ -139,7 +147,7 @@ function App() {
 
         if (list.length === 0) {
           dispatch(setSelectedProject(null));
-          dispatch(setView('no-project'));
+          dispatch(setView('overview'));
           setProjectBootstrapping(false);
           return;
         }
@@ -203,7 +211,7 @@ function App() {
       if (projects.length > 0 && selectedProject) {
         dispatch(setView('overview'));
       } else if (projects.length === 0) {
-        dispatch(setView('no-project'));
+        dispatch(setView('overview'));
       }
       return;
     }
@@ -211,8 +219,8 @@ function App() {
     if (projects.length > 0 && selectedProject && view === 'no-project') {
       dispatch(setView('overview'));
     }
-    if (projects.length === 0 && view !== 'no-project' && view !== 'subscribe' && !NO_PROJECT_SAFE_VIEWS.has(view)) {
-      dispatch(setView('no-project'));
+    if (projects.length === 0 && view !== 'no-project' && view !== 'subscribe' && view !== 'overview' && view !== 'projects' && !NO_PROJECT_SAFE_VIEWS.has(view)) {
+      dispatch(setView('overview'));
     }
   }, [isAuthenticated, isDeveloper, projectsReady, projectBootstrapping, projects.length, selectedProject, view, dispatch]);
 
@@ -226,10 +234,33 @@ function App() {
   }, [isAuthenticated, isDeveloper, projectsReady, projectBootstrapping, selectedProject, view, dispatch]);
 
   useEffect(() => {
-    const storedThemeMode = localStorage.getItem('themeMode') || 'dark';
+    const stored = localStorage.getItem('themeMode');
+    let storedThemeMode = stored;
+    if (!storedThemeMode || storedThemeMode === 'system') {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      storedThemeMode = prefersDark ? 'dark' : 'light';
+    }
     const storedThemeColor = localStorage.getItem('themeColor') || 'slate-emerald';
-    document.documentElement.setAttribute('data-theme', storedThemeMode);
+    const effectiveTheme = storedThemeMode === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
     document.documentElement.setAttribute('data-color-theme', storedThemeColor);
+    document.documentElement.style.colorScheme = effectiveTheme;
+    document.documentElement.classList.toggle('dark', effectiveTheme === 'dark');
+
+    // If no manual preference is locked, track system theme changes
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const handleSystemThemeChange = (e) => {
+      const currentMode = localStorage.getItem('themeMode');
+      if (!currentMode || currentMode === 'system') {
+        const nextMode = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', nextMode);
+        document.documentElement.style.colorScheme = nextMode;
+        document.documentElement.classList.toggle('dark', nextMode === 'dark');
+      }
+    };
+    if (mediaQuery?.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+    }
 
     const handlePopState = (event) => {
       const tokenExists = sessionStorage.getItem('accessToken');
@@ -342,7 +373,7 @@ function App() {
 
   const handleNavigate = (newView) => {
     if (!selectedProject && !NO_PROJECT_SAFE_VIEWS.has(newView) && newView !== 'no-project') {
-      dispatch(setView('no-project'));
+      dispatch(openCreateModal());
       return;
     }
     dispatch(setView(newView));
@@ -352,14 +383,13 @@ function App() {
     isAuthenticated &&
     projectsReady &&
     !projectBootstrapping &&
-    (!selectedProject || projects.length === 0 || view === 'no-project');
+    view === 'no-project';
 
   const showWorkspace =
     isAuthenticated &&
     projectsReady &&
     !projectBootstrapping &&
-    selectedProject &&
-    projects.length > 0 &&
+    (selectedProject || projects.length === 0 || NO_PROJECT_SAFE_VIEWS.has(view)) &&
     view !== 'no-project' &&
     view !== 'signin' &&
     view !== 'signup' &&
@@ -372,20 +402,35 @@ function App() {
     <div className="app-layout">
       {view === 'public-transmittal' ? (
         <PublicTransmittalPage />
+      ) : view === 'design-system' ? (
+        <DesignSystemPage />
       ) : view === 'signin' ? (
         <SignInPage
-          onSignIn={handleSignInSuccess}
+          onSignIn={(authData) => {
+            setAuthNotice(null);
+            handleSignInSuccess(authData);
+          }}
+          noticeMessage={authNotice}
+          initialEmail={prefilledEmail}
           onNavigateToSignUp={() => {
+            setAuthNotice(null);
             dispatch(setView('signup'));
           }}
           onNavigateToDeveloper={() => {
+            setAuthNotice(null);
             dispatch(setView('superadmin-login'));
           }}
         />
       ) : !isAuthenticated && view === 'signup' ? (
         <SignUpPage
+          onSignUpSuccess={({ email }) => {
+            setAuthNotice('Account created successfully! Please sign in to continue.');
+            setPrefilledEmail(email || '');
+            dispatch(setView('signin'));
+          }}
           onSignUp={handleSignInSuccess}
           onNavigateToSignIn={() => {
+            setAuthNotice(null);
             dispatch(setView('signin'));
           }}
         />
@@ -396,11 +441,7 @@ function App() {
       ) : view === 'superadmin' || isDeveloper ? (
         <SuperadminDashboard />
       ) : isAuthenticated && (!projectsReady || projectBootstrapping) ? (
-        <div className="no-project-page">
-          <div className="no-project-card">
-            <p>Loading your projects…</p>
-          </div>
-        </div>
+        <LoadingSpinner message="Setting up your projects…" minHeight="80vh" size="large" />
       ) : showNoProject ? (
         <>
           <NoProjectPage onLogout={handleLogout} />
@@ -452,8 +493,8 @@ function App() {
             {view === 'general-inventory' && (
               <GeneralInventoryPage />
             )}
-            {view === 'crm' && (
-              <CrmPage />
+            {(view === 'crm' || (typeof view === 'string' && view.startsWith('crm-'))) && (
+              <CrmPage subView={view} />
             )}
             {view === 'project-management' && (
               <ProjectManagementPage />
@@ -534,6 +575,8 @@ function App() {
       {showWorkspace && isCreateModalOpen && <ProjectFormModal />}
       {showWorkspace && geofenceModalProject && <GeofenceConfigModal />}
       {showWorkspace && assignPartnerModalProject && <AssignPartnerModal />}
+
+      {showWorkspace && <BottomNavBar currentView={view} onViewChange={handleNavigate} />}
 
       <ChatNotificationToaster />
       <ScrollToTop />

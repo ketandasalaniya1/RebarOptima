@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './DrawingViewerScreen.css';
 import StatusPill from '../../../components/Drawings/StatusPill';
 import RoleGate from '../../../components/RoleGate';
+import CADViewer from '../components/CADViewer';
 import DxfViewerComponent from '../components/DxfViewerComponent';
 import PDFViewer from '../components/PDFViewer';
+import { drawingsApi } from '../../../utils/drawingsApi';
 import UploadVersionModal from '../components/UploadVersionModal';
 import ReviewApprovalModal from '../components/ReviewApprovalModal';
 import CompareDrawingsModal from '../components/CompareDrawingsModal';
@@ -26,7 +28,8 @@ import {
   Clock,
   Layers,
   Share2,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function DrawingViewerScreen({
@@ -46,21 +49,21 @@ export default function DrawingViewerScreen({
     ? rawActivities
     : (revisions.length > 0
       ? revisions.map((r, idx) => ({
-          _id: r._id || `rev-act-${idx}`,
-          createdAt: r.createdAt || r.uploadedAt,
-          action: r.isCurrent ? 'CURRENT' : r.status || 'UPLOADED',
-          performedByName: r.uploadedByName || drawing?.createdBy || 'Document Team',
-          description: r.changeDescription || `Revision ${r.revisionNumber || 'v' + (idx + 1)} recorded`
-        }))
+        _id: r._id || `rev-act-${idx}`,
+        createdAt: r.createdAt || r.uploadedAt,
+        action: r.isCurrent ? 'CURRENT' : r.status || 'UPLOADED',
+        performedByName: r.uploadedByName || drawing?.createdBy || 'Document Team',
+        description: r.changeDescription || `Revision ${r.revisionNumber || 'v' + (idx + 1)} recorded`
+      }))
       : [
-          {
-            _id: 'init-1',
-            createdAt: drawing?.createdAt || new Date().toISOString(),
-            action: 'CREATED',
-            performedByName: drawing?.createdBy || 'System',
-            description: `Initial drawing created as ${drawing?.drawingNumber || 'v1'}`
-          }
-        ]);
+        {
+          _id: 'init-1',
+          createdAt: drawing?.createdAt || new Date().toISOString(),
+          action: 'CREATED',
+          performedByName: drawing?.createdBy || 'System',
+          description: `Initial drawing created as ${drawing?.drawingNumber || 'v1'}`
+        }
+      ]);
 
   // Active Tab: 'viewer' | 'details' | 'history' | 'activity' | 'distributions'
   const [activeTab, setActiveTab] = useState('viewer');
@@ -76,6 +79,25 @@ export default function DrawingViewerScreen({
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // On-demand file data resolution
+  const [activeFileData, setActiveFileData] = useState(rev?.fileData || drawing?.fileData || null);
+
+  useEffect(() => {
+    const data = rev?.fileData || drawing?.fileData;
+    if (data) {
+      setActiveFileData(data);
+    } else if (drawing?._id) {
+      drawingsApi
+        .downloadDrawing(drawing._id, rev?._id)
+        .then((res) => {
+          if (res?.fileData) {
+            setActiveFileData(res.fileData);
+          }
+        })
+        .catch((err) => console.warn('[DrawingViewerScreen] On-demand file fetch error:', err));
+    }
+  }, [rev, drawing]);
 
   // Actions dropdown & Modals
   const [showActionsDropdown, setShowActionsDropdown] = useState(false);
@@ -264,7 +286,7 @@ export default function DrawingViewerScreen({
                 <button
                   type="button"
                   className="ro-kebab-item"
-                  style={{ color: '#059669' }}
+                  style={{ color: 'var(--accent)' }}
                   onClick={() => {
                     setShowActionsDropdown(false);
                     setShowReviewModal(true);
@@ -377,127 +399,129 @@ export default function DrawingViewerScreen({
 
           {/* Center Canvas Area with Top Toolbar */}
           <main className="ro-center-canvas">
-            {/* Floating Toolbar */}
-            <div className="ro-viewer-toolbar">
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                onClick={() => setIsSidebarOpen((prev) => !prev)}
-                title="Toggle Thumbnail Strip"
-              >
-                <Sidebar size={16} />
-              </button>
+            {/* Floating Toolbar (Hidden for CAD files which have native controls) */}
+            {!isCadFile && (
+              <div className="ro-viewer-toolbar">
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  onClick={() => setIsSidebarOpen((prev) => !prev)}
+                  title="Toggle Thumbnail Strip"
+                >
+                  <Sidebar size={16} />
+                </button>
 
-              <div className="ro-toolbar-divider" />
+                <div className="ro-toolbar-divider" />
 
-              {/* Page navigation */}
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                disabled={currentPage <= 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                title="Previous Page"
-              >
-                <ChevronLeft size={16} />
-              </button>
+                {/* Page navigation */}
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  disabled={currentPage <= 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  title="Previous Page"
+                >
+                  <ChevronLeft size={16} />
+                </button>
 
-              <span className="ro-toolbar-page-indicator">
-                {currentPage} / {numPages || 1}
-              </span>
+                <span className="ro-toolbar-page-indicator">
+                  {currentPage} / {numPages || 1}
+                </span>
 
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                disabled={currentPage >= numPages}
-                onClick={() => setCurrentPage((p) => Math.min(numPages, p + 1))}
-                title="Next Page"
-              >
-                <ChevronRight size={16} />
-              </button>
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  disabled={currentPage >= numPages}
+                  onClick={() => setCurrentPage((p) => Math.min(numPages, p + 1))}
+                  title="Next Page"
+                >
+                  <ChevronRight size={16} />
+                </button>
 
-              <div className="ro-toolbar-divider" />
+                <div className="ro-toolbar-divider" />
 
-              {/* Zoom Controls */}
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                onClick={() => handleZoom(-0.2)}
-                title="Zoom Out (-)"
-              >
-                <ZoomOut size={16} />
-              </button>
+                {/* Zoom Controls */}
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  onClick={() => handleZoom(-0.2)}
+                  title="Zoom Out (-)"
+                >
+                  <ZoomOut size={16} />
+                </button>
 
-              <span className="ro-toolbar-zoom-pct">
-                {Math.round(zoomLevel * 100)}%
-              </span>
+                <span className="ro-toolbar-zoom-pct">
+                  {Math.round(zoomLevel * 100)}%
+                </span>
 
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                onClick={() => handleZoom(0.2)}
-                title="Zoom In (+)"
-              >
-                <ZoomIn size={16} />
-              </button>
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  onClick={() => handleZoom(0.2)}
+                  title="Zoom In (+)"
+                >
+                  <ZoomIn size={16} />
+                </button>
 
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                onClick={handleFitView}
-                title="Fit to Width / Reset (0)"
-              >
-                <Maximize2 size={15} />
-              </button>
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  onClick={handleFitView}
+                  title="Fit to Width / Reset (0)"
+                >
+                  <Maximize2 size={15} />
+                </button>
 
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                onClick={() => setRotation((r) => (r + 90) % 360)}
-                title="Rotate (R)"
-              >
-                <RotateCw size={15} />
-              </button>
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  onClick={() => setRotation((r) => (r + 90) % 360)}
+                  title="Rotate (R)"
+                >
+                  <RotateCw size={15} />
+                </button>
 
-              <div className="ro-toolbar-divider" />
+                <div className="ro-toolbar-divider" />
 
-              <button
-                type="button"
-                className="ro-toolbar-btn"
-                onClick={() => onDownloadDrawing && onDownloadDrawing(drawing)}
-                title="Download Drawing"
-              >
-                <Download size={15} />
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="ro-toolbar-btn"
+                  onClick={() => onDownloadDrawing && onDownloadDrawing(drawing)}
+                  title="Download Drawing"
+                >
+                  <Download size={15} />
+                </button>
+              </div>
+            )}
 
             {/* Viewport Canvas Routing */}
             <div
               className="ro-canvas-viewport"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onWheel={handleWheel}
+              onMouseDown={isCadFile ? undefined : handleMouseDown}
+              onMouseMove={isCadFile ? undefined : handleMouseMove}
+              onMouseUp={isCadFile ? undefined : handleMouseUp}
+              onWheel={isCadFile ? undefined : handleWheel}
               style={{ cursor: isImage ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
             >
               {isCadFile ? (
                 <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
-                  <DxfViewerComponent
-                    dxfUrl={`/api/drawings/drawings/${drawing._id}/dxf`}
-                    originalFileName={rev.fileName || `${drawing.drawingNumber}.dwg`}
-                    onDownloadOriginal={() => onDownloadDrawing && onDownloadDrawing(drawing)}
+                  <CADViewer
+                    fileData={activeFileData || rev?.fileData || drawing?.fileData}
+                    fileUrl={rev?.fileUrl || drawing?.fileUrl}
+                    fileName={rev?.fileName || `${drawing?.drawingNumber || 'drawing'}.${fileExt}`}
                   />
                 </div>
               ) : isPdf ? (
                 <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <PDFViewer
-                    fileData={rev.fileData}
-                    fileUrl={rev.fileUrl}
-                    fileName={rev.fileName}
+                    fileData={activeFileData || rev?.fileData}
+                    fileUrl={rev?.fileUrl}
+                    fileName={rev?.fileName}
                   />
                 </div>
-              ) : isImage && rev.fileData ? (
+              ) : isImage && (activeFileData || rev?.fileData) ? (
                 <img
-                  src={rev.fileData}
+                  src={activeFileData || rev.fileData}
                   alt={drawing.title}
                   draggable={false}
                   style={{
@@ -511,9 +535,9 @@ export default function DrawingViewerScreen({
                   }}
                 />
               ) : (
-                <div style={{ textAlign: 'center', color: '#94a3b8' }}>
+                <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
                   <AlertCircle size={44} style={{ margin: '0 auto 12px', opacity: 0.6 }} />
-                  <div style={{ fontSize: '15px', fontWeight: 600, color: '#f8fafc' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     Preview Not Available
                   </div>
                   <p style={{ fontSize: '12px', marginTop: '6px', maxWidth: '360px' }}>

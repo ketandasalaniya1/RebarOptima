@@ -11,6 +11,7 @@ export const crmApi = {
     return apiRequest(`/crm/customers${qs ? `?${qs}` : ''}`);
   },
   getCustomer360: (id) => apiRequest(`/crm/customers/${id}`),
+  revealSensitiveFields: (id) => apiRequest(`/crm/customers/${id}/sensitive-fields`),
   createCustomer: (data) => apiRequest('/crm/customers', { method: 'POST', body: data }),
   updateCustomer: (id, data) => apiRequest(`/crm/customers/${id}`, { method: 'PUT', body: data }),
   checkDuplicate: (data) => apiRequest('/crm/customers/check-duplicate', { method: 'POST', body: data }),
@@ -18,11 +19,17 @@ export const crmApi = {
   addCustomerActivity: (customerId, data) => apiRequest(`/crm/customers/${customerId}/activities`, { method: 'POST', body: data }),
 
   // Projects, Blocks & Units
+  getUnitMasterData: () => apiRequest('/crm/settings/unit-master-data'),
   getProjects: () => apiRequest('/crm/projects'),
   getProjectDetail: (id) => apiRequest(`/crm/projects/${id}`),
   createProject: (data) => apiRequest('/crm/projects', { method: 'POST', body: data }),
   getBlocks: (projectId) => apiRequest(`/crm/blocks${projectId ? `?projectId=${projectId}` : ''}`),
+  getFloors: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/floors${qs ? `?${qs}` : ''}`);
+  },
   createBlock: (data) => apiRequest('/crm/blocks', { method: 'POST', body: data }),
+  clearSeedUnits: (projectId) => apiRequest(`/crm/projects/${projectId}/clear-seed-units`, { method: 'POST' }),
   getUnits: (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return apiRequest(`/crm/units${qs ? `?${qs}` : ''}`);
@@ -91,5 +98,57 @@ export const crmApi = {
 
   // Settings
   getSettings: () => apiRequest('/crm/settings'),
-  updateSettings: (data) => apiRequest('/crm/settings', { method: 'PUT', body: data })
+  updateSettings: (data) => apiRequest('/crm/settings', { method: 'PUT', body: data }),
+
+  // Today Summary & Appointments
+  getTodaySummary: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/today-summary${qs ? `?${qs}` : ''}`);
+  },
+  getAppointments: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/appointments${qs ? `?${qs}` : ''}`);
+  },
+  createAppointment: (data) => apiRequest('/crm/appointments', { method: 'POST', body: data }),
+  toggleTask: (taskId) => apiRequest(`/crm/tasks/${taskId}/toggle`, { method: 'PUT' }),
+
+  // WhatsApp Templates
+  getTemplates: () => apiRequest('/crm/templates'),
+  createTemplate: (data) => apiRequest('/crm/templates', { method: 'POST', body: data }),
+  updateTemplate: (id, data) => apiRequest(`/crm/templates/${id}`, { method: 'PUT', body: data }),
+  deleteTemplate: (id) => apiRequest(`/crm/templates/${id}`, { method: 'DELETE' }),
+
+  // Guided Follow-up Outcomes & Timeline
+  logFollowupResult: (leadId, data) => apiRequest(`/crm/leads/${leadId}/followup-result`, { method: 'POST', body: data }),
+  getLeadTimeline: (leadId) => apiRequest(`/crm/leads/${leadId}/timeline`),
+
+  // Tasks & Calendar
+  updateTask: (id, data) => apiRequest(`/crm/tasks/${id}`, { method: 'PUT', body: data }),
+  deleteTask: (id) => apiRequest(`/crm/tasks/${id}`, { method: 'DELETE' }),
+  getCalendarEvents: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/calendar-events${qs ? `?${qs}` : ''}`);
+  },
+  submitAppointmentFeedback: (id, data) => apiRequest(`/crm/appointments/${id}/feedback`, { method: 'POST', body: data }),
+
+  // Leads & Pipeline
+  createLead: (data) => apiRequest('/crm/leads', { method: 'POST', body: data }),
+  getPipelineStages: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/leads/pipeline/stages${qs ? `?${qs}` : ''}`);
+  },
+  updatePipelineStages: (data) => apiRequest('/crm/leads/pipeline/stages', { method: 'PUT', body: data }),
+
+  // Follow-ups Queue & Interactive Log
+  getFollowups: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/crm/followups${qs ? `?${qs}` : ''}`);
+  },
+  logFollowupInteraction: (data) => apiRequest('/crm/followups/log', { method: 'POST', body: data }),
+
+  // Lead Import Pipeline
+  uploadImportFile: (formData) => apiRequest('/crm/leads/import/upload', { method: 'POST', body: formData }),
+  executeLeadImport: (data) => apiRequest('/crm/leads/import/execute', { method: 'POST', body: data }),
+  getImportHistory: () => apiRequest('/crm/leads/import/history'),
+  getSampleTemplateUrl: () => '/api/crm/leads/import/sample-template'
 };

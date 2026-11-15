@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 import { inventoryApi, batchesApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import html2pdf from 'html2pdf.js';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Sparkles, 
-  BookOpen, 
-  ClipboardCheck, 
-  Calendar, 
-  Filter, 
+import {
+  TrendingUp,
+  TrendingDown,
+  Sparkles,
+  BookOpen,
+  ClipboardCheck,
+  Calendar,
+  Filter,
   Search,
   PackagePlus,
   Scale,
@@ -32,20 +32,24 @@ import {
   DollarSign,
   PieChart,
   BarChart3,
-  FileSpreadsheet
+  FileSpreadsheet,
+  FileText,
+  Truck
 } from 'lucide-react';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
-import { PageHeader, StatusBadge } from '../../components/ui';
+import { PageHeader, StatusBadge, Badge, TableSkeleton, useDelayedSkeleton } from '../../components/ui';
+import SteelHeader from '../../components/Shared/SteelHeader';
+import { SHOW_FINANCIALS } from '../../utils/steelFinancials';
 import './LedgerPage.css';
 
 export default function LedgerPage() {
   const user = useSelector((state) => state.auth.user);
-  
+
   // Tab states: 'ledger' | 'inward-cost' | 'orders' | 'requests'
-  const [activeTab, setActiveTab] = useState('ledger'); 
+  const [activeTab, setActiveTab] = useState('ledger');
   const [ledger, setLedger] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isDelayedLoading = useDelayedSkeleton(loading);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isPrinting, setIsPrinting] = useState(false);
@@ -54,7 +58,7 @@ export default function LedgerPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [groupByBatch, setGroupByBatch] = useState(true);
   const [expandedBatches, setExpandedBatches] = useState({});
-  const [ledgerFilter, setLedgerFilter] = useState('ALL'); 
+  const [ledgerFilter, setLedgerFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDiameter, setFilterDiameter] = useState('ALL');
   const [filterStartDate, setFilterStartDate] = useState('');
@@ -183,7 +187,7 @@ export default function LedgerPage() {
   const totalInwardKg = ledger
     .filter(t => t.type === 'INWARD')
     .reduce((sum, t) => sum + (t.weightInKgs || 0), 0);
-  
+
   const totalConsumedKg = ledger
     .filter(t => t.type === 'OUTWARD')
     .reduce((sum, t) => sum + (t.weightInKgs || 0), 0);
@@ -199,7 +203,7 @@ export default function LedgerPage() {
     const matchesFilter = ledgerFilter === 'ALL' || item.type === ledgerFilter;
     const matchesDia = filterDiameter === 'ALL' || Number(item.diameter) === Number(filterDiameter);
     const matchesDate = isDateInRange(item.createdAt);
-    const matchesVendor = !filterVendor || 
+    const matchesVendor = !filterVendor ||
       (item.vendorName && item.vendorName.toLowerCase().includes(filterVendor.toLowerCase())) ||
       (item.brandName && item.brandName.toLowerCase().includes(filterVendor.toLowerCase()));
     const itemSearchStr = `${item.brandName || ''} ${item.vendorName || ''} ${item.referenceName || ''} ${item.diameter}mm ${item.type || ''}`.toLowerCase();
@@ -213,7 +217,7 @@ export default function LedgerPage() {
       const isType = t.type === 'INWARD';
       const matchesDia = filterDiameter === 'ALL' || Number(t.diameter) === Number(filterDiameter);
       const matchesDate = isDateInRange(t.createdAt);
-      const matchesVendor = !filterVendor || 
+      const matchesVendor = !filterVendor ||
         (t.vendorName && t.vendorName.toLowerCase().includes(filterVendor.toLowerCase())) ||
         (t.brandName && t.brandName.toLowerCase().includes(filterVendor.toLowerCase()));
       const itemSearchStr = `${t.brandName || ''} ${t.vendorName || ''} ${t.referenceName || ''} ${t.diameter}mm`.toLowerCase();
@@ -226,32 +230,46 @@ export default function LedgerPage() {
     return inwardItems.reduce((sum, item) => sum + (item.weightInKgs || 0), 0);
   }, [inwardItems]);
 
-  const inwardTotalCost = useMemo(() => {
-    return inwardItems.reduce((sum, item) => sum + ((item.weightInKgs || 0) * (item.costPerKg || 0)), 0);
+  // For weighted average rate, ONLY include entries that have a valid price (> 0),
+  // ignoring zero-cost entries created while financials were hidden, so the average rate is not dragged down.
+  const inwardPricedItems = useMemo(() => {
+    return inwardItems.filter(item => (Number(item.costPerKg) || 0) > 0);
   }, [inwardItems]);
+
+  const inwardPricedWeight = useMemo(() => {
+    return inwardPricedItems.reduce((sum, item) => sum + (item.weightInKgs || 0), 0);
+  }, [inwardPricedItems]);
+
+  const inwardTotalCost = useMemo(() => {
+    return inwardPricedItems.reduce((sum, item) => sum + ((item.weightInKgs || 0) * (item.costPerKg || 0)), 0);
+  }, [inwardPricedItems]);
 
   const inwardTotalBars = useMemo(() => {
     return inwardItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
   }, [inwardItems]);
 
-  const inwardAvgRatePerKg = inwardTotalWeight > 0 ? (inwardTotalCost / inwardTotalWeight) : 0;
+  const inwardAvgRatePerKg = inwardPricedWeight > 0 ? (inwardTotalCost / inwardPricedWeight) : 0;
 
   // Diameter-wise Inward & Cost Breakdown
   const diameterBreakdown = useMemo(() => {
     const map = {};
     [8, 10, 12, 16, 20, 25, 32].forEach(d => {
-      map[d] = { diameter: d, weight: 0, cost: 0, bars: 0, entries: 0 };
+      map[d] = { diameter: d, weight: 0, cost: 0, bars: 0, entries: 0, pricedWeight: 0 };
     });
 
     inwardItems.forEach(item => {
       const d = item.diameter || 12;
       if (!map[d]) {
-        map[d] = { diameter: d, weight: 0, cost: 0, bars: 0, entries: 0 };
+        map[d] = { diameter: d, weight: 0, cost: 0, bars: 0, entries: 0, pricedWeight: 0 };
       }
       const wt = item.weightInKgs || 0;
-      const cst = wt * (item.costPerKg || 0);
+      const rate = Number(item.costPerKg) || 0;
+      const cst = wt * rate;
       map[d].weight += wt;
       map[d].cost += cst;
+      if (rate > 0) {
+        map[d].pricedWeight += wt;
+      }
       map[d].bars += (item.quantity || 0);
       map[d].entries += 1;
     });
@@ -265,12 +283,16 @@ export default function LedgerPage() {
     inwardItems.forEach(item => {
       const vName = item.vendorName || item.brandName || 'Standard Supplier';
       if (!map[vName]) {
-        map[vName] = { vendor: vName, weight: 0, cost: 0, bars: 0, entries: 0 };
+        map[vName] = { vendor: vName, weight: 0, cost: 0, bars: 0, entries: 0, pricedWeight: 0 };
       }
       const wt = item.weightInKgs || 0;
-      const cst = wt * (item.costPerKg || 0);
+      const rate = Number(item.costPerKg) || 0;
+      const cst = wt * rate;
       map[vName].weight += wt;
       map[vName].cost += cst;
+      if (rate > 0) {
+        map[vName].pricedWeight += wt;
+      }
       map[vName].bars += (item.quantity || 0);
       map[vName].entries += 1;
     });
@@ -354,6 +376,7 @@ export default function LedgerPage() {
     }
   };
 
+  // Purchase Orders List (Grouped from Inward Vouchers & Deliveries)
   // Filtered Orders List
   const filteredOrders = orders.filter(order => {
     const matchesSearch = !searchQuery || order.batchName.toLowerCase().includes(searchQuery.toLowerCase());
@@ -385,9 +408,9 @@ export default function LedgerPage() {
       margin: [10, 10, 10, 10],
       filename: `ledger_procurement_report_${new Date().toISOString().slice(0, 10)}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
-        useCORS: true, 
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
         logging: false,
         windowWidth: 850
       },
@@ -467,53 +490,51 @@ export default function LedgerPage() {
     setEditQtyMap(prev => ({ ...prev, [id]: val }));
   };
 
-  if (loading) {
-    return <LoadingSpinner message="Loading material ledger & procurement logs..." minHeight="65vh" />;
-  }
-
   return (
     <div className="ledger-page">
-      <PageHeader
-        title="Ledger & Procurement"
-        subtitle="Track material ledger logs, optimization batches, and site purchase requests."
-        projectName={selectedProject?.name}
+      <SteelHeader
+        activeTab="ledger"
+        title="Material Ledger & Procurement"
+        subtitle="Double-entry reinforcement audit ledger, procurement rate matrix, and site requisitions."
         actions={
-          <button 
-            className="btn-print-action"
-            onClick={handlePrintReport}
-            disabled={isPrinting}
-            title="Print or export PDF report"
-          >
-            <Printer size={15} />
-            <span>{isPrinting ? 'Exporting...' : 'Print Report'}</span>
-          </button>
+          <div className="steel-header-quick-actions">
+            <button
+              className="btn-print-action"
+              onClick={handlePrintReport}
+              disabled={isPrinting}
+              title="Print or export formatted PDF report with signature blocks"
+            >
+              <Printer size={15} />
+              <span>{isPrinting ? 'Exporting...' : 'Print Report'}</span>
+            </button>
+          </div>
         }
       />
       <div className="ledger-header-row">
         <div className="header-controls-block">
           <div className="tab-buttons">
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'ledger' ? 'active' : ''}`}
               onClick={() => { setActiveTab('ledger'); setSearchQuery(''); }}
             >
               <BookOpen size={15} />
               <span>Audit Ledger</span>
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'inward-cost' ? 'active' : ''}`}
               onClick={() => { setActiveTab('inward-cost'); setSearchQuery(''); }}
             >
-              <DollarSign size={15} />
-              <span>Inward Cost Report</span>
+              {SHOW_FINANCIALS ? <DollarSign size={15} /> : <Truck size={15} />}
+              <span>{SHOW_FINANCIALS ? 'Inward Cost Report' : 'Material Sourcing Breakdown'}</span>
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
               onClick={() => { setActiveTab('orders'); setSearchQuery(''); }}
             >
               <ClipboardCheck size={15} />
               <span>Batch Orders</span>
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'requests' ? 'active' : ''}`}
               onClick={() => { setActiveTab('requests'); setSearchQuery(''); }}
             >
@@ -566,8 +587,12 @@ export default function LedgerPage() {
             </div>
             <div className="card stat-mini">
               <div className="stat-info">
-                <span className="mini-lbl">Current Warehouse Valuation</span>
-                <span className="mini-val">₹{(netLiveStockKg * 60).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                <span className="mini-lbl">{SHOW_FINANCIALS && inwardAvgRatePerKg > 0 ? 'Current Warehouse Valuation' : 'Net Live Yard Stock'}</span>
+                <span className="mini-val">
+                  {SHOW_FINANCIALS && inwardAvgRatePerKg > 0
+                    ? `₹${Math.round(netLiveStockKg * inwardAvgRatePerKg).toLocaleString('en-IN')}`
+                    : `${(netLiveStockKg / 1000).toFixed(2)} MT`}
+                </span>
               </div>
               <div className="mini-icon stock"><Scale size={20} /></div>
             </div>
@@ -577,31 +602,31 @@ export default function LedgerPage() {
           <div className="card table-card">
             <div className="table-header">
               <div className="filters-row">
-                <button 
+                <button
                   className={`filter-badge ${ledgerFilter === 'ALL' ? 'active' : ''}`}
                   onClick={() => setLedgerFilter('ALL')}
                 >
                   All Logs ({ledger.length})
                 </button>
-                <button 
+                <button
                   className={`filter-badge ${ledgerFilter === 'INWARD' ? 'active' : ''}`}
                   onClick={() => setLedgerFilter('INWARD')}
                 >
                   Inwards
                 </button>
-                <button 
+                <button
                   className={`filter-badge ${ledgerFilter === 'OUTWARD' ? 'active' : ''}`}
                   onClick={() => setLedgerFilter('OUTWARD')}
                 >
                   Outwards
                 </button>
-                <button 
+                <button
                   className={`filter-badge ${ledgerFilter === 'REMNANT' ? 'active' : ''}`}
                   onClick={() => setLedgerFilter('REMNANT')}
                 >
                   Remnants
                 </button>
-                <button 
+                <button
                   className={`filter-badge ${ledgerFilter === 'SCRAP' ? 'active' : ''}`}
                   onClick={() => setLedgerFilter('SCRAP')}
                 >
@@ -612,16 +637,16 @@ export default function LedgerPage() {
               <div className="table-header-right">
                 <div className="search-box">
                   <Search size={14} className="search-icon" />
-                  <input 
-                    type="text" 
-                    placeholder="Search brand, vendor, dia..."
+                  <input
+                    type="text"
+                    placeholder="Search vendor, brand, diameter, batch..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="search-input"
                   />
                 </div>
 
-                <button 
+                <button
                   className={`btn-table-filter ${isFilterOpen || activeFilterCount > 0 ? 'active' : ''}`}
                   onClick={() => setIsFilterOpen(prev => !prev)}
                   title="Toggle filter controls"
@@ -633,7 +658,7 @@ export default function LedgerPage() {
                   )}
                 </button>
 
-                <button 
+                <button
                   className={`btn-table-toggle-group ${groupByBatch ? 'active' : ''}`}
                   onClick={() => setGroupByBatch(prev => !prev)}
                   title={groupByBatch ? "Switch to Flat View" : "Group outward items by Batch"}
@@ -643,7 +668,7 @@ export default function LedgerPage() {
                 </button>
 
                 {groupByBatch && (
-                  <button 
+                  <button
                     className="btn-table-action-subtle"
                     onClick={toggleAllBatches}
                     title="Expand or collapse all batches"
@@ -675,8 +700,8 @@ export default function LedgerPage() {
                   {/* Date Range Start */}
                   <div className="filter-field">
                     <label>From Date</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={filterStartDate}
                       onChange={(e) => setFilterStartDate(e.target.value)}
                       className="filter-input"
@@ -686,8 +711,8 @@ export default function LedgerPage() {
                   {/* Date Range End */}
                   <div className="filter-field">
                     <label>To Date</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={filterEndDate}
                       onChange={(e) => setFilterEndDate(e.target.value)}
                       className="filter-input"
@@ -697,7 +722,7 @@ export default function LedgerPage() {
                   {/* Diameter Filter */}
                   <div className="filter-field">
                     <label>Diameter</label>
-                    <select 
+                    <select
                       value={filterDiameter}
                       onChange={(e) => setFilterDiameter(e.target.value)}
                       className="filter-select"
@@ -712,7 +737,7 @@ export default function LedgerPage() {
                   {/* Type Filter */}
                   <div className="filter-field">
                     <label>Transaction Type</label>
-                    <select 
+                    <select
                       value={ledgerFilter}
                       onChange={(e) => setLedgerFilter(e.target.value)}
                       className="filter-select"
@@ -728,8 +753,8 @@ export default function LedgerPage() {
                   {/* Vendor / Brand Filter */}
                   <div className="filter-field">
                     <label>Vendor / Brand</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="e.g. Tata, Jindal, Sai Traders"
                       value={filterVendor}
                       onChange={(e) => setFilterVendor(e.target.value)}
@@ -778,243 +803,251 @@ export default function LedgerPage() {
             )}
 
             <div className="table-responsive">
-              <table className="ledger-table audit-ledger-table">
-                <thead>
-                  <tr>
-                    <th>Date & Time</th>
-                    <th>Type</th>
-                    <th>Diameter</th>
-                    <th>Length</th>
-                    <th>Qty (Bars)</th>
-                    <th>Weight</th>
-                    <th>Cost (per kg)</th>
-                    <th>Reference / Vendor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupedLedger.length === 0 ? (
+              {isDelayedLoading ? (
+                <TableSkeleton rows={6} cols={SHOW_FINANCIALS ? 8 : 7} />
+              ) : (
+                <table className="ledger-table audit-ledger-table">
+                  <thead>
                     <tr>
-                      <td colSpan="8" style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
-                        No ledger transactions found matching the applied filters.
-                      </td>
+                      <th>Date & Time</th>
+                      <th>Type</th>
+                      <th>Diameter</th>
+                      <th>Length</th>
+                      <th>Qty (Bars)</th>
+                      <th>Weight</th>
+                      {SHOW_FINANCIALS && <th>Cost (per kg)</th>}
+                      <th>Reference / Vendor</th>
                     </tr>
-                  ) : (
-                    groupedLedger.map((row) => {
-                      if (row.isGroup) {
-                        const isExpanded = !!expandedBatches[row.id];
-                        const diaList = Array.from(row.diameters).sort((a, b) => a - b);
-                        const vendors = Array.from(row.vendorNames).filter(Boolean);
-                        const brands = Array.from(row.brandNames).filter(Boolean);
-                        const rowDate = new Date(row.createdAt);
+                  </thead>
+                  <tbody>
+                    {groupedLedger.length === 0 ? (
+                      <tr>
+                        <td colSpan={SHOW_FINANCIALS ? "8" : "7"} style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
+                          No ledger transactions found matching the applied filters.
+                        </td>
+                      </tr>
+                    ) : (
+                      groupedLedger.map((row) => {
+                        if (row.isGroup) {
+                          const isExpanded = !!expandedBatches[row.id];
+                          const diaList = Array.from(row.diameters).sort((a, b) => a - b);
+                          const vendors = Array.from(row.vendorNames).filter(Boolean);
+                          const brands = Array.from(row.brandNames).filter(Boolean);
+                          const rowDate = new Date(row.createdAt);
 
-                        return (
-                          <React.Fragment key={row.id}>
-                            <tr 
-                              className={`ledger-batch-row ${isExpanded ? 'expanded' : ''}`}
-                              onClick={() => toggleBatchExpand(row.id)}
-                            >
-                              <td className="ledger-date-col">
-                                <div className="date-with-toggle">
-                                  <button 
-                                    className={`batch-chevron-btn ${isExpanded ? 'open' : ''}`}
-                                    onClick={(e) => { e.stopPropagation(); toggleBatchExpand(row.id); }}
-                                    title={isExpanded ? 'Collapse batch entries' : 'Expand batch entries'}
-                                  >
-                                    <ChevronRight size={14} />
-                                  </button>
-                                  <div className="date-time-stack">
-                                    <span className="date-primary">{rowDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
-                                    <span className="time-secondary">{rowDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                          return (
+                            <React.Fragment key={row.id}>
+                              <tr
+                                className={`ledger-batch-row ${isExpanded ? 'expanded' : ''}`}
+                                onClick={() => toggleBatchExpand(row.id)}
+                              >
+                                <td className="ledger-date-col">
+                                  <div className="date-with-toggle">
+                                    <button
+                                      className={`batch-chevron-btn ${isExpanded ? 'open' : ''}`}
+                                      onClick={(e) => { e.stopPropagation(); toggleBatchExpand(row.id); }}
+                                      title={isExpanded ? 'Collapse batch entries' : 'Expand batch entries'}
+                                    >
+                                      <ChevronRight size={14} />
+                                    </button>
+                                    <div className="date-time-stack">
+                                      <span className="date-primary">{rowDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                                      <span className="time-secondary">{rowDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                                    </div>
                                   </div>
+                                </td>
+                                <td>
+                                  <div className="type-cell-stack">
+                                    <span className="ledger-type-badge outward">
+                                      <span className="type-dot"></span>
+                                      BATCH OUTWARD
+                                    </span>
+                                    <span className="batch-logs-meta">{row.items.length} logs grouped</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="dia-tags-wrapper">
+                                    {diaList.length > 0 ? (
+                                      diaList.map(d => (
+                                        <span key={d} className="dia-pill-badge">{d} mm</span>
+                                      ))
+                                    ) : (
+                                      <span className="text-secondary">—</span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td>
+                                  <span className="batch-summary-tag">Batch Run</span>
+                                </td>
+                                <td>
+                                  <div className="qty-cell-stack">
+                                    <span className="qty-main">{row.totalOutwardQty.toLocaleString()} bars</span>
+                                    {row.totalRemnantQty > 0 && (
+                                      <span className="qty-rem-sub">+{row.totalRemnantQty} rem</span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="weight-cell-stack">
+                                    <span className="weight-outward">{Math.round(row.totalOutwardWeight).toLocaleString('en-IN')} kg</span>
+                                    {row.totalRemnantWeight > 0 && (
+                                      <span className="weight-rem-yield">+{Math.round(row.totalRemnantWeight).toLocaleString('en-IN')} kg rem</span>
+                                    )}
+                                  </div>
+                                </td>
+                                {SHOW_FINANCIALS && (
+                                  <td>
+                                    {row.items.some(i => i.costPerKg > 0) ? (
+                                      <span className="cost-val">₹{(row.items.reduce((s, i) => s + (i.costPerKg || 0), 0) / (row.items.filter(i => i.costPerKg > 0).length || 1)).toFixed(2)}</span>
+                                    ) : (
+                                      <span className="cost-muted">₹0.00</span>
+                                    )}
+                                  </td>
+                                )}
+                                <td>
+                                  <div className="vendor-ref-cell">
+                                    <span className="batch-name-link" title={row.batchName}>{row.batchName}</span>
+                                    <span className="vendor-meta-sub">
+                                      {vendors.length > 0 || brands.length > 0 ? (
+                                        [...vendors, ...brands].filter(Boolean).join(' • ')
+                                      ) : (
+                                        'Cutting Optimization'
+                                      )}
+                                    </span>
+                                  </div>
+                                </td>
+                              </tr>
+
+                              {/* Nested Subitems Table Row */}
+                              {isExpanded && (
+                                <tr className="batch-expanded-row">
+                                  <td colSpan="8" className="batch-expanded-container-td">
+                                    <div className="batch-subitems-wrapper">
+                                      <div className="batch-subitems-header">
+                                        <div className="subitems-title">
+                                          <Layers size={14} className="text-accent" />
+                                          <span>Individual Bar Entries for <strong>{row.batchName}</strong> ({row.items.length} records)</span>
+                                        </div>
+                                        <div className="subitems-meta">
+                                          <span>Outward: <strong>{Math.round(row.totalOutwardWeight).toLocaleString('en-IN')} kg</strong></span>
+                                          <span>•</span>
+                                          <span>Remnants: <strong>{Math.round(row.totalRemnantWeight).toLocaleString('en-IN')} kg</strong></span>
+                                          {row.totalScrapWeight > 0 && (
+                                            <>
+                                              <span>•</span>
+                                              <span>Scraps: <strong>{Math.round(row.totalScrapWeight).toLocaleString('en-IN')} kg</strong></span>
+                                            </>
+                                          )}
+                                        </div>
+                                      </div>
+
+                                      <table className="batch-nested-table">
+                                        <thead>
+                                          <tr>
+                                            <th style={{ width: '45px' }}>#</th>
+                                            <th style={{ width: '130px' }}>Type</th>
+                                            <th style={{ width: '100px' }}>Diameter</th>
+                                            <th style={{ width: '90px' }}>Length</th>
+                                            <th style={{ width: '90px' }}>Quantity</th>
+                                            <th style={{ width: '120px' }}>Weight</th>
+                                            {SHOW_FINANCIALS && <th style={{ width: '100px' }}>Cost/kg</th>}
+                                            <th>Brand / Vendor</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {row.items.map((subItem, sIdx) => (
+                                            <tr key={subItem._id || sIdx} className={`nested-row-${subItem.type.toLowerCase()}`}>
+                                              <td className="nested-idx">{sIdx + 1}</td>
+                                              <td>
+                                                <span className={`ledger-type-badge ${subItem.type.toLowerCase()}`}>
+                                                  <span className="type-dot"></span>
+                                                  {subItem.type}
+                                                </span>
+                                              </td>
+                                              <td>
+                                                <span className="dia-pill-badge">{subItem.diameter} mm</span>
+                                              </td>
+                                              <td>{(subItem.length / 1000).toFixed(1)} m</td>
+                                              <td className="font-bold">{subItem.quantity}</td>
+                                              <td>
+                                                <span className={subItem.type === 'OUTWARD' ? 'text-orange font-bold' : subItem.type === 'REMNANT' ? 'text-green font-bold' : 'text-danger font-bold'}>
+                                                  {Math.round(subItem.weightInKgs).toLocaleString('en-IN')} kg
+                                                </span>
+                                              </td>
+                                              {SHOW_FINANCIALS && <td>₹{subItem.costPerKg?.toFixed(2) || '0.00'}</td>}
+                                              <td>
+                                                <div className="vendor-ref-cell">
+                                                  <span>{subItem.brandName || subItem.vendorName || '—'}</span>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
+                          );
+                        }
+
+                        // Standalone single transaction row (e.g. Inward)
+                        const item = row.data;
+                        const itemDate = new Date(item.createdAt);
+                        return (
+                          <tr key={item._id}>
+                            <td className="ledger-date-col">
+                              <div className="date-with-toggle">
+                                <span className="batch-chevron-placeholder" />
+                                <div className="date-time-stack">
+                                  <span className="date-primary">{itemDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                                  <span className="time-secondary">{itemDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                                 </div>
-                              </td>
+                              </div>
+                            </td>
+                            <td>
+                              <span className={`ledger-type-badge ${item.type.toLowerCase()}`}>
+                                <span className="type-dot"></span>
+                                {item.type}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="dia-pill-badge">{item.diameter} mm</span>
+                            </td>
+                            <td>{(item.length / 1000).toFixed(1)} m</td>
+                            <td>
+                              <span className="qty-main">{item.quantity?.toLocaleString() || 0}</span>
+                            </td>
+                            <td>
+                              <span className={item.type === 'INWARD' ? 'text-green font-bold' : item.type === 'OUTWARD' ? 'text-orange font-bold' : 'font-bold'}>
+                                {Math.round(item.weightInKgs || 0).toLocaleString('en-IN')} kg
+                              </span>
+                            </td>
+                            {SHOW_FINANCIALS && (
                               <td>
-                                <div className="type-cell-stack">
-                                  <span className="ledger-type-badge outward">
-                                    <span className="type-dot"></span>
-                                    BATCH OUTWARD
-                                  </span>
-                                  <span className="batch-logs-meta">{row.items.length} logs grouped</span>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="dia-tags-wrapper">
-                                  {diaList.length > 0 ? (
-                                    diaList.map(d => (
-                                      <span key={d} className="dia-pill-badge">{d} mm</span>
-                                    ))
-                                  ) : (
-                                    <span className="text-secondary">—</span>
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <span className="batch-summary-tag">Batch Run</span>
-                              </td>
-                              <td>
-                                <div className="qty-cell-stack">
-                                  <span className="qty-main">{row.totalOutwardQty.toLocaleString()} bars</span>
-                                  {row.totalRemnantQty > 0 && (
-                                    <span className="qty-rem-sub">+{row.totalRemnantQty} rem</span>
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="weight-cell-stack">
-                                  <span className="weight-outward">{Math.round(row.totalOutwardWeight).toLocaleString('en-IN')} kg</span>
-                                  {row.totalRemnantWeight > 0 && (
-                                    <span className="weight-rem-yield">+{Math.round(row.totalRemnantWeight).toLocaleString('en-IN')} kg rem</span>
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                {row.items.some(i => i.costPerKg > 0) ? (
-                                  <span className="cost-val">₹{(row.items.reduce((s, i) => s + (i.costPerKg || 0), 0) / (row.items.filter(i => i.costPerKg > 0).length || 1)).toFixed(2)}</span>
+                                {item.costPerKg ? (
+                                  <span className="cost-val">₹{Number(item.costPerKg).toFixed(2)}</span>
                                 ) : (
                                   <span className="cost-muted">₹0.00</span>
                                 )}
                               </td>
-                              <td>
-                                <div className="vendor-ref-cell">
-                                  <span className="batch-name-link" title={row.batchName}>{row.batchName}</span>
-                                  <span className="vendor-meta-sub">
-                                    {vendors.length > 0 || brands.length > 0 ? (
-                                      [...vendors, ...brands].filter(Boolean).join(' • ')
-                                    ) : (
-                                      'Cutting Optimization'
-                                    )}
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-
-                            {/* Nested Subitems Table Row */}
-                            {isExpanded && (
-                              <tr className="batch-expanded-row">
-                                <td colSpan="8" className="batch-expanded-container-td">
-                                  <div className="batch-subitems-wrapper">
-                                    <div className="batch-subitems-header">
-                                      <div className="subitems-title">
-                                        <Layers size={14} className="text-accent" />
-                                        <span>Individual Bar Entries for <strong>{row.batchName}</strong> ({row.items.length} records)</span>
-                                      </div>
-                                      <div className="subitems-meta">
-                                        <span>Outward: <strong>{Math.round(row.totalOutwardWeight).toLocaleString('en-IN')} kg</strong></span>
-                                        <span>•</span>
-                                        <span>Remnants: <strong>{Math.round(row.totalRemnantWeight).toLocaleString('en-IN')} kg</strong></span>
-                                        {row.totalScrapWeight > 0 && (
-                                          <>
-                                            <span>•</span>
-                                            <span>Scraps: <strong>{Math.round(row.totalScrapWeight).toLocaleString('en-IN')} kg</strong></span>
-                                          </>
-                                        )}
-                                      </div>
-                                    </div>
-                                    
-                                    <table className="batch-nested-table">
-                                      <thead>
-                                        <tr>
-                                          <th style={{ width: '45px' }}>#</th>
-                                          <th style={{ width: '130px' }}>Type</th>
-                                          <th style={{ width: '100px' }}>Diameter</th>
-                                          <th style={{ width: '90px' }}>Length</th>
-                                          <th style={{ width: '90px' }}>Quantity</th>
-                                          <th style={{ width: '120px' }}>Weight</th>
-                                          <th style={{ width: '100px' }}>Cost/kg</th>
-                                          <th>Brand / Vendor</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {row.items.map((subItem, sIdx) => (
-                                          <tr key={subItem._id || sIdx} className={`nested-row-${subItem.type.toLowerCase()}`}>
-                                            <td className="nested-idx">{sIdx + 1}</td>
-                                            <td>
-                                              <span className={`ledger-type-badge ${subItem.type.toLowerCase()}`}>
-                                                <span className="type-dot"></span>
-                                                {subItem.type}
-                                              </span>
-                                            </td>
-                                            <td>
-                                              <span className="dia-pill-badge">{subItem.diameter} mm</span>
-                                            </td>
-                                            <td>{(subItem.length / 1000).toFixed(1)} m</td>
-                                            <td className="font-bold">{subItem.quantity}</td>
-                                            <td>
-                                              <span className={subItem.type === 'OUTWARD' ? 'text-orange font-bold' : subItem.type === 'REMNANT' ? 'text-green font-bold' : 'text-danger font-bold'}>
-                                                {Math.round(subItem.weightInKgs).toLocaleString('en-IN')} kg
-                                              </span>
-                                            </td>
-                                            <td>₹{subItem.costPerKg?.toFixed(2) || '0.00'}</td>
-                                            <td>
-                                              <div className="vendor-ref-cell">
-                                                <span>{subItem.brandName || subItem.vendorName || '—'}</span>
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </td>
-                              </tr>
                             )}
-                          </React.Fragment>
-                        );
-                      }
-
-                      // Standalone single transaction row (e.g. Inward)
-                      const item = row.data;
-                      const itemDate = new Date(item.createdAt);
-                      return (
-                        <tr key={item._id}>
-                          <td className="ledger-date-col">
-                            <div className="date-with-toggle">
-                              <span className="batch-chevron-placeholder" />
-                              <div className="date-time-stack">
-                                <span className="date-primary">{itemDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
-                                <span className="time-secondary">{itemDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                            <td>
+                              <div className="vendor-ref-cell">
+                                <span className="font-bold">{item.vendorName || item.referenceName || '—'}</span>
+                                {item.brandName && (
+                                  <span className="vendor-meta-sub">Brand: {item.brandName}</span>
+                                )}
                               </div>
-                            </div>
-                          </td>
-                          <td>
-                            <span className={`ledger-type-badge ${item.type.toLowerCase()}`}>
-                              <span className="type-dot"></span>
-                              {item.type}
-                            </span>
-                          </td>
-                          <td>
-                            <span className="dia-pill-badge">{item.diameter} mm</span>
-                          </td>
-                          <td>{(item.length / 1000).toFixed(1)} m</td>
-                          <td>
-                            <span className="qty-main">{item.quantity?.toLocaleString() || 0}</span>
-                          </td>
-                          <td>
-                            <span className={item.type === 'INWARD' ? 'text-green font-bold' : item.type === 'OUTWARD' ? 'text-orange font-bold' : 'font-bold'}>
-                              {Math.round(item.weightInKgs || 0).toLocaleString('en-IN')} kg
-                            </span>
-                          </td>
-                          <td>
-                            {item.costPerKg ? (
-                              <span className="cost-val">₹{Number(item.costPerKg).toFixed(2)}</span>
-                            ) : (
-                              <span className="cost-muted">₹0.00</span>
-                            )}
-                          </td>
-                          <td>
-                            <div className="vendor-ref-cell">
-                              <span className="font-bold">{item.vendorName || item.referenceName || '—'}</span>
-                              {item.brandName && (
-                                <span className="vendor-meta-sub">Brand: {item.brandName}</span>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </>
@@ -1036,31 +1069,59 @@ export default function LedgerPage() {
               <div className="mini-icon inward"><TrendingUp size={22} /></div>
             </div>
 
-            <div className="card stat-mini">
-              <div className="stat-info">
-                <span className="mini-lbl">Total Inward Procurement Cost</span>
-                <span className="mini-val text-accent">₹{inwardTotalCost.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
-                  Total Invoiced Expenditure
-                </span>
-              </div>
-              <div className="mini-icon stock"><DollarSign size={22} /></div>
-            </div>
+            {SHOW_FINANCIALS ? (
+              <>
+                <div className="card stat-mini">
+                  <div className="stat-info">
+                    <span className="mini-lbl">Total Inward Procurement Cost</span>
+                    <span className="mini-val text-accent">₹{inwardTotalCost.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                    <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
+                      Total Invoiced Expenditure
+                    </span>
+                  </div>
+                  <div className="mini-icon stock"><DollarSign size={22} /></div>
+                </div>
+
+                <div className="card stat-mini">
+                  <div className="stat-info">
+                    <span className="mini-lbl">Weighted Avg Procurement Rate</span>
+                    <span className="mini-val">₹{inwardAvgRatePerKg.toFixed(2)} <span className="u">/ kg</span></span>
+                    <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
+                      ₹{Math.round(inwardAvgRatePerKg * 1000).toLocaleString('en-IN')} / Ton
+                    </span>
+                  </div>
+                  <div className="mini-icon outward"><Scale size={22} /></div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="card stat-mini">
+                  <div className="stat-info">
+                    <span className="mini-lbl">Inward Deliveries Logged</span>
+                    <span className="mini-val text-accent">{inwardItems.length} <span className="u">batches</span></span>
+                    <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
+                      Verified Site Deliveries
+                    </span>
+                  </div>
+                  <div className="mini-icon stock"><Truck size={22} /></div>
+                </div>
+
+                <div className="card stat-mini">
+                  <div className="stat-info">
+                    <span className="mini-lbl">Suppliers & Brands</span>
+                    <span className="mini-val">{vendorBreakdown.length} <span className="u">sources</span></span>
+                    <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
+                      Active Procurement Partners
+                    </span>
+                  </div>
+                  <div className="mini-icon outward"><BookOpen size={22} /></div>
+                </div>
+              </>
+            )}
 
             <div className="card stat-mini">
               <div className="stat-info">
-                <span className="mini-lbl">Weighted Avg Procurement Rate</span>
-                <span className="mini-val">₹{inwardAvgRatePerKg.toFixed(2)} <span className="u">/ kg</span></span>
-                <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
-                  ₹{Math.round(inwardAvgRatePerKg * 1000).toLocaleString('en-IN')} / Ton
-                </span>
-              </div>
-              <div className="mini-icon outward"><Scale size={22} /></div>
-            </div>
-
-            <div className="card stat-mini">
-              <div className="stat-info">
-                <span className="mini-lbl">Inward Volume & Deliveries</span>
+                <span className="mini-lbl">Inward Volume & Total Bars</span>
                 <span className="mini-val">{inwardTotalBars.toLocaleString()} <span className="u">bars</span></span>
                 <span className="text-secondary" style={{ fontSize: '11.5px', marginTop: '2px' }}>
                   Across {inwardItems.length} verified deliveries
@@ -1075,25 +1136,25 @@ export default function LedgerPage() {
             <div className="inward-customizer-bar">
               <div className="preset-date-pills">
                 <span className="preset-label">Period Presets:</span>
-                <button 
+                <button
                   className={`filter-badge ${!filterStartDate && !filterEndDate ? 'active' : ''}`}
                   onClick={() => setDatePreset('ALL')}
                 >
                   All Time
                 </button>
-                <button 
+                <button
                   className="filter-badge"
                   onClick={() => setDatePreset('THIS_MONTH')}
                 >
                   This Month
                 </button>
-                <button 
+                <button
                   className="filter-badge"
                   onClick={() => setDatePreset('LAST_30_DAYS')}
                 >
                   Last 30 Days
                 </button>
-                <button 
+                <button
                   className="filter-badge"
                   onClick={() => setDatePreset('TODAY')}
                 >
@@ -1104,8 +1165,8 @@ export default function LedgerPage() {
               <div className="table-header-right">
                 <div className="search-box">
                   <Search size={14} className="search-icon" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Search vendor, brand, dia..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -1113,7 +1174,7 @@ export default function LedgerPage() {
                   />
                 </div>
 
-                <button 
+                <button
                   className={`btn-table-filter ${isFilterOpen || activeFilterCount > 0 ? 'active' : ''}`}
                   onClick={() => setIsFilterOpen(prev => !prev)}
                   title="Toggle filter controls"
@@ -1146,8 +1207,8 @@ export default function LedgerPage() {
                 <div className="filter-controls-grid">
                   <div className="filter-field">
                     <label>From Date</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={filterStartDate}
                       onChange={(e) => setFilterStartDate(e.target.value)}
                       className="filter-input"
@@ -1155,8 +1216,8 @@ export default function LedgerPage() {
                   </div>
                   <div className="filter-field">
                     <label>To Date</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={filterEndDate}
                       onChange={(e) => setFilterEndDate(e.target.value)}
                       className="filter-input"
@@ -1164,7 +1225,7 @@ export default function LedgerPage() {
                   </div>
                   <div className="filter-field">
                     <label>Diameter</label>
-                    <select 
+                    <select
                       value={filterDiameter}
                       onChange={(e) => setFilterDiameter(e.target.value)}
                       className="filter-select"
@@ -1174,16 +1235,6 @@ export default function LedgerPage() {
                         <option key={d} value={d}>{d} mm</option>
                       ))}
                     </select>
-                  </div>
-                  <div className="filter-field">
-                    <label>Supplier / Brand</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Tata, Jindal, Sai Traders"
-                      value={filterVendor}
-                      onChange={(e) => setFilterVendor(e.target.value)}
-                      className="filter-input"
-                    />
                   </div>
                 </div>
 
@@ -1227,51 +1278,55 @@ export default function LedgerPage() {
               <div className="matrix-card-header">
                 <div className="matrix-title">
                   <BarChart3 size={17} className="text-green" />
-                  <span>Diameter-wise Inward & Cost Breakdown</span>
+                  <span>{SHOW_FINANCIALS ? 'Diameter-wise Inward & Cost Breakdown' : 'Diameter-wise Inward Distribution'}</span>
                 </div>
-                <span className="matrix-subtitle">Weight & Procurement Spend by Bar Size</span>
+                <span className="matrix-subtitle">{SHOW_FINANCIALS ? 'Weight & Procurement Spend by Bar Size' : 'Received Tonnage & Share by Bar Size'}</span>
               </div>
 
               <div className="table-responsive">
-                <table className="matrix-table">
-                  <thead>
-                    <tr>
-                      <th>Diameter</th>
-                      <th>Bars</th>
-                      <th>Weight (kg)</th>
-                      <th>Total Cost (₹)</th>
-                      <th>Avg Rate</th>
-                      <th>Weight Share</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {diameterBreakdown.length === 0 ? (
-                      <tr><td colSpan="6" style={{ textAlign: 'center', padding: '16px', color: 'var(--text-secondary)' }}>No diameter records found</td></tr>
-                    ) : (
-                      diameterBreakdown.map(d => {
-                        const pct = inwardTotalWeight > 0 ? ((d.weight / inwardTotalWeight) * 100).toFixed(1) : 0;
-                        const avgRate = d.weight > 0 ? (d.cost / d.weight).toFixed(2) : '0.00';
-                        return (
-                          <tr key={d.diameter}>
-                            <td className="font-bold">{d.diameter} mm</td>
-                            <td>{d.bars.toLocaleString()}</td>
-                            <td className="font-bold">{Math.round(d.weight).toLocaleString()} kg</td>
-                            <td className="font-bold text-accent">₹{Math.round(d.cost).toLocaleString('en-IN')}</td>
-                            <td>₹{avgRate}/kg</td>
-                            <td>
-                              <div className="progress-cell">
-                                <div className="mini-progress-bar-container">
-                                  <div className="mini-progress-bar" style={{ width: `${pct}%` }} />
+                {isDelayedLoading ? (
+                  <TableSkeleton rows={4} cols={SHOW_FINANCIALS ? 6 : 4} />
+                ) : (
+                  <table className="matrix-table">
+                    <thead>
+                      <tr>
+                        <th>Diameter</th>
+                        <th>Bars</th>
+                        <th>Weight (kg)</th>
+                        {SHOW_FINANCIALS && <th>Total Cost (₹)</th>}
+                        {SHOW_FINANCIALS && <th>Avg Rate</th>}
+                        <th>Weight Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {diameterBreakdown.length === 0 ? (
+                        <tr><td colSpan={SHOW_FINANCIALS ? 6 : 4} style={{ textAlign: 'center', padding: '16px', color: 'var(--text-secondary)' }}>No diameter records found</td></tr>
+                      ) : (
+                        diameterBreakdown.map(d => {
+                          const pct = inwardTotalWeight > 0 ? ((d.weight / inwardTotalWeight) * 100).toFixed(1) : 0;
+                          const avgRate = d.pricedWeight > 0 ? (d.cost / d.pricedWeight).toFixed(2) : null;
+                          return (
+                            <tr key={d.diameter}>
+                              <td className="font-bold">{d.diameter} mm</td>
+                              <td>{d.bars.toLocaleString()}</td>
+                              <td className="font-bold">{Math.round(d.weight).toLocaleString()} kg</td>
+                              {SHOW_FINANCIALS && <td className="font-bold text-accent">₹{Math.round(d.cost).toLocaleString('en-IN')}</td>}
+                              {SHOW_FINANCIALS && <td>{avgRate ? `₹${avgRate}/kg` : <span className="text-secondary" style={{ fontStyle: 'italic', fontSize: '12px' }}>No price</span>}</td>}
+                              <td>
+                                <div className="progress-cell">
+                                  <div className="mini-progress-bar-container">
+                                    <div className="mini-progress-bar" style={{ width: `${pct}%` }} />
+                                  </div>
+                                  <span className="pct-text">{pct}%</span>
                                 </div>
-                                <span className="pct-text">{pct}%</span>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
 
@@ -1280,41 +1335,55 @@ export default function LedgerPage() {
               <div className="matrix-card-header">
                 <div className="matrix-title">
                   <PieChart size={17} className="text-orange" />
-                  <span>Supplier & Vendor Procurement Share</span>
+                  <span>{SHOW_FINANCIALS ? 'Supplier & Vendor Procurement Share' : 'Supplier & Vendor Delivery Share'}</span>
                 </div>
-                <span className="matrix-subtitle">Vendor supply volume, invoice values & rates</span>
+                <span className="matrix-subtitle">{SHOW_FINANCIALS ? 'Vendor supply volume, invoice values & rates' : 'Vendor delivery volume & tonnage share'}</span>
               </div>
 
               <div className="table-responsive">
-                <table className="matrix-table">
-                  <thead>
-                    <tr>
-                      <th>Supplier / Brand</th>
-                      <th>Deliveries</th>
-                      <th>Weight (MT)</th>
-                      <th>Total Spend (₹)</th>
-                      <th>Avg Rate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {vendorBreakdown.length === 0 ? (
-                      <tr><td colSpan="5" style={{ textAlign: 'center', padding: '16px', color: 'var(--text-secondary)' }}>No vendor records found</td></tr>
-                    ) : (
-                      vendorBreakdown.map(v => {
-                        const avgRate = v.weight > 0 ? (v.cost / v.weight).toFixed(2) : '0.00';
-                        return (
-                          <tr key={v.vendor}>
-                            <td className="font-bold">{v.vendor}</td>
-                            <td>{v.entries} receipts</td>
-                            <td className="font-bold">{(v.weight / 1000).toFixed(3)} MT <span className="text-secondary" style={{ fontSize: '11px' }}>({Math.round(v.weight).toLocaleString()} kg)</span></td>
-                            <td className="font-bold text-accent">₹{Math.round(v.cost).toLocaleString('en-IN')}</td>
-                            <td>₹{avgRate}/kg</td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                {isDelayedLoading ? (
+                  <TableSkeleton rows={4} cols={SHOW_FINANCIALS ? 6 : 4} />
+                ) : (
+                  <table className="matrix-table">
+                    <thead>
+                      <tr>
+                        <th>Supplier / Brand</th>
+                        <th>Deliveries</th>
+                        <th>Weight (MT)</th>
+                        {SHOW_FINANCIALS && <th>Total Spend (₹)</th>}
+                        {SHOW_FINANCIALS && <th>Avg Rate</th>}
+                        <th>Inward Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {vendorBreakdown.length === 0 ? (
+                        <tr><td colSpan={SHOW_FINANCIALS ? 6 : 4} style={{ textAlign: 'center', padding: '16px', color: 'var(--text-secondary)' }}>No vendor records found</td></tr>
+                      ) : (
+                        vendorBreakdown.map(v => {
+                          const avgRate = v.pricedWeight > 0 ? (v.cost / v.pricedWeight).toFixed(2) : null;
+                          const pct = inwardTotalWeight > 0 ? ((v.weight / inwardTotalWeight) * 100).toFixed(1) : 0;
+                          return (
+                            <tr key={v.vendor}>
+                              <td className="font-bold">{v.vendor}</td>
+                              <td>{v.entries}</td>
+                              <td className="font-bold text-green">{(v.weight / 1000).toFixed(2)} MT</td>
+                              {SHOW_FINANCIALS && <td className="font-bold text-accent">₹{Math.round(v.cost).toLocaleString('en-IN')}</td>}
+                              {SHOW_FINANCIALS && <td>{avgRate ? `₹${avgRate}/kg` : <span className="text-secondary" style={{ fontStyle: 'italic', fontSize: '12px' }}>No price</span>}</td>}
+                              <td>
+                                <div className="progress-cell">
+                                  <div className="mini-progress-bar-container">
+                                    <div className="mini-progress-bar" style={{ width: `${pct}%` }} />
+                                  </div>
+                                  <span className="pct-text">{pct}%</span>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
@@ -1329,57 +1398,69 @@ export default function LedgerPage() {
             </div>
 
             <div className="table-responsive">
-              <table className="ledger-table inward-receipts-table">
-                <thead>
-                  <tr>
-                    <th>Date & Time</th>
-                    <th>Diameter</th>
-                    <th>Length</th>
-                    <th>Qty (Bars)</th>
-                    <th>Total Weight</th>
-                    <th>Rate (₹/kg)</th>
-                    <th>Total Inward Cost</th>
-                    <th>Vendor / Brand</th>
-                    <th>Reference / Invoice</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {inwardItems.length === 0 ? (
+              {isDelayedLoading ? (
+                <TableSkeleton rows={6} cols={SHOW_FINANCIALS ? 9 : 7} />
+              ) : (
+                <table className="ledger-table inward-receipts-table">
+                  <thead>
                     <tr>
-                      <td colSpan="9" style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
-                        No steel inward deliveries found for the selected filters.
-                      </td>
+                      <th>Date & Time</th>
+                      <th>Diameter</th>
+                      <th>Length</th>
+                      <th>Qty (Bars)</th>
+                      <th>Total Weight</th>
+                      {SHOW_FINANCIALS && (
+                        <>
+                          <th>Rate (₹/kg)</th>
+                          <th>Total Inward Cost</th>
+                        </>
+                      )}
+                      <th>Vendor / Brand</th>
+                      <th>Reference / Invoice</th>
                     </tr>
-                  ) : (
-                    inwardItems.map((item, idx) => {
-                      const itemCost = (item.weightInKgs || 0) * (item.costPerKg || 0);
-                      return (
-                        <tr key={item._id || idx}>
-                          <td className="ledger-date-col">
-                            <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                            {new Date(item.createdAt).toLocaleString('en-GB')}
-                          </td>
-                          <td className="font-bold">{item.diameter} mm</td>
-                          <td>{(item.length / 1000).toFixed(1)} m</td>
-                          <td className="font-bold">{item.quantity}</td>
-                          <td className="font-bold text-green">{Math.round(item.weightInKgs).toLocaleString()} kg</td>
-                          <td>₹{item.costPerKg?.toFixed(2) || '0.00'}</td>
-                          <td className="font-bold text-accent">₹{Math.round(itemCost).toLocaleString('en-IN')}</td>
-                          <td>
-                            <div className="vendor-ref-cell">
-                              <span className="font-bold">{item.vendorName || '-'}</span>
-                              <span className="text-secondary" style={{ fontSize: '11px' }}>{item.brandName ? `Brand: ${item.brandName}` : ''}</span>
-                            </div>
-                          </td>
-                          <td>
-                            <span className="batch-summary-tag">{item.referenceName || 'Manual Inward'}</span>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {inwardItems.length === 0 ? (
+                      <tr>
+                        <td colSpan={SHOW_FINANCIALS ? 9 : 7} style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
+                          No steel inward deliveries found for the selected filters.
+                        </td>
+                      </tr>
+                    ) : (
+                      inwardItems.map((item, idx) => {
+                        const itemCost = (item.weightInKgs || 0) * (item.costPerKg || 0);
+                        return (
+                          <tr key={item._id || idx}>
+                            <td className="ledger-date-col">
+                              <Calendar size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                              {new Date(item.createdAt).toLocaleString('en-GB')}
+                            </td>
+                            <td className="font-bold">{item.diameter} mm</td>
+                            <td>{(item.length / 1000).toFixed(1)} m</td>
+                            <td className="font-bold">{item.quantity}</td>
+                            <td className="font-bold text-green">{Math.round(item.weightInKgs).toLocaleString()} kg</td>
+                            {SHOW_FINANCIALS && (
+                              <>
+                                <td>₹{item.costPerKg?.toFixed(2) || '0.00'}</td>
+                                <td className="font-bold text-accent">₹{Math.round(itemCost).toLocaleString('en-IN')}</td>
+                              </>
+                            )}
+                            <td>
+                              <div className="vendor-ref-cell">
+                                <span className="font-bold">{item.vendorName || '-'}</span>
+                                <span className="text-secondary" style={{ fontSize: '11px' }}>{item.brandName ? `Brand: ${item.brandName}` : ''}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <span className="batch-summary-tag">{item.referenceName || 'Manual Inward'}</span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
@@ -1393,8 +1474,8 @@ export default function LedgerPage() {
             <div className="table-header-right">
               <div className="search-box">
                 <Search size={14} className="search-icon" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Search batch name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -1402,7 +1483,7 @@ export default function LedgerPage() {
                 />
               </div>
 
-              <button 
+              <button
                 className={`btn-table-filter ${isFilterOpen || activeFilterCount > 0 ? 'active' : ''}`}
                 onClick={() => setIsFilterOpen(prev => !prev)}
                 title="Toggle filter controls"
@@ -1435,8 +1516,8 @@ export default function LedgerPage() {
               <div className="filter-controls-grid">
                 <div className="filter-field">
                   <label>From Date</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={filterStartDate}
                     onChange={(e) => setFilterStartDate(e.target.value)}
                     className="filter-input"
@@ -1444,8 +1525,8 @@ export default function LedgerPage() {
                 </div>
                 <div className="filter-field">
                   <label>To Date</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={filterEndDate}
                     onChange={(e) => setFilterEndDate(e.target.value)}
                     className="filter-input"
@@ -1473,7 +1554,11 @@ export default function LedgerPage() {
             </div>
           )}
 
-          {filteredOrders.length === 0 ? (
+          {isDelayedLoading ? (
+            <div className="table-responsive">
+              <TableSkeleton rows={5} cols={8} />
+            </div>
+          ) : filteredOrders.length === 0 ? (
             <div className="empty-state">
               <p>No processed optimization batches found matching query.</p>
             </div>
@@ -1605,88 +1690,92 @@ export default function LedgerPage() {
               <p className="form-card-subtitle">Approval status and procurement authorization history logs.</p>
 
               <div className="table-responsive">
-                <table className="requests-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Requester / Site</th>
-                      <th>Dia</th>
-                      <th>Requested</th>
-                      <th>Approved Qty</th>
-                      <th>Status</th>
-                      <th>Approved By</th>
-                      {user?.role !== 'ENGINEER' && <th>Action</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRequests.length === 0 ? (
+                {isDelayedLoading ? (
+                  <TableSkeleton rows={4} cols={8} />
+                ) : (
+                  <table className="requests-table">
+                    <thead>
                       <tr>
-                        <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: 'var(--text-secondary)' }}>
-                          No procurement requests found matching the current filters.
-                        </td>
+                        <th>Date</th>
+                        <th>Requester / Site</th>
+                        <th>Dia</th>
+                        <th>Requested</th>
+                        <th>Approved Qty</th>
+                        <th>Status</th>
+                        <th>Approved By</th>
+                        {user?.role !== 'ENGINEER' && <th>Action</th>}
                       </tr>
-                    ) : (
-                      filteredRequests.map((req) => {
-                        const isPending = req.status === 'Pending';
-                        const isApproved = req.status === 'Approved';
-                        const isOwnerAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN';
+                    </thead>
+                    <tbody>
+                      {filteredRequests.length === 0 ? (
+                        <tr>
+                          <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: 'var(--text-secondary)' }}>
+                            No procurement requests found matching the current filters.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredRequests.map((req) => {
+                          const isPending = req.status === 'Pending';
+                          const isApproved = req.status === 'Approved';
+                          const isOwnerAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN';
 
-                        return (
-                          <tr key={req.id}>
-                            <td>{req.date}</td>
-                            <td>
-                              <div className="font-bold">{req.requester}</div>
-                              <div className="text-secondary" style={{ fontSize: '11px' }}>{req.site}</div>
-                            </td>
-                            <td className="font-bold">{req.diameter} mm</td>
-                            <td>{req.quantity}</td>
-                            <td>
-                              {isPending && isOwnerAdmin ? (
-                                <input
-                                  type="number"
-                                  className="voucher-input edit-qty-input"
-                                  style={{ maxWidth: '80px', padding: '4px 8px' }}
-                                  defaultValue={req.quantity}
-                                  onChange={(e) => handleEditQtyChange(req.id, e.target.value)}
-                                />
-                              ) : (
-                                <span className="font-bold">{req.approvedQuantity}</span>
-                              )}
-                            </td>
-                            <td>
-                              <StatusBadge status={req.status} />
-                            </td>
-                            <td className="text-secondary">{req.approver || '-'}</td>
-                            {user?.role !== 'ENGINEER' && (
+                          return (
+                            <tr key={req.id}>
+                              <td>{req.date}</td>
                               <td>
-                                {isPending ? (
-                                  <div className="action-buttons-flex">
-                                    <button 
-                                      className="btn-approve" 
-                                      onClick={() => handleApprove(req.id)}
-                                      title="Approve request"
-                                    >
-                                      <CheckCircle2 size={14} />
-                                    </button>
-                                    <button 
-                                      className="btn-reject" 
-                                      onClick={() => handleReject(req.id)}
-                                      title="Reject request"
-                                    >
-                                      <XCircle size={14} />
-                                    </button>
-                                  </div>
+                                <div className="font-bold">{req.requester}</div>
+                                <div className="text-secondary" style={{ fontSize: '11px' }}>{req.site}</div>
+                              </td>
+                              <td className="font-bold">{req.diameter} mm</td>
+                              <td>{req.quantity}</td>
+                              <td>
+                                {isPending && isOwnerAdmin ? (
+                                  <input
+                                    type="number"
+                                    className="voucher-input edit-qty-input"
+                                    style={{ maxWidth: '80px', padding: '4px 8px' }}
+                                    defaultValue={req.quantity}
+                                    onChange={(e) => handleEditQtyChange(req.id, e.target.value)}
+                                  />
                                 ) : (
-                                  <span className="text-secondary">-</span>
+                                  <span className="font-bold">{req.approvedQuantity}</span>
                                 )}
                               </td>
-                            )}
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                              <td>
+                                <StatusBadge status={req.status} />
+                              </td>
+                              <td className="text-secondary">{req.approver || '-'}</td>
+                              {user?.role !== 'ENGINEER' && (
+                                <td>
+                                  {isPending ? (
+                                    <div className="action-buttons-flex">
+                                      <button
+                                        className="btn-approve"
+                                        onClick={() => handleApprove(req.id)}
+                                        title="Approve request"
+                                      >
+                                        <CheckCircle2 size={14} />
+                                      </button>
+                                      <button
+                                        className="btn-reject"
+                                        onClick={() => handleReject(req.id)}
+                                        title="Reject request"
+                                      >
+                                        <XCircle size={14} />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <span className="text-secondary">-</span>
+                                  )}
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
@@ -1704,13 +1793,13 @@ export default function LedgerPage() {
             </div>
             <div className="print-meta-right">
               <div className="print-badge-type">
-                {activeTab === 'inward-cost' 
-                  ? 'STEEL INWARD & PROCUREMENT COST REPORT' 
-                  : activeTab === 'ledger' 
-                  ? 'MATERIAL AUDIT LEDGER' 
-                  : activeTab === 'orders' 
-                  ? 'BATCH ORDERS REPORT' 
-                  : 'PROCUREMENT REQUESTS REPORT'}
+                {activeTab === 'inward-cost'
+                  ? 'STEEL INWARD & PROCUREMENT COST REPORT'
+                  : activeTab === 'ledger'
+                    ? 'MATERIAL AUDIT LEDGER'
+                    : activeTab === 'orders'
+                      ? 'BATCH ORDERS REPORT'
+                      : 'PROCUREMENT REQUESTS REPORT'}
               </div>
               <div className="print-meta-item">Generated: {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
             </div>
@@ -1722,8 +1811,8 @@ export default function LedgerPage() {
             <div><strong>Project / Site:</strong> {user?.projectName || 'Main Site Facility'}</div>
             <div>
               <strong>Applied Filters:</strong>{' '}
-              {activeFilterCount === 0 
-                ? 'All Records (No filters applied)' 
+              {activeFilterCount === 0
+                ? 'All Records (No filters applied)'
                 : `${filterDiameter !== 'ALL' ? `Dia: ${filterDiameter}mm | ` : ''}${filterStartDate ? `From: ${filterStartDate} | ` : ''}${filterEndDate ? `To: ${filterEndDate} | ` : ''}${filterVendor ? `Supplier: ${filterVendor}` : ''}`}
             </div>
           </div>
@@ -1738,14 +1827,18 @@ export default function LedgerPage() {
                 <span className="print-kpi-lbl">Total Steel Inward Tonnage</span>
                 <span className="print-kpi-val">{inwardTotalWeight.toLocaleString()} kg ({(inwardTotalWeight / 1000).toFixed(2)} T)</span>
               </div>
-              <div className="print-kpi-box">
-                <span className="print-kpi-lbl">Total Inward Procurement Cost</span>
-                <span className="print-kpi-val">₹{inwardTotalCost.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-              </div>
-              <div className="print-kpi-box">
-                <span className="print-kpi-lbl">Weighted Avg Rate / kg</span>
-                <span className="print-kpi-val">₹{inwardAvgRatePerKg.toFixed(2)} / kg</span>
-              </div>
+              {SHOW_FINANCIALS && (
+                <>
+                  <div className="print-kpi-box">
+                    <span className="print-kpi-lbl">Total Inward Procurement Cost</span>
+                    <span className="print-kpi-val">₹{inwardTotalCost.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                  </div>
+                  <div className="print-kpi-box">
+                    <span className="print-kpi-lbl">Weighted Avg Rate / kg</span>
+                    <span className="print-kpi-val">₹{inwardAvgRatePerKg.toFixed(2)} / kg</span>
+                  </div>
+                </>
+              )}
               <div className="print-kpi-box">
                 <span className="print-kpi-lbl">Total Inward Bars</span>
                 <span className="print-kpi-val">{inwardTotalBars.toLocaleString()} Bars ({inwardItems.length} Deliveries)</span>
@@ -1754,7 +1847,7 @@ export default function LedgerPage() {
 
             {/* Diameter-wise Inward Matrix */}
             <h3 style={{ fontSize: '13px', fontWeight: 700, margin: '16px 0 8px 0', textTransform: 'uppercase' }}>
-              1. Diameter-wise Inward & Cost Breakdown
+              1. Diameter-wise Inward Breakdown
             </h3>
             <table className="print-data-table" style={{ marginBottom: '18px' }}>
               <thead>
@@ -1763,8 +1856,8 @@ export default function LedgerPage() {
                   <th>Bars (Qty)</th>
                   <th>Weight (kg)</th>
                   <th>Weight (Tons)</th>
-                  <th>Total Cost (₹)</th>
-                  <th>Avg Rate (₹/kg)</th>
+                  {SHOW_FINANCIALS && <th>Total Cost (₹)</th>}
+                  {SHOW_FINANCIALS && <th>Avg Rate (₹/kg)</th>}
                   <th>Weight Share</th>
                 </tr>
               </thead>
@@ -1778,8 +1871,8 @@ export default function LedgerPage() {
                       <td>{d.bars.toLocaleString()}</td>
                       <td>{Math.round(d.weight).toLocaleString()} kg</td>
                       <td>{(d.weight / 1000).toFixed(2)} T</td>
-                      <td>₹{Math.round(d.cost).toLocaleString('en-IN')}</td>
-                      <td>₹{avgR}</td>
+                      {SHOW_FINANCIALS && <td>₹{Math.round(d.cost).toLocaleString('en-IN')}</td>}
+                      {SHOW_FINANCIALS && <td>₹{avgR}</td>}
                       <td>{pct}%</td>
                     </tr>
                   );
@@ -1789,7 +1882,7 @@ export default function LedgerPage() {
 
             {/* Vendor Supply Matrix */}
             <h3 style={{ fontSize: '13px', fontWeight: 700, margin: '16px 0 8px 0', textTransform: 'uppercase' }}>
-              2. Supplier / Vendor Supply & Value Matrix
+              2. Supplier / Vendor Supply Matrix
             </h3>
             <table className="print-data-table" style={{ marginBottom: '18px' }}>
               <thead>
@@ -1798,8 +1891,8 @@ export default function LedgerPage() {
                   <th>Receipts</th>
                   <th>Weight (kg)</th>
                   <th>Tonnage (T)</th>
-                  <th>Total Spend (₹)</th>
-                  <th>Avg Rate (₹/kg)</th>
+                  {SHOW_FINANCIALS && <th>Total Spend (₹)</th>}
+                  {SHOW_FINANCIALS && <th>Avg Rate (₹/kg)</th>}
                 </tr>
               </thead>
               <tbody>
@@ -1809,8 +1902,8 @@ export default function LedgerPage() {
                     <td>{v.entries} deliveries</td>
                     <td>{Math.round(v.weight).toLocaleString()} kg</td>
                     <td>{(v.weight / 1000).toFixed(2)} T</td>
-                    <td>₹{Math.round(v.cost).toLocaleString('en-IN')}</td>
-                    <td>₹{(v.weight > 0 ? (v.cost / v.weight).toFixed(2) : '0.00')}</td>
+                    {SHOW_FINANCIALS && <td>₹{Math.round(v.cost).toLocaleString('en-IN')}</td>}
+                    {SHOW_FINANCIALS && <td>₹{(v.weight > 0 ? (v.cost / v.weight).toFixed(2) : '0.00')}</td>}
                   </tr>
                 ))}
               </tbody>
@@ -1828,8 +1921,8 @@ export default function LedgerPage() {
                   <th>Length</th>
                   <th>Bars</th>
                   <th>Weight (kg)</th>
-                  <th>Rate/kg</th>
-                  <th>Total Cost (₹)</th>
+                  {SHOW_FINANCIALS && <th>Rate/kg</th>}
+                  {SHOW_FINANCIALS && <th>Total Cost (₹)</th>}
                   <th>Supplier / Brand</th>
                 </tr>
               </thead>
@@ -1841,8 +1934,8 @@ export default function LedgerPage() {
                     <td>{(item.length / 1000).toFixed(1)} m</td>
                     <td>{item.quantity}</td>
                     <td>{Math.round(item.weightInKgs).toLocaleString()}</td>
-                    <td>₹{item.costPerKg?.toFixed(2)}</td>
-                    <td><strong>₹{Math.round((item.weightInKgs || 0) * (item.costPerKg || 0)).toLocaleString('en-IN')}</strong></td>
+                    {SHOW_FINANCIALS && <td>₹{item.costPerKg?.toFixed(2)}</td>}
+                    {SHOW_FINANCIALS && <td><strong>₹{Math.round((item.weightInKgs || 0) * (item.costPerKg || 0)).toLocaleString('en-IN')}</strong></td>}
                     <td>{item.vendorName || item.brandName || '-'}</td>
                   </tr>
                 ))}
@@ -1866,8 +1959,12 @@ export default function LedgerPage() {
                 <span className="print-kpi-val">{totalRemnantsKg.toLocaleString()} kg</span>
               </div>
               <div className="print-kpi-box">
-                <span className="print-kpi-lbl">Net Stock Valuation</span>
-                <span className="print-kpi-val">₹{(netLiveStockKg * 60).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                <span className="print-kpi-lbl">{SHOW_FINANCIALS && inwardAvgRatePerKg > 0 ? 'Net Stock Valuation' : 'Net Live Yard Stock'}</span>
+                <span className="print-kpi-val">
+                  {SHOW_FINANCIALS && inwardAvgRatePerKg > 0
+                    ? `₹${Math.round(netLiveStockKg * inwardAvgRatePerKg).toLocaleString('en-IN')}`
+                    : `${(netLiveStockKg / 1000).toFixed(2)} MT`}
+                </span>
               </div>
             </div>
 
@@ -1882,7 +1979,7 @@ export default function LedgerPage() {
                     <th>Length</th>
                     <th>Qty</th>
                     <th>Weight (kg)</th>
-                    <th>Cost/kg</th>
+                    {SHOW_FINANCIALS && <th>Cost/kg</th>}
                     <th>Vendor / Reference</th>
                   </tr>
                 </thead>
@@ -1895,7 +1992,7 @@ export default function LedgerPage() {
                       <td>{(item.length / 1000).toFixed(1)} m</td>
                       <td>{item.quantity}</td>
                       <td>{Math.round(item.weightInKgs).toLocaleString()}</td>
-                      <td>₹{item.costPerKg?.toFixed(2)}</td>
+                      {SHOW_FINANCIALS && <td>₹{item.costPerKg?.toFixed(2)}</td>}
                       <td>{item.vendorName || item.brandName || '-'}</td>
                     </tr>
                   ))}
@@ -1969,15 +2066,15 @@ export default function LedgerPage() {
         <div className="print-signatures-row">
           <div className="print-sign-box">
             <div className="print-sign-line"></div>
-            <div>Prepared By: {user?.firstName} {user?.lastName}</div>
+            <div>Site Reinforcement Engineer</div>
           </div>
           <div className="print-sign-box">
             <div className="print-sign-line"></div>
-            <div>Procurement & Site Incharge</div>
+            <div>Stores & Yard In-Charge</div>
           </div>
           <div className="print-sign-box">
             <div className="print-sign-line"></div>
-            <div>Finance & Accounts Approval</div>
+            <div>Project Manager</div>
           </div>
         </div>
       </div>

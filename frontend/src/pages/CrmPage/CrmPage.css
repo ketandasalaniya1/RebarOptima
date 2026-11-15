@@ -129,7 +129,7 @@
 }
 
 .crm-btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--table-row-hover);
   border-color: var(--text-label, #64748b);
 }
 
@@ -179,7 +179,7 @@
   font-size: 0.7rem;
   padding: 0.1rem 0.4rem;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--table-row-hover);
   color: var(--text-primary, #f8fafc);
   font-weight: 600;
 }
@@ -228,7 +228,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--input-bg);
 }
 
 .crm-kpi-value {
@@ -443,7 +443,7 @@
   font-weight: 700;
   color: var(--text-primary, #f8fafc);
   padding: 0.45rem 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--table-header-bg);
   border-radius: 6px;
   letter-spacing: 0.03em;
 }
@@ -500,22 +500,33 @@
 
 /* Cell Status Colors matching Profitbase standard */
 .crm-cell-available {
-  background-color: #10b981; /* Green */
+  background-color: #10b981;
+  /* Green */
 }
+
 .crm-cell-held {
-  background-color: #f59e0b; /* Yellow/Amber */
+  background-color: #f59e0b;
+  /* Yellow/Amber */
 }
+
 .crm-cell-reserved {
-  background-color: #3b82f6; /* Blue */
+  background-color: #3b82f6;
+  /* Blue */
 }
+
 .crm-cell-booked {
-  background-color: #8b5cf6; /* Purple */
+  background-color: #8b5cf6;
+  /* Purple */
 }
+
 .crm-cell-sold {
-  background-color: #64748b; /* Grey/Slate */
+  background-color: #64748b;
+  /* Grey/Slate */
 }
+
 .crm-cell-blocked {
-  background-color: #475569; /* Dark Slate / Management Hold */
+  background-color: #475569;
+  /* Dark Slate / Management Hold */
   border: 1px dashed #94a3b8 !important;
   color: #f1f5f9;
 }
@@ -572,7 +583,7 @@
 }
 
 .crm-inspect-price-box {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--table-header-bg);
   border: 1px solid var(--card-border, #23314d);
   border-radius: 8px;
   padding: 0.75rem 0.9rem;
@@ -852,9 +863,20 @@
   flex-shrink: 0;
 }
 
-.crm-feed-icon-circle.note { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-.crm-feed-icon-circle.call { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-.crm-feed-icon-circle.booking { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+.crm-feed-icon-circle.note {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.crm-feed-icon-circle.call {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.crm-feed-icon-circle.booking {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+}
 
 .crm-feed-content {
   flex: 1;
@@ -927,7 +949,7 @@
 }
 
 .crm-counter-box {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--table-row-hover);
   border: 1px solid var(--card-border, #23314d);
   border-radius: 6px;
   padding: 0.45rem;
@@ -995,7 +1017,7 @@
   font-size: 0.72rem;
   padding: 0.1rem 0.4rem;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--input-bg);
   color: var(--text-secondary, #94a3b8);
 }
 
@@ -1010,7 +1032,7 @@
 
 /* Draggable Kanban Card */
 .crm-kanban-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--table-header-bg);
   border: 1px solid var(--card-border, #23314d);
   border-radius: 8px;
   padding: 0.85rem;
@@ -1105,7 +1127,7 @@
 }
 
 .crm-modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--table-row-hover);
   color: var(--text-primary, #f8fafc);
 }
 
@@ -1199,12 +1221,12 @@
 }
 
 .crm-table th {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--table-header-bg);
   padding: 0.65rem 0.85rem;
   color: var(--text-secondary, #94a3b8);
   font-weight: 600;
   font-size: 0.74rem;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0.04em;
   border-bottom: 1px solid var(--card-border, #23314d);
 }
@@ -1217,7 +1239,7 @@
 }
 
 .crm-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--table-row-hover);
 }
 
 .crm-table-row-clickable {
@@ -1242,26 +1264,100 @@
   border-radius: 50%;
 }
 
-.crm-badge-stage-new { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
-.crm-badge-stage-contacted { background: rgba(99, 102, 241, 0.12); color: #818cf8; }
-.crm-badge-stage-qualified { background: rgba(168, 85, 247, 0.12); color: #c084fc; }
-.crm-badge-stage-visitscheduled { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
-.crm-badge-stage-visited { background: rgba(20, 184, 166, 0.12); color: #2dd4bf; }
-.crm-badge-stage-negotiation { background: rgba(249, 115, 22, 0.12); color: #fb923c; }
-.crm-badge-stage-booked { background: rgba(16, 185, 129, 0.12); color: #34d399; }
-.crm-badge-stage-lost { background: rgba(239, 68, 68, 0.12); color: #f87171; }
-.crm-badge-stage-onhold { background: rgba(100, 116, 139, 0.15); color: #94a3b8; }
+.crm-badge-stage-new {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+}
 
-.crm-badge-unit-available { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
-.crm-badge-unit-held { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
-.crm-badge-unit-reserved { background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25); }
-.crm-badge-unit-booked { background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); }
-.crm-badge-unit-blocked { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); }
+.crm-badge-stage-contacted {
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+}
 
-.crm-badge-pay-paid { background: rgba(16, 185, 129, 0.12); color: #34d399; }
-.crm-badge-pay-due { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
-.crm-badge-pay-overdue { background: rgba(239, 68, 68, 0.12); color: #f87171; }
-.crm-badge-pay-partiallypaid { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
+.crm-badge-stage-qualified {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+}
+
+.crm-badge-stage-visitscheduled {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+}
+
+.crm-badge-stage-visited {
+  background: rgba(20, 184, 166, 0.12);
+  color: #2dd4bf;
+}
+
+.crm-badge-stage-negotiation {
+  background: rgba(249, 115, 22, 0.12);
+  color: #fb923c;
+}
+
+.crm-badge-stage-booked {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+}
+
+.crm-badge-stage-lost {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.crm-badge-stage-onhold {
+  background: rgba(100, 116, 139, 0.15);
+  color: #94a3b8;
+}
+
+.crm-badge-unit-available {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.crm-badge-unit-held {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.crm-badge-unit-reserved {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.crm-badge-unit-booked {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.crm-badge-unit-blocked {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.crm-badge-pay-paid {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+}
+
+.crm-badge-pay-due {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+}
+
+.crm-badge-pay-overdue {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.crm-badge-pay-partiallypaid {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+}
 
 /* ── Printable Official Receipt ───────────────────────────────────────────── */
 .crm-receipt-sheet {
@@ -1351,12 +1447,15 @@
 }
 
 @media print {
-  body * {
+  body:has(.crm-receipt-sheet) * {
     visibility: hidden;
   }
-  .crm-receipt-sheet, .crm-receipt-sheet * {
+
+  body:has(.crm-receipt-sheet) .crm-receipt-sheet,
+  body:has(.crm-receipt-sheet) .crm-receipt-sheet * {
     visibility: visible;
   }
+
   .crm-receipt-sheet {
     position: absolute;
     left: 0;
@@ -1365,4 +1464,162 @@
     box-shadow: none;
     padding: 0;
   }
+}
+
+/* ── CRM V2 RESPONSIVE & MOBILE BOTTOM NAV ───────────────────────────────── */
+@keyframes crm-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.crm-spin {
+  animation: crm-spin 0.8s linear infinite;
+}
+
+@media (min-width: 769px) {
+  .crm-mobile-bottom-nav {
+    display: none !important;
+  }
+
+  .crm-main-viewport {
+    padding-bottom: 24px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .crm-desktop-screen-tabs {
+    display: none !important;
+  }
+
+  .crm-top-bar {
+    padding: 10px 14px !important;
+  }
+
+  .crm-container {
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  body:has(#crm-printable-receipt) * {
+    visibility: hidden;
+  }
+
+  body:has(#crm-printable-receipt) #crm-printable-receipt,
+  body:has(#crm-printable-receipt) #crm-printable-receipt * {
+    visibility: visible;
+  }
+
+  #crm-printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ── SIDEBAR & 380PX MOBILE RESPONSIVE TWEAKS ────────────────────────────── */
+@media (min-width: 769px) {
+  .crm-desktop-sidebar {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .crm-desktop-sidebar {
+    display: none !important;
+  }
+
+  .crm-mobile-bottom-nav {
+    display: flex !important;
+  }
+
+  .crm-today-rebuild {
+    padding: 12px 10px !important;
+  }
+
+  .crm-layout-shell {
+    flex-direction: column !important;
+  }
+}
+
+/* Light / Dark variable fallbacks */
+[data-theme="light"] .crm-layout-shell {
+  --main-bg: #f8fafc;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+}
+
+[data-theme="dark"] .crm-layout-shell {
+  --main-bg: #0b1120;
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CRM MULTI-FIELD FORMS: CONVERTED TO RIGHT DRAWERS
+   (Short confirmations remain centered popup modals)
+   ═══════════════════════════════════════════════════════════════════ */
+.crm-modal-backdrop:has(.crm-form-modal),
+.crm-modal-overlay:has(.crm-form-modal),
+.crm-modal-backdrop:has(.crm-drawer-modal),
+.crm-modal-overlay:has(.crm-drawer-modal),
+.crm-modal-backdrop:has(.crm-lead-modal),
+.crm-modal-overlay:has(.crm-lead-modal),
+.crm-modal-backdrop:has(.crm-customer-modal),
+.crm-modal-overlay:has(.crm-customer-modal),
+.crm-modal-backdrop:has(.crm-booking-modal),
+.crm-modal-overlay:has(.crm-booking-modal),
+.crm-modal-backdrop:has(.crm-payment-modal),
+.crm-modal-overlay:has(.crm-payment-modal) {
+  justify-content: flex-end;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+
+.crm-modal-backdrop:has(.crm-form-modal) .crm-modal,
+.crm-modal-overlay:has(.crm-form-modal) .crm-modal,
+.crm-modal-backdrop:has(.crm-form-modal) .crm-modal-container,
+.crm-modal-overlay:has(.crm-form-modal) .crm-modal-container,
+.crm-modal-backdrop:has(.crm-drawer-modal) .crm-modal,
+.crm-modal-overlay:has(.crm-drawer-modal) .crm-modal,
+.crm-modal-backdrop:has(.crm-lead-modal) .crm-modal,
+.crm-modal-overlay:has(.crm-lead-modal) .crm-modal,
+.crm-modal-backdrop:has(.crm-customer-modal) .crm-modal,
+.crm-modal-overlay:has(.crm-customer-modal) .crm-modal,
+.crm-modal-backdrop:has(.crm-booking-modal) .crm-modal,
+.crm-modal-overlay:has(.crm-booking-modal) .crm-modal,
+.crm-modal-backdrop:has(.crm-payment-modal) .crm-modal,
+.crm-modal-overlay:has(.crm-payment-modal) .crm-modal,
+.crm-drawer-modal {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  width: 620px !important;
+  max-width: 92vw !important;
+  border-radius: 0 !important;
+  border-left: 1px solid var(--card-border) !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.28) !important;
+  animation: ro-drawer-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: flex !important;
+  flex-direction: column !important;
 }

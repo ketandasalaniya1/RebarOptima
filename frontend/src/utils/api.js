@@ -27,12 +27,18 @@ export function getActiveProjectHeader() {
 
 export async function apiRequest(endpoint, options = {}) {
   const token = sessionStorage.getItem('accessToken');
-  
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
   const headers = {
-    'Content-Type': 'application/json',
+    ...(!isFormData && { 'Content-Type': 'application/json' }),
     ...options.headers,
   };
-  
+
+  // If uploading FormData, delete Content-Type so browser sets boundary automatically
+  if (isFormData && headers['Content-Type']) {
+    delete headers['Content-Type'];
+  }
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -47,19 +53,19 @@ export async function apiRequest(endpoint, options = {}) {
   if (!skipProjectHeader && projectHeader) {
     headers['X-Project-Id'] = String(projectHeader);
   }
-  
+
   const config = {
     ...options,
     headers,
   };
-  
-  if (options.body && typeof options.body === 'object') {
+
+  if (options.body && typeof options.body === 'object' && !isFormData) {
     config.body = JSON.stringify(options.body);
   }
-  
+
   let response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   let data = await response.json().catch(() => null);
-  
+
   if (response.status === 401 && !endpoint.startsWith('/auth/')) {
     if (isRefreshing) {
       try {
@@ -77,24 +83,24 @@ export async function apiRequest(endpoint, options = {}) {
       try {
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (!refreshToken) throw new Error('No refresh token available');
-        
+
         const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken })
         });
-        
+
         const refreshData = await refreshRes.json();
         if (!refreshRes.ok) throw new Error('Refresh failed');
-        
+
         sessionStorage.setItem('accessToken', refreshData.accessToken);
         if (refreshData.refreshToken) {
           sessionStorage.setItem('refreshToken', refreshData.refreshToken);
         }
-        
+
         isRefreshing = false;
         processQueue(null, refreshData.accessToken);
-        
+
         config.headers['Authorization'] = `Bearer ${refreshData.accessToken}`;
         response = await fetch(`${API_BASE_URL}${endpoint}`, config);
         data = await response.json().catch(() => null);
@@ -106,7 +112,7 @@ export async function apiRequest(endpoint, options = {}) {
         try {
           const parsed = JSON.parse(storedUser || '{}');
           if (parsed.accountType === 'developer' || parsed.role === 'DEVELOPER' || parsed.role === 'SUPER_ADMIN') isDev = true;
-        } catch (_) {}
+        } catch (_) { }
         sessionStorage.clear();
         if (isDev) {
           window.location.href = '/developer-login';
@@ -117,34 +123,34 @@ export async function apiRequest(endpoint, options = {}) {
       }
     }
   }
-  
+
   if (!response.ok) {
     const errorMsg = (Array.isArray(data?.message) ? data.message[0] : data?.message) || `HTTP error! status: ${response.status}`;
     throw new Error(errorMsg);
   }
-  
+
   return data;
 }
 
 export const authApi = {
-  signin: (email, password) => 
+  signin: (email, password) =>
     apiRequest('/auth/signin', { method: 'POST', body: { email, password } }),
-  signup: (dto) => 
+  signup: (dto) =>
     apiRequest('/auth/signup', { method: 'POST', body: dto }),
   developerSignin: (email, password) =>
     apiRequest('/auth/developer/signin', { method: 'POST', body: { email, password } }),
 };
 
 export const inventoryApi = {
-  getInventory: (projectId) => 
+  getInventory: (projectId) =>
     apiRequest(projectId ? `/inventory?projectId=${projectId}` : '/inventory'),
-  inward: (dto) => 
+  inward: (dto) =>
     apiRequest('/inventory/inward', { method: 'POST', body: dto }),
-  getScrapRules: () => 
+  getScrapRules: () =>
     apiRequest('/inventory/scrap-rules'),
-  updateScrapRules: (rules) => 
+  updateScrapRules: (rules) =>
     apiRequest('/inventory/scrap-rules', { method: 'POST', body: { rules } }),
-  getLedger: (projectId) => 
+  getLedger: (projectId) =>
     apiRequest(projectId ? `/inventory/ledger?projectId=${encodeURIComponent(projectId)}` : '/inventory/ledger'),
   deleteStockItem: (id) =>
     apiRequest(`/inventory/${id}`, { method: 'DELETE' }),
@@ -163,9 +169,9 @@ export const inventoryApi = {
 export const batchesApi = {
   optimize: (payload) =>
     apiRequest('/batches/optimize', { method: 'POST', body: payload }),
-  commitBatch: (batchData) => 
+  commitBatch: (batchData) =>
     apiRequest('/batches', { method: 'POST', body: batchData }),
-  getHistory: (projectId) => 
+  getHistory: (projectId) =>
     apiRequest(projectId ? `/batches?projectId=${projectId}` : '/batches'),
   getStats: (projectId) =>
     apiRequest(projectId ? `/batches/stats?projectId=${encodeURIComponent(projectId)}` : '/batches/stats'),
@@ -175,6 +181,29 @@ export const batchesApi = {
     apiRequest(`/batches/${id}`, { method: 'PUT', body: { batchName } }),
   deleteBatch: (id, restoreStock = false) =>
     apiRequest(`/batches/${id}?restoreStock=${restoreStock}`, { method: 'DELETE' }),
+};
+
+export const predefinedCutsApi = {
+  getAll: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiRequest(`/predefined-cuts${qs ? `?${qs}` : ''}`);
+  },
+  getGroups: (projectId) =>
+    apiRequest(`/predefined-cuts/groups${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`),
+  create: (data) =>
+    apiRequest('/predefined-cuts', { method: 'POST', body: data }),
+  importCsv: (data) =>
+    apiRequest('/predefined-cuts/import', { method: 'POST', body: data }),
+  update: (id, data) =>
+    apiRequest(`/predefined-cuts/${id}`, { method: 'PUT', body: data }),
+  delete: (id) =>
+    apiRequest(`/predefined-cuts/${id}`, { method: 'DELETE' }),
+  bulkDelete: (data) =>
+    apiRequest('/predefined-cuts/bulk-delete', { method: 'POST', body: data }),
+  renameGroup: (data) =>
+    apiRequest('/predefined-cuts/groups/rename', { method: 'PUT', body: data }),
+  deleteGroup: (groupName, projectId) =>
+    apiRequest('/predefined-cuts/bulk-delete', { method: 'POST', body: { groupName, projectId } }),
 };
 
 export const MAX_BLOCKS_PER_PROJECT = 200;
@@ -195,6 +224,37 @@ export const projectsApi = {
     apiRequest(`/projects/${projectId}/blocks/${blockId}`, { method: 'PUT', body: data }),
   archiveBlock: (projectId, blockId, { hard = false } = {}) =>
     apiRequest(`/projects/${projectId}/blocks/${blockId}${hard ? '?hard=true' : ''}`, { method: 'DELETE' }),
+
+  // Unit Master Data (Global Single Source of Truth)
+  getUnitMasterData: () => apiRequest('/projects/unit-master-data'),
+
+  // Floors / Levels
+  getAllFloors: (projectId, { includeInactive = false, blockId } = {}) => {
+    const qs = new URLSearchParams();
+    if (includeInactive) qs.append('includeInactive', 'true');
+    if (blockId) qs.append('blockId', blockId);
+    return apiRequest(`/projects/${projectId}/floors${qs.toString() ? `?${qs.toString()}` : ''}`);
+  },
+  getFloors: (projectId, blockId, { includeInactive = false } = {}) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors${includeInactive ? '?includeInactive=true' : ''}`),
+  createFloor: (projectId, blockId, data) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors`, { method: 'POST', body: data }),
+  updateFloor: (projectId, blockId, floorId, data) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/${floorId}`, { method: 'PUT', body: data }),
+  deleteFloor: (projectId, blockId, floorId, { hard = false } = {}) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/${floorId}${hard ? '?hard=true' : ''}`, { method: 'DELETE' }),
+  reorderFloors: (projectId, blockId, floorIds) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/reorder`, { method: 'PUT', body: { floorIds } }),
+
+  // Units
+  getUnits: (projectId, blockId, floorId) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/${floorId}/units`),
+  createUnit: (projectId, blockId, floorId, data) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/${floorId}/units`, { method: 'POST', body: data }),
+  updateUnit: (projectId, blockId, floorId, unitId, data) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/${floorId}/units/${unitId}`, { method: 'PUT', body: data }),
+  deleteUnit: (projectId, blockId, floorId, unitId, { hard = false } = {}) =>
+    apiRequest(`/projects/${projectId}/blocks/${blockId}/floors/${floorId}/units/${unitId}${hard ? '?hard=true' : ''}`, { method: 'DELETE' }),
 };
 
 // Developer API
@@ -526,7 +586,8 @@ export const pettyCashApi = {
     return apiRequest(`/petty-cash/transactions${qs ? `?${qs}` : ''}`);
   },
   createTransaction: (data) => apiRequest('/petty-cash/transactions', { method: 'POST', body: data }),
-  deleteTransaction: (id) => apiRequest(`/petty-cash/transactions/${id}`, { method: 'DELETE' })
+  deleteTransaction: (id) => apiRequest(`/petty-cash/transactions/${id}`, { method: 'DELETE' }),
+  updateStatus: (id, data) => apiRequest(`/petty-cash/transactions/${id}/status`, { method: 'PATCH', body: data })
 };
 
 export const contractorsApi = {

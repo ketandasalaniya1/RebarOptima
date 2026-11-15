@@ -33,6 +33,9 @@ export const drawingsApi = {
     const query = new URLSearchParams();
     if (params.projectId && params.projectId !== 'all') query.append('projectId', params.projectId);
     if (params.disciplineId && params.disciplineId !== 'all') query.append('disciplineId', params.disciplineId);
+    if (params.blockId && params.blockId !== 'all') query.append('blockId', params.blockId);
+    if (params.block && params.block !== 'all') query.append('block', params.block);
+    if (params.level && params.level !== 'all') query.append('level', params.level);
     if (params.status && params.status !== 'all') query.append('status', params.status);
     if (params.search) query.append('search', params.search);
     if (params.page) query.append('page', params.page);
@@ -43,9 +46,31 @@ export const drawingsApi = {
   createDrawing: (data) => apiRequest('/drawings/drawings', { method: 'POST', body: data }),
   getDrawingDetail: (id) => apiRequest(`/drawings/drawings/${id}`),
 
-  // 5. Revisions
+  // 4b. Matrix
+  getMatrix: (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.projectId && params.projectId !== 'all') query.append('projectId', params.projectId);
+    if (params.disciplineId && params.disciplineId !== 'all') query.append('disciplineId', params.disciplineId);
+    if (params.blockId && params.blockId !== 'all') query.append('blockId', params.blockId);
+    const qs = query.toString();
+    return apiRequest(`/drawings/matrix${qs ? `?${qs}` : ''}`);
+  },
+
+  // 4c. Check duplicate
+  checkDuplicate: (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.projectId) query.append('projectId', params.projectId);
+    if (params.drawingNumber) query.append('drawingNumber', params.drawingNumber);
+    return apiRequest(`/drawings/check-duplicate?${query.toString()}`);
+  },
+
+  // 5. Revisions / Versions
   uploadRevision: (drawingId, data) =>
     apiRequest(`/drawings/drawings/${drawingId}/revisions`, { method: 'POST', body: data }),
+  makeRevisionCurrent: (drawingId, revisionId) =>
+    apiRequest(`/drawings/drawings/${drawingId}/versions/${revisionId}/make-current`, { method: 'POST' }),
+  updateRevision: (drawingId, revisionId, data) =>
+    apiRequest(`/drawings/drawings/${drawingId}/versions/${revisionId}`, { method: 'PATCH', body: data }),
 
   // 6. Review & Approval
   submitForReview: (drawingId, revisionId, data = {}) =>

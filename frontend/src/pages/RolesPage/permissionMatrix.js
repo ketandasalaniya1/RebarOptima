@@ -8,7 +8,7 @@ export const MODULE_GROUPS = [
   {
     id: 'site',
     label: 'Site Operations',
-    modules: ['casting', 'generalInventory', 'pettyCash', 'contractors', 'manpower', 'attendance', 'projectManagement', 'projects', 'drawings', 'reports'],
+    modules: ['casting', 'generalInventory', 'pettyCash', 'contractors', 'manpower', 'attendance', 'projectManagement', 'projects', 'drawings'],
   },
   {
     id: 'sales',
@@ -18,7 +18,7 @@ export const MODULE_GROUPS = [
   {
     id: 'admin',
     label: 'Admin',
-    modules: ['overview', 'users', 'roles', 'settings', 'activityLogs'],
+    modules: ['overview', 'users', 'roles', 'activityLogs'],
   },
 ];
 

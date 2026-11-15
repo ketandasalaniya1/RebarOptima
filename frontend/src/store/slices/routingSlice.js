@@ -28,6 +28,7 @@ const getInitialView = () => {
   if (path === '/developer-login' || path === '/superadmin-login') return 'superadmin-login';
   if (path === '/developer' || path === '/superadmin') return 'superadmin-login';
   if (path === '/register') return 'signup';
+  if (path === '/design-system') return 'design-system';
 
   if (token && !isExpired) {
     if (path === '/inventory') return 'inventory';
@@ -36,14 +37,33 @@ const getInitialView = () => {
     if (path === '/history') return 'history';
     if (path === '/bbs') return 'bbs';
     if (path === '/casting') return 'casting';
-    if (path === '/general-inventory') return 'general-inventory';
-    if (path === '/crm') return 'crm';
+    if (path === '/general-inventory' || path === '/site-inventory') return 'general-inventory';
+    if (path === '/crm/dashboard') return 'crm-dashboard';
+    if (path === '/crm/today') return 'crm-today';
+    if (path === '/crm/leads') return 'crm-leads';
+    if (path === '/crm/pipeline') return 'crm-pipeline';
+    if (path === '/crm/tasks') return 'crm-tasks';
+    if (path === '/crm/calendar') return 'crm-calendar';
+    if (path === '/crm/followups') return 'crm-followups';
+    if (path === '/crm/inventory') return 'crm-inventory';
+    if (path === '/crm/templates') return 'crm-templates';
+    if (path === '/crm/import') return 'crm-import';
+    if (path === '/crm') {
+      const sp = new URLSearchParams(window.location.search).get('screen');
+      if (sp === 'dashboard') return 'crm-dashboard';
+      if (sp === 'leads') return 'crm-leads';
+      if (sp === 'pipeline') return 'crm-pipeline';
+      if (sp === 'tasks') return 'crm-tasks';
+      if (sp === 'calendar') return 'crm-calendar';
+      if (sp === 'followups') return 'crm-followups';
+      if (sp === 'inventory') return 'crm-inventory';
+      if (sp === 'templates') return 'crm-templates';
+      if (sp === 'import') return 'crm-import';
+      return 'crm-today';
+    }
     if (path.startsWith('/t/')) return 'public-transmittal';
     if (path === '/drawings/matrix') return 'drawings-matrix';
-    if (path === '/drawings/approvals') return 'drawings-approvals';
-    if (path === '/drawings/transmittals') return 'drawings-transmittals';
-    if (path === '/drawings/activity') return 'drawings-activity';
-    if (path === '/drawings/plan-pass') return 'drawings-plan-pass';
+    if (path === '/drawings/versions') return 'drawings-versions';
     if (path.startsWith('/drawings/')) return 'drawings-viewer';
     if (path === '/drawings') return 'drawings';
     if (path === '/petty-cash') return 'petty-cash';
@@ -53,12 +73,12 @@ const getInitialView = () => {
     if (path === '/attendance' || path === '/attendance/mark') return 'attendance-mark';
     if (path === '/attendance/history') return 'attendance-history';
     if (path === '/attendance/reports') return 'attendance-reports';
-    if (path === '/reports') return 'reports';
+    if (path === '/reports') return 'overview';
     if (path === '/chat') return 'chat';
     if (path === '/ledger') return 'ledger';
     if (path === '/activity-logs') return 'activity-logs';
     if (path === '/project-management') return 'project-management';
-    if (path === '/settings') return 'settings';
+    if (path === '/settings') return 'overview';
     if (path === '/profile') return 'profile';
     if (path === '/projects') return 'projects';
     if (path === '/roles') return 'roles';
@@ -67,6 +87,7 @@ const getInitialView = () => {
     if (path === '/bbs/wizard') return 'bbs-wizard';
     if (path === '/bbs/shapes') return 'bbs-shapes';
     if (path === '/bbs/reports') return 'bbs-reports';
+    if (path === '/design-system') return 'design-system';
     return 'overview';
   } else {
     if (path === '/register') return 'signup';
@@ -105,11 +126,20 @@ const routingSlice = createSlice({
       else if (newView === 'attendance-history') targetPath = '/attendance/history';
       else if (newView === 'attendance-reports') targetPath = '/attendance/reports';
       else if (newView === 'drawings-matrix') targetPath = '/drawings/matrix';
-      else if (newView === 'drawings-approvals') targetPath = '/drawings/approvals';
-      else if (newView === 'drawings-transmittals') targetPath = '/drawings/transmittals';
-      else if (newView === 'drawings-activity') targetPath = '/drawings/activity';
-      else if (newView === 'drawings-plan-pass') targetPath = '/drawings/plan-pass';
+      else if (newView === 'drawings-versions') targetPath = '/drawings/versions';
       else if (newView === 'drawings') targetPath = '/drawings';
+      else if (newView === 'crm-dashboard') targetPath = '/crm/dashboard';
+      else if (newView === 'crm-today') targetPath = '/crm/today';
+      else if (newView === 'crm-leads') targetPath = '/crm/leads';
+      else if (newView === 'crm-pipeline') targetPath = '/crm/pipeline';
+      else if (newView === 'crm-tasks') targetPath = '/crm/tasks';
+      else if (newView === 'crm-calendar') targetPath = '/crm/calendar';
+      else if (newView === 'crm-followups') targetPath = '/crm/followups';
+      else if (newView === 'crm-inventory') targetPath = '/crm/inventory';
+      else if (newView === 'crm-templates') targetPath = '/crm/templates';
+      else if (newView === 'crm-import') targetPath = '/crm/import';
+      else if (newView === 'crm') targetPath = '/crm/today';
+      else if (newView === 'design-system') targetPath = '/design-system';
       else if (newView === 'public-transmittal') targetPath = window.location.pathname;
       else if (newView !== 'overview') targetPath = `/${newView}`;
 

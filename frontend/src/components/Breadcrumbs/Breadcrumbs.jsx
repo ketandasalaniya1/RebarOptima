@@ -21,6 +21,16 @@ const VIEW_TITLES = {
   casting: 'Casting Management',
   'general-inventory': 'Site Inventory',
   crm: 'Real Estate CRM',
+  'crm-dashboard': 'CRM Dashboard',
+  'crm-today': 'Today',
+  'crm-leads': 'Leads',
+  'crm-pipeline': 'Sales Pipeline',
+  'crm-tasks': 'CRM Tasks',
+  'crm-calendar': 'CRM Calendar',
+  'crm-followups': 'Follow-ups',
+  'crm-inventory': 'Real Estate Unit Inventory',
+  'crm-templates': 'WhatsApp Templates',
+  'crm-import': 'Import Leads',
   drawings: 'Drawings & Files',
   'petty-cash': 'Petty Cash',
   'project-management': 'Projects & Tasks',
@@ -71,7 +81,7 @@ export default function Breadcrumbs() {
     }
 
     // Organization-level modules
-    if (['users', 'roles', 'settings', 'profile', 'activity-logs'].includes(currentView)) {
+    if (['users', 'roles', 'profile', 'activity-logs'].includes(currentView)) {
       segments.push({
         label: 'Organization',
       });
@@ -115,6 +125,22 @@ export default function Breadcrumbs() {
       currentView === 'attendance-reports'
     ) {
       segments.push({ label: 'Attendance' });
+    }
+
+    if (currentView === 'crm' || (typeof currentView === 'string' && currentView.startsWith('crm-'))) {
+      const isRootCrm = currentView === 'crm' || currentView === 'crm-today';
+      segments.push({
+        label: 'Real Estate CRM',
+        onClick: isRootCrm ? undefined : () => navigate('crm-today'),
+        isCurrent: isRootCrm,
+      });
+      if (!isRootCrm) {
+        segments.push({
+          label: VIEW_TITLES[currentView] || currentView,
+          isCurrent: true,
+        });
+      }
+      return segments;
     }
 
     segments.push({

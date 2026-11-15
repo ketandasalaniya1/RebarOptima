@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Lock, EyeOff, Eye, Map, ClipboardList, TrendingUp, Shield, Users } from 'lucide-react';
+import { User, Lock, EyeOff, Eye, Map, ClipboardList, TrendingUp, Shield, Users, CheckCircle2 } from 'lucide-react';
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle';
 import logo from '../../assets/logo.png';
 import { authApi } from '../../utils/api';
@@ -11,10 +11,16 @@ import './SignInPage.css';
 const REMEMBER_EMAIL_KEY = 'rebar_remember_email';
 const REMEMBER_FLAG_KEY = 'rebar_remember_me';
 
-const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => {
+const SignInPage = ({
+  onSignIn,
+  onNavigateToSignUp,
+  onNavigateToDeveloper,
+  noticeMessage,
+  initialEmail = '',
+}) => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(initialEmail || '');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
@@ -22,6 +28,10 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
   const [logoClicks, setLogoClicks] = useState(0);
 
   useEffect(() => {
+    if (initialEmail) {
+      setEmail(initialEmail);
+      return;
+    }
     try {
       const savedFlag = localStorage.getItem(REMEMBER_FLAG_KEY) === '1';
       const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || '';
@@ -32,7 +42,7 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
     } catch {
       /* ignore storage errors */
     }
-  }, []);
+  }, [initialEmail]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -107,8 +117,8 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
           <div className="signin-left">
             <div className="signin-left-content">
               <div className="logo-container">
-                <div className="logo-img-wrapper" onClick={handleLogoClick} style={{ cursor: 'pointer' }} title="RebarOptima">
-                  <img src={logo} alt="RebarOptima" className="logo-img" />
+                <div className="logo-img-wrapper" onClick={handleLogoClick} style={{ cursor: 'pointer' }} title="CraveToBuild">
+                  <img src={logo} alt="CraveToBuild" className="logo-img" />
                 </div>
               </div>
 
@@ -148,14 +158,21 @@ const SignInPage = ({ onSignIn, onNavigateToSignUp, onNavigateToDeveloper }) => 
           {/* Right Section */}
           <div className="signin-right">
             <div className="signin-form-container">
-              <div className="mobile-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }} title="RebarOptima">
-                  <img src={logo} alt="RebarOptima" className="logo-img" />
+              <div className="mobile-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }} title="CraveToBuild">
+                  <img src={logo} alt="CraveToBuild" className="logo-img" />
               </div>
 
               <div className="form-header">
                 <h2>Sign In</h2>
                 <p className="subtitle">Enter your credentials to access your account</p>
               </div>
+
+              {noticeMessage && (
+                <div className="auth-success-message">
+                  <CheckCircle2 size={16} />
+                  <span>{noticeMessage}</span>
+                </div>
+              )}
 
               {error && <div className="auth-error-message">{error}</div>}
 

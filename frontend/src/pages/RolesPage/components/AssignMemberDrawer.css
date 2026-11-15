@@ -1,0 +1,137 @@
+/* Assign Member Drawer Styles */
+
+.amd-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.amd-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.amd-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary, #94a3b8);
+  pointer-events: none;
+}
+
+.amd-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border, #cbd5e1);
+  background: var(--input-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.amd-search-input:focus {
+  border-color: var(--accent, #059669);
+}
+
+.amd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.amd-user-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #e2e8f0);
+  background: var(--card-bg, #ffffff);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.amd-user-row:hover {
+  background: var(--input-bg, #f8fafc);
+  border-color: var(--accent, #059669);
+}
+
+.amd-user-row.selected {
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.08));
+  border-color: var(--accent, #059669);
+}
+
+.amd-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--accent, #059669);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.amd-user-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.amd-user-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.amd-user-meta,
+.amd-user-current-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.amd-radio-pill {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--card-border, #cbd5e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.amd-user-row.selected .amd-radio-pill {
+  background: var(--accent, #059669);
+  border-color: var(--accent, #059669);
+}
+
+.amd-empty {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #94a3b8);
+  font-style: italic;
+  text-align: center;
+  padding: 24px;
+}
+
+.amd-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+

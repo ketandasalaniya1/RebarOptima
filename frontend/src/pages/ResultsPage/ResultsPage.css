@@ -1836,6 +1836,21 @@
   display: none !important;
 }
 
+/* Screen Mode styles for html2pdf screenshot engine */
+.results-page.print-mode .print-only {
+  display: block !important;
+}
+
+.results-page.print-mode .no-print,
+.results-page.print-mode .results-actions,
+.results-page.print-mode .results-guided-path-banner,
+.results-page.print-mode .steel-header-wrapper,
+.results-page.print-mode .breadcrumbs-container,
+.results-page.print-mode .side-navbar,
+.results-page.print-mode .app-header {
+  display: none !important;
+}
+
 @page {
   size: A4 portrait;
   margin: 10mm 8mm 12mm 8mm;
@@ -1863,13 +1878,18 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   }
 
-  /* Hide screen-only interactive elements */
+  /* Hide screen-only interactive elements in native print */
   .no-print,
   .results-actions,
+  .results-guided-path-banner,
   .modal-backdrop,
   .print-menu-wrapper,
   .side-navbar,
-  .app-header {
+  .app-header,
+  .steel-header-wrapper,
+  .breadcrumbs-container,
+  .topbar,
+  .error-alert-banner {
     display: none !important;
   }
 
@@ -2302,7 +2322,10 @@
   .print-mode-foreman .top-cards-grid,
   .print-mode-foreman .financial-summary-card,
   .print-mode-foreman .table-card-summary,
-  .print-mode-foreman .wt-card {
+  .print-mode-foreman .wt-card,
+  .print-mode-foreman .bottom-summary-grid,
+  .print-mode-foreman .tables-grid,
+  .print-mode-foreman .results-metadata-grid {
     display: none !important;
   }
 
@@ -2312,7 +2335,8 @@
   }
 
   .print-mode-summary .layouts-section,
-  .print-mode-summary .wt-card {
+  .print-mode-summary .wt-card,
+  .print-mode-summary .financial-summary-card {
     display: none !important;
   }
 

@@ -5316,3 +5316,53 @@
     font-size: 0.75rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CASTING FORMS: MULTI-FIELD FORMS TO RIGHT DRAWERS
+   (Short confirmations remain centered modals)
+   ═══════════════════════════════════════════════════════════════════ */
+.casting-modal-overlay:has(.casting-modal.large),
+.casting-modal-overlay:has(.modal-content.large),
+.casting-modal-overlay:has(.casting-modal.medium),
+.casting-modal-overlay:has(.modal-content.medium),
+.casting-modal-backdrop:has(.casting-modal.large),
+.casting-modal-backdrop:has(.modal-content.large),
+.casting-modal-backdrop:has(.casting-modal.medium),
+.casting-modal-backdrop:has(.modal-content.medium) {
+  justify-content: flex-end;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+
+.casting-modal-overlay:has(.casting-modal.large) .casting-modal,
+.casting-modal-overlay:has(.modal-content.large) .modal-content,
+.casting-modal-overlay:has(.casting-modal.medium) .casting-modal,
+.casting-modal-overlay:has(.modal-content.medium) .modal-content,
+.casting-modal-backdrop:has(.casting-modal.large) .casting-modal,
+.casting-modal-backdrop:has(.modal-content.large) .modal-content,
+.casting-modal-backdrop:has(.casting-modal.medium) .casting-modal,
+.casting-modal-backdrop:has(.modal-content.medium) .modal-content {
+  height: 100vh;
+  max-height: 100vh;
+  width: 620px;
+  max-width: 92vw;
+  border-radius: 0;
+  border-left: 1px solid var(--card-border);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.28);
+  animation: ro-drawer-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes ro-drawer-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

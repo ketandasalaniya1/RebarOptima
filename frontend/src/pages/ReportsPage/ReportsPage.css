@@ -5,9 +5,16 @@
 
 .rep-page {
   width: 100%;
-  max-width: 1300px;
+  max-width: var(--page-max-width, 1680px);
   margin: 0 auto;
   padding: 16px 24px 64px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .rep-page {
+    padding: 12px 14px 48px;
+  }
 }
 
 /* ─── Header ───────────────────────────────────────────────────────────── */

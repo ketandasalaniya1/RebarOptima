@@ -4,6 +4,7 @@ import { ShieldAlert, AlertTriangle, LogOut, Check, X, HardDrive, Users, CheckCi
 import { publicApi } from '../../utils/api';
 import { logout } from '../../store/slices/authSlice';
 import { setView } from '../../store/slices/routingSlice';
+import brandLogo from '../../assets/logo.png';
 import './SubscribePage.css';
 
 export default function SubscribePage() {
@@ -81,8 +82,7 @@ export default function SubscribePage() {
       {/* Header Bar */}
       <header className="subscribe-header">
         <div className="subscribe-brand">
-          <div className="subscribe-logo-icon">RO</div>
-          <span className="subscribe-title">RebarOptima</span>
+          <img src={brandLogo} alt="CraveToBuild" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
         </div>
         <button className="subscribe-logout-btn" onClick={handleLogout}>
           <LogOut size={16} /> Sign Out

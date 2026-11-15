@@ -111,11 +111,48 @@ export async function listProjectBlocks(
   if (!opts.includeInactive) {
     filter.status = 'active';
   }
-  return db
+  const blocks = await db
     .collection(PROJECT_BLOCKS_COLLECTION)
     .find(filter)
     .sort({ displayOrder: 1, createdAt: 1 })
     .toArray();
+
+  // Enrich each block with live floor and unit counts
+  const enriched = await Promise.all(
+    blocks.map(async (b: any) => {
+      const bId = String(b._id || b.id);
+      const floorsColl = db.collection('project_floors');
+      const unitsColl = db.collection('crm_units');
+
+      const floorCount =
+        typeof floorsColl?.countDocuments === 'function'
+          ? await floorsColl.countDocuments({
+              $or: [{ blockId: bId }, { blockId: b._id }],
+              isDeleted: { $ne: true },
+            }).catch(() => 0)
+          : 0;
+
+      const unitCount =
+        typeof unitsColl?.countDocuments === 'function'
+          ? await unitsColl.countDocuments({
+              $or: [
+                { blockId: bId },
+                { blockId: b._id },
+                { buildingTower: b.name },
+              ],
+              isDeleted: { $ne: true },
+            }).catch(() => 0)
+          : 0;
+
+      return {
+        ...b,
+        floorCount,
+        unitCount,
+      };
+    }),
+  );
+
+  return enriched;
 }
 
 /**
@@ -442,19 +479,27 @@ export async function archiveBlockForProject(params: {
   });
 
   const bId = String(block._id);
+  const safeCount = async (collName: string, query: any) => {
+    const c = db.collection(collName);
+    return typeof c?.countDocuments === 'function' ? c.countDocuments(query).catch(() => 0) : 0;
+  };
   const childRefs = await Promise.all([
-    db.collection('bbs_levels').countDocuments({ blockId: { $in: [bId, block._id] } }).catch(() => 0),
-    db.collection('bbs_members').countDocuments({ blockId: { $in: [bId, block._id] } }).catch(() => 0),
-    db.collection('casting_levels').countDocuments({ blockId: { $in: [bId, block._id] } }).catch(() => 0),
-    db.collection('casting_members').countDocuments({ blockId: { $in: [bId, block._id] } }).catch(() => 0),
-    db.collection('crm_units').countDocuments({ blockId: { $in: [bId, block._id] } }).catch(() => 0),
+    safeCount('project_floors', { blockId: { $in: [bId, block._id] }, isDeleted: { $ne: true } }),
+    safeCount('bbs_levels', { blockId: { $in: [bId, block._id] } }),
+    safeCount('bbs_members', { blockId: { $in: [bId, block._id] } }),
+    safeCount('casting_levels', { blockId: { $in: [bId, block._id] } }),
+    safeCount('casting_members', { blockId: { $in: [bId, block._id] } }),
+    safeCount('crm_units', {
+      $or: [{ blockId: { $in: [bId, block._id] } }, { buildingTower: block.name }],
+      isDeleted: { $ne: true },
+    }),
   ]);
   const childCount = childRefs.reduce((a, b) => a + b, 0);
 
   if (hardDelete) {
     if (childCount > 0) {
       const err: any = new Error(
-        'Cannot hard-delete block while levels, members, or units reference it; archive instead',
+        'Cannot hard-delete block while floors, levels, members, or units reference it; archive instead',
       );
       err.status = 409;
       err.code = 'BLOCK_HAS_CHILDREN';

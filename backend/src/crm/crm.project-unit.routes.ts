@@ -1,8 +1,17 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { reserveUnitSafely, releaseUnitSafely, evaluateUnitAvailability, generateBusinessReference } from './crm.reservation.service';
-import { calculateBookingFinancials } from './crm.calculation.service';
+import {
+  reserveUnitSafely,
+  releaseUnitSafely,
+  blockUnitSafely,
+  unblockUnitSafely,
+  evaluateUnitAvailability,
+  generateBusinessReference
+} from './crm.reservation.service';
+import { calculateBookingFinancials, rupeesToPaise } from './crm.calculation.service';
 import { resolveUserAndCompany, listAccessibleGlobalProjects } from '../projects/module-project-adapter';
+import { requireCrmRole } from './crm.security.service';
+import { crmRateLimiter } from './crm.validation';
 
 export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any, logAudit: any) {
   const router = Router();
@@ -287,12 +296,21 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const {
         projectId,
         buildingTower,
+        blockId,
+        floorId,
+        floorName,
         floorNumber,
         unitNumber,
+        unitCode: customUnitCode,
         configuration = '2BHK',
         propertyType = 'Apartment',
         carpetAreaSqFt,
+        builtUpAreaSqFt,
         saleableAreaSqFt,
+        balconyAreaSqFt,
+        areaUnit = 'sq.ft',
+        specifications,
+        features,
         basePrice,
         askingPrice,
         facing = 'East',
@@ -308,7 +326,7 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
         || (await db.collection('crm_projects').findOne({ _id: prjId, companyId }));
       if (!project) return res.status(404).json({ message: 'Parent project not found.' });
 
-      const unitCode = `${buildingTower}-${unitNumber}`.toUpperCase();
+      const unitCode = customUnitCode ? String(customUnitCode).trim().toUpperCase() : `${buildingTower}-${unitNumber}`.toUpperCase();
 
       // Check collision within same project
       const exists = await db.collection('crm_units').findOne({
@@ -324,20 +342,33 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const calculatedBasePrice = Number(basePrice) || (Number(carpetAreaSqFt || 1000) * 6000);
       const calculatedAskingPrice = Number(askingPrice) || calculatedBasePrice;
 
+      const specsList = Array.isArray(specifications) ? specifications : (Array.isArray(features) ? features : []);
+
       const newUnit: any = {
         companyId,
         projectId: prjId,
         projectName: project.name,
         unitCode,
         buildingTower: String(buildingTower).trim().toUpperCase(),
+        sectionName: String(buildingTower).trim().toUpperCase(),
+        blockId: blockId ? String(blockId) : undefined,
+        floorId: floorId ? String(floorId) : undefined,
+        floorName: floorName ? String(floorName) : undefined,
         floorNumber: Number(floorNumber),
         unitNumber: String(unitNumber).trim(),
         configuration,
         propertyType,
         carpetAreaSqFt: Number(carpetAreaSqFt) || 0,
+        builtUpAreaSqFt: Number(builtUpAreaSqFt) || 0,
         saleableAreaSqFt: Number(saleableAreaSqFt) || Number(carpetAreaSqFt) || 0,
+        balconyAreaSqFt: Number(balconyAreaSqFt) || 0,
+        areaUnit,
+        specifications: specsList,
+        features: specsList,
         basePrice: calculatedBasePrice,
+        basePricePaise: rupeesToPaise(calculatedBasePrice),
         askingPrice: calculatedAskingPrice,
+        askingPricePaise: rupeesToPaise(calculatedAskingPrice),
         availabilityStatus: 'Available',
         heldUntil: null,
         heldByCustomerId: null,
@@ -357,50 +388,64 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
   });
 
   // POST /api/crm/units/:id/reserve - Atomic unit reservation
-  router.post('/units/:id/reserve', authMiddleware, async (req: any, res) => {
-    try {
-      const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const { customerId, durationHours = 48 } = req.body;
+  router.post(
+    '/units/:id/reserve',
+    authMiddleware,
+    requireCrmRole('admin', 'sales_manager', 'sales_rep'),
+    crmRateLimiter({ max: 30 }),
+    async (req: any, res) => {
+      try {
+        const db = getDb();
+        const companyId = await resolveCompanyId(req, db);
+        const { customerId, durationHours, holdDurationHours } = req.body;
 
-      if (!customerId) return res.status(400).json({ message: 'Customer ID is required to reserve a unit.' });
+        if (!customerId) return res.status(400).json({ message: 'Customer ID is required to reserve a unit.' });
 
-      const reservationResult = await reserveUnitSafely(
-        db,
-        companyId,
-        req.params.id,
-        customerId,
-        Number(durationHours)
-      );
+        const hours = Number(holdDurationHours || durationHours || 48);
 
-      if (!reservationResult.success) {
-        return res.status(409).json({ message: reservationResult.message });
+        const reservationResult = await reserveUnitSafely(
+          db,
+          companyId,
+          req.params.id,
+          customerId,
+          hours
+        );
+
+        if (!reservationResult.success) {
+          return res.status(409).json({ message: reservationResult.message, conflict: true });
+        }
+
+        res.json(reservationResult);
+      } catch (err: any) {
+        console.error('Error reserving unit:', err);
+        res.status(500).json({ message: err.message });
       }
-
-      res.json(reservationResult);
-    } catch (err: any) {
-      console.error('Error reserving unit:', err);
-      res.status(500).json({ message: err.message });
     }
-  });
+  );
 
   // POST /api/crm/units/:id/release - Safe unit release back to Available
-  router.post('/units/:id/release', authMiddleware, async (req: any, res) => {
-    try {
-      const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
+  router.post(
+    '/units/:id/release',
+    authMiddleware,
+    requireCrmRole('admin', 'sales_manager', 'sales_rep'),
+    crmRateLimiter({ max: 30 }),
+    async (req: any, res) => {
+      try {
+        const db = getDb();
+        const companyId = await resolveCompanyId(req, db);
 
-      const releaseResult = await releaseUnitSafely(db, companyId, req.params.id);
-      if (!releaseResult.success) {
-        return res.status(400).json({ message: releaseResult.message });
+        const releaseResult = await releaseUnitSafely(db, companyId, req.params.id);
+        if (!releaseResult.success) {
+          return res.status(409).json({ message: releaseResult.message, conflict: true });
+        }
+
+        res.json(releaseResult);
+      } catch (err: any) {
+        console.error('Error releasing unit:', err);
+        res.status(500).json({ message: err.message });
       }
-
-      res.json(releaseResult);
-    } catch (err: any) {
-      console.error('Error releasing unit:', err);
-      res.status(500).json({ message: err.message });
     }
-  });
+  );
 
   // PUT /api/crm/units/:id - Update unit details or block/unblock status
   router.put('/units/:id', authMiddleware, async (req: any, res) => {
@@ -410,13 +455,24 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const uId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
 
       const allowedFields = [
-        'askingPrice', 'basePrice', 'carpetAreaSqFt', 'saleableAreaSqFt',
-        'configuration', 'facing', 'notes', 'availabilityStatus'
+        'askingPrice', 'basePrice', 'carpetAreaSqFt', 'builtUpAreaSqFt',
+        'saleableAreaSqFt', 'balconyAreaSqFt', 'areaUnit', 'configuration',
+        'propertyType', 'facing', 'notes', 'availabilityStatus',
+        'specifications', 'features', 'unitNumber', 'unitCode', 'floorId', 'floorName', 'blockId'
       ];
 
       const updateData: any = { updatedAt: new Date() };
       for (const f of allowedFields) {
         if (req.body[f] !== undefined) updateData[f] = req.body[f];
+      }
+      if (req.body.basePrice !== undefined) {
+        updateData.basePricePaise = rupeesToPaise(Number(req.body.basePrice));
+      }
+      if (req.body.askingPrice !== undefined) {
+        updateData.askingPricePaise = rupeesToPaise(Number(req.body.askingPrice));
+      }
+      if (req.body.specifications !== undefined && Array.isArray(req.body.specifications)) {
+        updateData.features = req.body.specifications;
       }
 
       await db.collection('crm_units').updateOne(
@@ -446,16 +502,65 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
         query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
       }
 
-      // Explicit blocks in crm_blocks
+      // 1. Canonical blocks from project_blocks
+      const pIdStr = projectId ? String(projectId) : null;
+      let canonicalBlocks: any[] = [];
+      if (pIdStr) {
+        canonicalBlocks = await db.collection('project_blocks').find({
+          projectId: { $in: [pIdStr, ObjectId.isValid(pIdStr) && pIdStr.length === 24 ? new ObjectId(pIdStr) : null].filter(Boolean) },
+          isDeleted: { $ne: true },
+          status: { $ne: 'inactive' }
+        }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
+
+        // Enrich canonical blocks with live floorCount and unitCount
+        await Promise.all(canonicalBlocks.map(async (b: any) => {
+          const bId = String(b._id || b.id);
+          const bName = b.name || b.blockName;
+          const [floorCount, unitCount] = await Promise.all([
+            db.collection('project_floors').countDocuments({
+              $or: [{ blockId: bId }, ObjectId.isValid(bId) ? { blockId: new ObjectId(bId) } : null].filter(Boolean),
+              isDeleted: { $ne: true }
+            }).catch(() => 0),
+            db.collection('crm_units').countDocuments({
+              $or: [
+                { blockId: bId },
+                ObjectId.isValid(bId) ? { blockId: new ObjectId(bId) } : null,
+                bName ? { buildingTower: bName } : null
+              ].filter(Boolean),
+              isDeleted: { $ne: true }
+            }).catch(() => 0)
+          ]);
+          b.floorCount = floorCount;
+          b.unitCount = unitCount;
+        }));
+      }
+
+      // 2. Explicit blocks in crm_blocks
       const explicitBlocks = await db.collection('crm_blocks').find(query).sort({ blockName: 1 }).toArray();
 
-      // Distinct towers inferred from crm_units
+      // 3. Distinct towers inferred from crm_units
       const unitTowers = await db.collection('crm_units').distinct('buildingTower', query);
 
       const map = new Map<string, any>();
+
+      canonicalBlocks.forEach((b: any) => {
+        const name = b.name || b.blockName;
+        if (name) {
+          map.set(name.toUpperCase(), {
+            ...b,
+            _id: b._id,
+            id: (b._id || b.id).toString(),
+            blockName: name,
+            source: 'project_blocks'
+          });
+        }
+      });
+
       explicitBlocks.forEach((b: any) => {
         const name = b.blockName || b.name;
-        if (name) map.set(name.toUpperCase(), { ...b, blockName: name });
+        if (name && !map.has(name.toUpperCase())) {
+          map.set(name.toUpperCase(), { ...b, blockName: name, source: 'crm_blocks' });
+        }
       });
 
       for (const t of unitTowers) {
@@ -471,6 +576,160 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       res.json(Array.from(map.values()));
     } catch (err: any) {
       console.error('Error fetching blocks:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // GET /api/crm/floors - List canonical floors from project_floors for a project / block
+  router.get('/floors', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { projectId, blockId } = req.query;
+
+      if (!projectId) {
+        return res.status(400).json({ message: 'projectId query parameter is required.' });
+      }
+
+      const pIdStr = String(projectId);
+      const pMatcher = ObjectId.isValid(pIdStr) && pIdStr.length === 24
+        ? { $in: [pIdStr, new ObjectId(pIdStr)] }
+        : pIdStr;
+
+      const filter: any = {
+        projectId: pMatcher,
+        isDeleted: { $ne: true },
+        status: { $ne: 'inactive' }
+      };
+
+      if (blockId && blockId !== 'ALL') {
+        const bIdStr = String(blockId);
+        filter.$or = [
+          { blockId: bIdStr },
+          ObjectId.isValid(bIdStr) && bIdStr.length === 24 ? { blockId: new ObjectId(bIdStr) } : null
+        ].filter(Boolean);
+      }
+
+      const floors = await db.collection('project_floors')
+        .find(filter)
+        .sort({ displayOrder: 1, floorNumber: 1, createdAt: 1 })
+        .toArray();
+
+      // Look up block names for any floor missing blockName
+      const blockIds = Array.from(new Set(floors.map((f: any) => String(f.blockId)).filter(Boolean)));
+      const blockMap = new Map<string, string>();
+      if (blockIds.length > 0) {
+        const blocks = await db.collection('project_blocks').find({
+          _id: { $in: blockIds.map((id: string) => ObjectId.isValid(id) && id.length === 24 ? new ObjectId(id) : id) }
+        }).toArray();
+        blocks.forEach((b: any) => {
+          blockMap.set(String(b._id), b.name || b.blockName || '');
+        });
+      }
+
+      // Enrich with live unit count
+      const enriched = await Promise.all(floors.map(async (f: any) => {
+        const fId = String(f._id);
+        const bName = f.blockName || blockMap.get(String(f.blockId)) || '';
+        const unitCount = await db.collection('crm_units').countDocuments({
+          $or: [
+            { floorId: fId },
+            { floorId: f._id },
+            {
+              projectId: pMatcher,
+              floorNumber: Number(f.floorNumber),
+              buildingTower: bName || undefined
+            }
+          ],
+          isDeleted: { $ne: true }
+        }).catch(() => 0);
+
+        return {
+          ...f,
+          id: String(f._id),
+          blockName: bName,
+          unitCount
+        };
+      }));
+
+      res.json(enriched);
+    } catch (err: any) {
+      console.error('Error fetching CRM floors:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  // POST /api/crm/projects/:id/clear-seed-units - Safely purge unlinked seed/mock units
+  router.post('/projects/:id/clear-seed-units', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+
+      const pId = String(req.params.id);
+      const pMatcher = ObjectId.isValid(pId) && pId.length === 24
+        ? { $in: [pId, new ObjectId(pId)] }
+        : pId;
+      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
+        : companyId;
+
+      // Match ONLY seed units that have NO valid floorId or match seed note templates
+      const seedFilter: any = {
+        projectId: pMatcher,
+        $or: [
+          { floorId: { $exists: false } },
+          { floorId: null },
+          { notes: { $regex: /luxury apartment with premium vitrified tiles/i } }
+        ]
+      };
+      if (companyId) {
+        seedFilter.companyId = cMatcher;
+      }
+
+      const seedUnits = await db.collection('crm_units').find(seedFilter, { projection: { _id: 1, unitCode: 1 } }).toArray();
+      const seedIds = seedUnits.map((u: any) => u._id);
+      const seedIdStrs = seedUnits.map((u: any) => String(u._id));
+
+      if (seedUnits.length === 0) {
+        return res.json({
+          success: true,
+          deletedCount: 0,
+          message: 'No seed units found to clear for this project.'
+        });
+      }
+
+      // Clean up any unlinked interests/bookings on these specific units
+      if (seedIds.length > 0) {
+        await Promise.all([
+          db.collection('crm_unit_interests').deleteMany({
+            $or: [{ unitId: { $in: seedIds } }, { unitId: { $in: seedIdStrs } }]
+          }).catch(() => { }),
+          db.collection('crm_bookings').deleteMany({
+            $or: [{ unitId: { $in: seedIds } }, { unitId: { $in: seedIdStrs } }]
+          }).catch(() => { })
+        ]);
+      }
+
+      const delRes = await db.collection('crm_units').deleteMany({ _id: { $in: seedIds } });
+
+      if (typeof logAudit === 'function') {
+        await logAudit({
+          action: 'CLEAR_SEED_UNITS',
+          resource: 'crm_units',
+          performedBy: req.user?.sub,
+          companyId,
+          projectId: pId,
+          details: { deletedCount: delRes.deletedCount, deletedCodes: seedUnits.slice(0, 10).map((u: any) => u.unitCode) }
+        });
+      }
+
+      res.json({
+        success: true,
+        deletedCount: delRes.deletedCount,
+        message: `Successfully cleared ${delRes.deletedCount} seed units.`
+      });
+    } catch (err: any) {
+      console.error('Error clearing seed units:', err);
       res.status(500).json({ message: err.message });
     }
   });
@@ -597,111 +856,80 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
   });
 
   // POST /api/crm/units/:id/block - Put unit on Management Hold / Blocked status
-  router.post('/units/:id/block', authMiddleware, async (req: any, res) => {
-    try {
-      const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
-        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
-        : companyId;
-      const uId = ObjectId.isValid(String(req.params.id)) && String(req.params.id).length === 24
-        ? { $in: [new ObjectId(String(req.params.id)), String(req.params.id)] }
-        : req.params.id;
-      const { reason = 'Management Hold', notes = '' } = req.body;
+  router.post(
+    '/units/:id/block',
+    authMiddleware,
+    requireCrmRole('admin', 'sales_manager'),
+    crmRateLimiter({ max: 30 }),
+    async (req: any, res) => {
+      try {
+        const db = getDb();
+        const companyId = await resolveCompanyId(req, db);
+        const { reason = 'Management Hold', notes = '' } = req.body;
 
-      let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
-      if (!unit) {
-        unit = await db.collection('crm_units').findOne({ _id: uId });
-      }
-      if (!unit) return res.status(404).json({ message: 'Unit not found.' });
-
-      if (['Booked', 'Sold'].includes(unit.availabilityStatus)) {
-        return res.status(400).json({ message: `Cannot block unit that is already ${unit.availabilityStatus}.` });
-      }
-
-      const now = new Date();
-      await db.collection('crm_units').updateOne(
-        { _id: unit._id },
-        {
-          $set: {
-            availabilityStatus: 'Blocked',
-            blockedReason: reason,
-            blockedNotes: notes,
-            blockedAt: now,
-            updatedAt: now
-          }
+        const blockResult = await blockUnitSafely(db, companyId, req.params.id, reason || notes);
+        if (!blockResult.success) {
+          return res.status(409).json({ message: blockResult.message, conflict: true });
         }
-      );
 
-      // Record activity
-      await db.collection('crm_activities').insertOne({
-        companyId,
-        entityType: 'unit',
-        entityId: unit._id,
-        action: 'UNIT_BLOCKED',
-        description: `Unit ${unit.unitCode} blocked (${reason})`,
-        createdAt: now
-      });
+        if (logAudit) {
+          await logAudit(db, {
+            actorId: req.user?.sub,
+            actorType: 'user',
+            companyId,
+            module: 'crm',
+            action: 'UNIT_BLOCKED',
+            resource: 'crm_units',
+            resourceId: String(req.params.id),
+            description: `Blocked unit ${blockResult.unit?.unitCode}: ${reason}`,
+            newValue: { reason }
+          });
+        }
 
-      const updated = await db.collection('crm_units').findOne({ _id: unit._id });
-      res.json({ success: true, message: `Unit ${unit.unitCode} is now blocked.`, unit: updated });
-    } catch (err: any) {
-      console.error('Error blocking unit:', err);
-      res.status(500).json({ message: err.message });
+        res.json(blockResult);
+      } catch (err: any) {
+        console.error('Error blocking unit:', err);
+        res.status(500).json({ message: err.message });
+      }
     }
-  });
+  );
 
   // POST /api/crm/units/:id/unblock - Release unit from Blocked back to Available
-  router.post('/units/:id/unblock', authMiddleware, async (req: any, res) => {
-    try {
-      const db = getDb();
-      const companyId = await resolveCompanyId(req, db);
-      const cMatcher = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
-        ? { $in: [String(companyId), new ObjectId(String(companyId))] }
-        : companyId;
-      const uId = ObjectId.isValid(String(req.params.id)) && String(req.params.id).length === 24
-        ? { $in: [new ObjectId(String(req.params.id)), String(req.params.id)] }
-        : req.params.id;
+  router.post(
+    '/units/:id/unblock',
+    authMiddleware,
+    requireCrmRole('admin', 'sales_manager'),
+    crmRateLimiter({ max: 30 }),
+    async (req: any, res) => {
+      try {
+        const db = getDb();
+        const companyId = await resolveCompanyId(req, db);
 
-      let unit = await db.collection('crm_units').findOne({ _id: uId, companyId: cMatcher });
-      if (!unit) {
-        unit = await db.collection('crm_units').findOne({ _id: uId });
-      }
-      if (!unit) return res.status(404).json({ message: 'Unit not found.' });
-
-      const now = new Date();
-      await db.collection('crm_units').updateOne(
-        { _id: unit._id },
-        {
-          $set: {
-            availabilityStatus: 'Available',
-            updatedAt: now
-          },
-          $unset: {
-            blockedReason: '',
-            blockedNotes: '',
-            blockedAt: ''
-          }
+        const unblockResult = await unblockUnitSafely(db, companyId, req.params.id);
+        if (!unblockResult.success) {
+          return res.status(409).json({ message: unblockResult.message, conflict: true });
         }
-      );
 
-      // Record activity
-      await db.collection('crm_activities').insertOne({
-        companyId,
-        entityType: 'unit',
-        entityId: uId,
-        action: 'UNIT_UNBLOCKED',
-        description: `Unit ${unit.unitCode} unblocked back to Available`,
-        createdAt: now
-      });
+        if (logAudit) {
+          await logAudit(db, {
+            actorId: req.user?.sub,
+            actorType: 'user',
+            companyId,
+            module: 'crm',
+            action: 'UNIT_UNBLOCKED',
+            resource: 'crm_units',
+            resourceId: String(req.params.id),
+            description: `Unblocked unit ${unblockResult.unit?.unitCode}`
+          });
+        }
 
-      const updated = await db.collection('crm_units').findOne({ _id: uId });
-      res.json({ success: true, message: `Unit ${unit.unitCode} unblocked.`, unit: updated });
-    } catch (err: any) {
-      console.error('Error unblocking unit:', err);
-      res.status(500).json({ message: err.message });
+        res.json(unblockResult);
+      } catch (err: any) {
+        console.error('Error unblocking unit:', err);
+        res.status(500).json({ message: err.message });
+      }
     }
-  });
+  );
 
   return router;
 }

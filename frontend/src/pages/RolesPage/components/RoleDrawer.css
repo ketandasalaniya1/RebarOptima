@@ -1,0 +1,119 @@
+/* Role Drawer Form Styles */
+
+.rd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rd-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--danger-subtle, rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  color: var(--danger, #ef4444);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.rd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rd-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-label, #64748b);
+  letter-spacing: 0.02em;
+}
+
+.rd-input,
+.rd-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border, #cbd5e1);
+  background: var(--input-bg, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.rd-input:focus,
+.rd-textarea:focus {
+  border-color: var(--accent, #059669);
+  box-shadow: 0 0 0 3px var(--accent-subtle, rgba(5, 150, 105, 0.12));
+}
+
+.rd-scope-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rd-scope-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #e2e8f0);
+  background: var(--card-bg, #ffffff);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rd-scope-card:hover {
+  border-color: var(--accent, #059669);
+  background: var(--input-bg, #f8fafc);
+}
+
+.rd-scope-card.selected {
+  border-color: var(--accent, #059669);
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.06));
+}
+
+.rd-radio {
+  margin-top: 3px;
+  accent-color: var(--accent, #059669);
+}
+
+.rd-scope-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rd-scope-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-primary, #0f172a);
+}
+
+.rd-scope-icon {
+  color: var(--accent, #059669);
+}
+
+.rd-scope-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.4;
+}
+
+.rd-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+

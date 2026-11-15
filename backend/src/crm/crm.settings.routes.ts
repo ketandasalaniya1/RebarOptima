@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
+import { DEFAULT_UNIT_MASTER_DATA, getCompanyUnitMasterData } from '../projects/unit-master-data';
 
 export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
   const router = Router();
@@ -56,6 +57,12 @@ export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
       '1BHK Apartment', '2BHK Apartment', '3BHK Apartment', '4BHK Penthouse',
       'Duplex', 'Commercial Office', 'Retail Shop', 'Villa / Plot'
     ],
+    unitTypes: DEFAULT_UNIT_MASTER_DATA.unitTypes,
+    unitConfigurations: DEFAULT_UNIT_MASTER_DATA.unitConfigurations,
+    unitSpecifications: DEFAULT_UNIT_MASTER_DATA.unitSpecifications,
+    areaMeasurementOptions: DEFAULT_UNIT_MASTER_DATA.areaMeasurementOptions,
+    facingOptions: DEFAULT_UNIT_MASTER_DATA.facingOptions,
+    availabilityStatuses: DEFAULT_UNIT_MASTER_DATA.availabilityStatuses,
     defaultReservationHours: 48,
     milestoneTemplates: [
       { name: 'Booking Token Amount', percentage: 10 },
@@ -67,6 +74,19 @@ export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
     ]
   };
 
+  // GET /api/crm/settings/unit-master-data - Unified global master data for units
+  router.get('/unit-master-data', authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const masterData = await getCompanyUnitMasterData(db, String(companyId));
+      res.json(masterData);
+    } catch (err: any) {
+      console.error('Error fetching unit master data:', err);
+      res.status(500).json({ message: err.message });
+    }
+  });
+
   // GET /api/crm/settings - Get company CRM configurations
   router.get('/', authMiddleware, async (req: any, res) => {
     try {
@@ -77,6 +97,27 @@ export function createCrmSettingsRouter(getDb: () => any, authMiddleware: any) {
       if (!settings) {
         settings = { companyId, ...DEFAULT_SETTINGS, updatedAt: new Date() };
         await db.collection('crm_settings').insertOne(settings);
+      } else {
+        // Ensure new master-data fields exist even on older documents
+        let needsUpdate = false;
+        const patch: any = {};
+        for (const key of [
+          'unitTypes',
+          'unitConfigurations',
+          'unitSpecifications',
+          'areaMeasurementOptions',
+          'facingOptions',
+          'availabilityStatuses',
+        ]) {
+          if (!settings[key] || !Array.isArray(settings[key])) {
+            settings[key] = (DEFAULT_SETTINGS as any)[key];
+            patch[key] = (DEFAULT_SETTINGS as any)[key];
+            needsUpdate = true;
+          }
+        }
+        if (needsUpdate) {
+          await db.collection('crm_settings').updateOne({ companyId }, { $set: patch });
+        }
       }
 
       res.json(settings);

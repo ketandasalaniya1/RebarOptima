@@ -1,0 +1,38 @@
+/* Scrap Sale Drawer Styles */
+
+.scrap-drawer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.revenue-preview-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+}
+
+.revenue-preview-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #475569);
+  font-weight: 500;
+}
+
+.revenue-preview-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.drawer-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+

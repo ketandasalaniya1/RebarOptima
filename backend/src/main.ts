@@ -20,6 +20,7 @@ import { createManpowerRouter } from './manpower/manpower.routes';
 import { createServer } from 'http';
 import { createAttendanceRouter } from './attendance/attendance.routes';
 import { createPmMasterRouter } from './pm/pm.routes';
+import { createPredefinedCutsRouter } from './batches/predefined-cuts.routes';
 import { createReportsRouter } from './reports/reports.routes';
 import { createDeveloperConsoleRouter } from './developer-console/developer.routes';
 import { createNotificationRouter } from './notifications/notification.routes';
@@ -768,6 +769,8 @@ app.use('/api/contractors', createContractorsRouter(() => db, authMiddleware, lo
 app.use('/api/manpower', createManpowerRouter(() => db, authMiddleware, logAudit));
 // Mount Enterprise Project & Task Management Master Routes
 app.use('/api/pm', createPmMasterRouter(() => db, authMiddleware, logAudit));
+// Mount Predefined Steel Cutting Data & CSV Module Routes
+app.use('/api/predefined-cuts', createPredefinedCutsRouter(() => db, authMiddleware, logAudit));
 
 // Attendance is mounted after requirePermission is defined (see below).
 
@@ -1868,7 +1871,13 @@ app.post('/api/auth/signup', async (req, res) => {
 
     // Create company
     const companiesColl = db.collection('companies');
-    const companyResult = await companiesColl.insertOne({ name: companyName, projectName, location, status: 'active', createdAt: new Date() });
+    const companyResult = await companiesColl.insertOne({
+      name: companyName,
+      projectName: projectName || '',
+      location: location || '',
+      status: 'active',
+      createdAt: new Date()
+    });
     const companyId = companyResult.insertedId;
 
     // Assign default subscription (FREE) with 7 Days Full Access Trial Validity
@@ -2734,7 +2743,34 @@ app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view')
       : { companyId: String(companyId) };
 
     const pIdObj = toObjectId(projectId);
-    const projectOr: any[] = [{ projectId: String(projectId) }];
+
+    // Auto-heal / associate any orphan unassigned stock items for this company to the active project
+    try {
+      await db.collection('stockitems').updateMany(
+        {
+          $and: [
+            companyClause,
+            {
+              $or: [
+                { projectId: null },
+                { projectId: '' },
+                { projectId: { $exists: false } }
+              ]
+            }
+          ]
+        },
+        { $set: { projectId: pIdObj || String(projectId) } }
+      );
+    } catch (healErr) {
+      console.warn('Auto-heal stockitems error:', healErr);
+    }
+
+    const projectOr: any[] = [
+      { projectId: String(projectId) },
+      { projectId: null },
+      { projectId: '' },
+      { projectId: { $exists: false } }
+    ];
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
     const query: any = {
       $and: [companyClause, { $or: projectOr }],
@@ -2752,30 +2788,105 @@ app.get('/api/inventory', authMiddleware, requirePermission('inventory', 'view')
 app.post('/api/inventory/inward', authMiddleware, requirePermission('inventory', 'inward'), async (req: any, res) => {
   try {
     const db = await connectDB();
-    const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
-    const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '', projectId } = req.body;
+    const ctx = await resolveUserAndCompany(req, db);
+    const companyId = ctx.companyId;
+    const resolvedCompanyId = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? new ObjectId(String(companyId))
+      : companyId;
+
+    // Resolve project ID from body, header, or query
+    const rawProjectId = req.body.projectId || req.headers['x-project-id'] || req.query.projectId;
+    let projectId = rawProjectId ? String(rawProjectId).trim() : null;
+
+    if (!projectId) {
+      const activeProject = await db.collection('projects').findOne({
+        $or: [{ companyId: resolvedCompanyId }, { companyId: String(companyId) }],
+        status: { $ne: 'ARCHIVED' }
+      });
+      if (activeProject) {
+        projectId = activeProject._id.toString();
+      }
+    }
+
+    const { diameter, length = 12000, quantity: rawQty = 0, weightInKgs: rawWeight = 0, costPerKg, typeOfBar = '', brandName = '', vendorName = '' } = req.body;
     let quantity = Number(rawQty), weightInKgs = Number(rawWeight);
     const singleWeight = getSingleBarWeight(Number(diameter), Number(length));
     if (weightInKgs > 0 && quantity === 0) quantity = Math.round(weightInKgs / singleWeight);
     else if (quantity > 0 && weightInKgs === 0) weightInKgs = quantity * singleWeight;
-    const filter: any = { companyId, diameter: Number(diameter), length: Number(length), costPerKg: Number(costPerKg), typeOfBar, brandName, vendorName, isRemnant: false };
+
+    const companyClause = ObjectId.isValid(String(companyId)) && String(companyId).length === 24
+      ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
+      : { companyId: String(companyId) };
+
+    const pIdObj = projectId ? toObjectId(projectId) : null;
+    const projectVal = pIdObj || (projectId ? String(projectId) : undefined);
+
+    const filter: any = {
+      $and: [
+        companyClause,
+        {
+          diameter: Number(diameter),
+          length: Number(length),
+          costPerKg: Number(costPerKg) || 0,
+          typeOfBar: typeOfBar || 'TMT500',
+          brandName: brandName || '',
+          vendorName: vendorName || '',
+          isRemnant: false,
+        }
+      ]
+    };
     if (projectId) {
-      filter.projectId = toObjectId(projectId) || projectId;
+      const projectOr: any[] = [{ projectId: String(projectId) }];
+      if (pIdObj) projectOr.unshift({ projectId: pIdObj });
+      filter.$and.push({ $or: projectOr });
     }
-    const result = await db.collection('stockitems').findOneAndUpdate(filter, { $inc: { quantity, weightInKgs }, $setOnInsert: { createdAt: new Date() } }, { upsert: true, returnDocument: 'after' });
-    await db.collection('inventorytransactions').insertOne({ companyId, projectId: projectId ? (toObjectId(projectId) || projectId) : undefined, type: 'INWARD', diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar: typeOfBar || 'TMT500', referenceName: 'Manual Inward Entry', createdAt: new Date() });
+
+    const result = await db.collection('stockitems').findOneAndUpdate(
+      filter,
+      {
+        $inc: { quantity, weightInKgs },
+        $setOnInsert: {
+          createdAt: new Date(),
+          companyId: resolvedCompanyId,
+          projectId: projectVal,
+          diameter: Number(diameter),
+          length: Number(length),
+          costPerKg: Number(costPerKg) || 0,
+          typeOfBar: typeOfBar || 'TMT500',
+          brandName: brandName || '',
+          vendorName: vendorName || '',
+          isRemnant: false
+        }
+      },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    await db.collection('inventorytransactions').insertOne({
+      companyId: resolvedCompanyId,
+      projectId: projectVal,
+      type: 'INWARD',
+      diameter: Number(diameter),
+      length: Number(length),
+      quantity,
+      weightInKgs,
+      costPerKg: Number(costPerKg) || 0,
+      brandName: brandName || '',
+      vendorName: vendorName || '',
+      typeOfBar: typeOfBar || 'TMT500',
+      referenceName: 'Manual Inward Entry',
+      createdAt: new Date()
+    });
 
     await logAudit(db, {
       actorId: req.user.sub,
       actorType: 'user',
-      companyId,
+      companyId: resolvedCompanyId,
       module: 'inventory',
       action: 'INVENTORY_INWARD',
       resource: 'stockitems',
       resourceId: result?._id?.toString() || '',
       description: `Added inward stock of ${diameter}mm rebar (${quantity} pcs, ${weightInKgs.toFixed(1)} kg) - ${brandName || 'Standard'}${typeOfBar ? ` (${typeOfBar})` : ''}`,
-      newValue: { diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar }
+      newValue: { diameter: Number(diameter), length: Number(length), quantity, weightInKgs, costPerKg: Number(costPerKg) || 0, brandName, vendorName, typeOfBar, projectId: projectVal }
     });
 
     res.json(result);
@@ -2842,7 +2953,34 @@ app.get('/api/inventory/ledger', authMiddleware, requirePermission('ledger', 'vi
       ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
       : { companyId: String(companyId) };
     const pIdObj = toObjectId(projectId);
-    const projectOr: any[] = [{ projectId: String(projectId) }];
+
+    // Auto-heal / associate orphan inventory transactions for this company to the active project
+    try {
+      await db.collection('inventorytransactions').updateMany(
+        {
+          $and: [
+            companyClause,
+            {
+              $or: [
+                { projectId: null },
+                { projectId: '' },
+                { projectId: { $exists: false } }
+              ]
+            }
+          ]
+        },
+        { $set: { projectId: pIdObj || String(projectId) } }
+      );
+    } catch (healErr) {
+      console.warn('Auto-heal inventorytransactions error:', healErr);
+    }
+
+    const projectOr: any[] = [
+      { projectId: String(projectId) },
+      { projectId: null },
+      { projectId: '' },
+      { projectId: { $exists: false } }
+    ];
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
     const ledger = await db.collection('inventorytransactions')
       .find({ $and: [companyClause, { $or: projectOr }] })
@@ -3171,7 +3309,12 @@ app.get('/api/batches', authMiddleware, requirePermission('history', 'view'), as
       ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
       : { companyId: String(companyId) };
     const pIdObj = toObjectId(projectId);
-    const projectOr: any[] = [{ projectId: String(projectId) }];
+    const projectOr: any[] = [
+      { projectId: String(projectId) },
+      { projectId: null },
+      { projectId: '' },
+      { projectId: { $exists: false } }
+    ];
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
     const query: any = { $and: [companyClause, { $or: projectOr }] };
 
@@ -3322,7 +3465,12 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
       ? { $or: [{ companyId: new ObjectId(String(companyId)) }, { companyId: String(companyId) }] }
       : { companyId: String(companyId) };
     const pIdObj = toObjectId(projectId);
-    const projectOr: any[] = [{ projectId: String(projectId) }];
+    const projectOr: any[] = [
+      { projectId: String(projectId) },
+      { projectId: null },
+      { projectId: '' },
+      { projectId: { $exists: false } }
+    ];
     if (pIdObj) projectOr.unshift({ projectId: pIdObj });
     const scoped: any = {
       $and: [

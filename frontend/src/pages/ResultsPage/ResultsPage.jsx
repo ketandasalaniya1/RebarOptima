@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './ResultsPage.css'
 import html2pdf from 'html2pdf.js'
+import cravetobuildMark from '../../assets/cravetobuild-mark.png'
 import { batchesApi, inventoryApi } from '../../utils/api'
+import SteelHeader from '../../components/Shared/SteelHeader'
+import CommitBatchDrawer from './components/CommitBatchDrawer'
+import { SHOW_FINANCIALS } from '../../utils/steelFinancials'
 import {
   ArrowLeft,
   Printer,
@@ -24,7 +28,10 @@ import {
   Loader2,
   Database,
   Check,
-  PackageCheck
+  PackageCheck,
+  AlertTriangle,
+  AlertCircle,
+  RotateCcw
 } from 'lucide-react'
 
 
@@ -180,9 +187,19 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
   const triggerCustomPrint = (option) => {
     setPrintOption(option);
     setShowPrintMenu(false);
-    setTimeout(() => {
-      window.print();
-    }, 150);
+    document.body.classList.add('has-active-print');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.print();
+        }, 120);
+      });
+    });
+    window.addEventListener('afterprint', () => {
+      setTimeout(() => {
+        document.body.classList.remove('has-active-print');
+      }, 600);
+    }, { once: true });
   };
 
   useEffect(() => {
@@ -426,7 +443,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
 
   const getCostPerKgForDia = (diameter) => {
     const stockItem = data?.inputStock?.find(s => String(s.diameter) === String(diameter));
-    return stockItem?.costPerKg ? parseFloat(stockItem.costPerKg) : 60;
+    return stockItem?.costPerKg && parseFloat(stockItem.costPerKg) > 0 ? parseFloat(stockItem.costPerKg) : 0;
   };
 
   const totalRemnantsSavings = diaWeightSummary.reduce((sum, d) => {
@@ -469,11 +486,11 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
     const element = document.querySelector('.results-page');
     element.classList.add('print-mode');
     const opt = {
-      margin: [14, 12, 16, 12],
-      filename: 'rebar_optima_report.pdf',
+      margin: [10, 8, 12, 8],
+      filename: `${(data?.batchName || 'cutting_optimization').toLowerCase().replace(/[^a-z0-9]/g, '_')}_report.pdf`,
       image: { type: 'jpeg', quality: 0.99 },
       html2canvas: {
-        scale: 3,
+        scale: 2,
         useCORS: true,
         logging: false,
         windowWidth: 794,
@@ -484,10 +501,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       ignoreElements: (el) => el.classList.contains('no-print')
     };
 
-    html2pdf().set(opt).from(element).save().then(() => {
-      element.classList.remove('print-mode');
-    }).catch(err => {
-      console.error('PDF Generation Error:', err);
+    html2pdf().set(opt).from(element).save().finally(() => {
       element.classList.remove('print-mode');
     });
   };
@@ -497,8 +511,65 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
     hour: '2-digit', minute: '2-digit', hour12: true
   });
 
+  // Safe empty state when no optimization run exists (Hard Rule 5)
+  if (!data || (!data.layouts && !data.batchName)) {
+    return (
+      <div className="results-page empty-results-page">
+        <SteelHeader
+          activeTab="results"
+          title="Cutting Results & Visual Patterns"
+          subtitle="1D bar cut layout plan, foreman shop sheets, offcut remnant savings, and yard stock commit."
+        />
+        <div className="card empty-results-card" style={{ textAlign: 'center', padding: '60px 24px', margin: '40px auto', maxWidth: '580px', borderRadius: '12px' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(5, 150, 105, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px auto', color: 'var(--accent, #059669)' }}>
+            <BarChart3 size={32} />
+          </div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px', color: 'var(--text-primary)' }}>
+            No Optimization Results Found
+          </h3>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>
+            There is no active optimization plan in memory. Configure your available stock and required cuts in the <strong>Run Optimizer</strong> tab to generate cutting layouts and wastage audit reports.
+          </p>
+          <button
+            className="btn-primary"
+            onClick={onBack}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 22px', fontSize: '0.9rem', fontWeight: '600', margin: '0 auto' }}
+          >
+            <ArrowLeft size={16} /> Go to Run Optimizer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="results-page">
+      <div className="no-print">
+        <SteelHeader
+          activeTab="results"
+          title="Cutting Results & Visual Patterns"
+          subtitle="1D bar cut layout plan, foreman shop sheets, offcut remnant savings, and yard stock commit."
+        />
+
+        {/* CHANGE 5: 3-Step Guided Workflow Path */}
+        <div className="results-guided-path-banner" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', background: 'var(--card-bg, #ffffff)', border: '1px solid var(--card-border, #e2e8f0)', borderRadius: '10px', margin: '0 0 16px 0', overflowX: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 700, color: 'var(--accent, #059669)' }}>
+            <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'var(--accent, #059669)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>1</span>
+            <span>1. Review Layouts</span>
+          </div>
+          <span style={{ color: 'var(--text-muted, #94a3b8)' }}>→</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: data?._id ? '#10b981' : 'var(--text-secondary)' }}>
+            <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: data?._id ? '#10b981' : 'var(--input-bg, #f1f5f9)', color: data?._id ? '#fff' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>{data?._id ? '✓' : '2'}</span>
+            <span>2. Save &amp; Commit Batch</span>
+          </div>
+          <span style={{ color: 'var(--text-muted, #94a3b8)' }}>→</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+            <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'var(--input-bg, #f1f5f9)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>3</span>
+            <span>3. Print &amp; Export</span>
+          </div>
+        </div>
+      </div>
+
       {/* Top action header (hidden on print) */}
       <div className="results-actions no-print">
         <div className="actions-left">
@@ -561,7 +632,7 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                   </div>
                   <div className="print-opt-text">
                     <div className="print-opt-title">Complete Executive Report</div>
-                    <div className="print-opt-desc">All KPIs, layouts, wastage & financials</div>
+                    <div className="print-opt-desc">All KPIs, cutting layouts, offcuts & wastage breakdown</div>
                   </div>
                 </button>
 
@@ -592,7 +663,8 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
 
       {saveError && (
         <div className="error-alert-banner no-print" style={{ margin: '16px 0', background: 'rgba(232, 90, 58, 0.1)', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '12px 16px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span>⚠️ {saveError}</span>
+          <AlertTriangle size={15} />
+          <span>{saveError}</span>
         </div>
       )}
 
@@ -602,9 +674,11 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       {/* ── Professional Print Header (hidden on screen) ── */}
       <div className="print-report-header print-only">
         <div className="prh-brand">
-          <div className="prh-logo">RO</div>
+          <div className="prh-logo" style={{ background: 'transparent' }}>
+            <img src={cravetobuildMark} alt="CraveToBuild" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </div>
           <div>
-            <div className="prh-title">RebarOptima</div>
+            <div className="prh-title">CraveToBuild</div>
             <div className="prh-subtitle">Steel Cutting Optimization Report</div>
           </div>
         </div>
@@ -685,26 +759,28 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       </div>
 
       {/* Financial Summary (₹) Section */}
-      <div className="card financial-summary-card">
-        <h3 className="financial-card-heading">Financial Summary (₹)</h3>
-        <div className="financial-grid">
-          <div className="financial-stat">
-            <span className="fin-lbl">Total Scrap Loss Cost</span>
-            <span className="fin-val text-red">₹{totalScrapLossCost.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
-            <span className="fin-hint">(Steel purchased material wasted)</span>
-          </div>
-          <div className="financial-stat">
-            <span className="fin-lbl">Reused Remnants Savings</span>
-            <span className="fin-val text-green">₹{totalRemnantsSavings.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
-            <span className="fin-hint">(Recovered value of remnant inventory)</span>
-          </div>
-          <div className="financial-stat">
-            <span className="fin-lbl">Est. Batch Yield Value</span>
-            <span className="fin-val">₹{totalYieldValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
-            <span className="fin-hint">(Value of cut pieces in structure)</span>
+      {SHOW_FINANCIALS && (
+        <div className="card financial-summary-card">
+          <h3 className="financial-card-heading">Financial Summary (₹)</h3>
+          <div className="financial-grid">
+            <div className="financial-stat">
+              <span className="fin-lbl">Total Scrap Loss Cost</span>
+              <span className="fin-val text-red">₹{totalScrapLossCost.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+              <span className="fin-hint">(Steel purchased material wasted)</span>
+            </div>
+            <div className="financial-stat">
+              <span className="fin-lbl">Reused Remnants Savings</span>
+              <span className="fin-val text-green">₹{totalRemnantsSavings.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+              <span className="fin-hint">(Recovered value of remnant inventory)</span>
+            </div>
+            <div className="financial-stat">
+              <span className="fin-lbl">Est. Batch Yield Value</span>
+              <span className="fin-val">₹{totalYieldValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+              <span className="fin-hint">(Value of cut pieces in structure)</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Tables Row: Required Stocks & Summary */}
       <div className="tables-grid">
@@ -914,7 +990,8 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                     )}
                     {layout.isVirtual && (
                       <span className="badge-optimal" style={{ background: '#fce8e6', color: '#a51d24', border: '1px solid #f5c2c7', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                        ⚠️ STOCK UNAVAILABLE (NEEDS PURCHASE)
+                        <AlertCircle size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+                        STOCK UNAVAILABLE (NEEDS PURCHASE)
                       </span>
                     )}
                   </div>
@@ -1138,10 +1215,16 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
                           <span className="wt-group-dia">{dia} mm</span>
                           <span className="wt-group-threshold">Remnant threshold ≥ {rows[0].threshold} mm</span>
                           {subRemnantKg > 0 && (
-                            <span className="wt-group-chip wt-chip-remnant">↩ {subRemnantKg.toFixed(2)} kg remnant</span>
+                            <span className="wt-group-chip wt-chip-remnant">
+                              <RotateCcw size={11} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '3px' }} />
+                              {subRemnantKg.toFixed(2)} kg remnant
+                            </span>
                           )}
                           {subScrapKg > 0 && (
-                            <span className="wt-group-chip wt-chip-scrap">✕ {subScrapKg.toFixed(2)} kg scrap</span>
+                            <span className="wt-group-chip wt-chip-scrap">
+                              <X size={11} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '3px' }} />
+                              {subScrapKg.toFixed(2)} kg scrap
+                            </span>
                           )}
                         </div>
                       </td>
@@ -1258,128 +1341,24 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
       </div>
 
 
-      {/* Save & Commit Batch Modal with Premium Loading Animation */}
-      {showSaveModal && (
-        <div className="modal-backdrop no-print save-commit-modal-backdrop">
-          <div className={`modal-content card save-commit-modal-card ${saveLoading ? 'is-loading' : ''} ${saveSuccess ? 'is-success' : ''}`}>
-            {!saveLoading && !saveSuccess ? (
-              <>
-                <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-                  <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: '700', margin: 0, color: 'var(--text-primary)' }}>
-                    <Tag size={18} color="var(--accent)" /> Save & Commit Cutting Batch
-                  </h3>
-                  <button className="modal-close-btn" onClick={() => setShowSaveModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                    <X size={18} />
-                  </button>
-                </div>
-                <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <p className="modal-desc" style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
-                    Specify a reference batch name to commit this optimization into inventory, deduct used stock, and log remnants in batch history.
-                  </p>
-                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={batchNameInput}
-                      onChange={(e) => setBatchNameInput(e.target.value)}
-                      placeholder="e.g. Batch #13/08/26 - Ground Floor"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleConfirmSaveBatch();
-                      }}
-                      style={{ width: '100%', fontSize: '14px', padding: '10px 14px', borderRadius: '6px' }}
-                    />
-                  </div>
-                  {saveError && (
-                    <div className="modal-error-badge">
-                      <span>⚠️ {saveError}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                  <button className="btn-secondary" onClick={() => setShowSaveModal(false)} style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>
-                    Cancel
-                  </button>
-                  <button
-                    className="btn-primary btn-save-commit-submit"
-                    onClick={handleConfirmSaveBatch}
-                    disabled={!batchNameInput.trim()}
-                  >
-                    <CheckCircle2 size={16} /> Save & Commit
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="save-commit-progress-view">
-                <div className="save-commit-loader-anim-wrap">
-                  <div className="save-loader-halo"></div>
-                  <div className="save-loader-ring-outer"></div>
-                  <div className="save-loader-ring-inner"></div>
-                  <div className="save-loader-center-icon">
-                    {saveSuccess ? (
-                      <Check size={28} className="save-icon-success" />
-                    ) : (
-                      <Database size={24} className="save-icon-pulsing" />
-                    )}
-                  </div>
-                </div>
-
-                <h3 className="save-progress-title">
-                  {saveSuccess ? 'Batch Committed Successfully!' : 'Saving & Committing Batch...'}
-                </h3>
-
-                <p className="save-progress-subtitle">
-                  {saveSuccess
-                    ? 'Inventory updated and history record created. Redirecting...'
-                    : saveStep === 1
-                    ? 'Verifying cut layouts and material allocation...'
-                    : saveStep === 2
-                    ? 'Deducting stock bars & creating remnant inventory...'
-                    : 'Committing transaction to audit ledger and batch history...'}
-                </p>
-
-                <div className="save-progress-bar-track">
-                  <div
-                    className={`save-progress-bar-fill step-${saveStep} ${saveSuccess ? 'complete' : ''}`}
-                    style={{
-                      width: saveSuccess
-                        ? '100%'
-                        : saveStep === 1
-                        ? '30%'
-                        : saveStep === 2
-                        ? '65%'
-                        : '90%'
-                    }}
-                  >
-                    <div className="save-progress-bar-shimmer"></div>
-                  </div>
-                </div>
-
-                <div className="save-step-badges">
-                  <div className={`save-step-item ${saveStep >= 1 ? 'active' : ''} ${saveStep > 1 || saveSuccess ? 'done' : ''}`}>
-                    <div className="step-dot">{saveStep > 1 || saveSuccess ? <Check size={11} /> : '1'}</div>
-                    <span>Verify</span>
-                  </div>
-                  <div className={`save-step-item ${saveStep >= 2 ? 'active' : ''} ${saveStep > 2 || saveSuccess ? 'done' : ''}`}>
-                    <div className="step-dot">{saveStep > 2 || saveSuccess ? <Check size={11} /> : '2'}</div>
-                    <span>Stock Deduction</span>
-                  </div>
-                  <div className={`save-step-item ${saveStep >= 3 ? 'active' : ''} ${saveSuccess ? 'done' : ''}`}>
-                    <div className="step-dot">{saveSuccess ? <Check size={11} /> : '3'}</div>
-                    <span>Ledger Commit</span>
-                  </div>
-                </div>
-
-                <div className="save-loader-note">
-                  <Sparkles size={13} color="#10b981" />
-                  <span>RebarOptima inventory & wastage engine is synchronizing data</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Slide-over Commit Batch Drawer (Hard Rule 4) */}
+      <CommitBatchDrawer
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        batchNameInput={batchNameInput}
+        setBatchNameInput={setBatchNameInput}
+        handleConfirmSaveBatch={handleConfirmSaveBatch}
+        saveLoading={saveLoading}
+        saveSuccess={saveSuccess}
+        saveStep={saveStep}
+        saveError={saveError}
+        summaryData={{
+          totalBarsUsed,
+          totalCutWeightKg: totalUtilisationKgSum,
+          totalRemnantsKg: totalRemnantKgSum,
+          totalScrapKg: totalScrapKgSum,
+        }}
+      />
 
         {/* Brand signature (visible on print only) */}
         <div className="print-footer print-only">

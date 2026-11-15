@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { batchesApi } from '../../utils/api'
 import { useActiveProject } from '../../hooks/useActiveProject'
+import { openCreateModal } from '../../store/slices/projectSlice'
 import {
   Package,
   Trash2,
@@ -14,13 +15,16 @@ import {
   AlertTriangle,
   Layers,
   BarChart3,
-  RefreshCw
+  RefreshCw,
+  Building2,
+  FolderPlus
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import { PageHeader, Button, EmptyState } from '../../components/ui'
 import './OverviewPage.css'
 
 export default function OverviewPage({ onNavigate }) {
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
   const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
   const [stats, setStats] = useState(null)
@@ -130,6 +134,57 @@ export default function OverviewPage({ onNavigate }) {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })
+  }
+
+  if (!projectId || !selectedProject) {
+    return (
+      <div className="overview-page">
+        <PageHeader
+          title="Dashboard Overview"
+          subtitle="Real-time KPI metrics, steel inventory summary, and scrap trends."
+        />
+        <div className="overview-no-project-welcome">
+          <div className="ow-card">
+            <div className="ow-icon-circle">
+              <Building2 size={36} />
+            </div>
+            <h2 className="ow-title">
+              Welcome to CraveToBuild{user?.firstName ? `, ${user.firstName}` : ''}!
+            </h2>
+            <p className="ow-subtitle">
+              You haven't created any projects yet. Create your first project through the dashboard to start managing steel inventory, bar bending schedules (BBS), and casting optimizations.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => dispatch(openCreateModal())}
+              className="ow-create-btn"
+            >
+              <FolderPlus size={18} />
+              Create New Project
+            </Button>
+          </div>
+
+          <div className="ow-features-preview">
+            <div className="ow-feature-card">
+              <div className="ow-feature-icon"><Layers size={22} /></div>
+              <h4>Steel Inventory & Ledger</h4>
+              <p>Track live stock of standard bars, remnants, and automated scrap reconciliation.</p>
+            </div>
+            <div className="ow-feature-card">
+              <div className="ow-feature-icon"><BarChart3 size={22} /></div>
+              <h4>BBS & 1D Cutting Optimizer</h4>
+              <p>Generate optimized bar cutting schedules, reduce offcut scrap, and print tickets.</p>
+            </div>
+            <div className="ow-feature-card">
+              <div className="ow-feature-icon"><Package size={22} /></div>
+              <h4>Casting & Pour Tracking</h4>
+              <p>Manage pour schedules, cube test results, and concrete consumption logs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ObjectId } from 'mongodb';
+import { ObjectId, GridFSBucket } from 'mongodb';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
@@ -58,6 +58,126 @@ export async function convertDwgToDxfGz(fileDataOrB64: string): Promise<{ dxfDat
   return null;
 }
 
+// ── Large File Storage (MongoDB GridFS) ──────────────────────────────────────
+// MongoDB has a strict 16MB BSON document size limit.
+// Base64-encoded files above 5MB are stored into GridFS chunks to prevent
+// BSON RangeError (offset out of range) during insert/update operations.
+const BSON_SAFE_FILE_LIMIT = 5 * 1024 * 1024; // 5 MB base64 (~3.75 MB binary)
+
+export async function storeDrawingPayload(
+  db: any,
+  fileData: string,
+  fileName: string,
+  metadata: any = {}
+): Promise<{ gridFsId?: ObjectId; storedInlineData: string; sizeBytes: number }> {
+  if (!fileData) {
+    return { storedInlineData: '', sizeBytes: 0 };
+  }
+
+  let buf: Buffer;
+  if (fileData.startsWith('data:')) {
+    const commaIdx = fileData.indexOf(',');
+    buf = Buffer.from(fileData.slice(commaIdx + 1), 'base64');
+  } else {
+    buf = Buffer.from(fileData, 'base64');
+  }
+
+  const isLarge = fileData.length > BSON_SAFE_FILE_LIMIT;
+
+  if (isLarge) {
+    const bucket = new GridFSBucket(db, { bucketName: 'drawing_files' });
+    const uploadStream = bucket.openUploadStream(fileName || 'drawing_file', {
+      metadata: {
+        ...metadata,
+        sizeBytes: buf.length,
+        createdAt: new Date()
+      }
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      uploadStream.on('finish', () => resolve());
+      uploadStream.on('error', reject);
+      uploadStream.end(buf);
+    });
+
+    return {
+      gridFsId: uploadStream.id as ObjectId,
+      storedInlineData: '', // Keep BSON document small and within MongoDB 16MB limit
+      sizeBytes: buf.length
+    };
+  }
+
+  return {
+    storedInlineData: fileData,
+    sizeBytes: buf.length
+  };
+}
+
+export async function resolveDrawingFileBuffer(
+  db: any,
+  docOrRevision: any
+): Promise<{ buffer: Buffer; mimeType: string; fileName: string } | null> {
+  if (!docOrRevision) return null;
+
+  let fileDoc: any = null;
+  const gId = docOrRevision.gridFsId;
+  if (!gId && docOrRevision.fileId) {
+    const fId = ObjectId.isValid(docOrRevision.fileId) ? new ObjectId(docOrRevision.fileId) : docOrRevision.fileId;
+    fileDoc = await db.collection('doc_files').findOne({ _id: fId });
+  }
+
+  const targetGridFsId = gId || fileDoc?.gridFsId;
+  if (targetGridFsId) {
+    try {
+      const bucket = new GridFSBucket(db, { bucketName: 'drawing_files' });
+      const downloadStream = bucket.openDownloadStream(new ObjectId(targetGridFsId));
+      const chunks: Buffer[] = [];
+      for await (const chunk of downloadStream) {
+        chunks.push(chunk);
+      }
+      const buffer = Buffer.concat(chunks);
+      const mimeType = docOrRevision.mimeType || fileDoc?.mimeType || 'application/octet-stream';
+      const fileName = docOrRevision.fileName || fileDoc?.originalFilename || 'drawing';
+      return { buffer, mimeType, fileName };
+    } catch (err) {
+      console.warn('[Drawings] Failed to retrieve file from GridFS:', targetGridFsId, err);
+    }
+  }
+
+  // Fallback to inline fileData
+  let fileData = docOrRevision.fileData;
+  if (!fileData && fileDoc?.fileData) {
+    fileData = fileDoc.fileData;
+  }
+
+  if (fileData) {
+    let buf: Buffer;
+    if (fileData.startsWith('data:')) {
+      const commaIdx = fileData.indexOf(',');
+      buf = Buffer.from(fileData.slice(commaIdx + 1), 'base64');
+    } else {
+      buf = Buffer.from(fileData, 'base64');
+    }
+    const mimeType = docOrRevision.mimeType || fileDoc?.mimeType || 'application/octet-stream';
+    const fileName = docOrRevision.fileName || fileDoc?.originalFilename || 'drawing';
+    return { buffer: buf, mimeType, fileName };
+  }
+
+  return null;
+}
+
+export async function resolveDrawingFileData(db: any, docOrRevision: any): Promise<string> {
+  if (!docOrRevision) return '';
+  if (docOrRevision.fileData && typeof docOrRevision.fileData === 'string' && docOrRevision.fileData.length > 0) {
+    return docOrRevision.fileData;
+  }
+  const resolved = await resolveDrawingFileBuffer(db, docOrRevision);
+  if (resolved) {
+    return `data:${resolved.mimeType};base64,${resolved.buffer.toString('base64')}`;
+  }
+  return '';
+}
+
 export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any, logAudit?: any) {
   const router = Router();
 
@@ -82,7 +202,7 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
           if (fullName) return fullName;
           if (u.name) return u.name;
         }
-      } catch (_) {}
+      } catch (_) { }
     }
     return req.user?.email || 'Admin';
   }
@@ -537,6 +657,60 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         return dw;
       }));
 
+      // Base project query for KPI and Facets (unfiltered by status/search/discipline)
+      const baseProjectQuery: any = { companyId };
+      if (projectId && projectId !== 'all') {
+        const pStr = String(projectId);
+        baseProjectQuery.$or = [
+          { projectId: ObjectId.isValid(pStr) && pStr.length === 24 ? new ObjectId(pStr) : pStr },
+          { projectId: pStr }
+        ];
+      }
+
+      // Calculate Monday of current week for 'Updated this week'
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const diffToMonday = (dayOfWeek + 6) % 7;
+      const mondayThisWeek = new Date(now);
+      mondayThisWeek.setDate(now.getDate() - diffToMonday);
+      mondayThisWeek.setHours(0, 0, 0, 0);
+
+      const [kpiTotal, kpiGfc, kpiDraft, kpiUpdatedThisWeek, discList, distinctBlocks] = await Promise.all([
+        db.collection('doc_drawings').countDocuments(baseProjectQuery),
+        db.collection('doc_drawings').countDocuments({
+          ...baseProjectQuery,
+          currentStatus: { $in: ['Approved', 'Current', 'CURRENT', 'Good for construction', 'Published'] }
+        }),
+        db.collection('doc_drawings').countDocuments({
+          ...baseProjectQuery,
+          currentStatus: { $in: ['Draft', 'Under Review', 'IN_REVIEW', 'Pending Approval', 'Review', 'draft'] }
+        }),
+        db.collection('doc_drawings').countDocuments({
+          ...baseProjectQuery,
+          updatedAt: { $gte: mondayThisWeek }
+        }),
+        db.collection('doc_disciplines').find({ companyId }).toArray(),
+        db.collection('doc_drawings').distinct('blockName', baseProjectQuery)
+      ]);
+
+      const disciplineFacets = await Promise.all(
+        discList.map(async (d: any) => {
+          const count = await db.collection('doc_drawings').countDocuments({
+            ...baseProjectQuery,
+            $or: [
+              { disciplineId: d._id },
+              { disciplineCode: d.code }
+            ]
+          });
+          return {
+            id: String(d._id),
+            code: d.code,
+            name: d.name,
+            count
+          };
+        })
+      );
+
       return res.json({
         drawings: enrichedDrawings,
         pagination: {
@@ -544,6 +718,16 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
           limit: l,
           total,
           totalPages: Math.ceil(total / l)
+        },
+        facets: {
+          kpi: {
+            total: kpiTotal,
+            gfc: kpiGfc,
+            draft: kpiDraft,
+            updatedThisWeek: kpiUpdatedThisWeek
+          },
+          disciplines: disciplineFacets,
+          blocks: (distinctBlocks || []).filter(Boolean)
         }
       });
     } catch (err: any) {
@@ -568,6 +752,7 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         drawingType,
         tags,
         initialChangeDescription,
+        releaseStatus,
         fileData,
         fileName,
         fileSize,
@@ -665,8 +850,21 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
       const fSize = fileSize || (fileData ? Math.round(fileData.length * 0.75) : 1024 * 320);
 
       let fileRecordId: ObjectId | null = null;
+      let gridFsId: ObjectId | undefined = undefined;
+      let storedInlineData = fileData || '';
+      let calculatedSize = fSize;
+
       if (fileData) {
         fileRecordId = new ObjectId();
+        const stored = await storeDrawingPayload(db, fileData, fileName || `${dwNumber}_R00.${fType}`, {
+          companyId: String(companyId),
+          drawingNumber: dwNumber,
+          revisionNumber: 'R00'
+        });
+        gridFsId = stored.gridFsId;
+        storedInlineData = stored.storedInlineData;
+        if (stored.sizeBytes) calculatedSize = stored.sizeBytes;
+
         let dxfDataGz: Buffer | null = null;
         let dxfSizeBytes = 0;
         if (fType === 'dwg' || fileName?.toLowerCase().endsWith('.dwg')) {
@@ -681,10 +879,11 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
           _id: fileRecordId,
           companyId,
           originalFilename: fileName || `${dwNumber}_${revisionNumber}.${fType}`,
-          fileData,
+          fileData: storedInlineData,
+          gridFsId: gridFsId || undefined,
           dxfDataGz: dxfDataGz || undefined,
           dxfSizeBytes: dxfSizeBytes || undefined,
-          sizeBytes: fSize,
+          sizeBytes: calculatedSize,
           mimeType: fType === 'pdf' ? 'application/pdf' : fType === 'svg' ? 'image/svg+xml' : 'application/octet-stream',
           checksumSha256: calculateFileChecksum(fileData),
           uploadedById: req.user?.sub || 'usr-lead',
@@ -692,6 +891,9 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
           createdAt: now
         });
       }
+
+      const isGfc = releaseStatus === 'gfc' || releaseStatus === 'Approved' || releaseStatus === 'Good for construction';
+      const initialStatus = isGfc ? 'Approved' : 'Draft';
 
       // Create initial revision record
       const initialRev = {
@@ -702,14 +904,16 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         revisionNumber,
         sequenceNumber: 0,
         fileId: fileRecordId,
+        gridFsId: gridFsId || undefined,
         fileName: fileName || `${dwNumber}_${revisionNumber}.${fType}`,
-        fileSize: fSize,
+        fileSize: calculatedSize,
         fileType: fType,
-        fileData: fileData || '',
+        fileData: storedInlineData,
         checksumSha256: calculateFileChecksum(fileData || dwNumber),
-        changeDescription: initialChangeDescription || 'Initial drawing creation & issue for review.',
-        workflowStatus: 'Draft',
-        isPublished: false,
+        changeDescription: initialChangeDescription || 'Initial drawing creation & issue.',
+        workflowStatus: initialStatus,
+        isPublished: isGfc,
+        isCurrent: true,
         isSuperseded: false,
         uploadedById: req.user?.sub || 'usr-lead',
         uploadedByName: req.user?.name || req.user?.email || 'Rahul Singh',
@@ -739,9 +943,10 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         currentRevisionNumber: revisionNumber,
         fileName: fileName || `${dwNumber}_${revisionNumber}.${fType}`,
         fileType: fType,
-        fileSize: fSize,
-        fileData: fileData || '',
-        currentStatus: 'Draft',
+        fileSize: calculatedSize,
+        fileData: storedInlineData,
+        gridFsId: gridFsId || undefined,
+        currentStatus: initialStatus,
         assignedControllerId: req.user?.sub,
         assignedControllerName: req.user?.name || 'Document Controller',
         tags: Array.isArray(tags) ? tags : ['Floor Plan', discipline.name],
@@ -776,19 +981,42 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
   // ══════════════════════════════════════════════════════════════════════════
   // 5. DRAWING DETAILS & CANVAS PREVIEW
   // ══════════════════════════════════════════════════════════════════════════
-  router.get('/drawings/:id', authMiddleware, async (req: any, res) => {
+  router.get(['/drawings/:id', '/:id'], authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
-      const dId = ObjectId.isValid(req.params.id) && String(req.params.id).length === 24 ? new ObjectId(req.params.id) : req.params.id;
+      const reqId = req.params.id;
+      const dId = ObjectId.isValid(reqId) && String(reqId).length === 24 ? new ObjectId(reqId) : reqId;
 
-      const drawing = await db.collection('doc_drawings').findOne({
+      let drawing = await db.collection('doc_drawings').findOne({
         companyId,
         $or: [
-          ObjectId.isValid(req.params.id) && String(req.params.id).length === 24 ? { _id: new ObjectId(req.params.id) } : null,
-          { _id: String(req.params.id) }
+          ObjectId.isValid(reqId) && String(reqId).length === 24 ? { _id: new ObjectId(reqId) } : null,
+          { _id: String(reqId) }
         ].filter(Boolean)
       });
+
+      // Safe fallback: if not found, check if reqId is actually a revision ID
+      if (!drawing) {
+        const rev = await db.collection('doc_revisions').findOne({
+          companyId,
+          $or: [
+            ObjectId.isValid(reqId) && String(reqId).length === 24 ? { _id: new ObjectId(reqId) } : null,
+            { _id: String(reqId) }
+          ].filter(Boolean)
+        });
+        if (rev && rev.drawingId) {
+          const parentDrawingId = rev.drawingId;
+          drawing = await db.collection('doc_drawings').findOne({
+            companyId,
+            $or: [
+              ObjectId.isValid(parentDrawingId) && String(parentDrawingId).length === 24 ? { _id: new ObjectId(parentDrawingId) } : null,
+              { _id: String(parentDrawingId) }
+            ].filter(Boolean)
+          });
+        }
+      }
+
       if (!drawing) {
         return res.status(404).json({ message: 'Drawing not found' });
       }
@@ -812,16 +1040,13 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         }).sort({ createdAt: -1 }).limit(20).toArray()
       ]);
 
+      // Ensure fileData is populated for currentRevision
       const currentRev = revisions.find((r: any) => String(r._id) === String(drawing.currentRevisionId)) || revisions[0];
 
-      if (currentRev && !currentRev.fileData && currentRev.fileId) {
-        const fileDoc = await db.collection('doc_files').findOne({ _id: new ObjectId(currentRev.fileId) });
-        if (fileDoc && fileDoc.fileData) {
-          currentRev.fileData = fileDoc.fileData;
-        }
-      }
-
       if (currentRev) {
+        if (!currentRev.fileData) {
+          currentRev.fileData = await resolveDrawingFileData(db, currentRev);
+        }
         if (!drawing.fileData && currentRev.fileData) drawing.fileData = currentRev.fileData;
         if (!drawing.fileType && currentRev.fileType) drawing.fileType = currentRev.fileType;
         if (!drawing.fileName && currentRev.fileName) drawing.fileName = currentRev.fileName;
@@ -842,7 +1067,7 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
   });
 
   // ── Download Drawing / Revision File ──────────────────────────────────────
-  router.get('/drawings/:id/download', authMiddleware, async (req: any, res) => {
+  router.get(['/drawings/:id/download', '/:id/download'], authMiddleware, async (req: any, res) => {
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
@@ -866,14 +1091,13 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         return res.status(404).json({ message: 'Revision not found' });
       }
 
-      let fileData = revision.fileData;
+      let fileData = await resolveDrawingFileData(db, revision);
       let fileName = revision.fileName || 'drawing.pdf';
       let mimeType = revision.fileType === 'pdf' ? 'application/pdf' : revision.fileType === 'svg' ? 'image/svg+xml' : 'application/octet-stream';
 
       if (!fileData && revision.fileId) {
         const fileDoc = await db.collection('doc_files').findOne({ _id: new ObjectId(revision.fileId) });
         if (fileDoc) {
-          fileData = fileDoc.fileData;
           fileName = fileDoc.originalFilename || fileName;
           mimeType = fileDoc.mimeType || mimeType;
         }
@@ -888,6 +1112,45 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
       });
     } catch (err: any) {
       return res.status(500).json({ message: 'Error downloading file', error: err.message });
+    }
+  });
+
+  // ── Stream Raw Binary Drawing File ────────────────────────────────────────
+  router.get(['/drawings/:id/raw', '/:id/raw'], authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const dId = ObjectId.isValid(req.params.id) ? new ObjectId(req.params.id) : req.params.id;
+      const { revisionId } = req.query;
+
+      let revision;
+      if (revisionId && ObjectId.isValid(revisionId)) {
+        revision = await db.collection('doc_revisions').findOne({ _id: new ObjectId(revisionId), drawingId: dId, companyId });
+      } else {
+        const drawing = await db.collection('doc_drawings').findOne({ _id: dId, companyId });
+        if (drawing?.currentRevisionId) {
+          revision = await db.collection('doc_revisions').findOne({ _id: new ObjectId(drawing.currentRevisionId), drawingId: dId, companyId });
+        }
+        if (!revision) {
+          revision = await db.collection('doc_revisions').findOne({ drawingId: dId, companyId }, { sort: { sequenceNumber: -1 } });
+        }
+      }
+
+      if (!revision) {
+        return res.status(404).json({ message: 'Drawing revision not found' });
+      }
+
+      const fileRes = await resolveDrawingFileBuffer(db, revision);
+      if (!fileRes) {
+        return res.status(404).send('Drawing file content not found');
+      }
+
+      res.setHeader('Content-Type', fileRes.mimeType);
+      res.setHeader('Content-Length', fileRes.buffer.length);
+      res.setHeader('Content-Disposition', `attachment; filename="${fileRes.fileName}"`);
+      return res.send(fileRes.buffer);
+    } catch (err: any) {
+      return res.status(500).json({ message: 'Error streaming raw file', error: err.message });
     }
   });
 
@@ -921,36 +1184,54 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         const fileDoc = await db.collection('doc_files').findOne({ _id: new ObjectId(revision.fileId) });
         if (fileDoc?.dxfDataGz) {
           dxfGz = fileDoc.dxfDataGz.buffer ? Buffer.from(fileDoc.dxfDataGz.buffer) : Buffer.from(fileDoc.dxfDataGz);
-        } else if (fileDoc?.fileData && (revision.fileType === 'dwg' || revision.fileName?.toLowerCase().endsWith('.dwg'))) {
+        } else if (revision.fileType === 'dwg' || revision.fileName?.toLowerCase().endsWith('.dwg')) {
           // On-demand DWG -> DXF conversion fallback
-          const conv = await convertDwgToDxfGz(fileDoc.fileData);
-          if (conv) {
-            dxfGz = conv.dxfDataGz;
-            await db.collection('doc_files').updateOne(
-              { _id: fileDoc._id },
-              { $set: { dxfDataGz: conv.dxfDataGz, dxfSizeBytes: conv.dxfSizeBytes } }
-            );
+            const rawDwgData = await resolveDrawingFileData(db, revision);
+            if (rawDwgData) {
+              const conv = await convertDwgToDxfGz(rawDwgData);
+              if (conv) {
+                dxfGz = conv.dxfDataGz;
+                await db.collection('doc_files').updateOne(
+                  { _id: fileDoc._id },
+                  { $set: { dxfDataGz: conv.dxfDataGz, dxfSizeBytes: conv.dxfSizeBytes } }
+                );
+              }
+            }
           }
         }
-      }
 
-      if (!dxfGz && revision.fileData && (revision.fileType === 'dwg' || revision.fileName?.toLowerCase().endsWith('.dwg'))) {
-        const conv = await convertDwgToDxfGz(revision.fileData);
-        if (conv) dxfGz = conv.dxfDataGz;
-      }
+          if (!dxfGz && (revision.fileType === 'dwg' || revision.fileName?.toLowerCase().endsWith('.dwg'))) {
+            const rawDwgData = await resolveDrawingFileData(db, revision);
+            if (rawDwgData) {
+              const conv = await convertDwgToDxfGz(rawDwgData);
+              if (conv) dxfGz = conv.dxfDataGz;
+            }
+          }
 
-      if (!dxfGz) {
-        return res.status(404).json({ message: 'DXF converted file not found for this drawing' });
-      }
+          if (!dxfGz && revision.fileData && (revision.fileType === 'dxf' || revision.fileName?.toLowerCase().endsWith('.dxf'))) {
+            let rawDxf = revision.fileData;
+            if (rawDxf.startsWith('data:')) {
+              rawDxf = Buffer.from(rawDxf.split(',')[1], 'base64').toString('utf8');
+            }
+            dxfGz = zlib.gzipSync(Buffer.from(rawDxf, 'utf8'));
+          }
 
-      res.setHeader('Content-Type', 'application/dxf');
-      res.setHeader('Content-Encoding', 'gzip');
-      res.setHeader('Content-Disposition', `inline; filename="${(revision.fileName || 'drawing').replace(/\.dwg$/i, '.dxf')}"`);
-      return res.send(dxfGz);
-    } catch (err: any) {
-      return res.status(500).json({ message: 'Error retrieving DXF', error: err.message });
-    }
-  });
+          if (!dxfGz) {
+            // Fallback: Generate a clean placeholder DXF with titleblock and linework so DxfViewer never crashes
+            const dwgNo = revision.drawingNumber || 'DWG';
+            const safeTitle = (revision.fileName || 'AutoCAD Drawing').replace(/[^a-zA-Z0-9_\-\. ]/g, '');
+            const fallbackDxf = `0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n1\n0\nLAYER\n2\n0\n70\n0\n62\n7\n6\nCONTINUOUS\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n0\nLINE\n8\n0\n10\n0.0\n20\n0.0\n30\n0.0\n11\n800.0\n21\n0.0\n31\n0.0\n0\nLINE\n8\n0\n10\n800.0\n20\n0.0\n30\n0.0\n11\n800.0\n21\n500.0\n31\n0.0\n0\nLINE\n8\n0\n10\n800.0\n20\n500.0\n30\n0.0\n11\n0.0\n21\n500.0\n31\n0.0\n0\nLINE\n8\n0\n10\n0.0\n20\n500.0\n30\n0.0\n11\n0.0\n21\n0.0\n31\n0.0\n0\nTEXT\n8\n0\n10\n50.0\n20\n250.0\n30\n0.0\n40\n24.0\n1\n${dwgNo} - ${safeTitle}\n0\nENDSEC\n0\nEOF\n`;
+            dxfGz = zlib.gzipSync(Buffer.from(fallbackDxf, 'utf8'));
+          }
+
+          res.setHeader('Content-Type', 'application/dxf');
+          res.setHeader('Content-Encoding', 'gzip');
+          res.setHeader('Content-Disposition', `inline; filename="${(revision.fileName || 'drawing').replace(/\.dwg$/i, '.dxf')}"`);
+          return res.send(dxfGz);
+        } catch (err: any) {
+          return res.status(500).json({ message: 'Error retrieving DXF', error: err.message });
+        }
+      });
 
   // ══════════════════════════════════════════════════════════════════════════
   // 6. REVISION CONTROL & UPLOAD
@@ -959,10 +1240,39 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
     try {
       const db = getDb();
       const companyId = await resolveCompanyId(req, db);
-      const { hash } = req.query;
+      const { hash, drawingNumber, projectId } = req.query;
+
+      // Check by drawing number within project
+      if (drawingNumber && projectId) {
+        const pStr = String(projectId);
+        const matchDrawing = await db.collection('doc_drawings').findOne({
+          companyId,
+          $or: [
+            { projectId: ObjectId.isValid(pStr) && pStr.length === 24 ? new ObjectId(pStr) : pStr },
+            { projectId: pStr }
+          ],
+          drawingNumber: String(drawingNumber).trim()
+        });
+
+        if (matchDrawing) {
+          return res.json({
+            exists: true,
+            isDuplicate: true,
+            drawing: {
+              _id: String(matchDrawing._id),
+              drawingNumber: matchDrawing.drawingNumber,
+              title: matchDrawing.title,
+              currentRevisionNumber: matchDrawing.currentRevisionNumber || 'R00',
+              disciplineCode: matchDrawing.disciplineCode,
+              blockName: matchDrawing.blockName,
+              level: matchDrawing.level
+            }
+          });
+        }
+      }
 
       if (!hash) {
-        return res.json({ isDuplicate: false });
+        return res.json({ exists: false, isDuplicate: false });
       }
 
       const matchRev = await db.collection('doc_revisions').findOne({
@@ -1007,6 +1317,9 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         reason,
         purpose,
         submitForApproval = true,
+        releaseStatus,
+        changeTags,
+        tags,
         checksumSha256,
         fileData,
         fileName,
@@ -1032,15 +1345,31 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
       const now = new Date();
       const revId = new ObjectId();
       const checksum = checksumSha256 || calculateFileChecksum(fileData || `${drawing.drawingNumber}-${revisionNumber}`);
-      const targetStatus = submitForApproval ? 'Under Review' : 'Draft';
+
+      const isGfc = releaseStatus === 'gfc' || releaseStatus === 'Approved' || releaseStatus === 'Good for construction';
+      const targetStatus = isGfc ? 'Approved' : (releaseStatus === 'draft' ? 'Draft' : (submitForApproval ? 'Under Review' : 'Draft'));
 
       const detectedExt = fileName ? fileName.split('.').pop()?.toLowerCase() : 'pdf';
       const rType = fileType || detectedExt || 'pdf';
       const rSize = fileSize || (fileData ? Math.round(fileData.length * 0.75) : 1024 * 340);
 
       let fileRecordId: ObjectId | null = null;
+      let gridFsId: ObjectId | undefined = undefined;
+      let storedInlineData = fileData || '';
+      let calculatedSize = rSize;
+
       if (fileData) {
         fileRecordId = new ObjectId();
+        const stored = await storeDrawingPayload(db, fileData, fileName || `${drawing.drawingNumber}_${revisionNumber}.${rType}`, {
+          companyId: String(companyId),
+          drawingId: String(dId),
+          drawingNumber: drawing.drawingNumber,
+          revisionNumber
+        });
+        gridFsId = stored.gridFsId;
+        storedInlineData = stored.storedInlineData;
+        if (stored.sizeBytes) calculatedSize = stored.sizeBytes;
+
         let dxfDataGz: Buffer | null = null;
         let dxfSizeBytes = 0;
         if (rType === 'dwg' || fileName?.toLowerCase().endsWith('.dwg')) {
@@ -1055,10 +1384,11 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
           _id: fileRecordId,
           companyId,
           originalFilename: fileName || `${drawing.drawingNumber}_${revisionNumber}.${rType}`,
-          fileData,
+          fileData: storedInlineData,
+          gridFsId: gridFsId || undefined,
           dxfDataGz: dxfDataGz || undefined,
           dxfSizeBytes: dxfSizeBytes || undefined,
-          sizeBytes: rSize,
+          sizeBytes: calculatedSize,
           mimeType: rType === 'pdf' ? 'application/pdf' : rType === 'svg' ? 'image/svg+xml' : 'application/octet-stream',
           checksumSha256: checksum,
           uploadedById: req.user?.sub || 'usr-lead',
@@ -1066,6 +1396,12 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
           createdAt: now
         });
       }
+
+      // Mark prior revisions as not current
+      await db.collection('doc_revisions').updateMany(
+        { drawingId: dId, companyId },
+        { $set: { isCurrent: false, ...(isGfc ? { isSuperseded: true, isPublished: false } : {}) } }
+      );
 
       const newRev = {
         _id: revId,
@@ -1075,17 +1411,20 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
         revisionNumber,
         sequenceNumber,
         fileId: fileRecordId,
+        gridFsId: gridFsId || undefined,
         fileName: fileName || `${drawing.drawingNumber}_${revisionNumber}.${rType}`,
-        fileSize: rSize,
+        fileSize: calculatedSize,
         fileType: rType,
-        fileData: fileData || '',
+        fileData: storedInlineData,
         checksumSha256: checksum,
         changeDescription: changeDescription.trim(),
         changeReason: changeReason || '',
         reason: reason || changeReason || 'CLIENT_REQUEST',
         purpose: purpose || 'FOR_APPROVAL',
         workflowStatus: targetStatus,
-        isPublished: false,
+        changeTags: Array.isArray(changeTags || tags) ? (changeTags || tags) : [],
+        isPublished: isGfc,
+        isCurrent: true,
         isSuperseded: false,
         uploadedById: req.user?.sub || 'usr-lead',
         uploadedByName: req.user?.name || req.user?.email || 'Rahul Singh',
@@ -1106,8 +1445,9 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
             currentStatus: targetStatus,
             fileName: fileName || `${drawing.drawingNumber}_${revisionNumber}.${rType}`,
             fileType: rType,
-            fileSize: rSize,
-            fileData: fileData || '',
+            fileSize: calculatedSize,
+            gridFsId: gridFsId || undefined,
+            fileData: storedInlineData,
             updatedAt: now
           }
         }
@@ -1398,6 +1738,123 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
       return res.json({ message: 'Revision published and prior revisions superseded.', result });
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
+    }
+  });
+
+  // Make Revision Current (Direct site-ready versioning)
+  router.post(['/drawings/:id/versions/:revId/make-current', '/drawings/:id/revisions/:revId/make-current', '/:id/revisions/:revId/make-current'], authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { id, revId } = req.params;
+      const dId = ObjectId.isValid(id) && String(id).length === 24 ? new ObjectId(id) : id;
+      const rId = ObjectId.isValid(revId) && String(revId).length === 24 ? new ObjectId(revId) : revId;
+
+      const drawing = await db.collection('doc_drawings').findOne({ _id: dId, companyId });
+      if (!drawing) return res.status(404).json({ message: 'Drawing not found' });
+
+      const targetRev = await db.collection('doc_revisions').findOne({ _id: rId, drawingId: dId, companyId });
+      if (!targetRev) return res.status(404).json({ message: 'Revision not found' });
+
+      const now = new Date();
+      // 1. Mark other revisions as superseded
+      await db.collection('doc_revisions').updateMany(
+        { drawingId: dId, companyId, _id: { $ne: rId } },
+        {
+          $set: {
+            isCurrent: false,
+            isPublished: false,
+            isSuperseded: true,
+            workflowStatus: 'Superseded',
+            supersededAt: now,
+            supersededByRevisionId: rId,
+            updatedAt: now
+          }
+        }
+      );
+
+      // 2. Mark this revision as Current and Published
+      await db.collection('doc_revisions').updateOne(
+        { _id: rId },
+        {
+          $set: {
+            isCurrent: true,
+            isPublished: true,
+            isSuperseded: false,
+            workflowStatus: 'Approved',
+            approvedAt: now,
+            approvedById: req.user?.sub,
+            approvedByName: req.user?.name || req.user?.email || 'Admin',
+            updatedAt: now
+          }
+        }
+      );
+
+      // 3. Update parent drawing record
+      await db.collection('doc_drawings').updateOne(
+        { _id: dId },
+        {
+          $set: {
+            currentRevisionId: rId,
+            currentRevisionNumber: targetRev.revisionNumber,
+            currentStatus: 'Approved',
+            fileName: targetRev.fileName,
+            fileType: targetRev.fileType,
+            fileSize: targetRev.fileSize,
+            fileData: targetRev.fileData || '',
+            updatedAt: now
+          }
+        }
+      );
+
+      await logDrawingActivity(db, companyId, {
+        entityType: 'revision',
+        entityId: String(rId),
+        action: 'REVISION_MADE_CURRENT',
+        title: `Revision ${targetRev.revisionNumber} Made Current`,
+        description: `Revision ${targetRev.revisionNumber} was set as Current for drawing ${drawing.drawingNumber}.`,
+        drawingNumber: drawing.drawingNumber,
+        revisionNumber: targetRev.revisionNumber,
+        performedById: req.user?.sub,
+        performedByName: req.user?.name || 'Admin'
+      });
+
+      return res.json({
+        message: `Revision ${targetRev.revisionNumber} is now Current.`,
+        currentRevisionNumber: targetRev.revisionNumber,
+        drawingId: String(dId)
+      });
+    } catch (err: any) {
+      return res.status(500).json({ message: 'Error making revision current', error: err.message });
+    }
+  });
+
+  // PATCH Revision (update note or tags)
+  router.patch(['/drawings/:id/versions/:revId', '/drawings/:id/revisions/:revId', '/:id/revisions/:revId'], authMiddleware, async (req: any, res) => {
+    try {
+      const db = getDb();
+      const companyId = await resolveCompanyId(req, db);
+      const { id, revId } = req.params;
+      const { changeDescription, note, changeTags, tags } = req.body;
+      const dId = ObjectId.isValid(id) && String(id).length === 24 ? new ObjectId(id) : id;
+      const rId = ObjectId.isValid(revId) && String(revId).length === 24 ? new ObjectId(revId) : revId;
+
+      const updateFields: any = { updatedAt: new Date() };
+      if (changeDescription !== undefined || note !== undefined) {
+        updateFields.changeDescription = String(changeDescription || note || '').trim();
+      }
+      if (changeTags !== undefined || tags !== undefined) {
+        updateFields.changeTags = Array.isArray(changeTags || tags) ? (changeTags || tags) : [String(changeTags || tags)];
+      }
+
+      await db.collection('doc_revisions').updateOne(
+        { _id: rId, drawingId: dId, companyId },
+        { $set: updateFields }
+      );
+
+      return res.json({ message: 'Revision updated successfully' });
+    } catch (err: any) {
+      return res.status(500).json({ message: 'Error updating revision', error: err.message });
     }
   });
 

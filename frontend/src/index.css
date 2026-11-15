@@ -9,57 +9,180 @@
 }
 
 :root {
-  /* Dimensions & defaults */
-  --sidebar-width: 240px;
-  --sidebar-text: #94a3b8;
-  --sidebar-text-active: #ffffff;
+  /* ── 0. SYSTEM COLOR SCHEME ── */
+  color-scheme: light;
+
+  /* ── 1. PRIMARY ACCENT (Single Brand Emerald) ── */
+  /* #047857 passes WCAG AA 4.5:1 with white text (5.48:1) */
+  --accent: #047857;
+  --accent-hover: #065f46;
+  --accent-active: #064e3b;
+  --accent-contrast: #ffffff;
+  --accent-icon: #059669;
+  /* For large icons and fills with no small text */
+  --accent-text: #047857;
+  /* Text-safe accent */
+  --accent-subtle: rgba(5, 150, 105, 0.08);
+  --accent-border: rgba(5, 150, 105, 0.25);
+  --accent-alpha: var(--accent-subtle);
+
+  /* ── 2. SEMANTIC STATUS (Universal) ── */
+  --success: #10b981;
+  --success-text: #047857;
+  /* 5.48:1 on #fff, 5.24:1 on #f8fafc */
+  --success-subtle: rgba(16, 185, 129, 0.10);
+  --success-border: rgba(16, 185, 129, 0.30);
+
+  --warning: #f59e0b;
+  --warning-text: #b45309;
+  /* 5.02:1 on #fff, 4.80:1 on #f8fafc */
+  --warning-subtle: rgba(245, 158, 11, 0.10);
+  --warning-border: rgba(245, 158, 11, 0.35);
+
+  --danger: #dc2626;
+  /* 4.83:1 with white text >= 4.5:1 AA */
+  --danger-text: #b91c1c;
+  /* 6.47:1 on #fff, 6.18:1 on #f8fafc */
+  --danger-subtle: rgba(220, 38, 38, 0.10);
+  --danger-border: rgba(220, 38, 38, 0.30);
+
+  --info: #2563eb;
+  --info-text: #1d4ed8;
+  /* 6.70:1 on #fff, 6.41:1 on #f8fafc */
+  --info-subtle: rgba(37, 99, 235, 0.10);
+  --info-border: rgba(37, 99, 235, 0.30);
+
+  /* ── 3. SURFACES & NEUTRALS (Light Mode) ── */
   --main-bg: #f8fafc;
   --card-bg: #ffffff;
   --card-border: #e2e8f0;
+  --card-border-hover: #cbd5e1;
   --text-primary: #0f172a;
+  /* 17.85:1 on card, 17.06:1 on main */
   --text-secondary: #475569;
+  /* 7.58:1 on card, 7.24:1 on main */
   --text-label: #64748b;
+  /* 4.76:1 on card, 4.55:1 on main */
   --navbar-bg: #ffffff;
   --navbar-border: #e2e8f0;
-  --danger: #ef4444;
-  --danger-subtle: rgba(239, 68, 68, 0.08);
-  --success: #10b981;
-  --success-subtle: rgba(16, 185, 129, 0.08);
-  --warning: #f59e0b;
-  --warning-subtle: rgba(245, 158, 11, 0.08);
-  --input-border: #cbd5e1;
   --input-bg: #ffffff;
-  --border-color: var(--card-border);
-  --bg-secondary: var(--main-bg);
-  --accent-alpha: var(--accent-subtle);
+  --input-border: #7c8ba1;
+  /* 3.46:1 against #ffffff >= 3:1 */
+  --input-border-focus: var(--accent);
+  --placeholder-text: #64748b;
+  /* 4.76:1 on #ffffff >= 4.5:1 */
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #94a3b8;
+  /* 5.71:1 on sidebar-bg */
+  --sidebar-text-active: #ffffff;
+  --sidebar-active-bg: rgba(5, 150, 105, 0.15);
+  --sidebar-active-border: var(--accent);
+  --sidebar-width: 240px;
 
-  /* Compatibility aliases (token drift from older page CSS) */
-  --bg-primary: var(--main-bg);
-  --bg-tertiary: var(--input-bg);
-  --text-muted: var(--text-label);
+  /* ── 4. DISABLED STATES ── */
+  --disabled-bg: #f1f5f9;
+  --disabled-text: #64748b;
+  /* 4.3:1 readable */
+  --disabled-border: #e2e8f0;
+
+  /* ── 5. FOCUS RING ── */
+  --focus-ring: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--accent);
+  --focus-outline: 2px solid var(--accent);
+  --focus-outline-offset: 2px;
+
+  /* ── 6. OVERLAYS & SKELETONS ── */
+  --overlay-bg: rgba(15, 23, 42, 0.65);
+  --skeleton-base: #e2e8f0;
+  --skeleton-shimmer: #f1f5f9;
+
+  /* ── 7. TABLE TOKENS ── */
+  --table-header-bg: #f8fafc;
+  --table-row-hover: #f1f5f9;
+
+  /* ── 8. SHADOWS & ELEVATION (No glow shadows) ── */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-drawer: -4px 0 24px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.20), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+  --card-shadow: var(--shadow-card);
+  --card-shadow-hover: var(--shadow-card);
+  /* No vertical jump on hover */
+
+  /* ── 9. RADII ── */
   --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  /* Badges, chips, tags */
+  --radius-md: 8px;
+  /* Buttons, form inputs */
+  --radius-lg: 10px;
+  /* Cards, drawers, modals */
+  --radius-full: 9999px;
+
+  /* ── 10. SPACING SCALE ── */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
-  --touch-min: 40px;
-  --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-  --card-shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+
+  /* ── 11. LAYOUT & BREAKPOINTS ── */
+  --page-max-width: 1680px;
+  --page-padding-x-mobile: 16px;
+  --page-padding-x-tablet: 24px;
+  --page-padding-x-desktop: 32px;
+
+  /* ── 12. CONTROLS & TOUCH SIZES ── */
+  --control-height: 36px;
+  /* Desktop default with mouse */
+  --touch-min: 36px;
+
+  /* ── 13. Z-INDEX SCALE ── */
+  --z-base: 1;
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-drawer: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-tooltip: 500;
+
+  /* ── 14. MOTION & EASING ── */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── 15. TYPOGRAPHY ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --text-xs: 0.75rem;
+  /* 12px */
+  --text-sm: 0.84375rem;
+  /* 13.5px */
+  --text-base: 0.9375rem;
+  /* 15px */
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: 1.375rem;
+  /* 22px */
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+
+  /* Legacy compatibility aliases */
+  --primary-color: var(--accent);
+  --bg-card: var(--card-bg);
+  --bg-surface: var(--card-bg);
+  --bg-primary: var(--main-bg);
+  --bg-secondary: var(--input-bg);
+  --bg-tertiary: var(--input-bg);
+  --border-color: var(--card-border);
+  --hover-bg: var(--table-row-hover);
+  --danger-bg: var(--danger-subtle);
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-label);
+  --accent-rgb: 4, 120, 87;
   --auth-gradient: linear-gradient(to bottom, rgba(248, 250, 252, 0.85), rgba(248, 250, 252, 0.98));
 
-  /* Theme color default mapping: slate-emerald */
-  --sidebar-bg: #334155;
-  --sidebar-active-border: #059669;
-  --accent: #059669;
-  --accent-hover: #047857;
-  --accent-subtle: rgba(5, 150, 105, 0.08);
-  
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 14px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   line-height: 1.5;
   color: var(--text-primary);
   text-rendering: optimizeLegibility;
@@ -67,95 +190,161 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Light / Dark overrides */
+/* ── 16. RESPONSIVE TOUCH TARGET SIZING ── */
+/* Touch targets of 44px apply under coarse pointer OR below 640px */
+@media (pointer: coarse),
+(max-width: 639px) {
+  :root {
+    --control-height: 44px;
+    --touch-min: 44px;
+  }
+}
+
+/* ── 17. DARK THEME OVERRIDES ── */
 [data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Primary Accent & Text */
+  --accent: #047857;
+  --accent-hover: #065f46;
+  --accent-active: #064e3b;
+  --accent-icon: #10b981;
+  --accent-text: #34d399;
+  /* 8.82:1 on dark card */
+  --accent-subtle: rgba(52, 211, 153, 0.12);
+  --accent-border: rgba(52, 211, 153, 0.30);
+
+  /* Semantic Text-Safe Variants (Lighter equivalents for dark mode) */
+  --success-text: #34d399;
+  /* 8.82:1 on dark card */
+  --success-subtle: rgba(52, 211, 153, 0.14);
+  --success-border: rgba(52, 211, 153, 0.35);
+
+  --warning-text: #fbbf24;
+  /* 10.16:1 on dark card */
+  --warning-subtle: rgba(251, 191, 36, 0.14);
+  --warning-border: rgba(251, 191, 36, 0.35);
+
+  --danger-text: #f87171;
+  /* 6.13:1 on dark card */
+  --danger-subtle: rgba(248, 113, 113, 0.14);
+  --danger-border: rgba(248, 113, 113, 0.35);
+
+  --info-text: #60a5fa;
+  /* 6.67:1 on dark card */
+  --info-subtle: rgba(96, 165, 250, 0.14);
+  --info-border: rgba(96, 165, 250, 0.35);
+
+  /* Surfaces & Neutrals (Strict WCAG 2.1 AA Compliance >= 4.5:1) */
   --main-bg: #0b1120;
   --card-bg: #131c31;
   --card-border: #23314d;
+  --card-border-hover: #334469;
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-label: #64748b;
+  /* 16.21:1 on card, 18.00:1 on main */
+  --text-secondary: #9bb0cc;
+  /* 7.65:1 on card, 8.50:1 on main */
+  --text-label: #8fa0ba;
+  /* 6.38:1 on card, 7.09:1 on main */
   --navbar-bg: #10172a;
   --navbar-border: #1e293b;
-  --input-border: #27364f;
   --input-bg: #0b1120;
-  --card-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.35);
-  --card-shadow-hover: 0 8px 20px -4px rgba(0, 0, 0, 0.45);
+  --input-border: #5b6c86;
+  /* 3.53:1 on #0b1120, 3.18:1 on #131c31 >= 3:1 */
+  --input-border-focus: var(--accent-text);
+  --placeholder-text: #8fa0ba;
+  /* 7.09:1 on #0b1120 >= 4.5:1 */
+  --sidebar-bg: #0e1526;
+  --sidebar-text: #94a3b8;
+  /* 7.10:1 on dark sidebar-bg */
+  --sidebar-text-active: #ffffff;
+  --sidebar-active-bg: rgba(5, 150, 105, 0.20);
+  --sidebar-active-border: var(--accent);
+
+  /* Disabled States */
+  --disabled-bg: #1e293b;
+  --disabled-text: #8fa0ba;
+  /* 4.6:1 readable */
+  --disabled-border: #334155;
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--accent-text);
+
+  /* Overlays & Skeletons */
+  --overlay-bg: rgba(0, 0, 0, 0.75);
+  --skeleton-base: #1e293b;
+  --skeleton-shimmer: #28374f;
+
+  /* Table Tokens */
+  --table-header-bg: #0e1526;
+  --table-row-hover: #17223b;
+
+  /* Shadows (No glowing halos) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+  --shadow-drawer: -4px 0 32px rgba(0, 0, 0, 0.60);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.60);
   --auth-gradient: linear-gradient(to bottom, rgba(11, 17, 32, 0.85), rgba(11, 17, 32, 0.98));
+
+  /* Legacy compatibility aliases for Dark Theme */
+  --primary-color: var(--accent);
+  --bg-card: var(--card-bg);
+  --bg-surface: var(--card-bg);
+  --bg-primary: var(--main-bg);
+  --bg-secondary: var(--input-bg);
+  --bg-tertiary: var(--input-bg);
+  --border-color: var(--card-border);
+  --hover-bg: var(--table-row-hover);
+  --danger-bg: var(--danger-subtle);
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-label);
+  --accent-rgb: 52, 211, 153;
 }
 
-/* Universal Autofill Fix for Clean Dark & Light Theme Inputs */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #ffffff) inset !important;
-  -webkit-text-fill-color: var(--text-primary, #0f172a) !important;
-  caret-color: var(--text-primary, #0f172a) !important;
-  transition: background-color 5000s ease-in-out 0s !important;
+/* ── 18. SYSTEM PREFERS-COLOR-SCHEME FALLBACK ── */
+/* When user hasn't explicitly set a preference via data-theme attribute */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --accent: #047857;
+    --accent-hover: #065f46;
+    --accent-active: #064e3b;
+    --accent-icon: #10b981;
+    --accent-text: #34d399;
+    --accent-subtle: rgba(52, 211, 153, 0.12);
+    --accent-border: rgba(52, 211, 153, 0.30);
+    --success-text: #34d399;
+    --success-subtle: rgba(52, 211, 153, 0.14);
+    --warning-text: #fbbf24;
+    --warning-subtle: rgba(251, 191, 36, 0.14);
+    --danger-text: #f87171;
+    --danger-subtle: rgba(248, 113, 113, 0.14);
+    --info-text: #60a5fa;
+    --info-subtle: rgba(96, 165, 250, 0.14);
+    --main-bg: #0b1120;
+    --card-bg: #131c31;
+    --card-border: #23314d;
+    --card-border-hover: #334469;
+    --text-primary: #f8fafc;
+    --text-secondary: #9bb0cc;
+    --text-label: #8fa0ba;
+    --navbar-bg: #10172a;
+    --navbar-border: #1e293b;
+    --input-bg: #0b1120;
+    --input-border: #27364f;
+    --sidebar-bg: #0e1526;
+    --sidebar-text: #94a3b8;
+    --disabled-bg: #1e293b;
+    --disabled-text: #64748b;
+    --skeleton-base: #1e293b;
+    --skeleton-shimmer: #28374f;
+    --table-header-bg: #0e1526;
+    --table-row-hover: #17223b;
+    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+  }
 }
 
-[data-theme="dark"] input:-webkit-autofill,
-[data-theme="dark"] input:-webkit-autofill:hover,
-[data-theme="dark"] input:-webkit-autofill:focus,
-[data-theme="dark"] input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #0b1120) inset !important;
-  -webkit-text-fill-color: var(--text-primary, #f8fafc) !important;
-  caret-color: var(--text-primary, #f8fafc) !important;
-  transition: background-color 5000s ease-in-out 0s !important;
-}
-
-/* Color theme mappings */
-[data-color-theme="slate-emerald"] {
-  --accent: #059669;
-  --accent-hover: #047857;
-  --accent-subtle: rgba(5, 150, 105, 0.09);
-  --sidebar-bg: #334155;
-  --sidebar-active-border: #059669;
-}
-[data-theme="dark"][data-color-theme="slate-emerald"] {
-  --sidebar-bg: #131c31;
-  --accent-subtle: rgba(5, 150, 105, 0.16);
-}
-
-[data-color-theme="steel-blue"] {
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-subtle: rgba(37, 99, 235, 0.09);
-  --sidebar-bg: #1e3a8a;
-  --sidebar-active-border: #2563eb;
-}
-[data-theme="dark"][data-color-theme="steel-blue"] {
-  --sidebar-bg: #131c31;
-  --accent-subtle: rgba(37, 99, 235, 0.16);
-}
-
-[data-color-theme="classic-purple"] {
-  --accent: #7016d2;
-  --accent-hover: #591cc2;
-  --accent-subtle: rgba(112, 22, 210, 0.09);
-  --sidebar-bg: #1a1259;
-  --sidebar-active-border: #7016d2;
-  --main-bg: #f5f4fa;
-  --text-primary: #1a1259;
-  --text-secondary: #5e578c;
-  --text-label: #8d86b8;
-}
-[data-theme="dark"][data-color-theme="classic-purple"] {
-  --sidebar-bg: #151125;
-  --main-bg: #0e0b17;
-  --card-bg: #151125;
-  --card-border: #282142;
-  --text-primary: #ffffff;
-  --text-secondary: #a19db5;
-  --text-label: #8d86b8;
-  --navbar-bg: #151125;
-  --navbar-border: #282142;
-  --input-border: #282142;
-  --input-bg: #1d1833;
-  --accent-subtle: rgba(112, 22, 210, 0.18);
-}
-
+/* ── 19. GLOBAL HTML / BODY SHELL ── */
 html,
 body {
   width: 100%;
@@ -165,6 +354,11 @@ body {
   background-color: var(--main-bg);
   color: var(--text-primary);
   overflow-x: hidden;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  transition: background-color var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
 }
 
 #root {
@@ -177,16 +371,23 @@ body {
 button {
   font-family: inherit;
   cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
 
 input,
 select,
 textarea {
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
 }
 
-/* Tabular numbers for accurate data alignment */
+/* ── 20. TABULAR NUMBERS ── */
 table,
 .tabular-nums,
 input[type="number"],
@@ -197,10 +398,7 @@ input[type="number"],
   font-feature-settings: "tnum" 1, "cv01" 1;
 }
 
-/* ═══════════════════════════════════════════
-   GLOBAL NUMBER INPUT ARROW REMOVAL
-   Removes native up/down spin buttons across Chrome, Safari, Edge, Opera, and Firefox
-   ═══════════════════════════════════════════ */
+/* Remove number spinner arrows cleanly */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none !important;
@@ -212,10 +410,7 @@ input[type="number"] {
   appearance: textfield !important;
 }
 
-/* ═══════════════════════════════════════════
-   CLEAN, SUBTLE ACCESSIBLE SCROLLBARS
-   Replaces invisible scrolling with refined, lightweight scrollbars
-   ═══════════════════════════════════════════ */
+/* ── 21. ACCESSIBLE SCROLLBARS ── */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--card-border) transparent;
@@ -250,36 +445,49 @@ input[type="number"] {
   height: 0;
 }
 
-/* Accessible focus outline */
+/* ── 22. ACCESSIBLE FOCUS VISIBLE ── */
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
 }
 
-/* Dense data tables: keep IDs/status readable on narrow viewports */
-.ro-table-scroll th,
-.ro-table-scroll td {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+/* Universal Autofill Fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #ffffff) inset !important;
+  -webkit-text-fill-color: var(--text-primary, #0f172a) !important;
+  caret-color: var(--text-primary, #0f172a) !important;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
 
-button,
-a,
-input,
-select,
-textarea {
-  min-height: 0;
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #0b1120) inset !important;
+  -webkit-text-fill-color: var(--text-primary, #f8fafc) !important;
+  caret-color: var(--text-primary, #f8fafc) !important;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
 
-.sidenav-item,
-.ro-btn,
-.menu-toggle-btn,
-.bc-link {
-  min-height: var(--touch-min, 40px);
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: var(--placeholder-text);
+  opacity: 1;
 }
 
-/* Reduced motion preference */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent);
+  border: 1px solid var(--input-border);
+}
+
+/* ── 23. REDUCED MOTION PREFERENCE ── */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -288,11 +496,35 @@ textarea {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .ro-skeleton {
+    animation: none !important;
+    background: var(--skeleton-base) !important;
+  }
 }
 
-/* ═══════════════════════════════════════════
-   GLOBAL CENTERED LOADING ANIMATION SYSTEM
-   ═══════════════════════════════════════════ */
+/* ── 24. SKELETON SHIMMER KEYFRAMES ── */
+@keyframes roShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.ro-skeleton {
+  background: linear-gradient(90deg,
+      var(--skeleton-base) 25%,
+      var(--skeleton-shimmer) 37%,
+      var(--skeleton-base) 63%);
+  background-size: 400% 100%;
+  animation: roShimmer 1.4s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ── 25. GLOBAL LOADING SPINNER ── */
 .loading-state,
 .loading-container,
 .users-loading,
@@ -308,36 +540,41 @@ textarea {
   margin: 0 auto !important;
   text-align: center !important;
   gap: 16px !important;
-  color: var(--text-secondary, #94a3b8) !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  animation: loadingFadeIn 0.3s ease-out;
+  color: var(--text-secondary) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  animation: loadingFadeIn var(--duration-normal) var(--ease-standard);
 }
 
 .loader,
 .users-spinner,
 .dev-spinner {
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 3.5px solid rgba(150, 150, 150, 0.15);
-  border-top-color: var(--accent, #059669);
-  border-right-color: var(--accent, #059669);
-  animation: appGlobalSpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.18);
+  border: 3px solid var(--card-border);
+  border-top-color: var(--accent);
+  border-right-color: var(--accent);
+  animation: appGlobalSpin 0.75s var(--ease-standard) infinite;
   margin-bottom: 4px;
 }
 
 @keyframes appGlobalSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes loadingFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

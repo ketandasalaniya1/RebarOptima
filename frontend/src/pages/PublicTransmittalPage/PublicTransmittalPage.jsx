@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './PublicTransmittalPage.css';
+import brandLogo from '../../assets/logo.png';
 import {
   FileText,
   Download,
@@ -96,8 +97,8 @@ export default function PublicTransmittalPage() {
         {/* Brand Header */}
         <div className="ro-public-header">
           <div>
-            <div className="ro-public-brand">
-              <span style={{ fontSize: '18px', fontWeight: 800, color: '#059669' }}>RebarOptima</span>
+            <div className="ro-public-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <img src={brandLogo} alt="CraveToBuild" style={{ height: '28px', width: 'auto', objectFit: 'contain' }} />
               <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>DOCUMENT TRANSMITTAL</span>
             </div>
             <div className="ro-public-trans-no">{transmittal.transmittalNumber || 'TR-2026-001'}</div>

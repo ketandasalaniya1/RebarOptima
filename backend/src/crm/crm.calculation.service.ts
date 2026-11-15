@@ -2,13 +2,21 @@ import { ICrmBooking, ICrmPaymentSchedule, ICrmPaymentTransaction } from './crm.
 
 export interface IBookingFinancialSummary {
   agreementPrice: number;
+  agreementPricePaise: number;
   discountAmount: number;
+  discountAmountPaise: number;
   taxAmount: number;
+  taxAmountPaise: number;
   netBookingValue: number;
+  netBookingValuePaise: number;
   totalReceived: number;
+  totalReceivedPaise: number;
   totalOutstanding: number;
+  totalOutstandingPaise: number;
   overdueAmount: number;
+  overdueAmountPaise: number;
   refundedAmount: number;
+  refundedAmountPaise: number;
   collectionProgressPercent: number;
   scheduleMilestoneCount: number;
   paidMilestoneCount: number;
@@ -16,94 +24,132 @@ export interface IBookingFinancialSummary {
 }
 
 /**
- * Monetary rounding helper - eliminates JavaScript binary floating-point drift.
- * Keeps exact 2 decimal currency precision.
+ * Converts float rupees to integer paise safely (eliminates floating point precision issues).
  */
-export function roundCurrency(amount: number): number {
-  return Math.round((Number(amount) || 0) * 100) / 100;
+export function rupeesToPaise(rupees: number | string | undefined | null): number {
+  if (rupees === undefined || rupees === null || isNaN(Number(rupees))) return 0;
+  return Math.round(Number(rupees) * 100);
 }
 
 /**
- * Calculates accurate financial metrics for a booking given its schedules and transactions.
+ * Converts integer paise to 2-decimal rounded float rupees.
+ */
+export function paiseToRupees(paise: number | undefined | null): number {
+  if (paise === undefined || paise === null || isNaN(Number(paise))) return 0;
+  return Math.round(Number(paise)) / 100;
+}
+
+/**
+ * Legacy monetary rounding helper - keeps 2 decimal currency precision.
+ */
+export function roundCurrency(amount: number): number {
+  return paiseToRupees(rupeesToPaise(amount));
+}
+
+/**
+ * Calculates accurate financial metrics for a booking using integer paise math.
+ * Keeps float rupee fields fully readable for backwards compatibility.
  */
 export function calculateBookingFinancials(
   booking: ICrmBooking,
   schedules: ICrmPaymentSchedule[] = [],
   transactions: ICrmPaymentTransaction[] = []
 ): IBookingFinancialSummary {
-  const agreementPrice = roundCurrency(booking.agreementPrice);
-  const discountAmount = roundCurrency(booking.discountAmount || 0);
-  const taxAmount = roundCurrency(booking.taxAmount || 0);
-  const netBookingValue = roundCurrency(
-    booking.netBookingValue || (agreementPrice - discountAmount + taxAmount)
-  );
+  const agreementPricePaise = booking.agreementPricePaise !== undefined
+    ? Math.round(Number(booking.agreementPricePaise))
+    : rupeesToPaise(booking.agreementPrice);
 
-  let totalReceived = 0;
-  let refundedAmount = 0;
+  const discountAmountPaise = booking.discountAmountPaise !== undefined
+    ? Math.round(Number(booking.discountAmountPaise))
+    : rupeesToPaise(booking.discountAmount || 0);
+
+  const taxAmountPaise = booking.taxAmountPaise !== undefined
+    ? Math.round(Number(booking.taxAmountPaise))
+    : rupeesToPaise(booking.taxAmount || 0);
+
+  const netBookingValuePaise = booking.netBookingValuePaise !== undefined
+    ? Math.round(Number(booking.netBookingValuePaise))
+    : (agreementPricePaise - discountAmountPaise + taxAmountPaise);
+
+  let totalReceivedPaise = 0;
+  let refundedAmountPaise = 0;
 
   for (const txn of transactions) {
-    const amt = roundCurrency(txn.amount);
+    const amtPaise = txn.amountPaise !== undefined
+      ? Math.round(Number(txn.amountPaise))
+      : rupeesToPaise(txn.amount);
+
     if (txn.paymentStatus === 'Paid') {
-      totalReceived += amt;
+      totalReceivedPaise += amtPaise;
     } else if (txn.paymentStatus === 'Refunded') {
-      refundedAmount += amt;
+      refundedAmountPaise += amtPaise;
     }
   }
 
-  totalReceived = roundCurrency(totalReceived);
-  refundedAmount = roundCurrency(refundedAmount);
-
-  const totalOutstanding = roundCurrency(Math.max(0, netBookingValue - totalReceived));
+  const totalOutstandingPaise = Math.max(0, netBookingValuePaise - totalReceivedPaise);
 
   const now = new Date();
-  let overdueAmount = 0;
+  let overdueAmountPaise = 0;
   let paidMilestoneCount = 0;
 
   for (const milestone of schedules) {
-    const dueAmt = roundCurrency(milestone.dueAmount);
-    const paidAmt = roundCurrency(milestone.paidAmount || 0);
-    const remainingDue = roundCurrency(Math.max(0, dueAmt - paidAmt));
+    const dueAmtPaise = milestone.dueAmountPaise !== undefined
+      ? Math.round(Number(milestone.dueAmountPaise))
+      : rupeesToPaise(milestone.dueAmount);
 
-    if (milestone.status === 'Paid') {
+    const paidAmtPaise = milestone.paidAmountPaise !== undefined
+      ? Math.round(Number(milestone.paidAmountPaise))
+      : rupeesToPaise(milestone.paidAmount || 0);
+
+    const remainingDuePaise = Math.max(0, dueAmtPaise - paidAmtPaise);
+
+    if (milestone.status === 'Paid' || (dueAmtPaise > 0 && remainingDuePaise === 0)) {
       paidMilestoneCount++;
-    } else if (remainingDue > 0) {
+    } else if (remainingDuePaise > 0) {
       const dueDate = new Date(milestone.dueDate);
       if (dueDate < now) {
-        overdueAmount += remainingDue;
+        overdueAmountPaise += remainingDuePaise;
       }
     }
   }
 
-  overdueAmount = roundCurrency(overdueAmount);
-
-  const collectionProgressPercent = netBookingValue > 0
-    ? roundCurrency(Math.min(100, (totalReceived / netBookingValue) * 100))
+  const collectionProgressPercent = netBookingValuePaise > 0
+    ? Math.min(100, Math.round(((totalReceivedPaise / netBookingValuePaise) * 100) * 100) / 100)
     : 0;
 
   return {
-    agreementPrice,
-    discountAmount,
-    taxAmount,
-    netBookingValue,
-    totalReceived,
-    totalOutstanding,
-    overdueAmount,
-    refundedAmount,
+    agreementPrice: paiseToRupees(agreementPricePaise),
+    agreementPricePaise,
+    discountAmount: paiseToRupees(discountAmountPaise),
+    discountAmountPaise,
+    taxAmount: paiseToRupees(taxAmountPaise),
+    taxAmountPaise,
+    netBookingValue: paiseToRupees(netBookingValuePaise),
+    netBookingValuePaise,
+    totalReceived: paiseToRupees(totalReceivedPaise),
+    totalReceivedPaise,
+    totalOutstanding: paiseToRupees(totalOutstandingPaise),
+    totalOutstandingPaise,
+    overdueAmount: paiseToRupees(overdueAmountPaise),
+    overdueAmountPaise,
+    refundedAmount: paiseToRupees(refundedAmountPaise),
+    refundedAmountPaise,
     collectionProgressPercent,
     scheduleMilestoneCount: schedules.length,
     paidMilestoneCount,
-    isFullyPaid: totalOutstanding <= 0 && netBookingValue > 0
+    isFullyPaid: totalOutstandingPaise <= 0 && netBookingValuePaise > 0
   };
 }
 
 /**
- * Generates standardized installment milestones from templates or percentages.
+ * Generates standardized installment milestones using integer paise precision.
+ * Guarantees sum(milestones.dueAmountPaise) === netBookingValuePaise.
  */
 export function generateInstallmentSchedule(
   netBookingValue: number,
   bookingDate: Date | string,
   milestoneTemplates?: { name: string; percentage: number }[]
-): { milestoneName: string; milestonePercentage: number; dueAmount: number; dueDate: string }[] {
+): { milestoneName: string; milestonePercentage: number; dueAmount: number; dueAmountPaise: number; dueDate: string }[] {
   const defaultTemplates = milestoneTemplates && milestoneTemplates.length > 0 ? milestoneTemplates : [
     { name: 'Booking Token Amount', percentage: 10 },
     { name: 'Agreement Signing (Within 30 Days)', percentage: 15 },
@@ -113,23 +159,24 @@ export function generateInstallmentSchedule(
     { name: 'Notice of Possession & Handover', percentage: 15 }
   ];
 
+  const netBookingValuePaise = rupeesToPaise(netBookingValue);
   const startDate = new Date(bookingDate || new Date());
-  const schedule: { milestoneName: string; milestonePercentage: number; dueAmount: number; dueDate: string }[] = [];
+  const schedule: { milestoneName: string; milestonePercentage: number; dueAmount: number; dueAmountPaise: number; dueDate: string }[] = [];
 
   let accumulatedPercent = 0;
-  let accumulatedAmount = 0;
+  let accumulatedPaise = 0;
 
   defaultTemplates.forEach((template, index) => {
     const isLast = index === defaultTemplates.length - 1;
     const pct = template.percentage;
     accumulatedPercent += pct;
 
-    // Last milestone absorbs any rounding cents to guarantee sum(milestones) === netBookingValue
-    const dueAmount = isLast
-      ? roundCurrency(netBookingValue - accumulatedAmount)
-      : roundCurrency((netBookingValue * pct) / 100);
+    // Last milestone absorbs any rounding difference to guarantee exact parity
+    const dueAmountPaise = isLast
+      ? (netBookingValuePaise - accumulatedPaise)
+      : Math.round((netBookingValuePaise * pct) / 100);
 
-    accumulatedAmount = roundCurrency(accumulatedAmount + dueAmount);
+    accumulatedPaise += dueAmountPaise;
 
     // Stagger due dates 45 days apart
     const dueDate = new Date(startDate);
@@ -138,7 +185,8 @@ export function generateInstallmentSchedule(
     schedule.push({
       milestoneName: template.name,
       milestonePercentage: pct,
-      dueAmount,
+      dueAmount: paiseToRupees(dueAmountPaise),
+      dueAmountPaise,
       dueDate: dueDate.toISOString().split('T')[0]
     });
   });

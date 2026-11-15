@@ -6,6 +6,7 @@ import {
   insertProjectWithBlocks,
   assertBlockInProject,
   createBlockForProject,
+  listProjectBlocks,
   PROJECT_BLOCKS_COLLECTION,
 } from './project-blocks.service';
 
@@ -216,5 +217,29 @@ describe('createBlockForProject', () => {
         input: { name: 'Tower A' },
       }),
     ).rejects.toMatchObject({ status: 409, code: 'BLOCK_NAME_DUPLICATE' });
+  });
+
+  it('lists active project blocks ordered by displayOrder', async () => {
+    const projectId = new ObjectId();
+    const blocksInDb = [
+      { _id: new ObjectId(), projectId: String(projectId), name: 'Tower A', displayOrder: 1, status: 'active' },
+      { _id: new ObjectId(), projectId: String(projectId), name: 'Tower B', displayOrder: 2, status: 'active' },
+    ];
+    const toArray = jest.fn().mockResolvedValue(blocksInDb);
+    const sort = jest.fn().mockReturnValue({ toArray });
+    const find = jest.fn().mockReturnValue({ sort });
+    const db = {
+      collection: (name: string) => {
+        if (name === PROJECT_BLOCKS_COLLECTION) {
+          return { find };
+        }
+        return {};
+      },
+    };
+
+    const result = await listProjectBlocks(db, String(projectId));
+    expect(result).toHaveLength(2);
+    expect(result[0].name).toBe('Tower A');
+    expect(result[1].name).toBe('Tower B');
   });
 });

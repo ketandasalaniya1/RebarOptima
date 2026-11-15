@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Plus, ChevronRight, ChevronDown, Layers, Building, FolderPlus, Trash2, Edit3, X } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { Plus, ChevronRight, ChevronDown, Layers, Building, FolderPlus, Trash2, Edit3, X, ExternalLink } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { openCreateModal } from '../../../store/slices/projectSlice';
 
 export default function ProjectHierarchyManager({
   projects,
@@ -14,6 +16,7 @@ export default function ProjectHierarchyManager({
   onSelectLevel,
   onRefreshHierarchy
 }) {
+  const dispatch = useDispatch();
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showLevelModal, setShowLevelModal] = useState(false);
@@ -140,16 +143,15 @@ export default function ProjectHierarchyManager({
           <Building size={17} className="casting-accent-icon" />
           Structure Hierarchy
         </span>
-        <button
+        {/* <button
           className="casting-btn casting-btn-secondary casting-btn-sm"
           onClick={() => {
-            setErrorMsg('');
-            setShowProjectModal(true);
+            dispatch(openCreateModal());
           }}
           title="Create New Project"
         >
           <FolderPlus size={13} /> New Project
-        </button>
+        </button> */}
       </div>
 
       {/* Project Selector */}
@@ -176,7 +178,7 @@ export default function ProjectHierarchyManager({
       <div className="tree-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
           <span className="project-select-lbl">Blocks & Levels</span>
-          {selectedProject && (
+          {/* {selectedProject && (
             <button
               className="casting-btn casting-btn-secondary casting-btn-xs"
               onClick={() => {
@@ -186,12 +188,12 @@ export default function ProjectHierarchyManager({
             >
               <Plus size={12} /> Add Block
             </button>
-          )}
+          )} */}
         </div>
 
         {blocks.length === 0 ? (
           <div className="casting-tree-empty">
-            No blocks found in this project. Click '+ Add Block' above.
+            No construction blocks found for this project. Click '+ Add Block' above or add towers from the Project section.
           </div>
         ) : (
           blocks.map(block => {
@@ -369,6 +371,10 @@ export default function ProjectHierarchyManager({
             </div>
             <form onSubmit={handleCreateBlock}>
               <div className="casting-modal-body">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: '#94a3b8', background: 'rgba(56, 189, 248, 0.08)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
+                  <Layers size={15} style={{ color: '#38bdf8', flexShrink: 0 }} />
+                  <span>Blocks and towers added here are automatically shared with Project Management, CRM, BBS, and Drawings.</span>
+                </div>
                 {errorMsg && (
                   <div style={{ padding: '0.65rem 0.85rem', background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', borderRadius: '8px', fontSize: '0.825rem' }}>
                     {errorMsg}

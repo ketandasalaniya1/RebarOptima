@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setView } from '../../store/slices/routingSlice'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import { useActiveProject } from '../../hooks/useActiveProject'
 import {
@@ -28,10 +29,20 @@ import {
   Calculator,
   Recycle,
   Wand2,
-  RotateCcw
+  RotateCcw,
+  Zap,
+  RefreshCw,
+  ExternalLink,
+  Check
 } from 'lucide-react'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
-import { PageHeader } from '../../components/ui'
+import { PageHeader, TableSkeleton, useDelayedSkeleton, Badge } from '../../components/ui'
+import SteelHeader from '../../components/Shared/SteelHeader'
+import InwardVoucherDrawer from './components/InwardVoucherDrawer'
+import ScrapSaleDrawer from './components/ScrapSaleDrawer'
+import ScrapRulesDrawer from './components/ScrapRulesDrawer'
+import { SHOW_FINANCIALS } from '../../utils/steelFinancials'
+import { Sliders } from 'lucide-react'
 import './InventoryPage.css'
 
 const STANDARD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32]
@@ -50,6 +61,7 @@ const createDefaultVoucherRows = () => {
 }
 
 export default function InventoryPage() {
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
   // Tab states: 'list' | 'inward' | 'rules' | 'scrapsales' | 'batchscrap'
   const [activeTab, setActiveTab] = useState('list')
@@ -58,9 +70,15 @@ export default function InventoryPage() {
   const [batchScrapRecords, setBatchScrapRecords] = useState([])
   const [scrapSearchQuery, setScrapSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
+  const isDelayedLoading = useDelayedSkeleton(loading)
   const [actionLoading, setActionLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  // Slide-over Drawer States (Hard Rules 3, 4, 7)
+  const [isInwardDrawerOpen, setIsInwardDrawerOpen] = useState(false)
+  const [isScrapSaleDrawerOpen, setIsScrapSaleDrawerOpen] = useState(false)
+  const [isScrapRulesDrawerOpen, setIsScrapRulesDrawerOpen] = useState(false)
 
   // Inward Multi-Diameter Voucher Form State (pre-populated with each standard diameter)
   const [voucherRows, setVoucherRows] = useState(createDefaultVoucherRows)
@@ -119,7 +137,7 @@ export default function InventoryPage() {
         inventoryApi.getScrapRules(),
         inventoryApi.getScrapSales(),
         batchesApi.getScrapRecords().catch(() => []),
-        inventoryApi.getLedger().catch(() => [])
+        inventoryApi.getLedger(projectId).catch(() => [])
       ])
       if (epochAtStart != null && isStale(epochAtStart)) return
       setInventory(invData)
@@ -146,16 +164,16 @@ export default function InventoryPage() {
     let grandTotalWeight = 0
     let grandTotalQty = 0
 
-    ;(inventory.standardStock || []).forEach((item) => {
-      const dia = Number(item.diameter)
-      if (!summary[dia]) {
-        summary[dia] = { diameter: dia, totalWeight: 0, totalQty: 0 }
-      }
-      summary[dia].totalWeight += Number(item.weightInKgs) || 0
-      summary[dia].totalQty += Number(item.quantity) || 0
-      grandTotalWeight += Number(item.weightInKgs) || 0
-      grandTotalQty += Number(item.quantity) || 0
-    })
+      ; (inventory.standardStock || []).forEach((item) => {
+        const dia = Number(item.diameter)
+        if (!summary[dia]) {
+          summary[dia] = { diameter: dia, totalWeight: 0, totalQty: 0 }
+        }
+        summary[dia].totalWeight += Number(item.weightInKgs) || 0
+        summary[dia].totalQty += Number(item.quantity) || 0
+        grandTotalWeight += Number(item.weightInKgs) || 0
+        grandTotalQty += Number(item.quantity) || 0
+      })
 
     const standardDias = [8, 10, 12, 16, 20, 25, 32]
     const presentDias = Object.keys(summary).map(Number)
@@ -179,16 +197,16 @@ export default function InventoryPage() {
     let grandTotalWeight = 0
     let grandTotalQty = 0
 
-    ;(inventory.remnantsStock || []).forEach((item) => {
-      const dia = Number(item.diameter)
-      if (!summary[dia]) {
-        summary[dia] = { diameter: dia, totalWeight: 0, totalQty: 0 }
-      }
-      summary[dia].totalWeight += Number(item.weightInKgs) || 0
-      summary[dia].totalQty += Number(item.quantity) || 0
-      grandTotalWeight += Number(item.weightInKgs) || 0
-      grandTotalQty += Number(item.quantity) || 0
-    })
+      ; (inventory.remnantsStock || []).forEach((item) => {
+        const dia = Number(item.diameter)
+        if (!summary[dia]) {
+          summary[dia] = { diameter: dia, totalWeight: 0, totalQty: 0 }
+        }
+        summary[dia].totalWeight += Number(item.weightInKgs) || 0
+        summary[dia].totalQty += Number(item.quantity) || 0
+        grandTotalWeight += Number(item.weightInKgs) || 0
+        grandTotalQty += Number(item.quantity) || 0
+      })
 
     const standardDias = [8, 10, 12, 16, 20, 25, 32]
     const presentDias = Object.keys(summary).map(Number)
@@ -212,10 +230,13 @@ export default function InventoryPage() {
   }, [standardDiaSummary, remnantsDiaSummary])
 
   const totalYardValuation = useMemo(() => {
-    const stdCost = (inventory.standardStock || []).reduce((sum, item) => sum + ((item.weightInKgs || 0) * (item.costPerKg || 60)), 0)
-    const remCost = remnantsDiaSummary.grandTotalWeight * 55
-    return stdCost + remCost
-  }, [inventory.standardStock, remnantsDiaSummary])
+    // Only priced stock items are included in valuation; unpriced items are excluded
+    const stdCost = (inventory.standardStock || []).reduce((sum, item) => {
+      const price = Number(item.costPerKg) || 0;
+      return price > 0 ? sum + ((item.weightInKgs || 0) * price) : sum;
+    }, 0);
+    return stdCost;
+  }, [inventory.standardStock])
 
   const remnantWeightPct = totalYardWeight > 0 ? ((remnantsDiaSummary.grandTotalWeight / totalYardWeight) * 100).toFixed(1) : 0
 
@@ -249,7 +270,7 @@ export default function InventoryPage() {
     }
     if (remnantSearch.trim()) {
       const q = remnantSearch.toLowerCase().trim()
-      list = list.filter(r => 
+      list = list.filter(r =>
         `${r.diameter}mm ${r.length} ${r.brandName || ''} ${r.vendorName || ''}`.toLowerCase().includes(q)
       )
     }
@@ -265,8 +286,174 @@ export default function InventoryPage() {
   // Smart Remnant Clearance & Cut Matcher State
   const [showRemnantMatcher, setShowRemnantMatcher] = useState(false)
   const [matcherDia, setMatcherDia] = useState(8)
-  const [matcherTargetLength, setMatcherTargetLength] = useState(300)
+
+  // 7. Smart Remnant Clearance – Remember Cutting Lengths
+  const [matcherTargetLength, setMatcherTargetLength] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rebar_remnant_last_length')
+      if (saved && Number(saved) > 0) return Number(saved)
+    } catch { }
+    return 300
+  })
+
+  const [savedLengthsHistory, setSavedLengthsHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rebar_remnant_saved_lengths')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(Number).filter(n => n > 0)
+      }
+    } catch { }
+    return [300]
+  })
+
+  useEffect(() => {
+    if (matcherTargetLength && Number(matcherTargetLength) > 0) {
+      try {
+        localStorage.setItem('rebar_remnant_last_length', String(matcherTargetLength))
+      } catch { }
+    }
+  }, [matcherTargetLength])
+
+  const rememberLength = (len) => {
+    const val = Number(len)
+    if (!val || val <= 0) return
+    setSavedLengthsHistory(prev => {
+      const filtered = prev.filter(item => Number(item) !== val)
+      const updated = [val, ...filtered].slice(0, 8)
+      try {
+        localStorage.setItem('rebar_remnant_saved_lengths', JSON.stringify(updated))
+      } catch { }
+      return updated
+    })
+  }
+
+  const removeSavedLength = (lenToRemove) => {
+    setSavedLengthsHistory(prev => {
+      const updated = prev.filter(item => Number(item) !== Number(lenToRemove))
+      try {
+        localStorage.setItem('rebar_remnant_saved_lengths', JSON.stringify(updated))
+      } catch { }
+      return updated
+    })
+  }
+
+  const clearAllSavedLengths = () => {
+    setSavedLengthsHistory([])
+    try {
+      localStorage.removeItem('rebar_remnant_saved_lengths')
+    } catch { }
+  }
+
   const [matcherTargetQty, setMatcherTargetQty] = useState('')
+  const [optimizingRemnants, setOptimizingRemnants] = useState(false)
+  const [optimizerResult, setOptimizerResult] = useState(null)
+  const [optimizerError, setOptimizerError] = useState(null)
+
+  // Reset optimizer result if user changes inputs
+  useEffect(() => {
+    setOptimizerResult(null)
+    setOptimizerError(null)
+  }, [matcherDia, matcherTargetLength, matcherTargetQty])
+
+  // Direct Run Optimizer Handler: navigates directly to /inputs pre-filled with remnant stock & cut requirements
+  const handleRunDirectRemnantOptimizer = () => {
+    setOptimizerError(null)
+    const targetL = Number(matcherTargetLength)
+    const targetDia = Number(matcherDia)
+    const reqQty = matcherTargetQty ? Number(matcherTargetQty) : null
+
+    if (!targetL || targetL <= 0) {
+      setOptimizerError('Please enter a valid required cut length (mm).')
+      return
+    }
+
+    rememberLength(targetL)
+
+    const matchingRemnants = (inventory.remnantsStock || [])
+      .filter(r => (targetDia === 0 || Number(r.diameter) === targetDia) && Number(r.length) >= targetL)
+      .sort((a, b) => Number(a.length) - Number(b.length))
+
+    if (matchingRemnants.length === 0) {
+      setOptimizerError(`No available remnants found with length ≥ ${targetL.toLocaleString()} mm for Ø ${targetDia === 0 ? 'All' : targetDia} mm in stock.`)
+      return
+    }
+
+    let partsRows = []
+    if (targetDia === 0) {
+      const diaMap = new Map()
+      matchingRemnants.forEach(r => {
+        const d = Number(r.diameter)
+        const maxPcs = Math.floor(Number(r.length) / targetL) * (Number(r.quantity) || 1)
+        diaMap.set(d, (diaMap.get(d) || 0) + maxPcs)
+      })
+      let rowIdx = 1
+      diaMap.forEach((maxPcs, d) => {
+        const qty = reqQty ? Math.min(reqQty, maxPcs) : maxPcs
+        if (qty > 0) {
+          partsRows.push({
+            id: rowIdx++,
+            diameter: String(d),
+            length: String(targetL),
+            quantity: String(qty),
+            label: `Clearance Ø${d}mm`
+          })
+        }
+      })
+    } else {
+      const totalExtractable = matchingRemnants.reduce(
+        (sum, r) => sum + (Math.floor(Number(r.length) / targetL) * (Number(r.quantity) || 1)),
+        0
+      )
+      const finalQty = reqQty ? Math.min(reqQty, totalExtractable) : totalExtractable
+      partsRows = [{
+        id: 1,
+        diameter: String(targetDia),
+        length: String(targetL),
+        quantity: String(finalQty > 0 ? finalQty : 1),
+        label: `Clearance Ø${targetDia}mm`
+      }]
+    }
+
+    const stockRows = matchingRemnants.map((r, idx) => ({
+      id: idx + 1,
+      dbId: r._id,
+      diameter: String(r.diameter),
+      length: String(r.length),
+      quantity: String(r.quantity || 1),
+      isRemnant: true,
+      costPerKg: r.costPerKg || 0,
+      brandName: r.brandName || '',
+      vendorName: r.vendorName || ''
+    }))
+
+    const diaLabel = targetDia === 0 ? 'All' : `${targetDia}mm`
+    const payload = {
+      batchName: `Remnant Clearance - Ø${diaLabel} (${targetL}mm)`,
+      inputStock: stockRows,
+      requiredParts: partsRows,
+      settings: { kerf: 0, trimMargin: 0 },
+      isRemnantClearance: true,
+      expandStock: true
+    }
+
+    sessionStorage.setItem('bbs_optimizer_payload', JSON.stringify(payload))
+    dispatch(setView('inputs'))
+  }
+
+  const handleOpenInBatchStudio = () => {
+    if (!optimizerResult) return
+    const payload = {
+      batchName: `Remnant Clearance - ${optimizerResult.targetLength}mm (${new Date().toLocaleDateString('en-GB')})`,
+      inputStock: optimizerResult.stockRows,
+      requiredParts: optimizerResult.partsRows,
+      settings: { kerf: 0, trimMargin: 0 },
+      isRemnantClearance: true,
+      expandStock: true
+    }
+    sessionStorage.setItem('bbs_optimizer_payload', JSON.stringify(payload))
+    dispatch(setView('inputs'))
+  }
 
   // Dynamic Remnant Clearance & Links Calculation
   const remnantMatchAnalysis = useMemo(() => {
@@ -400,30 +587,34 @@ export default function InventoryPage() {
     setActionLoading(true)
 
     try {
-      // Filter only rows that have weight or price entered
+      // Filter only rows that have weight entered (or price if SHOW_FINANCIALS)
       const filledRows = voucherRows.filter(row => {
         const tons = parseFloat(row.weightInTons) || 0;
         const price = parseFloat(row.pricePerTonWithoutGst) || 0;
-        return tons > 0 || price > 0 || (row.brandName && row.brandName.trim() !== '') || (row.vendorName && row.vendorName.trim() !== '');
+        return tons > 0 || (SHOW_FINANCIALS && price > 0) || (row.brandName && row.brandName.trim() !== '') || (row.vendorName && row.vendorName.trim() !== '');
       });
 
       if (filledRows.length === 0) {
-        throw new Error('Please enter Weight (Tons) and Price/Ton for at least one diameter.')
+        throw new Error(SHOW_FINANCIALS ? 'Please enter Weight (Tons) and Price/Ton for at least one diameter.' : 'Please enter Weight (Tons) for at least one diameter.');
       }
 
       for (const row of filledRows) {
-        const tons = parseFloat(row.weightInTons) || 0
-        const price = parseFloat(row.pricePerTonWithoutGst) || 0
-        if (tons <= 0 || price <= 0) {
-          throw new Error(`Please provide both valid Weight and Price for diameter ${row.diameter} mm.`)
+        const tons = parseFloat(row.weightInTons) || 0;
+        const price = parseFloat(row.pricePerTonWithoutGst) || 0;
+        if (tons <= 0 || (SHOW_FINANCIALS && price <= 0)) {
+          throw new Error(SHOW_FINANCIALS
+            ? `Please provide both valid Weight and Price for diameter ${row.diameter} mm.`
+            : `Please provide valid Weight for diameter ${row.diameter} mm.`
+          );
         }
 
-        const singleWeight = getSingleBarWeight(row.diameter, 12000)
-        const weightInKgs = tons * 1000
-        const quantity = Math.round(weightInKgs / singleWeight)
-        const costPerKg = (price * 1.18) / 1000 // Rs. including 18% GST
+        const singleWeight = getSingleBarWeight(row.diameter, 12000);
+        const weightInKgs = tons * 1000;
+        const quantity = Math.round(weightInKgs / singleWeight);
+        const costPerKg = SHOW_FINANCIALS ? ((price * 1.18) / 1000) : 0; // Rs. including 18% GST if enabled
 
         await inventoryApi.inward({
+          projectId: projectId || undefined,
           diameter: Number(row.diameter),
           quantity,
           weightInKgs,
@@ -431,7 +622,7 @@ export default function InventoryPage() {
           typeOfBar: 'TMT500',
           brandName: row.brandName || '',
           vendorName: row.vendorName || '',
-        })
+        });
       }
 
       // Persist newly submitted brands and vendors to company-specific localStorage for future instant suggestions
@@ -456,9 +647,14 @@ export default function InventoryPage() {
 
       setSuccess(`Voucher inward entry recorded successfully for ${filledRows.length} diameter${filledRows.length > 1 ? 's' : ''}!`)
       setVoucherRows(createDefaultVoucherRows())
-      
-      const invData = await inventoryApi.getInventory(projectId)
+      setIsInwardDrawerOpen(false)
+
+      const [invData, ledgerData] = await Promise.all([
+        inventoryApi.getInventory(projectId),
+        inventoryApi.getLedger(projectId).catch(() => [])
+      ])
       setInventory(invData)
+      setLedgerHistory(ledgerData || [])
 
       setTimeout(() => {
         setActiveTab('list')
@@ -491,12 +687,13 @@ export default function InventoryPage() {
       const sanitizedRules = scrapRules.map(r => ({
         ...r,
         scrapLengthThreshold: r.scrapLengthThreshold === '' || isNaN(Number(r.scrapLengthThreshold))
-          ? 1000 
+          ? 1000
           : Math.max(100, Math.min(12000, Number(r.scrapLengthThreshold)))
       }))
       const updatedRules = await inventoryApi.updateScrapRules(sanitizedRules)
       setScrapRules(updatedRules)
       setSuccess('Scrap rules updated successfully!')
+      setIsScrapRulesDrawerOpen(false)
       setTimeout(() => setSuccess(''), 2000)
     } catch (err) {
       setError(err.message || 'Failed to save scrap rules.')
@@ -551,7 +748,7 @@ export default function InventoryPage() {
     try {
       setActionLoading(true)
       const result = await inventoryApi.updateStockItem(id, newQty)
-      
+
       setInventory(prev => {
         if (newQty === 0 || result.deleted) {
           return {
@@ -561,7 +758,7 @@ export default function InventoryPage() {
         }
         return {
           ...prev,
-          standardStock: prev.standardStock.map(item => 
+          standardStock: prev.standardStock.map(item =>
             item._id === id ? { ...item, quantity: result.quantity, weightInKgs: result.weightInKgs } : item
           )
         }
@@ -625,7 +822,7 @@ export default function InventoryPage() {
     try {
       setActionLoading(true)
       const result = await inventoryApi.updateStockItem(id, newQty)
-      
+
       setInventory(prev => {
         if (newQty === 0 || result.deleted) {
           return {
@@ -635,7 +832,7 @@ export default function InventoryPage() {
         }
         return {
           ...prev,
-          remnantsStock: prev.remnantsStock.map(item => 
+          remnantsStock: prev.remnantsStock.map(item =>
             item._id === id ? { ...item, quantity: result.quantity, weightInKgs: result.weightInKgs } : item
           )
         }
@@ -659,7 +856,7 @@ export default function InventoryPage() {
     setSuccess('')
     const weight = parseFloat(scrapSaleForm.weight) || 0
     const price = parseFloat(scrapSaleForm.pricePerKg) || 0
-    if (weight <= 0 || price <= 0 || !scrapSaleForm.buyer.trim()) return
+    if (weight <= 0 || (SHOW_FINANCIALS && price <= 0) || !scrapSaleForm.buyer.trim()) return
 
     try {
       setActionLoading(true)
@@ -667,10 +864,11 @@ export default function InventoryPage() {
         date: scrapSaleForm.date,
         buyer: scrapSaleForm.buyer,
         weight,
-        pricePerKg: price
+        pricePerKg: SHOW_FINANCIALS ? price : 0
       })
       setScrapSales(prev => [newSale, ...prev])
       setSuccess('Scrap sale recorded successfully!')
+      setIsScrapSaleDrawerOpen(false)
       setScrapSaleForm({
         date: new Date().toISOString().split('T')[0],
         buyer: '',
@@ -692,8 +890,9 @@ export default function InventoryPage() {
       date: sale.date,
       buyer: sale.buyer,
       weight: String(sale.weight),
-      pricePerKg: String(sale.pricePerKg)
+      pricePerKg: String(sale.pricePerKg || '')
     })
+    setIsScrapSaleDrawerOpen(true)
   }
 
   const handleEditFormChange = (field, value) => {
@@ -705,8 +904,8 @@ export default function InventoryPage() {
     setSuccess('')
     const weight = parseFloat(editForm.weight) || 0
     const price = parseFloat(editForm.pricePerKg) || 0
-    if (weight <= 0 || price <= 0 || !editForm.buyer.trim()) {
-      setError('Please fill in all fields with valid values.')
+    if (weight <= 0 || (SHOW_FINANCIALS && price <= 0) || !editForm.buyer.trim()) {
+      setError(SHOW_FINANCIALS ? 'Please fill in all fields with valid values.' : 'Please provide valid buyer and weight.')
       return
     }
 
@@ -716,10 +915,11 @@ export default function InventoryPage() {
         date: editForm.date,
         buyer: editForm.buyer,
         weight,
-        pricePerKg: price
+        pricePerKg: SHOW_FINANCIALS ? price : 0
       })
       setScrapSales(prev => prev.map(s => s._id === editingId ? updated : s))
       setEditingId(null)
+      setIsScrapSaleDrawerOpen(false)
       setSuccess('Scrap sale entry updated successfully!')
       setTimeout(() => setSuccess(''), 1500)
     } catch (err) {
@@ -731,6 +931,7 @@ export default function InventoryPage() {
 
   const handleCancelEdit = () => {
     setEditingId(null)
+    setIsScrapSaleDrawerOpen(false)
     setError('')
   }
 
@@ -758,7 +959,7 @@ export default function InventoryPage() {
   // Calculations for Scrap Sales Portal
   const totalScrapSoldWeight = scrapSales.reduce((sum, s) => sum + s.weight, 0)
   const totalScrapRevenue = scrapSales.reduce((sum, s) => sum + s.revenue, 0)
-  
+
   // Average purchase price including GST is ₹60/kg for estimations
   const estPurchasePriceWithGst = 60
   const totalScrapLossDifferential = scrapSales.reduce((sum, s) => {
@@ -909,37 +1110,61 @@ export default function InventoryPage() {
 
   return (
     <div className="inventory-page">
-      <PageHeader
-        title="Inventory Stock"
-        subtitle="Manage standard rebar stock, voucher entries, batch scrap history, and scrap sales."
-        projectName={selectedProject?.name}
+      <SteelHeader
+        activeTab="inventory"
+        title="Rebar Inventory & Yard Stock"
+        subtitle="Manage standard 12.0m prime stock, reusable remnants, inward vouchers, and scrap sales."
+        actions={
+          <div className="steel-header-quick-actions">
+            <button
+              type="button"
+              className="btn-quick-inward-header"
+              onClick={() => setIsInwardDrawerOpen(true)}
+              title="Record new inward delivery voucher"
+            >
+              <Plus size={15} /> Add Inward
+            </button>
+            <button
+              type="button"
+              className="btn-quick-rules-header"
+              onClick={() => setIsScrapRulesDrawerOpen(true)}
+              title="Scrap classification length thresholds"
+            >
+              <Settings size={15} /> Scrap Rules
+            </button>
+          </div>
+        }
       />
       <div className="inventory-header-row">
         <div className="tab-buttons">
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
             onClick={() => setActiveTab('list')}
           >
             <List size={16} /> Stock List
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'inward' ? 'active' : ''}`}
-            onClick={() => setActiveTab('inward')}
+            onClick={() => {
+              setActiveTab('inward');
+              setIsInwardDrawerOpen(true);
+            }}
           >
             <PlusSquare size={16} /> Voucher Inward
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'batchscrap' ? 'active' : ''}`}
             onClick={() => setActiveTab('batchscrap')}
           >
             <Scale size={16} /> Batch Scrap Records
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'scrapsales' ? 'active' : ''}`}
             onClick={() => setActiveTab('scrapsales')}
           >
             <DollarSign size={16} /> Scrap Sales
           </button>
+
         </div>
       </div>
 
@@ -960,7 +1185,7 @@ export default function InventoryPage() {
       {/* Tab: Stock List */}
       {activeTab === 'list' && (
         <div className="stock-list-container">
-          {/* Executive Hero KPI Cards */}
+          {/* Executive Hero KPI Cards (4 Tiles, Clean Layout with Zero Financials) */}
           <div className="inventory-hero-grid">
             <div className="card hero-stat-card primary">
               <div className="hero-stat-content">
@@ -973,7 +1198,7 @@ export default function InventoryPage() {
                   {Math.round(totalYardWeight).toLocaleString('en-IN')} kg • {remnantWeightPct}% Remnants
                 </span>
               </div>
-              <div className="hero-stat-icon bg-emerald">
+              <div className="hero-stat-icon">
                 <Package size={22} />
               </div>
             </div>
@@ -986,44 +1211,84 @@ export default function InventoryPage() {
                   <span className="hero-stat-unit">MT</span>
                 </div>
                 <span className="hero-stat-sub">
-                  {standardDiaSummary.grandTotalQty.toLocaleString('en-IN')} full length bars in stock
+                  {standardDiaSummary.grandTotalQty.toLocaleString('en-IN')} full bars • {standardDiaSummary.inStockCount} of 7 in stock
                 </span>
               </div>
-              <div className="hero-stat-icon bg-blue">
+              <div className="hero-stat-icon">
                 <Layers size={22} />
               </div>
             </div>
 
             <div className="card hero-stat-card">
               <div className="hero-stat-content">
-                <span className="hero-stat-label">Reusable Remnants Yield</span>
+                <span className="hero-stat-label">Reusable Remnants Stock</span>
                 <div className="hero-stat-main">
                   <span className="hero-stat-number">{(remnantsDiaSummary.grandTotalWeight / 1000).toFixed(2)}</span>
                   <span className="hero-stat-unit">MT</span>
                 </div>
-                <span className="hero-stat-sub text-emerald">
-                  {remnantsDiaSummary.grandTotalQty.toLocaleString('en-IN')} offcut pieces saved
+                <span className="hero-stat-sub">
+                  {remnantsDiaSummary.grandTotalQty.toLocaleString('en-IN')} offcuts ready for reuse
                 </span>
               </div>
-              <div className="hero-stat-icon bg-cyan">
-                <Sparkles size={22} />
+              <div className="hero-stat-icon">
+                <Recycle size={22} />
               </div>
             </div>
 
-            <div className="card hero-stat-card">
-              <div className="hero-stat-content">
-                <span className="hero-stat-label">Estimated Inventory Asset Value</span>
-                <div className="hero-stat-main">
-                  <span className="hero-stat-number">₹{Math.round(totalYardValuation).toLocaleString('en-IN')}</span>
+            {SHOW_FINANCIALS ? (
+              <div className="card hero-stat-card">
+                <div className="hero-stat-content">
+                  <span className="hero-stat-label">Estimated Inventory Asset Value</span>
+                  <div className="hero-stat-main">
+                    <span className="hero-stat-number">₹{Math.round(totalYardValuation).toLocaleString('en-IN')}</span>
+                  </div>
+                  <span className="hero-stat-sub">Live procurement market valuation</span>
                 </div>
-                <span className="hero-stat-sub">
-                  Live procurement valuation
-                </span>
+                <div className="hero-stat-icon">
+                  <DollarSign size={22} />
+                </div>
               </div>
-              <div className="hero-stat-icon bg-purple">
-                <DollarSign size={22} />
+            ) : (
+              <div className="card hero-stat-card hint-card" style={{ borderLeft: '4px solid var(--accent)' }}>
+                <div className="hero-stat-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <span className="hero-stat-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-text)', fontWeight: 600 }}>
+                    <Sparkles size={14} /> Stock Readiness & Next Step
+                  </span>
+                  {standardDiaSummary.items.filter(i => !i.hasStock).length > 0 ? (
+                    <div style={{ marginTop: '4px' }}>
+                      <div style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        Ø {standardDiaSummary.items.filter(i => !i.hasStock).map(i => `${i.diameter}mm`).join(', ')} out of stock
+                      </div>
+                      <button
+                        type="button"
+                        className="btn-quick-inward"
+                        onClick={() => setIsInwardDrawerOpen(true)}
+                        style={{ marginTop: '8px', fontSize: '0.78rem', padding: '4px 10px' }}
+                      >
+                        <Plus size={13} /> Add Stock via Voucher
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: '4px' }}>
+                      <div style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        All 7 standard diameters in stock
+                      </div>
+                      <button
+                        type="button"
+                        className="btn-quick-inward"
+                        onClick={() => dispatch(setView('inputs'))}
+                        style={{ marginTop: '8px', fontSize: '0.78rem', padding: '4px 10px', background: 'var(--accent)', color: '#ffffff', border: 'none' }}
+                      >
+                        <Scissors size={13} /> Go to Run Optimizer →
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="hero-stat-icon">
+                  <Sparkles size={22} />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Standard Stock Section */}
@@ -1031,11 +1296,11 @@ export default function InventoryPage() {
             <div className="section-header-row">
               <div className="section-title-group">
                 <h3 className="section-title">
-                  <Package size={18} className="text-blue" style={{ marginRight: '8px' }} /> Standard Bar Stock (12.0m Prime)
+                  <Package size={18} style={{ color: 'var(--accent)', marginRight: '8px' }} /> Standard Bar Stock (12.0m Prime)
                 </h3>
-                <span className="section-badge-pill">
+                <Badge variant="accent">
                   {standardDiaSummary.inStockCount} Diameters Available
-                </span>
+                </Badge>
               </div>
 
               <div className="section-header-stats">
@@ -1049,14 +1314,14 @@ export default function InventoryPage() {
                     className="search-input"
                   />
                   {standardSearch && (
-                    <button className="search-clear-btn" onClick={() => setStandardSearch('')}>
+                    <button className="search-clear-btn" onClick={() => setStandardSearch('')} title="Clear search">
                       <X size={12} />
                     </button>
                   )}
                 </div>
                 <button
                   className="btn-quick-inward"
-                  onClick={() => setActiveTab('inward')}
+                  onClick={() => setIsInwardDrawerOpen(true)}
                   title="Record new inward delivery"
                 >
                   <Plus size={14} /> Add Inward
@@ -1067,15 +1332,31 @@ export default function InventoryPage() {
             {/* Diawise Summary Cards for Standard Stock */}
             <div className="dia-summary-container">
               <div className="dia-cards-grid">
+                <div
+                  className={`dia-stat-card dia-stat-all ${standardFilterDia === 'ALL' ? 'active-filter' : ''}`}
+                  onClick={() => setStandardFilterDia('ALL')}
+                  title="Show all diameters"
+                >
+                  <div className="dia-card-top">
+                    <span className="dia-badge dia-badge-all">All Stock</span>
+                    <span className="dia-qty-label font-bold">{standardDiaSummary.grandTotalQty} bars</span>
+                  </div>
+                  <div className="dia-card-main">
+                    <span className="dia-weight-number">{Math.round(standardDiaSummary.grandTotalWeight).toLocaleString()}</span>
+                    <span className="dia-weight-unit">kg</span>
+                  </div>
+                  <div className="dia-ton-label">{(standardDiaSummary.grandTotalWeight / 1000).toFixed(2)} MT Total</div>
+                </div>
+
                 {standardDiaSummary.items.map((item) => (
                   <div
                     key={item.diameter}
-                    className={`dia-stat-card ${item.hasStock ? 'has-stock' : 'no-stock'} ${standardFilterDia === String(item.diameter) ? 'active-filter' : ''}`}
+                    className={`dia-stat-card dia-card-${item.diameter} ${item.hasStock ? 'has-stock' : 'no-stock'} ${standardFilterDia === String(item.diameter) ? 'active-filter' : ''}`}
                     onClick={() => setStandardFilterDia(prev => prev === String(item.diameter) ? 'ALL' : String(item.diameter))}
                     title={`Click to filter Ø ${item.diameter} mm`}
                   >
                     <div className="dia-card-top">
-                      <span className="dia-badge standard-dia-badge">Ø {item.diameter} mm</span>
+                      <span className={`dia-badge dia-badge-${item.diameter}`}>Ø {item.diameter} mm</span>
                       <span className="dia-qty-label">
                         {item.hasStock ? `${item.totalQty} bars` : '0 bars'}
                       </span>
@@ -1096,36 +1377,143 @@ export default function InventoryPage() {
               </div>
             </div>
 
-            {filteredStandardStock.length === 0 ? (
+            {isDelayedLoading ? (
+              <TableSkeleton rows={4} cols={SHOW_FINANCIALS ? 9 : 8} />
+            ) : filteredStandardStock.length === 0 ? (
               <div className="empty-stock-state">
                 <p>No standard stock items found matching your filters. Add stock using Voucher Inward.</p>
               </div>
             ) : (
-              <div className="table-responsive ro-table-scroll">
-                <table className="inventory-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '110px' }}>Diameter</th>
-                      <th style={{ width: '100px' }}>Length</th>
-                      <th style={{ width: '110px' }}>Qty (Bars)</th>
-                      <th style={{ width: '130px' }}>Total Weight</th>
-                      <th style={{ width: '130px' }}>Cost / kg (w/ GST)</th>
-                      <th>Brand</th>
-                      <th>Vendor</th>
-                      <th style={{ width: '120px' }}>Inward Date</th>
-                      <th style={{ width: '90px' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredStandardStock.map((item) => (
-                      <tr key={item._id}>
-                        <td>
+              <>
+                {/* Desktop/Tablet Table View */}
+                <div className="table-responsive ro-table-scroll desktop-only-table">
+                  <table className="inventory-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '120px' }}>Diameter</th>
+                        <th style={{ width: '100px', textAlign: 'center' }}>Length</th>
+                        <th style={{ width: '120px', textAlign: 'right' }}>Qty (Bars)</th>
+                        <th style={{ width: '140px', textAlign: 'right' }}>Total Weight</th>
+                        {SHOW_FINANCIALS && <th style={{ width: '130px' }}>Cost / kg (w/ GST)</th>}
+                        <th>Brand</th>
+                        <th>Vendor</th>
+                        <th style={{ width: '130px', textAlign: 'center' }}>Inward Date</th>
+                        <th style={{ width: '100px', textAlign: 'center' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredStandardStock.map((item) => (
+                        <tr key={item._id}>
+                          <td>
+                            <span className={`dia-pill-badge dia-${item.diameter}`}>Ø {item.diameter} mm</span>
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            <span className="length-badge">{(item.length / 1000).toFixed(1)} m</span>
+                          </td>
+                          <td className="font-bold" style={{ textAlign: 'right' }}>
+                            {editingStockId === item._id ? (
+                              <input
+                                type="number"
+                                min="0"
+                                value={editStockQty}
+                                onChange={(e) => setEditStockQty(e.target.value)}
+                                className="inline-qty-input"
+                                autoFocus
+                              />
+                            ) : (
+                              <span className="qty-highlight">{item.quantity.toLocaleString()} bars</span>
+                            )}
+                          </td>
+                          <td className="font-bold text-emerald" style={{ textAlign: 'right' }}>
+                            {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
+                          </td>
+                          {SHOW_FINANCIALS && <td>{Number(item.costPerKg) > 0 ? `₹${Number(item.costPerKg).toFixed(2)}` : <span className="text-secondary" style={{ fontStyle: 'italic', fontSize: '12px' }}>No price</span>}</td>}
+                          <td>
+                            <span className="brand-tag">{item.brandName || '—'}</span>
+                          </td>
+                          <td>
+                            <span className="vendor-tag">{item.vendorName || '—'}</span>
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            <span className="date-tag">
+                              {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                            </span>
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            {editingStockId === item._id ? (
+                              <div className="sale-action-btns">
+                                <button
+                                  className="edit-sale-btn save-btn"
+                                  title="Save changes"
+                                  onClick={() => handleSaveStockEdit(item._id)}
+                                >
+                                  <Save size={14} />
+                                </button>
+                                <button
+                                  className="delete-row-btn cancel-btn"
+                                  title="Cancel edit"
+                                  onClick={handleCancelStockEdit}
+                                >
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ) : confirmDeleteStockId === item._id ? (
+                              <div className="sale-delete-confirm">
+                                <span className="delete-confirm-text">Delete?</span>
+                                <button
+                                  className="confirm-delete-btn"
+                                  onClick={() => handleConfirmDeleteStock(item._id)}
+                                >
+                                  Yes
+                                </button>
+                                <button
+                                  className="cancel-delete-btn"
+                                  onClick={handleCancelDeleteStock}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="sale-action-btns">
+                                <button
+                                  className="edit-sale-btn"
+                                  title="Edit quantity"
+                                  onClick={() => handleEditStock(item)}
+                                >
+                                  <Pencil size={14} />
+                                </button>
+                                <button
+                                  className="delete-row-btn"
+                                  title="Delete this stock entry"
+                                  onClick={() => handleDeleteStockItem(item._id)}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Phone Card View (<640px) */}
+                <div className="stock-cards-mobile phone-only-cards">
+                  {filteredStandardStock.map((item) => (
+                    <div key={item._id} className="stock-mobile-card">
+                      <div className="stock-mobile-card-header">
+                        <div className="stock-mobile-dia">
                           <span className="dia-pill-badge dia-pill-standard">Ø {item.diameter} mm</span>
-                        </td>
-                        <td>
                           <span className="length-badge">{(item.length / 1000).toFixed(1)} m</span>
-                        </td>
-                        <td className="font-bold">
+                        </div>
+                        <span className="stock-mobile-weight font-bold text-emerald">
+                          {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
+                        </span>
+                      </div>
+                      <div className="stock-mobile-details">
+                        <div>
+                          <span className="stock-mobile-lbl">Qty: </span>
                           {editingStockId === item._id ? (
                             <input
                               type="number"
@@ -1133,85 +1521,99 @@ export default function InventoryPage() {
                               value={editStockQty}
                               onChange={(e) => setEditStockQty(e.target.value)}
                               className="inline-qty-input"
+                              style={{ width: '80px', height: '32px' }}
                             />
                           ) : (
-                            <span className="qty-highlight">{item.quantity.toLocaleString()}</span>
+                            <span className="qty-highlight">{item.quantity.toLocaleString()} bars</span>
                           )}
-                        </td>
-                        <td className="font-bold text-emerald">
-                          {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
-                        </td>
-                        <td>₹{item.costPerKg?.toFixed(2) || '0.00'}</td>
-                        <td>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Brand: </span>
                           <span className="brand-tag">{item.brandName || '—'}</span>
-                        </td>
-                        <td>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Vendor: </span>
                           <span className="vendor-tag">{item.vendorName || '—'}</span>
-                        </td>
-                        <td>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Brand: </span>
+                          <span className="brand-tag">{item.brandName || '—'}</span>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Vendor: </span>
+                          <span className="vendor-tag">{item.vendorName || '—'}</span>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Date: </span>
                           <span className="date-tag">
-                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB') : '—'}
                           </span>
-                        </td>
-                        <td>
-                          {editingStockId === item._id ? (
-                            <div className="sale-action-btns">
-                              <button
-                                className="edit-sale-btn"
-                                title="Save changes"
-                                onClick={() => handleSaveStockEdit(item._id)}
-                                style={{ color: '#10b981' }}
-                              >
-                                <Save size={14} />
-                              </button>
-                              <button
-                                className="delete-row-btn"
-                                title="Cancel edit"
-                                onClick={handleCancelStockEdit}
-                              >
-                                <X size={14} />
-                              </button>
-                            </div>
-                          ) : confirmDeleteStockId === item._id ? (
-                            <div className="sale-delete-confirm">
-                              <span className="delete-confirm-text">Delete?</span>
-                              <button
-                                className="confirm-delete-btn"
-                                onClick={() => handleConfirmDeleteStock(item._id)}
-                              >
-                                Yes
-                              </button>
-                              <button
-                                className="cancel-delete-btn"
-                                onClick={handleCancelDeleteStock}
-                              >
-                                No
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="sale-action-btns">
-                              <button
-                                className="edit-sale-btn"
-                                title="Edit quantity"
-                                onClick={() => handleEditStock(item)}
-                              >
-                                <Pencil size={14} />
-                              </button>
-                              <button
-                                className="delete-row-btn"
-                                title="Delete this stock entry"
-                                onClick={() => handleDeleteStockItem(item._id)}
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </div>
+                      <div className="stock-mobile-actions">
+                        {editingStockId === item._id ? (
+                          <div className="sale-action-btns">
+                            <button
+                              type="button"
+                              className="edit-sale-btn"
+                              title="Save changes"
+                              onClick={() => handleSaveStockEdit(item._id)}
+                              style={{ color: '#10b981' }}
+                            >
+                              <Save size={16} /> Save
+                            </button>
+                            <button
+                              type="button"
+                              className="delete-row-btn"
+                              title="Cancel edit"
+                              onClick={handleCancelStockEdit}
+                            >
+                              <X size={16} /> Cancel
+                            </button>
+                          </div>
+                        ) : confirmDeleteStockId === item._id ? (
+                          <div className="sale-delete-confirm">
+                            <span className="delete-confirm-text">Delete?</span>
+                            <button
+                              type="button"
+                              className="confirm-delete-btn"
+                              onClick={() => handleConfirmDeleteStock(item._id)}
+                            >
+                              Yes
+                            </button>
+                            <button
+                              type="button"
+                              className="cancel-delete-btn"
+                              onClick={handleCancelDeleteStock}
+                            >
+                              No
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="sale-action-btns">
+                            <button
+                              type="button"
+                              className="edit-sale-btn"
+                              title="Edit quantity"
+                              onClick={() => handleEditStock(item)}
+                            >
+                              <Pencil size={15} /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="delete-row-btn"
+                              title="Delete this stock entry"
+                              onClick={() => handleDeleteStockItem(item._id)}
+                            >
+                              <Trash2 size={15} /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </section>
 
@@ -1220,11 +1622,11 @@ export default function InventoryPage() {
             <div className="section-header-row">
               <div className="section-title-group">
                 <h3 className="section-title">
-                  <Sparkles size={18} className="text-cyan" style={{ marginRight: '8px' }} /> Reusable Remnants Stock
+                  <Sparkles size={18} style={{ color: 'var(--accent-text)', marginRight: '8px' }} /> Reusable Remnants Stock
                 </h3>
-                <span className="section-badge-pill remnant">
+                <Badge variant="neutral">
                   {remnantsDiaSummary.grandTotalQty.toLocaleString('en-IN')} Offcuts ({Math.round(remnantsDiaSummary.grandTotalWeight).toLocaleString('en-IN')} kg)
-                </span>
+                </Badge>
               </div>
 
               <div className="section-header-stats">
@@ -1243,14 +1645,20 @@ export default function InventoryPage() {
               <div className="remnant-matcher-panel">
                 <div className="matcher-header">
                   <div className="matcher-header-title">
-                    <Recycle size={20} className="text-emerald" />
+                    <div className="matcher-icon-circle">
+                      <Recycle size={20} style={{ color: 'var(--accent)' }} />
+                    </div>
                     <div>
-                      <h4>Smart Remnant Clearance & Takeout Matcher</h4>
-                      <p>Enter required cut length to discover total possible pieces extractable from current remnant offcuts.</p>
+                      <div className="matcher-title-row">
+                        <h4>Smart Remnant Clearance & Takeout Matcher</h4>
+                        <Badge variant="accent">Yard Stock Reclaimer</Badge>
+                      </div>
+                      <p>Enter your target cut length to calculate how many pieces can be extracted from leftover offcuts before cutting fresh 12m stock.</p>
                     </div>
                   </div>
-                  <button className="matcher-close-btn" onClick={() => setShowRemnantMatcher(false)}>
+                  <button className="matcher-close-btn" onClick={() => setShowRemnantMatcher(false)} title="Close Matcher">
                     <X size={16} />
+                    <span>Close Matcher</span>
                   </button>
                 </div>
 
@@ -1264,31 +1672,92 @@ export default function InventoryPage() {
                     >
                       <option value={0}>All Diameters</option>
                       {[8, 10, 12, 16, 20, 25, 32].map(d => (
-                        <option key={d} value={d}>{d} mm</option>
+                        <option key={d} value={d}>Ø {d} mm</option>
                       ))}
                     </select>
                   </div>
 
                   <div className="matcher-input-group flex-2">
-                    <label>Required Cut Length (mm)</label>
-                    <div className="input-with-presets">
-                      <input
-                        type="number"
-                        min="50"
-                        step="10"
-                        value={matcherTargetLength}
-                        onChange={(e) => setMatcherTargetLength(e.target.value)}
-                        placeholder="e.g. 300"
-                        className="matcher-input"
-                      />
+                    <div className="matcher-label-row">
+                      <label>Target Cut Length (mm)</label>
                       <div className="quick-presets-chips">
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 300 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(300)}>300 mm</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 450 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(450)}>450 mm</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 600 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(600)}>600 mm</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 800 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(800)}>800 mm</button>
-                        <button type="button" className={`preset-chip ${Number(matcherTargetLength) === 1000 ? 'active' : ''}`} onClick={() => setMatcherTargetLength(1000)}>1,000 mm</button>
+                        {[300, 450, 600, 800, 1000, 1200, 1500, 2000].map((preset) => (
+                          <button
+                            key={preset}
+                            type="button"
+                            className={`preset-pill ${Number(matcherTargetLength) === preset ? 'active' : ''}`}
+                            onClick={() => {
+                              setMatcherTargetLength(preset);
+                              rememberLength(preset);
+                            }}
+                          >
+                            {preset} mm
+                          </button>
+                        ))}
                       </div>
                     </div>
+                    <div className="input-with-presets">
+                      <div className="input-with-suffix-wrap">
+                        <input
+                          type="number"
+                          min="50"
+                          step="10"
+                          value={matcherTargetLength}
+                          onChange={(e) => setMatcherTargetLength(e.target.value)}
+                          onBlur={() => rememberLength(matcherTargetLength)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              rememberLength(matcherTargetLength);
+                              handleRunDirectRemnantOptimizer();
+                            }
+                          }}
+                          placeholder="e.g. 450"
+                          className="matcher-input"
+                        />
+                        <span className="input-suffix">mm</span>
+                      </div>
+                    </div>
+
+                    {/* Length History chips with individual delete (X) and Clear All History */}
+                    {savedLengthsHistory.length > 0 && (
+                      <div className="matcher-history-strip">
+                        <span className="history-strip-label">Length History:</span>
+                        <div className="history-chips-list">
+                          {savedLengthsHistory.map((len) => (
+                            <span
+                              key={len}
+                              className={`history-chip ${Number(matcherTargetLength) === len ? 'active' : ''}`}
+                              onClick={() => {
+                                setMatcherTargetLength(len);
+                                rememberLength(len);
+                              }}
+                              title={`Select ${len} mm`}
+                            >
+                              <span>{len} mm</span>
+                              <button
+                                type="button"
+                                className="history-chip-remove"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeSavedLength(len);
+                                }}
+                                title={`Remove ${len} mm from history`}
+                              >
+                                <X size={10} />
+                              </button>
+                            </span>
+                          ))}
+                          <button
+                            type="button"
+                            className="history-clear-all-btn"
+                            onClick={clearAllSavedLengths}
+                            title="Clear all length history"
+                          >
+                            Clear All History
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="matcher-input-group">
@@ -1302,82 +1771,239 @@ export default function InventoryPage() {
                       className="matcher-input"
                     />
                   </div>
-                </div>
 
-                {/* KPI Summary Tiles */}
-                <div className="matcher-results-grid">
-                  <div className="matcher-kpi-card highlight-green">
-                    <span className="kpi-lbl">Total Extractable Pieces</span>
-                    <span className="kpi-val">{remnantMatchAnalysis.totalPieces.toLocaleString()} <span className="kpi-unit">pieces</span></span>
-                    <span className="kpi-sub">@ {matcherTargetLength} mm cut length</span>
-                  </div>
-
-                  <div className="matcher-kpi-card highlight-blue">
-                    <span className="kpi-lbl">Steel Cleared from Yard</span>
-                    <span className="kpi-val">{Math.round(remnantMatchAnalysis.totalWeightCleared).toLocaleString()} <span className="kpi-unit">kg</span></span>
-                    <span className="kpi-sub">{remnantMatchAnalysis.totalRemnantsUsed} remnant bars consumed</span>
-                  </div>
-
-                  <div className="matcher-kpi-card highlight-purple">
-                    <span className="kpi-lbl">Clearance Yield</span>
-                    <span className="kpi-val">{remnantMatchAnalysis.avgYield.toFixed(1)}%</span>
-                    <span className="kpi-sub">Utilization efficiency</span>
-                  </div>
-
-                  <div className="matcher-kpi-card highlight-orange">
-                    <span className="kpi-lbl">Leftover Scrap</span>
-                    <span className="kpi-val">{Math.round(remnantMatchAnalysis.totalScrapWeight).toLocaleString()} <span className="kpi-unit">kg</span></span>
-                    <span className="kpi-sub">Offcut remainder</span>
+                  {/* Direct Run Optimizer Action Column */}
+                  <div className="matcher-input-group matcher-action-col">
+                    <label>&nbsp;</label>
+                    <button
+                      type="button"
+                      className="btn-run-remnant-optimizer"
+                      onClick={handleRunDirectRemnantOptimizer}
+                      disabled={!matcherTargetLength || Number(matcherTargetLength) <= 0}
+                      title="Load remnant offcuts and cut pieces directly into the Optimizer"
+                    >
+                      <Zap size={15} />
+                      <span>Run Optimizer</span>
+                    </button>
                   </div>
                 </div>
 
-                {/* Match Breakdown Schedule Table */}
-                {remnantMatchAnalysis.items.length > 0 ? (
-                  <div className="matcher-schedule-container">
-                    <h5 className="schedule-heading">
-                      <Scissors size={14} /> Recommended Remnant Takeout & Cutting Schedule
-                    </h5>
-                    <div className="table-responsive">
-                      <table className="matcher-table">
-                        <thead>
-                          <tr>
-                            <th>Diameter</th>
-                            <th>Remnant Length</th>
-                            <th>Available</th>
-                            <th>Bars to Use</th>
-                            <th>Yield / Bar</th>
-                            <th>Total Pieces</th>
-                            <th>Scrap / Bar</th>
-                            <th>Yield %</th>
-                            <th>Weight Cleared</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {remnantMatchAnalysis.items.map((item, idx) => (
-                            <tr key={idx}>
-                              <td className="font-bold">Ø {item.diameter} mm</td>
-                              <td className="font-bold">{item.remnantLength.toLocaleString()} mm</td>
-                              <td>{item.availableQty} bars</td>
-                              <td className="font-bold text-emerald">{item.barsUsed} bars</td>
-                              <td className="font-bold">{item.pcsPerBar} pcs</td>
-                              <td className="font-bold text-emerald">+{item.extractedPieces} pcs</td>
-                              <td className="text-secondary">{item.scrapPerBar} mm</td>
-                              <td>
-                                <span className={`yield-pill ${item.barYield >= 90 ? 'high' : 'med'}`}>
-                                  {item.barYield.toFixed(1)}%
+                {/* Error Banner if any */}
+                {optimizerError && (
+                  <div className="matcher-alert-error">
+                    <AlertCircle size={16} />
+                    <span>{optimizerError}</span>
+                  </div>
+                )}
+
+                {/* RECOMMENDED CUTTING RESULTS (when Run Optimizer has been triggered) */}
+                {optimizerResult ? (
+                  <div className="remnant-optimizer-results">
+                    {/* Header Banner */}
+                    <div className="optimizer-results-banner">
+                      <div className="results-banner-left">
+                        <Badge variant="success">
+                          <Sparkles size={13} style={{ marginRight: '4px' }} />
+                          Optimal Remnant Reuse Combination Recommended
+                        </Badge>
+                        <p className="results-banner-sub">
+                          Found optimal cutting pattern reusing leftover steel across {optimizerResult.layouts.length} remnant layout(s).
+                        </p>
+                      </div>
+                      <div className="results-banner-actions">
+                        <button
+                          type="button"
+                          className="btn-open-studio"
+                          onClick={handleOpenInBatchStudio}
+                          title="Open this cutting plan in Cutting Studio"
+                        >
+                          <ExternalLink size={14} /> Open in Cutting Studio
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-reset-results"
+                          onClick={() => setOptimizerResult(null)}
+                          title="Clear optimizer results"
+                        >
+                          <RotateCcw size={13} /> Reset Results
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* KPI Summary Tiles for Optimizer Results */}
+                    <div className="matcher-results-grid">
+                      <div className="matcher-kpi-card highlight-green">
+                        <span className="kpi-lbl">Total Extractable Pieces</span>
+                        <span className="kpi-val">{optimizerResult.totalPiecesCalculated.toLocaleString()} <span className="kpi-unit">pieces</span></span>
+                        <span className="kpi-sub">@ {optimizerResult.targetLength} mm cut length</span>
+                      </div>
+
+                      <div className="matcher-kpi-card highlight-blue">
+                        <span className="kpi-lbl">Steel Cleared from Yard</span>
+                        <span className="kpi-val">{Math.round(optimizerResult.calculatedWeightCleared).toLocaleString()} <span className="kpi-unit">kg</span></span>
+                        <span className="kpi-sub">{optimizerResult.summary?.totalCutsCount || 0} total cuts made</span>
+                      </div>
+
+                      <div className="matcher-kpi-card highlight-purple">
+                        <span className="kpi-lbl">Clearance Yield</span>
+                        <span className="kpi-val">{(optimizerResult.summary?.avgUtilization || 0).toFixed(1)}%</span>
+                        <span className="kpi-sub">Optimal cutting efficiency</span>
+                      </div>
+
+                      <div className="matcher-kpi-card highlight-orange">
+                        <span className="kpi-lbl">Leftover Scrap</span>
+                        <span className="kpi-val">{Math.round(optimizerResult.calculatedScrapWeight).toLocaleString()} <span className="kpi-unit">kg</span></span>
+                        <span className="kpi-sub">Minimized remnant waste</span>
+                      </div>
+                    </div>
+
+                    {/* Visual Cutting Pattern Cards */}
+                    <div className="remnant-patterns-section">
+                      <h5 className="schedule-heading">
+                        <Wand2 size={14} /> Recommended Remnant Cutting Patterns & Layouts
+                      </h5>
+                      <div className="remnant-patterns-list">
+                        {optimizerResult.layouts.map((layout, idx) => (
+                          <div key={idx} className="remnant-pattern-card">
+                            <div className="pattern-header">
+                              <div className="pattern-meta">
+                                <span className="pattern-num">Pattern #{idx + 1}</span>
+                                <span className="pattern-rep">
+                                  <strong>× {layout.repetition}</strong> remnant bar{layout.repetition > 1 ? 's' : ''} of {Number(layout.stockLength).toLocaleString()} mm
                                 </span>
-                              </td>
-                              <td className="font-bold">{item.weightCleared.toFixed(1)} kg</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                <span className="pattern-dia-badge">Ø {layout.diameter} mm</span>
+                              </div>
+                              <div className="pattern-metrics">
+                                <span className={`yield-pill ${layout.utilization >= 90 ? 'high' : 'med'}`}>
+                                  {layout.utilization.toFixed(1)}% Yield
+                                </span>
+                                <span className="pattern-waste-lbl">
+                                  {layout.waste > 0 ? `${layout.waste} mm scrap` : 'Zero scrap'}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Visual Bar Display */}
+                            <div className="remnant-visual-bar-wrap">
+                              <div className="remnant-visual-bar">
+                                {layout.parts.map((p, pIdx) => {
+                                  const pct = (p.length / layout.stockLength) * 100
+                                  return (
+                                    <div
+                                      key={pIdx}
+                                      className="remnant-bar-segment"
+                                      style={{
+                                        width: `${pct}%`,
+                                        backgroundColor: p.color || '#10b981'
+                                      }}
+                                      title={`Cut piece ${pIdx + 1}: ${p.length} mm (${p.label || 'Remnant Cut'})`}
+                                    >
+                                      {pct > 9 && <span className="segment-label">{p.length} mm</span>}
+                                    </div>
+                                  )
+                                })}
+                                {layout.waste > 0 && (
+                                  <div
+                                    className="remnant-bar-waste"
+                                    style={{ width: `${(layout.waste / layout.stockLength) * 100}%` }}
+                                    title={`Offcut Remainder: ${layout.waste} mm`}
+                                  >
+                                    {(layout.waste / layout.stockLength) * 100 > 10 && (
+                                      <span className="waste-label">{layout.waste} mm</span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="matcher-empty-state">
-                    <p>No remnants in stock with length ≥ {matcherTargetLength} mm for Ø {matcherDia === 0 ? 'All' : matcherDia} mm.</p>
-                  </div>
+                  <>
+                    {/* KPI Summary Tiles (Live Estimate) */}
+                    <div className="matcher-results-grid">
+                      <div className="matcher-kpi-card highlight-green">
+                        <span className="kpi-lbl">Total Extractable Pieces</span>
+                        <span className="kpi-val">{remnantMatchAnalysis.totalPieces.toLocaleString()} <span className="kpi-unit">pieces</span></span>
+                        <span className="kpi-sub">@ {matcherTargetLength} mm cut length</span>
+                      </div>
+
+                      <div className="matcher-kpi-card highlight-blue">
+                        <span className="kpi-lbl">Steel Cleared from Yard</span>
+                        <span className="kpi-val">{Math.round(remnantMatchAnalysis.totalWeightCleared).toLocaleString()} <span className="kpi-unit">kg</span></span>
+                        <span className="kpi-sub">{remnantMatchAnalysis.totalRemnantsUsed} remnant bars consumed</span>
+                      </div>
+
+                      <div className="matcher-kpi-card highlight-purple">
+                        <span className="kpi-lbl">Clearance Yield</span>
+                        <span className="kpi-val">{remnantMatchAnalysis.avgYield.toFixed(1)}%</span>
+                        <span className="kpi-sub">Utilization efficiency</span>
+                      </div>
+
+                      <div className="matcher-kpi-card highlight-orange">
+                        <span className="kpi-lbl">Leftover Scrap</span>
+                        <span className="kpi-val">{Math.round(remnantMatchAnalysis.totalScrapWeight).toLocaleString()} <span className="kpi-unit">kg</span></span>
+                        <span className="kpi-sub">Offcut remainder</span>
+                      </div>
+                    </div>
+
+                    {/* Match Breakdown Schedule Table */}
+                    {remnantMatchAnalysis.items.length > 0 ? (
+                      <div className="matcher-schedule-container">
+                        <h5 className="schedule-heading">
+                          <Scissors size={14} /> Recommended Remnant Takeout & Cutting Schedule
+                        </h5>
+                        <div className="table-responsive">
+                          <table className="matcher-table">
+                            <thead>
+                              <tr>
+                                <th>Diameter</th>
+                                <th>Remnant Length</th>
+                                <th>Available</th>
+                                <th>Bars to Use</th>
+                                <th>Yield / Bar</th>
+                                <th>Total Pieces</th>
+                                <th>Scrap / Bar</th>
+                                <th>Yield %</th>
+                                <th>Weight Cleared</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {remnantMatchAnalysis.items.map((item, idx) => (
+                                <tr key={idx}>
+                                  <td className="font-bold">Ø {item.diameter} mm</td>
+                                  <td className="font-bold">{item.remnantLength.toLocaleString()} mm</td>
+                                  <td>{item.availableQty} bars</td>
+                                  <td className="font-bold" style={{ color: 'var(--success-text)' }}>{item.barsUsed} bars</td>
+                                  <td className="font-bold">{item.pcsPerBar} pcs</td>
+                                  <td className="font-bold" style={{ color: 'var(--success-text)' }}>+{item.extractedPieces} pcs</td>
+                                  <td className="text-secondary">{item.scrapPerBar} mm</td>
+                                  <td>
+                                    <span className={`yield-pill ${item.barYield >= 90 ? 'high' : 'med'}`}>
+                                      {item.barYield.toFixed(1)}%
+                                    </span>
+                                  </td>
+                                  <td className="font-bold">{item.weightCleared.toFixed(1)} kg</td>
+                                  <td>
+                                    <Badge variant={item.barsUsed >= item.availableQty ? 'success' : 'accent'}>
+                                      {item.barsUsed >= item.availableQty ? 'Fully Cleared' : 'Partially Cleared'}
+                                    </Badge>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="matcher-empty-state">
+                        <p>No remnants in stock with length ≥ {matcherTargetLength} mm for Ø {matcherDia === 0 ? 'All' : matcherDia} mm.</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -1385,15 +2011,31 @@ export default function InventoryPage() {
             {/* Diawise Summary Cards for Reusable Remnants Stock */}
             <div className="dia-summary-container">
               <div className="dia-cards-grid">
+                <div
+                  className={`dia-stat-card remnant-card-style dia-stat-all ${remnantFilterDia === 'ALL' ? 'active-filter' : ''}`}
+                  onClick={() => setRemnantFilterDia('ALL')}
+                  title="Show all remnant diameters"
+                >
+                  <div className="dia-card-top">
+                    <span className="dia-badge remnant-dia-badge dia-badge-all">All Remnants</span>
+                    <span className="dia-qty-label remnant-qty font-bold">{remnantsDiaSummary.grandTotalQty} offcuts</span>
+                  </div>
+                  <div className="dia-card-main">
+                    <span className="dia-weight-number remnant-text">{Math.round(remnantsDiaSummary.grandTotalWeight).toLocaleString()}</span>
+                    <span className="dia-weight-unit">kg</span>
+                  </div>
+                  <div className="dia-ton-label remnant-ton">{(remnantsDiaSummary.grandTotalWeight / 1000).toFixed(2)} MT Available</div>
+                </div>
+
                 {remnantsDiaSummary.items.map((item) => (
                   <div
                     key={item.diameter}
-                    className={`dia-stat-card remnant-card-style ${item.hasStock ? 'has-stock' : 'no-stock'} ${remnantFilterDia === String(item.diameter) ? 'active-filter' : ''}`}
+                    className={`dia-stat-card remnant-card-style dia-card-${item.diameter} ${item.hasStock ? 'has-stock' : 'no-stock'} ${remnantFilterDia === String(item.diameter) ? 'active-filter' : ''}`}
                     onClick={() => setRemnantFilterDia(prev => prev === String(item.diameter) ? 'ALL' : String(item.diameter))}
                     title={`Click to filter Ø ${item.diameter} mm`}
                   >
                     <div className="dia-card-top">
-                      <span className="dia-badge remnant-dia-badge">Ø {item.diameter} mm</span>
+                      <span className={`dia-badge remnant-dia-badge dia-badge-${item.diameter}`}>Ø {item.diameter} mm</span>
                       <span className="dia-qty-label remnant-qty">
                         {item.hasStock ? `${item.totalQty} offcuts` : '0 offcuts'}
                       </span>
@@ -1416,35 +2058,39 @@ export default function InventoryPage() {
 
             {/* Interactive Remnant Control Bar: Filter Tabs, Range Chips & Search */}
             <div className="remnant-toolbar">
-              <div className="remnant-filter-pills-row">
-                <span className="toolbar-label">Diameter:</span>
-                <button
-                  className={`filter-badge ${remnantFilterDia === 'ALL' ? 'active' : ''}`}
-                  onClick={() => setRemnantFilterDia('ALL')}
-                >
-                  All ({inventory.remnantsStock.length})
-                </button>
-                {remnantsDiaSummary.items.filter(i => i.hasStock).map(i => (
+              <div className="remnant-toolbar-filters">
+                <div className="remnant-filter-pills-row">
+                  <span className="toolbar-label">Diameter:</span>
                   <button
-                    key={i.diameter}
-                    className={`filter-badge ${remnantFilterDia === String(i.diameter) ? 'active' : ''}`}
-                    onClick={() => setRemnantFilterDia(String(i.diameter))}
+                    type="button"
+                    className={`filter-chip-btn ${remnantFilterDia === 'ALL' ? 'active' : ''}`}
+                    onClick={() => setRemnantFilterDia('ALL')}
                   >
-                    Ø {i.diameter} mm ({i.totalQty})
+                    All ({remnantsDiaSummary.grandTotalQty})
                   </button>
-                ))}
-              </div>
+                  {remnantsDiaSummary.items.filter(i => i.totalQty > 0).map(item => (
+                    <button
+                      key={item.diameter}
+                      type="button"
+                      className={`filter-chip-btn ${remnantFilterDia === String(item.diameter) ? 'active' : ''}`}
+                      onClick={() => setRemnantFilterDia(prev => prev === String(item.diameter) ? 'ALL' : String(item.diameter))}
+                    >
+                      Ø {item.diameter} mm ({item.totalQty})
+                    </button>
+                  ))}
+                </div>
 
-              <div className="remnant-toolbar-right">
                 <div className="length-preset-group">
                   <span className="toolbar-label">Length:</span>
                   <button
+                    type="button"
                     className={`filter-chip-btn ${remnantLengthCategory === 'ALL' ? 'active' : ''}`}
                     onClick={() => setRemnantLengthCategory('ALL')}
                   >
                     All
                   </button>
                   <button
+                    type="button"
                     className={`filter-chip-btn ${remnantLengthCategory === 'SHORT' ? 'active' : ''}`}
                     onClick={() => setRemnantLengthCategory('SHORT')}
                     title="Length < 1000 mm"
@@ -1452,6 +2098,7 @@ export default function InventoryPage() {
                     &lt;1m
                   </button>
                   <button
+                    type="button"
                     className={`filter-chip-btn ${remnantLengthCategory === 'MEDIUM' ? 'active' : ''}`}
                     onClick={() => setRemnantLengthCategory('MEDIUM')}
                     title="Length 1000mm - 3000mm"
@@ -1459,6 +2106,7 @@ export default function InventoryPage() {
                     1m–3m
                   </button>
                   <button
+                    type="button"
                     className={`filter-chip-btn ${remnantLengthCategory === 'LONG' ? 'active' : ''}`}
                     onClick={() => setRemnantLengthCategory('LONG')}
                     title="Length > 3000mm"
@@ -1466,7 +2114,9 @@ export default function InventoryPage() {
                     &gt;3m
                   </button>
                 </div>
+              </div>
 
+              <div className="remnant-toolbar-right">
                 <div className="search-box">
                   <Search size={14} className="search-icon" />
                   <input
@@ -1496,35 +2146,147 @@ export default function InventoryPage() {
               </div>
             </div>
 
-            {filteredRemnants.length === 0 ? (
+            {isDelayedLoading ? (
+              <TableSkeleton rows={4} cols={6} />
+            ) : filteredRemnants.length === 0 ? (
               <div className="empty-stock-state">
                 <p>No remnants found matching the selected filters. Change filter or run optimization.</p>
               </div>
             ) : (
-              <div className="remnants-scrollable-container">
-                <table className="inventory-table remnants-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '120px' }}>Diameter</th>
-                      <th style={{ width: '140px' }}>Length</th>
-                      <th style={{ width: '140px' }}>Qty (Offcuts)</th>
-                      <th style={{ width: '140px' }}>Total Weight</th>
-                      <th style={{ width: '130px' }}>Generated Date</th>
-                      <th style={{ width: '100px' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRemnants.map((item) => (
-                      <tr key={item._id}>
-                        <td>
+              <>
+                {/* Desktop/Tablet Table View */}
+                <div className="remnants-scrollable-container desktop-only-table">
+                  <table className="inventory-table remnants-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '120px' }}>Diameter</th>
+                        <th style={{ width: '140px' }}>Length</th>
+                        <th style={{ width: '140px', textAlign: 'right' }}>Qty (Offcuts)</th>
+                        <th style={{ width: '140px', textAlign: 'right' }}>Total Weight</th>
+                        <th>Brand</th>
+                        <th>Vendor</th>
+                        <th style={{ width: '130px', textAlign: 'center' }}>Generated Date</th>
+                        <th style={{ width: '100px', textAlign: 'center' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredRemnants.map((item) => (
+                        <tr key={item._id}>
+                          <td>
+                            <span className={`dia-pill-badge dia-${item.diameter}`}>
+                              Ø {item.diameter} mm
+                            </span>
+                          </td>
+                          <td>
+                            <span className="font-bold text-remnant-length">{item.length.toLocaleString()} mm</span>
+                          </td>
+                          <td className="font-bold" style={{ textAlign: 'right' }}>
+                            {editingRemnantId === item._id ? (
+                              <input
+                                type="number"
+                                min="0"
+                                value={editRemnantQty}
+                                onChange={(e) => setEditRemnantQty(e.target.value)}
+                                className="inline-qty-input"
+                                autoFocus
+                              />
+                            ) : (
+                              <span className="remnant-qty-tag">{item.quantity} offcuts</span>
+                            )}
+                          </td>
+                          <td style={{ textAlign: 'right' }}>
+                            <span className="font-bold" style={{ color: 'var(--accent-text)' }}>
+                              {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
+                            </span>
+                          </td>
+                          <td>
+                            <span className="brand-tag">{item.brandName || '—'}</span>
+                          </td>
+                          <td>
+                            <span className="vendor-tag">{item.vendorName || '—'}</span>
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            <span className="date-tag">
+                              {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                            </span>
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            {editingRemnantId === item._id ? (
+                              <div className="sale-action-btns">
+                                <button
+                                  className="edit-sale-btn save-btn"
+                                  title="Save changes"
+                                  onClick={() => handleSaveRemnantEdit(item._id)}
+                                >
+                                  <Save size={14} />
+                                </button>
+                                <button
+                                  className="delete-row-btn cancel-btn"
+                                  title="Cancel edit"
+                                  onClick={handleCancelRemnantEdit}
+                                >
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ) : confirmDeleteRemnantId === item._id ? (
+                              <div className="sale-delete-confirm">
+                                <span className="delete-confirm-text">Delete?</span>
+                                <button
+                                  className="confirm-delete-btn"
+                                  onClick={() => handleConfirmDeleteRemnant(item._id)}
+                                >
+                                  Yes
+                                </button>
+                                <button
+                                  className="cancel-delete-btn"
+                                  onClick={handleCancelDeleteRemnant}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="sale-action-btns">
+                                <button
+                                  className="edit-sale-btn"
+                                  title="Edit quantity"
+                                  onClick={() => handleEditRemnant(item)}
+                                >
+                                  <Pencil size={14} />
+                                </button>
+                                <button
+                                  className="delete-row-btn"
+                                  title="Delete this remnant"
+                                  onClick={() => handleDeleteRemnant(item._id)}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Phone Card View (<640px) */}
+                <div className="stock-cards-mobile phone-only-cards">
+                  {filteredRemnants.map((item) => (
+                    <div key={item._id} className="stock-mobile-card remnant-mobile-card">
+                      <div className="stock-mobile-card-header">
+                        <div className="stock-mobile-dia">
                           <span className={`dia-pill-badge ${item.diameter === 8 ? 'dia-8' : item.diameter === 10 ? 'dia-10' : item.diameter === 12 ? 'dia-12' : 'dia-default'}`}>
                             Ø {item.diameter} mm
                           </span>
-                        </td>
-                        <td>
                           <span className="font-bold">{item.length.toLocaleString()} mm</span>
-                        </td>
-                        <td className="font-bold">
+                        </div>
+                        <span className="stock-mobile-weight font-bold text-cyan">
+                          {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
+                        </span>
+                      </div>
+                      <div className="stock-mobile-details">
+                        <div>
+                          <span className="stock-mobile-lbl">Offcuts: </span>
                           {editingRemnantId === item._id ? (
                             <input
                               type="number"
@@ -1532,80 +2294,91 @@ export default function InventoryPage() {
                               value={editRemnantQty}
                               onChange={(e) => setEditRemnantQty(e.target.value)}
                               className="inline-qty-input"
+                              style={{ width: '80px', height: '32px' }}
                             />
                           ) : (
                             <span className="remnant-qty-tag">{item.quantity} offcuts</span>
                           )}
-                        </td>
-                        <td>
-                          <span className="font-bold text-cyan">
-                            {Math.round(item.weightInKgs).toLocaleString('en-IN')} kg
-                          </span>
-                        </td>
-                        <td>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Brand: </span>
+                          <span className="brand-tag">{item.brandName || '—'}</span>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Vendor: </span>
+                          <span className="vendor-tag">{item.vendorName || '—'}</span>
+                        </div>
+                        <div>
+                          <span className="stock-mobile-lbl">Date: </span>
                           <span className="date-tag">
-                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB') : '—'}
                           </span>
-                        </td>
-                        <td>
-                          {editingRemnantId === item._id ? (
-                            <div className="sale-action-btns">
-                              <button
-                                className="edit-sale-btn"
-                                title="Save changes"
-                                onClick={() => handleSaveRemnantEdit(item._id)}
-                                style={{ color: '#10b981' }}
-                              >
-                                <Save size={14} />
-                              </button>
-                              <button
-                                className="delete-row-btn"
-                                title="Cancel edit"
-                                onClick={handleCancelRemnantEdit}
-                              >
-                                <X size={14} />
-                              </button>
-                            </div>
-                          ) : confirmDeleteRemnantId === item._id ? (
-                            <div className="sale-delete-confirm">
-                              <span className="delete-confirm-text">Delete?</span>
-                              <button
-                                className="confirm-delete-btn"
-                                onClick={() => handleConfirmDeleteRemnant(item._id)}
-                              >
-                                Yes
-                              </button>
-                              <button
-                                className="cancel-delete-btn"
-                                onClick={handleCancelDeleteRemnant}
-                              >
-                                No
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="sale-action-btns">
-                              <button
-                                className="edit-sale-btn"
-                                title="Edit quantity"
-                                onClick={() => handleEditRemnant(item)}
-                              >
-                                <Pencil size={14} />
-                              </button>
-                              <button
-                                className="delete-row-btn"
-                                title="Delete this remnant"
-                                onClick={() => handleDeleteRemnant(item._id)}
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </div>
+                      <div className="stock-mobile-actions">
+                        {editingRemnantId === item._id ? (
+                          <div className="sale-action-btns">
+                            <button
+                              type="button"
+                              className="edit-sale-btn"
+                              title="Save changes"
+                              onClick={() => handleSaveRemnantEdit(item._id)}
+                              style={{ color: '#10b981' }}
+                            >
+                              <Save size={16} /> Save
+                            </button>
+                            <button
+                              type="button"
+                              className="delete-row-btn"
+                              title="Cancel edit"
+                              onClick={handleCancelRemnantEdit}
+                            >
+                              <X size={16} /> Cancel
+                            </button>
+                          </div>
+                        ) : confirmDeleteRemnantId === item._id ? (
+                          <div className="sale-delete-confirm">
+                            <span className="delete-confirm-text">Delete?</span>
+                            <button
+                              type="button"
+                              className="confirm-delete-btn"
+                              onClick={() => handleConfirmDeleteRemnant(item._id)}
+                            >
+                              Yes
+                            </button>
+                            <button
+                              type="button"
+                              className="cancel-delete-btn"
+                              onClick={handleCancelDeleteRemnant}
+                            >
+                              No
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="sale-action-btns">
+                            <button
+                              type="button"
+                              className="edit-sale-btn"
+                              title="Edit quantity"
+                              onClick={() => handleEditRemnant(item)}
+                            >
+                              <Pencil size={15} /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="delete-row-btn"
+                              title="Delete this remnant"
+                              onClick={() => handleDeleteRemnant(item._id)}
+                            >
+                              <Trash2 size={15} /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
 
             {filteredRemnants.length > 0 && (
@@ -1638,18 +2411,18 @@ export default function InventoryPage() {
               </p>
             </div>
             <div className="voucher-actions-group">
-              <button 
-                type="button" 
-                className="add-voucher-row-btn secondary-btn" 
-                onClick={handleResetAllDiameters} 
+              <button
+                type="button"
+                className="add-voucher-row-btn secondary-btn"
+                onClick={handleResetAllDiameters}
                 title="Reset to all standard diameters (8mm - 32mm)"
               >
                 <RotateCcw size={14} /> All Diameters (8–32mm)
               </button>
-              <button 
-                type="button" 
-                className="add-voucher-row-btn secondary-btn" 
-                onClick={handleApplyBrandVendorToAll} 
+              <button
+                type="button"
+                className="add-voucher-row-btn secondary-btn"
+                onClick={handleApplyBrandVendorToAll}
                 title="Copy brand & vendor to all rows"
               >
                 <Sparkles size={14} /> Apply Brand/Vendor to All
@@ -1808,8 +2581,8 @@ export default function InventoryPage() {
                         )}
                       </td>
                       <td className="col-actions">
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           className="delete-row-btn"
                           onClick={() => handleDeleteVoucherRow(row.id)}
                           disabled={voucherRows.length === 1}
@@ -1842,20 +2615,24 @@ export default function InventoryPage() {
               </div>
               <div className="stat-icon-wrapper green"><TrendingDown size={20} /></div>
             </div>
-            <div className="card scrap-stat-panel">
-              <div className="stat-info">
-                <span className="stat-lbl">Total Revenue Retrieved</span>
-                <span className="stat-val text-green">₹{totalScrapRevenue.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="stat-icon-wrapper green"><Plus size={20} /></div>
-            </div>
-            <div className="card scrap-stat-panel">
-              <div className="stat-info">
-                <span className="stat-lbl">Lost Material Capital</span>
-                <span className="stat-val text-red">₹{totalScrapLossDifferential.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="stat-icon-wrapper red"><Trash2 size={20} /></div>
-            </div>
+            {SHOW_FINANCIALS && (
+              <>
+                <div className="card scrap-stat-panel">
+                  <div className="stat-info">
+                    <span className="stat-lbl">Total Revenue Retrieved</span>
+                    <span className="stat-val text-green">₹{totalScrapRevenue.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="stat-icon-wrapper green"><Plus size={20} /></div>
+                </div>
+                <div className="card scrap-stat-panel">
+                  <div className="stat-info">
+                    <span className="stat-lbl">Lost Material Capital</span>
+                    <span className="stat-val text-red">₹{totalScrapLossDifferential.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="stat-icon-wrapper red"><Trash2 size={20} /></div>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="scrap-portal-grid">
@@ -1897,18 +2674,20 @@ export default function InventoryPage() {
                     className="inward-input"
                   />
                 </div>
-                <div className="form-group">
-                  <label>Selling Price per Kg (₹)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    required
-                    placeholder="e.g. 22.5"
-                    value={scrapSaleForm.pricePerKg}
-                    onChange={(e) => setScrapSaleForm(prev => ({ ...prev, pricePerKg: e.target.value }))}
-                    className="inward-input"
-                  />
-                </div>
+                {SHOW_FINANCIALS && (
+                  <div className="form-group">
+                    <label>Selling Price per Kg (₹)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      required
+                      placeholder="e.g. 22.5"
+                      value={scrapSaleForm.pricePerKg}
+                      onChange={(e) => setScrapSaleForm(prev => ({ ...prev, pricePerKg: e.target.value }))}
+                      className="inward-input"
+                    />
+                  </div>
+                )}
 
                 <button type="submit" className="submit-inward-btn">Record Scrap Transaction</button>
               </form>
@@ -1928,15 +2707,19 @@ export default function InventoryPage() {
                       <th>Date</th>
                       <th>Buyer</th>
                       <th>Weight</th>
-                      <th>Rate / Kg</th>
-                      <th>Total Earned</th>
+                      {SHOW_FINANCIALS && (
+                        <>
+                          <th>Rate / Kg</th>
+                          <th>Total Earned</th>
+                        </>
+                      )}
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {scrapSales.length === 0 ? (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
+                        <td colSpan={SHOW_FINANCIALS ? 6 : 4} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
                           No scrap sales recorded for {user?.companyName || 'this firm'}{user?.projectName ? ` (${user.projectName})` : ''} yet.
                         </td>
                       </tr>
@@ -1946,8 +2729,12 @@ export default function InventoryPage() {
                           <td>{new Date(sale.date).toLocaleDateString('en-GB')}</td>
                           <td className="font-bold">{sale.buyer}</td>
                           <td>{sale.weight} kg</td>
-                          <td>₹{sale.pricePerKg}</td>
-                          <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
+                          {SHOW_FINANCIALS && (
+                            <>
+                              <td>₹{sale.pricePerKg}</td>
+                              <td className="font-bold text-green">₹{sale.revenue.toLocaleString('en-IN')}</td>
+                            </>
+                          )}
                           <td>
                             {confirmDeleteId === sale._id ? (
                               <div className="sale-delete-confirm">
@@ -2078,12 +2865,12 @@ export default function InventoryPage() {
                 Every batch committed automatically logs date, time, total scrap quantity (kg), and diameter breakdown.
               </p>
             </div>
-            <button 
+            <button
               className="export-csv-btn"
               onClick={() => {
                 if (batchScrapRecords.length === 0) return;
                 const headers = ['Date & Time', 'Batch ID', 'Batch Name', 'Total Scrap (kg)', 'Total Remnant (kg)', 'Avg Utilization (%)', 'Diameter Breakdown'];
-                const filtered = batchScrapRecords.filter(r => 
+                const filtered = batchScrapRecords.filter(r =>
                   r.batchName.toLowerCase().includes(scrapSearchQuery.toLowerCase()) ||
                   (r.diameterBreakdown || []).some(d => `${d.diameter}mm`.includes(scrapSearchQuery))
                 );
@@ -2133,7 +2920,7 @@ export default function InventoryPage() {
             <div className="scrap-stat-card card-orange">
               <span className="stat-label">Avg Scrap per Batch</span>
               <span className="stat-value">
-                {batchScrapRecords.length > 0 
+                {batchScrapRecords.length > 0
                   ? (batchScrapRecords.reduce((sum, r) => sum + (r.totalScrapKg || 0), 0) / batchScrapRecords.length).toFixed(2)
                   : '0.00'} <small>kg</small>
               </span>
@@ -2175,12 +2962,12 @@ export default function InventoryPage() {
                 </thead>
                 <tbody>
                   {batchScrapRecords
-                    .filter(r => 
+                    .filter(r =>
                       r.batchName.toLowerCase().includes(scrapSearchQuery.toLowerCase()) ||
                       (r.diameterBreakdown || []).some(d => `${d.diameter}mm`.includes(scrapSearchQuery))
                     )
                     .map((record) => {
-                      const formattedDate = record.createdAt 
+                      const formattedDate = record.createdAt
                         ? `${new Date(record.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}, ${new Date(record.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
                         : 'N/A';
 
@@ -2238,6 +3025,55 @@ export default function InventoryPage() {
           )}
         </div>
       )}
+
+      {/* Slide-over Drawers (Hard Rules 3, 4, 7) */}
+      <InwardVoucherDrawer
+        isOpen={isInwardDrawerOpen}
+        onClose={() => setIsInwardDrawerOpen(false)}
+        voucherRows={voucherRows}
+        handleVoucherRowChange={handleVoucherRowChange}
+        handleAddVoucherRow={handleAddVoucherRow}
+        handleDeleteVoucherRow={handleDeleteVoucherRow}
+        handleResetAllDiameters={handleResetAllDiameters}
+        handleApplyBrandVendorToAll={handleApplyBrandVendorToAll}
+        handleVoucherSubmit={handleVoucherSubmit}
+        actionLoading={actionLoading}
+        error={error}
+        success={success}
+        openDropdown={openDropdown}
+        closeDropdownDelayed={closeDropdownDelayed}
+        focusedDropdown={focusedDropdown}
+        highlightedIndex={highlightedIndex}
+        setHighlightedIndex={setHighlightedIndex}
+        handleSelectSuggestion={handleSelectSuggestion}
+        handleDropdownKeyDown={handleDropdownKeyDown}
+        getFilteredBrands={getFilteredBrands}
+        getFilteredVendors={getFilteredVendors}
+        blurTimeoutRef={blurTimeoutRef}
+      />
+
+      <ScrapSaleDrawer
+        isOpen={isScrapSaleDrawerOpen}
+        onClose={handleCancelEdit}
+        isEditing={editingId !== null}
+        formState={editingId !== null ? editForm : scrapSaleForm}
+        onFormChange={editingId !== null ? handleEditFormChange : (field, val) => setScrapSaleForm(prev => ({ ...prev, [field]: val }))}
+        onSubmit={editingId !== null ? handleSaveEdit : handleScrapSaleSubmit}
+        actionLoading={actionLoading}
+        error={error}
+        success={success}
+      />
+
+      <ScrapRulesDrawer
+        isOpen={isScrapRulesDrawerOpen}
+        onClose={() => setIsScrapRulesDrawerOpen(false)}
+        scrapRules={scrapRules}
+        handleRuleChange={handleRuleChange}
+        handleSaveRules={handleSaveRules}
+        actionLoading={actionLoading}
+        error={error}
+        success={success}
+      />
 
     </div>
   )

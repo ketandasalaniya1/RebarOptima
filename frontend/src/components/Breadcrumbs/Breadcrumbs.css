@@ -3,12 +3,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 24px;
-  background: var(--bg-surface, rgba(17, 24, 39, 0.7));
-  border-bottom: 1px solid var(--border-color, rgba(75, 85, 99, 0.2));
-  backdrop-filter: blur(8px);
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  background: var(--card-bg, #ffffff);
+  border-bottom: 1px solid var(--card-border, #e2e8f0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
   min-height: 44px;
 }
 
@@ -94,7 +93,7 @@
 
 .bc-project-name {
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 .bc-project-type {

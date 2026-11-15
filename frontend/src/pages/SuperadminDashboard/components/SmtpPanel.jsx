@@ -153,8 +153,12 @@ export default function SmtpPanel() {
               </label>
               <input
                 type="number"
-                value={config.port || 587}
-                onChange={(e) => setConfig({ ...config, port: parseInt(e.target.value, 10) || 587 })}
+                value={config.port ?? 587}
+                onFocus={(e) => e.target.select()}
+                onChange={(e) => setConfig({ ...config, port: e.target.value === '' ? '' : parseInt(e.target.value, 10) })}
+                onBlur={() => {
+                  if (!config.port) setConfig((prev) => ({ ...prev, port: 587 }));
+                }}
                 required
                 style={{
                   width: '100%',

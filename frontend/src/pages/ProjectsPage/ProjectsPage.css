@@ -3,9 +3,22 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 1400px;
+  max-width: var(--page-max-width, 1680px);
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .projects-page-container {
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .projects-page-container {
+    padding: 16px 14px;
+  }
 }
 
 .pp-header {

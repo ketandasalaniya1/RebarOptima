@@ -40,7 +40,7 @@
   box-sizing: border-box !important;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .app-layout {
     height: auto;
     min-height: 100vh;
@@ -76,8 +76,30 @@
 }
 
 /* ═══════════════════════════════════════════
-   GLOBAL PRINT STYLES  — A4 Portrait
+   GLOBAL PRINT STYLES  — A4 Portrait & Active Print Sync
    ═══════════════════════════════════════════ */
+body.has-active-print,
+html.has-active-print,
+body.has-active-print #root,
+body.has-active-print .app-layout,
+body.has-active-print .app-workspace,
+body.has-active-print .main-viewport {
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+  position: static !important;
+}
+
+body.has-active-print .sidenav,
+body.has-active-print .mobile-header,
+body.has-active-print .sidenav-backdrop,
+body.has-active-print .rebar-breadcrumbs,
+body.has-active-print .breadcrumbs-container,
+body.has-active-print .scroll-to-top-btn {
+  display: none !important;
+}
+
 @media print {
   /* ── Force light theme variables for print ── */
   :root,
@@ -96,26 +118,35 @@
     --accent-hover: #591cc2 !important;
   }
 
-  /* ── Reset body/html ── */
-  html, body {
+  /* ── Reset body/html and container tree for natural multi-page flow ── */
+  html, body, #root, .app-layout, .app-workspace, .main-viewport {
     background: #ffffff !important;
     color: #111827 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     margin: 0 !important;
     padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
   }
 
-  /* ── Hide everything except main content ── */
-  .scroll-to-top-btn {
+  /* ── Hide non-printable app chrome ── */
+  .scroll-to-top-btn,
+  .rebar-breadcrumbs,
+  .breadcrumbs-container {
     display: none !important;
   }
 
-  /* ── Remove sidebar ── */
+  /* ── Full width printable workspace ── */
   .app-workspace {
     display: block !important;
     width: 100% !important;
     min-height: unset !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   /* ── SideNavbar: hide completely ── */
@@ -125,15 +156,37 @@
     display: none !important;
   }
 
-  /* ── Main viewport: full width, no padding ── */
+  /* ── Main viewport: full width, no padding, unrestricted height ── */
   .main-viewport {
     flex: none !important;
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
     padding: 0 !important;
     margin: 0 !important;
     background: #ffffff !important;
     overflow: visible !important;
     box-sizing: border-box !important;
+  }
+
+  /* ── Universal Print Portals Visibility ── */
+  .batch-print-portal,
+  .batch-print-portal *,
+  .results-page,
+  .results-page *,
+  .ledger-print-template,
+  .ledger-print-template * {
+    visibility: visible !important;
+  }
+
+  .batch-print-portal {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    z-index: 999999 !important;
   }
 }

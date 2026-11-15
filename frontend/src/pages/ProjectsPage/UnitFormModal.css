@@ -1,0 +1,342 @@
+.ufm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 16px;
+}
+
+.ufm-modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  background: var(--bg-card, #111827);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: ufmScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ufmScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ufm-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ufm-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ufm-header-icon {
+  color: var(--primary-color, #10b981);
+}
+
+.ufm-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+}
+
+.ufm-subtitle {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.ufm-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ufm-close-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary, #f8fafc);
+}
+
+.ufm-error {
+  margin: 12px 20px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ufm-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.ufm-scroll-content {
+  padding: 16px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ufm-section {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.ufm-section-title {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary-color, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ufm-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.ufm-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ufm-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .ufm-grid-2,
+  .ufm-grid-3,
+  .ufm-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ufm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ufm-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.ufm-req {
+  color: #ef4444;
+}
+
+.ufm-input,
+.ufm-select,
+.ufm-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary, #f8fafc);
+  font-size: 0.84rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.ufm-input:focus,
+.ufm-select:focus,
+.ufm-textarea:focus {
+  border-color: var(--primary-color, #10b981);
+}
+
+.ufm-select option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.ufm-input-addon {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.ufm-addon-text {
+  position: absolute;
+  right: 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted, #94a3b8);
+  pointer-events: none;
+}
+
+.ufm-chip-btn {
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary, #cbd5e1);
+  font-size: 0.72rem;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.ufm-chip-btn.active {
+  background: var(--primary-color, #10b981);
+  color: #fff;
+  border-color: var(--primary-color, #10b981);
+}
+
+.ufm-hint {
+  font-size: 0.72rem;
+  color: #38bdf8;
+  margin-top: 2px;
+}
+
+.ufm-specs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ufm-spec-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary, #cbd5e1);
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ufm-spec-pill:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.ufm-spec-pill.selected {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.ufm-spec-check {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ufm-spec-pill.selected .ufm-spec-check {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+
+.ufm-textarea {
+  resize: vertical;
+}
+
+.ufm-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ufm-cancel-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  background: transparent;
+  color: var(--text-secondary, #cbd5e1);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ufm-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ufm-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-color, #10b981);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.ufm-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ufm-spin {
+  animation: ufmSpin 0.8s linear infinite;
+}
+
+@keyframes ufmSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

@@ -3,6 +3,22 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  max-width: var(--page-max-width, 1680px);
+  margin: 0 auto;
+  padding: 12px 16px 36px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .optimizer-page {
+    padding: 16px var(--page-padding-x-tablet, 24px) 36px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .optimizer-page {
+    padding: 16px var(--page-padding-x-desktop, 32px) 36px;
+  }
 }
 
 /* Crisp, high-contrast engineering cards */
@@ -58,6 +74,27 @@
   background: var(--main-bg);
   border-color: var(--text-label);
   color: var(--text-primary);
+}
+
+.manage-csv-btn {
+  background: rgba(110, 30, 231, 0.08);
+  border: 1px solid rgba(110, 30, 231, 0.25);
+  color: var(--accent, #8b5cf6);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.manage-csv-btn:hover {
+  background: rgba(110, 30, 231, 0.16);
+  border-color: var(--accent, #8b5cf6);
+  transform: translateY(-1px);
 }
 
 .import-row-btn {
@@ -861,7 +898,8 @@
   }
 
   .add-row-btn,
-  .import-row-btn {
+  .import-row-btn,
+  .manage-csv-btn {
     flex: 1;
     justify-content: center;
   }
@@ -890,4 +928,282 @@
     padding: 12px 20px;
     font-size: 13px;
   }
+}
+
+/* Remnant Clearance Alert Banner */
+.remnant-clearance-badge-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  margin-bottom: 2px;
+}
+
+.remnant-badge-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.remnant-badge-left .text-emerald {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.btn-dismiss-remnant-mode {
+  background: transparent;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-dismiss-remnant-mode:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GUIDED STEPPER & STOCK VERIFICATION FLOW (CHANGE 3 & CHANGE 5)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.optimizer-stepper-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.optimizer-step-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  user-select: none;
+  background: transparent;
+}
+
+.optimizer-step-node:hover {
+  background: var(--hover-bg, #f1f5f9);
+}
+
+.optimizer-step-node.is-active {
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.25);
+}
+
+.step-node-number {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--input-bg, #f1f5f9);
+  color: var(--text-secondary, #64748b);
+  border: 1px solid var(--card-border, #cbd5e1);
+  transition: all 0.15s ease;
+}
+
+.optimizer-step-node.is-active .step-node-number {
+  background: var(--accent, #059669);
+  color: #ffffff;
+  border-color: var(--accent, #059669);
+}
+
+.optimizer-step-node.is-valid .step-node-number {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+}
+
+.step-node-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #475569);
+  white-space: nowrap;
+}
+
+.optimizer-step-node.is-active .step-node-title {
+  color: var(--accent, #059669);
+  font-weight: 700;
+}
+
+.step-separator-arrow {
+  color: var(--text-muted, #94a3b8);
+  font-size: 13px;
+}
+
+/* Step Navigation Footer */
+.step-nav-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid var(--card-border, #e2e8f0);
+}
+
+.btn-step-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  min-height: 38px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-step-nav.secondary {
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #cbd5e1);
+  color: var(--text-secondary, #475569);
+}
+
+.btn-step-nav.secondary:hover {
+  background: var(--hover-bg, #f1f5f9);
+  color: var(--text-primary, #0f172a);
+}
+
+.btn-step-nav.primary {
+  background: var(--accent, #059669);
+  border: 1px solid var(--accent, #059669);
+  color: #ffffff;
+}
+
+.btn-step-nav.primary:hover {
+  background: var(--accent-hover, #047857);
+}
+
+/* Stock Checker Alert Banner */
+.stock-blocker-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.stock-blocker-banner.danger {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #b91c1c;
+}
+
+.stock-blocker-banner.warning {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #b45309;
+}
+
+.stock-blocker-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stock-blocker-msg {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.stock-blocker-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-stock-add-inward {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  min-height: 34px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: #059669;
+  border: 1px solid #059669;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-stock-add-inward:hover {
+  background: #047857;
+}
+
+.btn-stock-run-anyway {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  min-height: 34px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid #d97706;
+  color: #b45309;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-stock-run-anyway:hover {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+/* Gear Icon Button for Scrap Rules */
+.btn-scrap-rules-gear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #cbd5e1);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-scrap-rules-gear:hover {
+  background: var(--hover-bg, #f1f5f9);
+  color: var(--accent, #059669);
+  border-color: var(--accent, #059669);
 }

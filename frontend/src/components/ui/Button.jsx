@@ -1,9 +1,6 @@
 import React from 'react';
 import './ui.css';
 
-const VARIANTS = ['primary', 'secondary', 'danger', 'ghost'];
-const SIZES = ['sm', 'md', 'lg'];
-
 export default function Button({
   children,
   variant = 'primary',
@@ -11,22 +8,32 @@ export default function Button({
   type = 'button',
   className = '',
   disabled = false,
+  loading = false,
+  icon: Icon = null,
+  rightIcon: RightIcon = null,
   onClick,
   ...rest
 }) {
-  const v = VARIANTS.includes(variant) ? variant : 'primary';
-  const s = SIZES.includes(size) ? size : 'md';
-  const sizeClass = s === 'md' ? '' : ` ro-btn--${s}`;
+  const sizeClass = size === 'md' ? 'ro-btn--md' : `ro-btn--${size}`;
+  const variantClass = `ro-btn--${variant}`;
 
   return (
     <button
       type={type}
-      className={`ro-btn ro-btn--${v}${sizeClass}${className ? ` ${className}` : ''}`}
-      disabled={disabled}
+      className={`ro-btn ${variantClass} ${sizeClass} ${className}`}
+      disabled={disabled || loading}
       onClick={onClick}
       {...rest}
     >
-      {children}
+      {loading ? (
+        <span className="ro-btn-spinner" aria-hidden="true" />
+      ) : (
+        Icon && <Icon size={size === 'sm' ? 13 : 15} aria-hidden="true" />
+      )}
+      <span>{children}</span>
+      {!loading && RightIcon && (
+        <RightIcon size={size === 'sm' ? 13 : 15} aria-hidden="true" />
+      )}
     </button>
   );
 }

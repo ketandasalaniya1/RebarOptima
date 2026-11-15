@@ -1,0 +1,332 @@
+/* Log Row Styles */
+
+.log-table-row {
+  border-bottom: 1px solid var(--card-border, #e2e8f0);
+  transition: background 0.15s ease;
+}
+
+.log-table-row:hover {
+  background: var(--input-bg, #f8fafc);
+}
+
+.log-table-row.is-critical-row {
+  background: rgba(239, 68, 68, 0.02);
+}
+
+.log-table-row td {
+  padding: 12px 14px;
+  vertical-align: middle;
+}
+
+.ltr-actor-cell {
+  white-space: nowrap;
+}
+
+.ltr-actor-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ltr-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--accent, #059669);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ltr-actor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ltr-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ltr-role {
+  font-size: 0.72rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.ltr-desc-cell {
+  min-width: 260px;
+}
+
+.ltr-desc-text {
+  font-size: 0.84rem;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Module Pills */
+.ltr-mod-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ltr-mod-pill.mod-inventory {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #d97706;
+}
+
+.ltr-mod-pill.mod-optimizer {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #6366f1;
+}
+
+.ltr-mod-pill.mod-history,
+.ltr-mod-pill.mod-ledger {
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  color: #0284c7;
+}
+
+.ltr-mod-pill.mod-users,
+.ltr-mod-pill.mod-roles {
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.08));
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  color: var(--accent, #059669);
+}
+
+.ltr-mod-pill.mod-crm {
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  color: #9333ea;
+}
+
+.ltr-mod-pill.mod-drawings {
+  background: rgba(236, 72, 153, 0.08);
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  color: #db2777;
+}
+
+.ltr-mod-pill.mod-default {
+  background: var(--input-bg, #f1f5f9);
+  border: 1px solid var(--card-border, #cbd5e1);
+  color: var(--text-secondary, #64748b);
+}
+
+/* Action Pills */
+.ltr-act-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ltr-act-pill.act-critical {
+  background: var(--danger-subtle, rgba(239, 68, 68, 0.08));
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.ltr-act-pill.act-create {
+  background: var(--success-subtle, rgba(16, 185, 129, 0.08));
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.ltr-act-pill.act-update {
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.ltr-act-pill.act-auth {
+  background: rgba(14, 165, 233, 0.08);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+}
+
+.ltr-act-pill.act-neutral {
+  background: var(--input-bg, #f1f5f9);
+  color: var(--text-secondary, #64748b);
+  border: 1px solid var(--card-border, #cbd5e1);
+}
+
+.ltr-time-cell {
+  white-space: nowrap;
+}
+
+.ltr-time-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ltr-time-rel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.ltr-time-abs {
+  font-size: 0.72rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.ltr-inspect-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ltr-inspect-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #e2e8f0);
+  background: var(--card-bg, #ffffff);
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ltr-inspect-btn:hover {
+  border-color: var(--accent, #059669);
+  color: var(--accent, #059669);
+  background: var(--accent-subtle, rgba(5, 150, 105, 0.08));
+}
+
+.ltr-no-diff {
+  color: var(--text-secondary, #cbd5e1);
+  padding-right: 12px;
+}
+
+/* ── Mobile Card ──────────────────────────────────────────────────── */
+.log-mobile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+.log-mobile-card.is-critical-event {
+  border-left: 3px solid #ef4444;
+}
+
+.lmc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lmc-actor-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lmc-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--accent, #059669);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.lmc-actor-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.lmc-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.lmc-role {
+  font-size: 0.72rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.lmc-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.lmc-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.4;
+}
+
+.lmc-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lmc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.lmc-inspect-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px; /* Accessible tap target >= 44px */
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #e2e8f0);
+  background: var(--input-bg, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+

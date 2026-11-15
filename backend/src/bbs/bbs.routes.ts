@@ -156,15 +156,43 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       const ctx = await resolveUserAndCompany(req, db);
       const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
 
-      const blocks = await db.collection('bbs_blocks').find({ projectId }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
+      const [canonicalBlocks, bbsBlocks] = await Promise.all([
+        db.collection('project_blocks')
+          .find({ projectId: String(projectId), isDeleted: { $ne: true }, status: { $ne: 'inactive' } })
+          .sort({ displayOrder: 1, createdAt: 1 })
+          .toArray(),
+        db.collection('bbs_blocks')
+          .find({ projectId })
+          .sort({ displayOrder: 1, createdAt: 1 })
+          .toArray()
+      ]);
+
+      const map = new Map<string, any>();
+      canonicalBlocks.forEach((b: any) => {
+        const id = (b._id || b.id).toString();
+        map.set(id, { ...b, id, _id: b._id, name: b.name, source: 'project_blocks' });
+      });
+
+      bbsBlocks.forEach((b: any) => {
+        const id = (b._id || b.id).toString();
+        if (!map.has(id)) {
+          const lower = (b.name || '').trim().toLowerCase();
+          const exists = Array.from(map.values()).some((x: any) => (x.name || '').trim().toLowerCase() === lower);
+          if (!exists) {
+            map.set(id, { ...b, id, _id: b._id, name: b.name, source: 'bbs_blocks' });
+          }
+        }
+      });
+
+      const blocks = Array.from(map.values());
 
       // Aggregate counts for each block
       const enriched = await Promise.all(
         blocks.map(async (b: any) => {
-          const blockId = b._id.toString();
+          const blockId = (b.id || b._id).toString();
           const [levels, members] = await Promise.all([
-            db.collection('bbs_levels').find({ blockId }).toArray(),
-            db.collection('bbs_members').find({ blockId }).toArray()
+            db.collection('bbs_levels').find({ $or: [{ blockId }, { blockId: b._id }] }).toArray(),
+            db.collection('bbs_members').find({ $or: [{ blockId }, { blockId: b._id }] }).toArray()
           ]);
           let completionPercentage = 0;
           if (members.length > 0) {
@@ -173,6 +201,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
           }
           return {
             ...b,
+            id: blockId,
             levelCount: levels.length,
             memberCount: members.length,
             completionPercentage
@@ -444,7 +473,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       const levelId = req.params.levelId;
 
       const rawMembers = await db.collection('bbs_members').find({ levelId }).toArray();
-      const members = rawMembers.sort((a: any, b: any) => 
+      const members = rawMembers.sort((a: any, b: any) =>
         (a.displayId || '').localeCompare(b.displayId || '', undefined, { numeric: true, sensitivity: 'base' })
       );
       res.json(members);
@@ -557,7 +586,7 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       await db.collection('bbs_members').insertMany(newDocs);
 
       const rawAll = await db.collection('bbs_members').find({ levelId }).toArray();
-      const allLevelMembers = rawAll.sort((a: any, b: any) => 
+      const allLevelMembers = rawAll.sort((a: any, b: any) =>
         (a.displayId || '').localeCompare(b.displayId || '', undefined, { numeric: true, sensitivity: 'base' })
       );
       res.status(201).json(allLevelMembers);

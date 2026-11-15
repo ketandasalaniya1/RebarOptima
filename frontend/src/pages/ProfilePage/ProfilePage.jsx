@@ -667,10 +667,21 @@ export default function ProfilePage({ onNavigate }) {
                       step="0.5" 
                       className="form-input" 
                       value={currentPrefs.defaultKerf ?? 3}
+                      onFocus={(e) => {
+                        if (e.target.value === '0') e.target.select();
+                      }}
                       onChange={(e) => setFormData({
                         ...formData,
-                        preferences: { ...currentPrefs, defaultKerf: Number(e.target.value) || 0 }
+                        preferences: { ...currentPrefs, defaultKerf: e.target.value === '' ? '' : Number(e.target.value) }
                       })}
+                      onBlur={() => {
+                        if (currentPrefs.defaultKerf === '') {
+                          setFormData({
+                            ...formData,
+                            preferences: { ...currentPrefs, defaultKerf: 3 }
+                          });
+                        }
+                      }}
                     />
                     <span className="form-hint">Thickness of the cutting saw/shear blade lost per cut (standard: 3.0 mm).</span>
                   </div>
@@ -686,10 +697,21 @@ export default function ProfilePage({ onNavigate }) {
                       step="5" 
                       className="form-input" 
                       value={currentPrefs.defaultTrimMargin ?? 25}
+                      onFocus={(e) => {
+                        if (e.target.value === '0') e.target.select();
+                      }}
                       onChange={(e) => setFormData({
                         ...formData,
-                        preferences: { ...currentPrefs, defaultTrimMargin: Number(e.target.value) || 0 }
+                        preferences: { ...currentPrefs, defaultTrimMargin: e.target.value === '' ? '' : Number(e.target.value) }
                       })}
+                      onBlur={() => {
+                        if (currentPrefs.defaultTrimMargin === '') {
+                          setFormData({
+                            ...formData,
+                            preferences: { ...currentPrefs, defaultTrimMargin: 25 }
+                          });
+                        }
+                      }}
                     />
                     <span className="form-hint">End allowance trimmed off damaged raw stock ends before cutting (standard: 25 mm).</span>
                   </div>

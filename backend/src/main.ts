@@ -45,9 +45,11 @@ process.on('uncaughtException', (err: any) => {
   }
 });
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-dotenv.config();
+if (process.env.E2E_SKIP_DOTENV !== '1') {
+  dotenv.config({ path: path.resolve(__dirname, '../.env') });
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+  dotenv.config();
+}
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -1272,48 +1274,60 @@ async function seedDefaults(db: Db) {
     }
   }
 
-  // 3. Seed developer & admin user account
-  const devEmail = (process.env.DEVELOPER_EMAIL || 'dev@gmail.com').toLowerCase().trim();
-  const devPassword = process.env.DEVELOPER_PASSWORD || 'Dev@123!';
-  const hash = await bcrypt.hash(devPassword, 10);
-
-  const devColl = db.collection('platformusers');
-  const existingDev = await devColl.findOne({ email: devEmail });
-  if (!existingDev) {
-    await devColl.insertOne({
-      email: devEmail,
-      passwordHash: hash,
-      firstName: 'Platform',
-      lastName: 'Developer',
-      role: 'DEVELOPER',
+  // 3. Create platform accounts only when their password env var is set.
+  // An existing account is never updated: passwordHash and isActive stay as stored.
+  const platformUsers = db.collection('platformusers');
+  const ensurePlatformAccount = async (spec: {
+    email: string;
+    password: string | undefined;
+    passwordVar: string;
+    label: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+  }) => {
+    const email = spec.email.toLowerCase().trim();
+    if (!email) {
+      console.warn(`⚠️ ${spec.label} account was not created: email is not set.`);
+      return;
+    }
+    const existing = await platformUsers.findOne({ email });
+    if (existing) return;
+    if (!spec.password) {
+      console.warn(`⚠️ ${spec.passwordVar} is not set. ${spec.label} account was not created.`);
+      return;
+    }
+    await platformUsers.insertOne({
+      email,
+      passwordHash: await bcrypt.hash(spec.password, 10),
+      firstName: spec.firstName,
+      lastName: spec.lastName,
+      role: spec.role,
       isActive: true,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
-    console.log(`  ✅ Created developer account: ${devEmail}`);
-  } else {
-    await devColl.updateOne({ _id: existingDev._id }, { $set: { passwordHash: hash, isActive: true } });
-  }
+    console.log(`  ✅ Created ${spec.label} account: ${email}`);
+  };
 
-  // Seed superadmin account for Developer Console access
-  const superadminEmail = 'superadmin@rebaroptima.io';
-  const superadminHash = await bcrypt.hash('Super@123', 10);
-  const existingSuperadmin = await devColl.findOne({ email: superadminEmail });
-  if (!existingSuperadmin) {
-    await devColl.insertOne({
-      email: superadminEmail,
-      passwordHash: superadminHash,
-      firstName: 'Super',
-      lastName: 'Admin',
-      role: 'SUPER_ADMIN',
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log(`  ✅ Created superadmin account: ${superadminEmail}`);
-  } else {
-    await devColl.updateOne({ _id: existingSuperadmin._id }, { $set: { passwordHash: superadminHash, isActive: true } });
-  }
+  await ensurePlatformAccount({
+    email: process.env.DEVELOPER_EMAIL || 'dev@gmail.com',
+    password: process.env.DEVELOPER_PASSWORD,
+    passwordVar: 'DEVELOPER_PASSWORD',
+    label: 'developer',
+    role: 'DEVELOPER',
+    firstName: 'Platform',
+    lastName: 'Developer',
+  });
+  await ensurePlatformAccount({
+    email: process.env.SUPERADMIN_EMAIL || '',
+    password: process.env.SUPERADMIN_PASSWORD,
+    passwordVar: 'SUPERADMIN_PASSWORD',
+    label: 'superadmin',
+    role: 'SUPER_ADMIN',
+    firstName: 'Super',
+    lastName: 'Admin',
+  });
 
 
 

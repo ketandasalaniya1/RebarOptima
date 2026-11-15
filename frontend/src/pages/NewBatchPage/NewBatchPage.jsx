@@ -224,7 +224,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
         setIsRemnantClearance(true)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editParams])
 
   const { projectId, projectEpoch, isStale } = useActiveProject()
@@ -287,7 +286,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
       }
     }
     loadStockAndBatches()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, projectEpoch])
 
   // Reload Live Yard Stock from Database (Additive shortcut)
@@ -370,7 +368,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     } catch (e) {
       console.warn('Could not restore draft from sessionStorage', e);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // CSV & Predefined Cuts Modal states

@@ -51,7 +51,6 @@ export default function BbsProjectsPage() {
   // Load projects and bind to global org project
   useEffect(() => {
     loadProjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgProjectId, projectEpoch]);
 
   // When active project changes, load blocks/levels and sync defaults

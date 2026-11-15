@@ -88,7 +88,6 @@ export default function LedgerPage() {
   useEffect(() => {
     if (!projectId) return;
     fetchData(projectEpoch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, projectEpoch]);
 
   async function fetchData(epochAtStart = projectEpoch) {

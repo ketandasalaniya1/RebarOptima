@@ -22,7 +22,6 @@ export default function BbsReportsPage() {
     if (activeProjectId) {
       loadMTO();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId, projectEpoch]);
 
   const loadMTO = async () => {

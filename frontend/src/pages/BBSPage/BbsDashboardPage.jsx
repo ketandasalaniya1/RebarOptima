@@ -30,7 +30,6 @@ export default function BbsDashboardPage() {
     if (activeProjectId) {
       loadMatrix();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId, projectEpoch]);
 
   const loadMatrix = async () => {

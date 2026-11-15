@@ -112,7 +112,6 @@ export default function BBSPage() {
     setLevels([]);
     setMembers([]);
     loadProjectsAndBind();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgProjectId, projectEpoch]);
 
   const loadProjectsAndBind = async () => {

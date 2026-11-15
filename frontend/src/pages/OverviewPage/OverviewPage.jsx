@@ -75,7 +75,6 @@ export default function OverviewPage({ onNavigate }) {
     }, 30000)
 
     return () => clearInterval(autoRefreshTimer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, projectEpoch])
 
   // Relative time ticker effect (updates every 3 seconds)

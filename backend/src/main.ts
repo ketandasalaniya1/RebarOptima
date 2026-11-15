@@ -3389,9 +3389,123 @@ app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'del
     const db = await connectDB();
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
-    const result = await db.collection('batches').findOneAndDelete({ _id: new ObjectId(req.params.id), companyId });
+    const batchId = new ObjectId(req.params.id);
+    const restoreStock = String(req.query.restoreStock) === 'true';
 
-    if (result) {
+    if (!restoreStock) {
+      const result = await db.collection('batches').findOneAndDelete({ _id: batchId, companyId });
+      if (result) {
+        await logAudit(db, {
+          actorId: req.user.sub,
+          actorType: 'user',
+          companyId,
+          module: 'history',
+          action: 'BATCH_DELETED',
+          resource: 'batches',
+          resourceId: req.params.id,
+          description: `Deleted cutting batch "${result.batchName || 'Cutting Batch'}"`,
+          previousValue: { batchName: result.batchName, summary: result.summary }
+        });
+      }
+      return res.json({ deleted: !!result, restored: false });
+    }
+
+    if (!client) {
+      return res.status(503).json({ message: 'Stock restore requires a MongoDB transaction, and no client is connected.' });
+    }
+
+    const scrapRules = await ensureScrapRules(db, companyId as any);
+    const rulesMap = new Map(scrapRules.map((rule: any) => [rule.diameter, rule.scrapLengthThreshold]));
+    const session = client.startSession();
+    let payload: any = { deleted: false, restored: false, remnantShortfalls: [] };
+    try {
+      await session.withTransaction(async () => {
+        const batch = await db.collection('batches').findOne({ _id: batchId, companyId }, { session });
+        if (!batch) return;
+        const shortfalls: any[] = [];
+        for (const layout of batch.layouts || []) {
+          if (layout.isVirtual || !layout.dbId) continue;
+          const diameter = Number(layout.diameter);
+          const stockLength = Number(layout.stockLength);
+          const repetition = Number(layout.repetition) || 0;
+          const waste = Number(layout.waste) || 0;
+          const layoutWeight = getSingleBarWeight(diameter, stockLength) * repetition;
+          const stockId = new ObjectId(layout.dbId);
+          const original = await db.collection('stockitems').findOne({ _id: stockId }, { session });
+          if (original) {
+            await db.collection('stockitems').updateOne(
+              { _id: stockId },
+              { $inc: { quantity: repetition, weightInKgs: layoutWeight } },
+              { session }
+            );
+          } else {
+            const outward = await db.collection('inventorytransactions').findOne({
+              companyId,
+              referenceName: batch.batchName || 'Cutting Batch',
+              type: 'OUTWARD',
+              diameter,
+              length: stockLength,
+            }, { session });
+            await db.collection('stockitems').insertOne({
+              _id: stockId,
+              companyId,
+              projectId: batch.projectId,
+              diameter,
+              length: stockLength,
+              quantity: repetition,
+              weightInKgs: layoutWeight,
+              isRemnant: false,
+              brandName: outward?.brandName || '',
+              vendorName: outward?.vendorName || '',
+              typeOfBar: outward?.typeOfBar || '',
+              costPerKg: Number(outward?.costPerKg) || 0,
+              createdAt: new Date(),
+            }, { session });
+          }
+
+          if (waste <= 0) continue;
+          const threshold = rulesMap.get(diameter) ?? 1000;
+          if (waste < threshold) continue;
+          const remnant = await db.collection('stockitems').findOne({
+            companyId,
+            projectId: batch.projectId,
+            diameter,
+            length: waste,
+            isRemnant: true,
+          }, { session });
+          const wasteWeight = getSingleBarWeight(diameter, waste);
+          if (!remnant) {
+            shortfalls.push({ diameter, length: waste, requested: repetition, restored: 0, alreadyUsed: repetition });
+            continue;
+          }
+          const available = Number(remnant.quantity) || 0;
+          const restored = Math.min(available, repetition);
+          const alreadyUsed = repetition - restored;
+          if (alreadyUsed > 0) {
+            shortfalls.push({ diameter, length: waste, requested: repetition, restored, alreadyUsed });
+          }
+          if (available <= repetition) {
+            await db.collection('stockitems').deleteOne({ _id: remnant._id }, { session });
+          } else {
+            await db.collection('stockitems').updateOne(
+              { _id: remnant._id },
+              { $inc: { quantity: -repetition, weightInKgs: -(wasteWeight * repetition) } },
+              { session }
+            );
+          }
+        }
+        await db.collection('inventorytransactions').deleteMany({
+          companyId,
+          referenceName: batch.batchName || 'Cutting Batch',
+        }, { session });
+        await db.collection('batches').deleteOne({ _id: batch._id, companyId }, { session });
+        payload = { deleted: true, restored: true, remnantShortfalls: shortfalls, batchName: batch.batchName, summary: batch.summary };
+      });
+    } finally {
+      await session.endSession();
+    }
+
+    if (payload.deleted) {
       await logAudit(db, {
         actorId: req.user.sub,
         actorType: 'user',
@@ -3400,12 +3514,15 @@ app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'del
         action: 'BATCH_DELETED',
         resource: 'batches',
         resourceId: req.params.id,
-        description: `Deleted cutting batch "${result.batchName || 'Cutting Batch'}"`,
-        previousValue: { batchName: result.batchName, summary: result.summary }
+        description: `Deleted cutting batch "${payload.batchName || 'Cutting Batch'}" and restored stock`,
+        previousValue: { batchName: payload.batchName, summary: payload.summary, remnantShortfalls: payload.remnantShortfalls }
       });
     }
-
-    res.json({ deleted: !!result });
+    res.json({
+      deleted: payload.deleted,
+      restored: payload.restored,
+      remnantShortfalls: payload.remnantShortfalls,
+    });
   } catch (e: any) { console.error(e); res.status(500).json({ message: e.message }); }
 });
 

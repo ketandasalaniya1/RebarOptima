@@ -180,11 +180,18 @@ export default function BatchHistoryPage({ onEditBatch }) {
     setSuccess('')
     try {
       setActionLoading(true)
-      await batchesApi.deleteBatch(id, restoreStock)
+      const result = await batchesApi.deleteBatch(id, restoreStock)
+      if (result?.deleted === false) {
+        setError('Batch was not deleted.')
+        return
+      }
       setHistory(prev => prev.filter(b => b._id !== id))
       setConfirmDeleteBatchId(null)
-      if (restoreStock) {
+      const shortfall = (result?.remnantShortfalls || []).some((row) => row.alreadyUsed > 0)
+      if (restoreStock && result?.restored && !shortfall) {
         setSuccess('Batch deleted and consumed steel stock successfully restored to inventory!')
+      } else if (restoreStock && result?.restored) {
+        setSuccess('Batch deleted and the remaining stock was restored. Remnant bars already used by a later batch were not returned.')
       } else {
         setSuccess('Batch optimization history log deleted successfully!')
       }

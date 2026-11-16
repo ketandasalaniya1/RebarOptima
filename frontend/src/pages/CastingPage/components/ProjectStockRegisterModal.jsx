@@ -6,6 +6,7 @@ import {
   Clock, PackageOpen, RefreshCw, Trash2, ArrowRight
 } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function ProjectStockRegisterModal({
   isOpen,
@@ -337,7 +338,7 @@ export default function ProjectStockRegisterModal({
           {/* ══════════════════════════════════════════════════════════════════ */}
           {activeTab === 'balances' && (
             loading ? (
-              <div style={{ textAlign: 'center', padding: '3.5rem', color: 'var(--text-secondary, #94a3b8)' }}>
+              <div style={{ textAlign: 'center', padding: '3.5rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                 <RefreshCw size={28} className="spinning" style={{ margin: '0 auto 1rem', display: 'block', opacity: 0.7 }} />
                 Loading project inventory balances...
               </div>
@@ -347,7 +348,7 @@ export default function ProjectStockRegisterModal({
                   <PackageOpen size={28} />
                 </div>
                 <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary, #f8fafc)' }}>No Materials in Project Inventory</h4>
-                <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary, #94a3b8)', maxWidth: '420px', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary, var(--text-secondary))', maxWidth: '420px', lineHeight: 1.5 }}>
                   No stock has been received on this project site yet. Inward cement, aggregates, or admixtures to begin tracking pour consumption.
                 </p>
                 <button
@@ -416,7 +417,7 @@ export default function ProjectStockRegisterModal({
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <div className="stock-input-wrapper" style={{ width: '200px' }}>
                       <Search size={14} className="stock-input-icon" />
-                      <input
+                      <Input
                         type="text"
                         placeholder="Search stock..."
                         value={balanceSearch}
@@ -451,7 +452,7 @@ export default function ProjectStockRegisterModal({
                     <tbody>
                       {filteredBalances.length === 0 ? (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                          <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                             No materials matched your filter.
                           </td>
                         </tr>
@@ -460,7 +461,7 @@ export default function ProjectStockRegisterModal({
                           <tr key={st._id || idx}>
                             <td>
                               <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{st.name}</div>
-                              <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, #94a3b8)', marginTop: '2px' }}>
+                              <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, var(--text-secondary))', marginTop: '2px' }}>
                                 <code>{st.materialIdentifier}</code> &bull; {st.specificationStandard || 'Standard Specification'}
                               </div>
                             </td>
@@ -472,12 +473,12 @@ export default function ProjectStockRegisterModal({
                             <td style={{ textAlign: 'right' }}>
                               <div style={{ fontWeight: 700, fontSize: '1rem', color: '#10b981' }}>
                                 {Number(st.currentBalance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-secondary, #94a3b8)', marginLeft: '4px' }}>
+                                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-secondary, var(--text-secondary))', marginLeft: '4px' }}>
                                   {st.canonicalUnit}
                                 </span>
                               </div>
                             </td>
-                            <td style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                            <td style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                               {st.updatedAt ? new Date(st.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Initial'}
                             </td>
                             <td style={{ textAlign: 'right' }}>
@@ -520,7 +521,7 @@ export default function ProjectStockRegisterModal({
                     </label>
                     <div className="stock-input-wrapper">
                       <FileText size={14} className="stock-input-icon" />
-                      <input
+                      <Input
                         type="text"
                         required
                         className="stock-input"
@@ -537,7 +538,7 @@ export default function ProjectStockRegisterModal({
                     </label>
                     <div className="stock-input-wrapper">
                       <Building2 size={14} className="stock-input-icon" />
-                      <input
+                      <Input
                         type="text"
                         required
                         className="stock-input"
@@ -554,7 +555,7 @@ export default function ProjectStockRegisterModal({
                     </label>
                     <div className="stock-input-wrapper">
                       <Truck size={14} className="stock-input-icon" />
-                      <input
+                      <Input
                         type="text"
                         className="stock-input"
                         value={truckNumber}
@@ -570,7 +571,7 @@ export default function ProjectStockRegisterModal({
                     </label>
                     <div className="stock-input-wrapper">
                       <Calendar size={14} className="stock-input-icon" />
-                      <input
+                      <Input
                         type="date"
                         required
                         className="stock-input"
@@ -618,7 +619,7 @@ export default function ProjectStockRegisterModal({
                       {inwardItems.map((item, idx) => (
                         <tr key={idx}>
                           <td>
-                            <select
+                            <Select
                               className="stock-field-select"
                               value={item.materialIdentifier}
                               onChange={(e) => {
@@ -658,14 +659,14 @@ export default function ProjectStockRegisterModal({
                               <optgroup label="Chemical Admixtures">
                                 <option value="ADMIXTURE_PCE">PCE Superplasticizer (IS 9103)</option>
                               </optgroup>
-                            </select>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, #94a3b8)', marginTop: '4px' }}>
+                            </Select>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, var(--text-secondary))', marginTop: '4px' }}>
                               Standard: <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{item.specificationStandard}</strong>
                             </div>
                           </td>
 
                           <td style={{ textAlign: 'right' }}>
-                            <input
+                            <Input
                               type="number"
                               step="0.01"
                               min="0.01"
@@ -678,7 +679,7 @@ export default function ProjectStockRegisterModal({
                           </td>
 
                           <td>
-                            <select
+                            <Select
                               className="stock-field-select"
                               value={item.receivedUnit}
                               onChange={(e) => handleUpdateInwardLine(idx, 'receivedUnit', e.target.value)}
@@ -689,7 +690,7 @@ export default function ProjectStockRegisterModal({
                               <option value="KG">Kilograms (KG)</option>
                               <option value="LITERS">Liters (L)</option>
                               <option value="M3">Cubic Meter (m³)</option>
-                            </select>
+                            </Select>
                           </td>
 
                           <td>
@@ -700,7 +701,7 @@ export default function ProjectStockRegisterModal({
                           </td>
 
                           <td>
-                            <input
+                            <Input
                               type="text"
                               className="stock-input"
                               value={item.batchNumber}
@@ -733,7 +734,7 @@ export default function ProjectStockRegisterModal({
                 <label className="stock-field-label">
                   Remarks / Gate Pass Inspection Notes
                 </label>
-                <input
+                <Input
                   type="text"
                   className="stock-input"
                   value={remarks}
@@ -750,7 +751,7 @@ export default function ProjectStockRegisterModal({
           {/* ══════════════════════════════════════════════════════════════════ */}
           {activeTab === 'ledger' && (
             loading ? (
-              <div style={{ textAlign: 'center', padding: '3.5rem', color: 'var(--text-secondary, #94a3b8)' }}>
+              <div style={{ textAlign: 'center', padding: '3.5rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                 <RefreshCw size={28} className="spinning" style={{ margin: '0 auto 1rem', display: 'block', opacity: 0.7 }} />
                 Loading stock ledger transactions...
               </div>
@@ -760,7 +761,7 @@ export default function ProjectStockRegisterModal({
                   <Clock size={28} />
                 </div>
                 <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary, #f8fafc)' }}>No Transaction Ledger History</h4>
-                <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary, #94a3b8)', maxWidth: '420px', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary, var(--text-secondary))', maxWidth: '420px', lineHeight: 1.5 }}>
                   Every inward receipt (GRN) and casting pour consumption automatically records a non-destructive audit entry here.
                 </p>
               </div>
@@ -788,7 +789,7 @@ export default function ProjectStockRegisterModal({
 
                   <div className="stock-input-wrapper" style={{ width: '220px' }}>
                     <Search size={14} className="stock-input-icon" />
-                    <input
+                    <Input
                       type="text"
                       placeholder="Search transactions..."
                       value={ledgerSearch}
@@ -814,7 +815,7 @@ export default function ProjectStockRegisterModal({
                     <tbody>
                       {filteredLedger.length === 0 ? (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                          <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                             No transactions matched your search.
                           </td>
                         </tr>
@@ -826,7 +827,7 @@ export default function ProjectStockRegisterModal({
 
                           return (
                             <tr key={entry._id || idx}>
-                              <td style={{ color: 'var(--text-secondary, #94a3b8)', whiteSpace: 'nowrap' }}>
+                              <td style={{ color: 'var(--text-secondary, var(--text-secondary))', whiteSpace: 'nowrap' }}>
                                 {new Date(entry.createdAt).toLocaleString(undefined, { 
                                   month: 'short', 
                                   day: 'numeric', 
@@ -860,7 +861,7 @@ export default function ProjectStockRegisterModal({
                               </td>
                               <td>
                                 <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{entry.name}</div>
-                                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                                   <code>{entry.materialIdentifier}</code>
                                 </div>
                               </td>
@@ -872,7 +873,7 @@ export default function ProjectStockRegisterModal({
                               }}>
                                 {isInward || isReversal ? `+${Number(entry.canonicalQuantity).toLocaleString()}` : `-${Number(entry.canonicalQuantity).toLocaleString()}`} {entry.canonicalUnit}
                               </td>
-                              <td style={{ color: 'var(--text-secondary, #94a3b8)', fontSize: '0.75rem' }}>
+                              <td style={{ color: 'var(--text-secondary, var(--text-secondary))', fontSize: '0.75rem' }}>
                                 <code style={{ color: 'var(--text-primary, #f8fafc)' }}>{entry.operationKey}</code>
                               </td>
                             </tr>

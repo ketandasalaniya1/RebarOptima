@@ -9,6 +9,7 @@ import {
   Settings,
   X
 } from 'lucide-react';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function InternalProjectsView({
   projects,
@@ -131,7 +132,7 @@ export default function InternalProjectsView({
                 <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '0.75rem' }}>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Project Code *</label>
-                    <input
+                    <Input
                       type="text"
                       className="dw-form-input"
                       placeholder="e.g. AH"
@@ -142,7 +143,7 @@ export default function InternalProjectsView({
                   </div>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Project Name *</label>
-                    <input
+                    <Input
                       type="text"
                       className="dw-form-input"
                       placeholder="e.g. Alpha Heights Residential"
@@ -155,7 +156,7 @@ export default function InternalProjectsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Location / Site Address</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. Sector 18 Expressway, Bangalore"
@@ -166,7 +167,7 @@ export default function InternalProjectsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Description / Scope of Works</label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     className="dw-form-textarea"
                     placeholder="High-rise towers, basement rebar schedules, and statutory drawings scope..."

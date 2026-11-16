@@ -62,7 +62,7 @@
 .rl-search-icon {
   position: absolute;
   left: 24px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   pointer-events: none;
 }
 
@@ -216,7 +216,7 @@
 .rl-empty-custom {
   padding: 12px;
   font-size: 0.78rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-style: italic;
   text-align: center;
   line-height: 1.4;

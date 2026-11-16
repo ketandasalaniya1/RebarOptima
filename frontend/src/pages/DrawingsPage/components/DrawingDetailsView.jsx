@@ -24,6 +24,7 @@ import {
   Layers,
   Eye
 } from 'lucide-react';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function DrawingDetailsView({
   drawingData,
@@ -387,7 +388,7 @@ export default function DrawingDetailsView({
                     <text x="250" y="180" fontSize="15" fontWeight="bold" fill="#f8fafc" textAnchor="middle" fontFamily="sans-serif">
                       {drawing.title.toUpperCase()}
                     </text>
-                    <text x="250" y="205" fontSize="11" fill="#94a3b8" textAnchor="middle" fontFamily="sans-serif">
+                    <text x="250" y="205" fontSize="11" fill="var(--text-secondary)" textAnchor="middle" fontFamily="sans-serif">
                       SCALE 1:100 • REVISION {drawing.currentRevisionNumber || 'R00'}
                     </text>
 
@@ -402,7 +403,7 @@ export default function DrawingDetailsView({
                     <text x="570" y="195" fontSize="14" fontWeight="bold" fill="#c084fc" textAnchor="middle" fontFamily="sans-serif">
                       CORE LOBBY &amp; STAIRWELL
                     </text>
-                    <text x="570" y="220" fontSize="11" fill="#94a3b8" textAnchor="middle" fontFamily="sans-serif">
+                    <text x="570" y="220" fontSize="11" fill="var(--text-secondary)" textAnchor="middle" fontFamily="sans-serif">
                       FIRE RATED 2-HR BARRIER
                     </text>
 
@@ -688,7 +689,7 @@ export default function DrawingDetailsView({
                     <span style={{ fontSize: '0.7rem', color: '#38bdf8' }}>PDF, DWG, DXF, PNG, SVG</span>
                   </label>
 
-                  <input
+                  <Input
                     type="file"
                     ref={revFileInputRef}
                     style={{ display: 'none' }}
@@ -726,7 +727,7 @@ export default function DrawingDetailsView({
                           <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#f8fafc', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {selectedRevFile.name}
                           </div>
-                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                             {(selectedRevFile.size / (1024 * 1024)).toFixed(2)} MB • Checksum SHA-256 Calculated
                           </div>
                         </div>
@@ -751,7 +752,7 @@ export default function DrawingDetailsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Change Description (Changelog) *</label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     className="dw-form-textarea"
                     placeholder="e.g. Adjusted ceiling heights to 2.7m for better airflow, updated window specifications..."
@@ -763,7 +764,7 @@ export default function DrawingDetailsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Change Reason / Technical Rationale</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. Structural and MEP coordination clash resolution"

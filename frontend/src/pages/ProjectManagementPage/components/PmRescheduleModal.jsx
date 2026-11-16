@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, ArrowRight, ShieldCheck, AlertCircle, RefreshCw, X, CheckCircle2 } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input } from '../../../components/ui';
 
 export default function PmRescheduleModal({ isOpen, onClose, project, onRescheduled }) {
   const [newStartDate, setNewStartDate] = useState('');
@@ -82,7 +83,7 @@ export default function PmRescheduleModal({ isOpen, onClose, project, onReschedu
           <div className="pm-reschedule-inputs-grid">
             <div className="pm-form-group">
               <label>Current Planned Start Date</label>
-              <input
+              <Input
                 type="date"
                 value={project.plannedStart}
                 disabled
@@ -93,7 +94,7 @@ export default function PmRescheduleModal({ isOpen, onClose, project, onReschedu
 
             <div className="pm-form-group">
               <label>Current Forecast Finish</label>
-              <input
+              <Input
                 type="date"
                 value={project.forecastFinish}
                 disabled
@@ -104,7 +105,7 @@ export default function PmRescheduleModal({ isOpen, onClose, project, onReschedu
 
             <div className="pm-form-group pm-form-group-highlight">
               <label>Select New Project Start Date *</label>
-              <input
+              <Input
                 type="date"
                 value={newStartDate}
                 onChange={(e) => {

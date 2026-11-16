@@ -53,7 +53,7 @@
   justify-content: center;
   min-height: 480px;
   gap: 16px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 14px;
 }
 
@@ -200,7 +200,7 @@
 }
 
 .overview-subtitle {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 13px;
   font-weight: 400;
   margin: 0;
@@ -400,7 +400,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
 .kpi-sub-label {
   font-size: 11px;
   font-weight: 500;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .kpi-sub-val-wrapper {
@@ -426,7 +426,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
 .kpi-currency {
   font-size: 11px;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-left: 2px;
 }
 
@@ -448,7 +448,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
 .kpi-hero-unit {
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 /* Purchased Block */
@@ -576,7 +576,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: 500;
 }
 
@@ -865,7 +865,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
 
 .ow-subtitle {
   font-size: 15px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   max-width: 580px;
   line-height: 1.6;
   margin: 0 0 28px 0;
@@ -925,7 +925,7 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
 .ow-feature-card p {
   font-size: 13px;
   line-height: 1.5;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0;
 }
 

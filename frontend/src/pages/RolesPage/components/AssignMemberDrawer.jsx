@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { UserPlus, Search, Mail, Shield, Check } from 'lucide-react';
 import Drawer from '../../../components/Shared/Drawer';
 import './AssignMemberDrawer.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Slide-over Drawer to Assign Existing Team Members to Role
@@ -68,7 +69,7 @@ export default function AssignMemberDrawer({
         {/* Search Input */}
         <div className="amd-search-box">
           <Search size={14} className="amd-search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search member by name or email..."
             value={search}

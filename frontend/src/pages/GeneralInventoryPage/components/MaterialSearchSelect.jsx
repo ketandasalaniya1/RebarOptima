@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Search, Package, Check, X, AlertCircle } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function MaterialSearchSelect({
   materials = [],
@@ -96,7 +97,7 @@ export default function MaterialSearchSelect({
         /* Search Input */
         <div className="gi-material-search-input-wrapper">
           <Search size={18} className="gi-search-icon-inside" />
-          <input
+          <Input
             ref={inputRef}
             type="text"
             className={`gi-input-field search-input ${error ? 'has-error' : ''}`}

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import PhotoPicker from './PhotoPicker';
 import { formatINR } from '../../../utils/money';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 const EXPENSE_SUGGESTIONS = [
   'Tea & snacks for workers',
@@ -239,7 +240,7 @@ export default function EntryDrawer({
             <label className="pc-amount-label">Enter Amount (₹)</label>
             <div className="pc-amount-input-wrap">
               <span className="pc-amount-currency-sym">₹</span>
-              <input
+              <Input
                 ref={amountInputRef}
                 type="number"
                 step="any"
@@ -286,7 +287,7 @@ export default function EntryDrawer({
               </div>
 
               {isCustomPerson ? (
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="Enter full name (e.g. Ketan Dasalaniya)"
@@ -404,7 +405,7 @@ export default function EntryDrawer({
 
               <div className="pc-form-group">
                 <label className="pc-input-label">Description / Remarks (Optional)</label>
-                <textarea
+                <Textarea
                   rows={2}
                   placeholder="e.g. Purchased 2 rolls binding wire from hardware shop"
                   className="pc-textarea"
@@ -419,7 +420,7 @@ export default function EntryDrawer({
             <div className="pc-form-block">
               <div className="pc-form-group">
                 <label className="pc-input-label">Remarks / Note (Optional)</label>
-                <textarea
+                <Textarea
                   rows={2}
                   placeholder="e.g. Cash handed over for weekly site expenses"
                   className="pc-textarea"
@@ -449,7 +450,7 @@ export default function EntryDrawer({
                 <div className="pc-form-grid-2">
                   <div className="pc-form-group">
                     <label>Date <span className="pc-req">*</span></label>
-                    <input
+                    <Input
                       type="date"
                       required
                       className="pc-input"
@@ -461,7 +462,7 @@ export default function EntryDrawer({
                   {!isCredit && (
                     <div className="pc-form-group">
                       <label>Spent By Employee <span className="pc-req">*</span></label>
-                      <input
+                      <Input
                         type="text"
                         required
                         placeholder="e.g. Ramesh Supervisor"
@@ -475,7 +476,7 @@ export default function EntryDrawer({
                   {isCredit && (
                     <div className="pc-form-group">
                       <label>Category</label>
-                      <select
+                      <Select
                         className="pc-input"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
@@ -483,7 +484,7 @@ export default function EntryDrawer({
                         {categories.map((c) => (
                           <option key={c.id || c.name} value={c.name}>{c.name}</option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   )}
                 </div>

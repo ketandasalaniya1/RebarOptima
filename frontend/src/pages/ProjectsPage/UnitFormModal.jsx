@@ -13,6 +13,7 @@ import {
   Tag,
 } from 'lucide-react';
 import './UnitFormModal.css';
+import { Input, Select, Textarea } from '../../components/ui';
 
 export default function UnitFormModal({
   isOpen,
@@ -234,7 +235,7 @@ export default function UnitFormModal({
                   <label className="ufm-label">
                     Unit Number / Flat No. <span className="ufm-req">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     className="ufm-input"
                     placeholder="e.g. 101, A-101"
@@ -247,7 +248,7 @@ export default function UnitFormModal({
 
                 <div className="ufm-field">
                   <label className="ufm-label">Unit Type (Global)</label>
-                  <select
+                  <Select
                     className="ufm-select"
                     value={propertyType}
                     onChange={(e) => setPropertyType(e.target.value)}
@@ -257,12 +258,12 @@ export default function UnitFormModal({
                         {t}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="ufm-field">
                   <label className="ufm-label">Configuration</label>
-                  <select
+                  <Select
                     className="ufm-select"
                     value={configuration}
                     onChange={(e) => setConfiguration(e.target.value)}
@@ -272,14 +273,14 @@ export default function UnitFormModal({
                         {c}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div className="ufm-grid-2" style={{ marginTop: '12px' }}>
                 <div className="ufm-field">
                   <label className="ufm-label">Facing / Direction</label>
-                  <select
+                  <Select
                     className="ufm-select"
                     value={facing}
                     onChange={(e) => setFacing(e.target.value)}
@@ -289,12 +290,12 @@ export default function UnitFormModal({
                         {f}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="ufm-field">
                   <label className="ufm-label">Availability / Booking Status</label>
-                  <select
+                  <Select
                     className="ufm-select"
                     value={availabilityStatus}
                     onChange={(e) => setAvailabilityStatus(e.target.value)}
@@ -304,7 +305,7 @@ export default function UnitFormModal({
                         {s}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
             </div>
@@ -318,7 +319,7 @@ export default function UnitFormModal({
                 <div className="ufm-field">
                   <label className="ufm-label">Carpet Area (RERA)</label>
                   <div className="ufm-input-addon">
-                    <input
+                    <Input
                       type="number"
                       step="any"
                       min="0"
@@ -334,7 +335,7 @@ export default function UnitFormModal({
                 <div className="ufm-field">
                   <label className="ufm-label">Built-up Area</label>
                   <div className="ufm-input-addon">
-                    <input
+                    <Input
                       type="number"
                       step="any"
                       min="0"
@@ -350,7 +351,7 @@ export default function UnitFormModal({
                 <div className="ufm-field">
                   <label className="ufm-label">Super Built-up Area</label>
                   <div className="ufm-input-addon">
-                    <input
+                    <Input
                       type="number"
                       step="any"
                       min="0"
@@ -366,7 +367,7 @@ export default function UnitFormModal({
                 <div className="ufm-field">
                   <label className="ufm-label">Balcony Area</label>
                   <div className="ufm-input-addon">
-                    <input
+                    <Input
                       type="number"
                       step="any"
                       min="0"
@@ -381,7 +382,7 @@ export default function UnitFormModal({
               </div>
 
               <div style={{ marginTop: '8px' }}>
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-muted, #94a3b8)' }}>
+                <span style={{ fontSize: '0.74rem', color: 'var(--text-muted, var(--text-secondary))' }}>
                   Measurement Standard:{' '}
                 </span>
                 {areaUnits.map((u) => (
@@ -405,7 +406,7 @@ export default function UnitFormModal({
               <div className="ufm-grid-2">
                 <div className="ufm-field">
                   <label className="ufm-label">Base Agreement Value (₹)</label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     step="1000"
@@ -423,7 +424,7 @@ export default function UnitFormModal({
 
                 <div className="ufm-field">
                   <label className="ufm-label">Asking / Listing Price (₹)</label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     step="1000"
@@ -446,7 +447,7 @@ export default function UnitFormModal({
               <h4 className="ufm-section-title">
                 <Tag size={14} /> Unit Specifications (Global Single Source of Truth)
               </h4>
-              <p style={{ margin: '0 0 10px', fontSize: '0.76rem', color: 'var(--text-muted, #94a3b8)' }}>
+              <p style={{ margin: '0 0 10px', fontSize: '0.76rem', color: 'var(--text-muted, var(--text-secondary))' }}>
                 Select standard specifications shared with Unit Inventory and Real Estate CRM:
               </p>
               <div className="ufm-specs-grid">
@@ -472,7 +473,7 @@ export default function UnitFormModal({
             {/* Section 5: Description & Notes */}
             <div className="ufm-section">
               <label className="ufm-label">Description &amp; Additional Details</label>
-              <textarea
+              <Textarea
                 className="ufm-textarea"
                 rows={2}
                 placeholder="e.g. North-facing garden view apartment with cross ventilation, Italian marble in living room, premium fixtures..."

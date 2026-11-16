@@ -101,7 +101,7 @@
 
 .pgh-count {
   font-size: 0.78rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .perm-modules-table-wrap {

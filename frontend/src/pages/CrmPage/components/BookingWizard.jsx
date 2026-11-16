@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Check, ArrowRight, ArrowLeft, DollarSign, FileText, Calendar, Building2 } from 'lucide-react';
 import { formatINR, formatShortINR } from '../../../utils/money';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function BookingWizard({
   projects = [],
@@ -131,7 +132,7 @@ export default function BookingWizard({
             <div className="crm-wizard-step-content">
               <div className="crm-form-group">
                 <label className="crm-form-label">Select Registered Buyer *</label>
-                <select
+                <Select
                   className="crm-form-input"
                   value={selectedCustomerId}
                   onChange={e => setSelectedCustomerId(e.target.value)}
@@ -142,12 +143,12 @@ export default function BookingWizard({
                       {c.fullName} ({c.phone}) - {c.customerCode}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div className="crm-form-group">
                 <label className="crm-form-label">Select Inventory Unit *</label>
-                <select
+                <Select
                   className="crm-form-input"
                   value={selectedUnitId}
                   onChange={e => {
@@ -166,7 +167,7 @@ export default function BookingWizard({
                         Unit {u.unitCode} ({u.configuration}, Floor {u.floorNumber}) - {formatShortINR(u.askingPrice || u.basePrice)}
                       </option>
                     ))}
-                </select>
+                </Select>
               </div>
 
               {selectedUnit && (
@@ -186,7 +187,7 @@ export default function BookingWizard({
               <div className="crm-form-grid">
                 <div className="crm-form-group">
                   <label className="crm-form-label">Agreement Base Price (₹) *</label>
-                  <input
+                  <Input
                     type="number"
                     className="crm-form-input"
                     value={agreementPrice}
@@ -196,7 +197,7 @@ export default function BookingWizard({
 
                 <div className="crm-form-group">
                   <label className="crm-form-label">Developer Discount (₹)</label>
-                  <input
+                  <Input
                     type="number"
                     className="crm-form-input"
                     value={discountAmount}
@@ -246,7 +247,7 @@ export default function BookingWizard({
               <div className="crm-form-grid">
                 <div className="crm-form-group">
                   <label className="crm-form-label">Booking Token Deposit Required (₹) *</label>
-                  <input
+                  <Input
                     type="number"
                     className="crm-form-input"
                     value={bookingDepositRequired}
@@ -256,7 +257,7 @@ export default function BookingWizard({
 
                 <div className="crm-form-group">
                   <label className="crm-form-label">Booking Agreement Date *</label>
-                  <input
+                  <Input
                     type="date"
                     className="crm-form-input"
                     value={bookingDate}
@@ -266,7 +267,7 @@ export default function BookingWizard({
 
                 <div className="crm-form-group full-width">
                   <label className="crm-form-label">Booking Remarks / Special Terms</label>
-                  <textarea
+                  <Textarea
                     rows={2}
                     className="crm-form-input"
                     placeholder="e.g. Includes 1 covered podium car park."

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
 import { formatINR } from '../../../utils/money';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function CalendarView({
   projects = [],
@@ -240,7 +241,7 @@ export default function CalendarView({
                   borderRadius: '6px',
                   border: 'none',
                   background: viewMode === mode ? '#38bdf8' : 'transparent',
-                  color: viewMode === mode ? '#0f172a' : '#94a3b8',
+                  color: viewMode === mode ? '#0f172a' : 'var(--text-secondary)',
                   fontWeight: 600,
                   fontSize: '0.78rem',
                   textTransform: 'capitalize',
@@ -319,7 +320,7 @@ export default function CalendarView({
           { key: 'hold_expiries', label: 'Hold Expiries', color: '#eab308' }
         ].map(l => (
           <label key={l.key} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '0.78rem' }}>
-            <input
+            <Input
               type="checkbox"
               checked={layers[l.key]}
               onChange={() => toggleLayer(l.key)}
@@ -578,7 +579,7 @@ export default function CalendarView({
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Client Reaction & Discussion Points *
                 </label>
-                <textarea
+                <Textarea
                   required
                   rows={3}
                   placeholder="e.g. Loved the living room layout & balcony view. Concerned about 5th floor delivery timeline."
@@ -593,7 +594,7 @@ export default function CalendarView({
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Next Step Action
                 </label>
-                <select
+                <Select
                   value={feedbackNextStep}
                   onChange={(e) => setFeedbackNextStep(e.target.value)}
                   style={{ width: '100%', padding: '8px 10px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '8px', color: "var(--text-primary)", fontSize: '0.84rem' }}
@@ -603,7 +604,7 @@ export default function CalendarView({
                   <option value="Follow-up call in 2 days">Follow-up call in 2 days</option>
                   <option value="Schedule family repeat visit">Schedule family repeat visit</option>
                   <option value="Check home loan eligibility">Check home loan eligibility</option>
-                </select>
+                </Select>
               </div>
 
               {/* Advance Stage */}
@@ -611,7 +612,7 @@ export default function CalendarView({
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Advance Pipeline Stage To
                 </label>
-                <select
+                <Select
                   value={advanceStageTo}
                   onChange={(e) => setAdvanceStageTo(e.target.value)}
                   style={{ width: '100%', padding: '8px 10px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '8px', color: "var(--text-primary)", fontSize: '0.84rem' }}
@@ -619,7 +620,7 @@ export default function CalendarView({
                   <option value="Negotiation">Negotiation (Hot Prospect)</option>
                   <option value="Visited">Visited (Evaluating Options)</option>
                   <option value="On Hold">Hold (Blocking Unit)</option>
-                </select>
+                </Select>
               </div>
 
               <button

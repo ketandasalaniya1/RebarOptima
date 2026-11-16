@@ -16,6 +16,7 @@ import SmtpPanel from './components/SmtpPanel';
 import TemplatesPanel from './components/TemplatesPanel';
 import DeliveryLogsPanel from './components/DeliveryLogsPanel';
 import SystemHealthPanel from './components/SystemHealthPanel';
+import { Input, Select } from '../../components/ui';
 
 export default function SuperadminDashboard() {
   const dispatch = useDispatch();
@@ -295,7 +296,7 @@ export default function SuperadminDashboard() {
                     <h3>Registered Builder Firms</h3>
                     <div className="dev-search-bar">
                       <Search size={14} />
-                      <input placeholder="Search firms..." value={search} onChange={e => setSearch(e.target.value)} />
+                      <Input placeholder="Search firms..." value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
                   </div>
                   <div className="dev-table-wrap">
@@ -327,19 +328,19 @@ export default function SuperadminDashboard() {
                                 <span className="dev-plan-badge">{c.subscriptionPlan}</span>
                                 {showAssignSub === c.id && (
                                   <div className="dev-inline-assign">
-                                    <select value={selectedPkgId} onChange={e => setSelectedPkgId(e.target.value)}>
+                                    <Select value={selectedPkgId} onChange={e => setSelectedPkgId(e.target.value)}>
                                       <option value="">Select Package</option>
                                       {packages.filter(p => p.isActive).map(p => (
                                         <option key={p.id} value={p.id}>{p.displayName}</option>
                                       ))}
-                                    </select>
-                                    <select value={selectedDuration} onChange={e => setSelectedDuration(e.target.value)}>
+                                    </Select>
+                                    <Select value={selectedDuration} onChange={e => setSelectedDuration(e.target.value)}>
                                       <option value="1_month">1 Month</option>
                                       <option value="6_months">6 Months</option>
                                       <option value="1_year">1 Year</option>
                                       <option value="2_years">2 Years</option>
                                       <option value="lifetime">Lifetime</option>
-                                    </select>
+                                    </Select>
                                     <button className="dev-btn-sm green" onClick={() => handleAssignSubscription(c.id)} disabled={actionLoading === `sub-${c.id}`}>
                                       {actionLoading === `sub-${c.id}` ? '...' : 'Assign'}
                                     </button>
@@ -667,7 +668,7 @@ export default function SuperadminDashboard() {
                     )}
                     <div className="dev-form-group">
                       <label>Developer Password</label>
-                      <input 
+                      <Input 
                         type="password" 
                         value={deletePassword} 
                         onChange={(e) => setDeletePassword(e.target.value)}
@@ -716,15 +717,15 @@ export default function SuperadminDashboard() {
               <div className="dev-modal-body">
                 <div className="dev-form-group" style={{ marginTop: '0' }}>
                   <label>Package Name (Display)</label>
-                  <input type="text" value={editPkgData.displayName} onChange={e => setEditPkgData({...editPkgData, displayName: e.target.value})} />
+                  <Input type="text" value={editPkgData.displayName} onChange={e => setEditPkgData({...editPkgData, displayName: e.target.value})} />
                 </div>
                 <div className="dev-form-group">
                   <label>Description</label>
-                  <input type="text" value={editPkgData.description} onChange={e => setEditPkgData({...editPkgData, description: e.target.value})} />
+                  <Input type="text" value={editPkgData.description} onChange={e => setEditPkgData({...editPkgData, description: e.target.value})} />
                 </div>
                 <div className="dev-form-group">
                   <label>Max Users (Leave empty for Unlimited)</label>
-                  <input type="number" min="1" placeholder="e.g. 5" value={editPkgData.maxUsers} onChange={e => setEditPkgData({...editPkgData, maxUsers: e.target.value})} />
+                  <Input type="number" min="1" placeholder="e.g. 5" value={editPkgData.maxUsers} onChange={e => setEditPkgData({...editPkgData, maxUsers: e.target.value})} />
                 </div>
               </div>
               <div className="dev-modal-footer">

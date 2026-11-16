@@ -4,6 +4,7 @@ import {
   Filter, Calendar, Download, PieChart, BarChart3, CheckCircle2
 } from 'lucide-react';
 import { formatINR, formatShortINR } from '../../../utils/money';
+import { Select } from '../../../components/ui';
 
 export default function ReportsView({
   summary = null,
@@ -88,7 +89,7 @@ export default function ReportsView({
         </div>
 
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <select
+          <Select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
             style={{
@@ -104,7 +105,7 @@ export default function ReportsView({
             <option value="lastMonth">Last Month</option>
             <option value="thisQuarter">This Quarter</option>
             <option value="fy2026">FY 2026-27</option>
-          </select>
+          </Select>
           <button
             type="button"
             onClick={() => window.print()}

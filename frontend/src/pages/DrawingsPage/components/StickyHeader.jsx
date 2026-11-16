@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, RefreshCw, ChevronDown, Check } from 'lucide-react';
 import { useActiveProject } from '../../../hooks/useActiveProject';
+import { Input, Select } from '../../../components/ui';
 
 export default function StickyHeader({
   activeTab,
@@ -137,7 +138,7 @@ export default function StickyHeader({
         {/* Live Search Input */}
         <div className="drawings-search-box">
           <Search size={16} className="drawings-search-icon" />
-          <input
+          <Input
             type="text"
             className="drawings-search-input"
             placeholder="Search drawing number or title"
@@ -201,7 +202,7 @@ export default function StickyHeader({
 
         {/* Compact Level Dropdown */}
         <div className="drawings-filter-group">
-          <select
+          <Select
             className="drawings-level-dropdown"
             value={filters.level || 'all'}
             onChange={(e) => onFilterChange({ level: e.target.value })}
@@ -212,7 +213,7 @@ export default function StickyHeader({
                 {lvl === 'All Levels' ? 'Level: All' : lvl}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

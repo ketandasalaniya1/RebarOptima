@@ -4,6 +4,7 @@ import { chatApi } from '../../../utils/api';
 import ReactionPickerModal from './ReactionPickerModal';
 import MediaSendModal from './MediaSendModal';
 import { validateChatFile, CHAT_FILE_ACCEPT } from '../utils/chatFileSecurity';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function MessageComposer({
   onSendMessage,
@@ -465,7 +466,7 @@ export default function MessageComposer({
               <Paperclip size={20} />
             </button>
 
-            <input
+            <Input
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
@@ -474,7 +475,7 @@ export default function MessageComposer({
               accept={CHAT_FILE_ACCEPT}
             />
 
-            <textarea
+            <Textarea
               ref={textareaRef}
               rows={1}
               value={text}

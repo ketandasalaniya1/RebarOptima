@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Building2, Plus, ArrowLeft, ChevronRight, Layers, LayoutGrid, 
-  CheckCircle2, Clock, Trash2, Edit3, MoveUp, MoveDown, Search, 
-  FolderPlus, PlusCircle, AlertCircle, Info, Hash, MapPin, 
-  ShieldCheck, RefreshCw, MoreVertical, X, Shapes, PenTool
+import { Building2, Plus, ArrowLeft, ChevronRight, Layers, LayoutGrid, CheckCircle2, Clock, Trash2, Edit3, MoveUp, MoveDown, Search, FolderPlus, PlusCircle, AlertCircle, Info, Hash, MapPin, ShieldCheck, RefreshCw, MoreVertical, X, Shapes, PenTool
 } from 'lucide-react';
 import { bbsApi } from './bbsApi';
-import { CardSkeleton, useDelayedSkeleton } from '../../components/ui';
+import { CardSkeleton, useDelayedSkeleton, Input, Select, Textarea } from '../../components/ui';
 import ShapeLibrary from './ShapeLibrary';
 import CADEditor from './cad/CADEditor';
 import { useActiveProject } from '../../hooks/useActiveProject';
@@ -870,7 +866,7 @@ export default function BBSPage() {
         <div className="bbs-toolbar-card">
           <div className="bbs-search-box">
             <Search size={18} className="bbs-search-icon" />
-            <input 
+            <Input 
               type="text" 
               placeholder="Search BBS projects by name or location..." 
               value={searchQuery}
@@ -1015,7 +1011,7 @@ export default function BBSPage() {
                 <div className="bbs-modal-body">
                   <div className="bbs-form-group">
                     <label>Project Name <span className="bbs-required">*</span></label>
-                    <input 
+                    <Input 
                       type="text" 
                       placeholder="e.g. ABC Residency, Skyline Towers" 
                       value={projectForm.name} 
@@ -1026,7 +1022,7 @@ export default function BBSPage() {
                   </div>
                   <div className="bbs-form-group">
                     <label>Location / Site Address</label>
-                    <input 
+                    <Input 
                       type="text" 
                       placeholder="e.g. Sector 44, Bengaluru" 
                       value={projectForm.location} 
@@ -1035,7 +1031,7 @@ export default function BBSPage() {
                   </div>
                   <div className="bbs-form-group">
                     <label>Project Status</label>
-                    <select 
+                    <Select 
                       value={projectForm.status} 
                       onChange={e => setProjectForm({ ...projectForm, status: e.target.value })}
                     >
@@ -1043,11 +1039,11 @@ export default function BBSPage() {
                       <option value="Planning">Planning</option>
                       <option value="Completed">Completed</option>
                       <option value="On Hold">On Hold</option>
-                    </select>
+                    </Select>
                   </div>
                   <div className="bbs-form-group">
                     <label>Remarks / Description</label>
-                    <textarea 
+                    <Textarea 
                       placeholder="Optional details, site notes, or structural overview..." 
                       rows={3}
                       value={projectForm.description} 
@@ -1500,7 +1496,7 @@ export default function BBSPage() {
               <div className="bbs-modal-body">
                 <div className="bbs-form-group">
                   <label>Block Display Name <span className="bbs-required">*</span></label>
-                  <input 
+                  <Input 
                     type="text" 
                     placeholder="e.g. Block A, Tower 1, Commercial Wing" 
                     value={blockForm.name} 
@@ -1511,7 +1507,7 @@ export default function BBSPage() {
                 </div>
                 <div className="bbs-form-group">
                   <label>Optional Block Code</label>
-                  <input 
+                  <Input 
                     type="text" 
                     placeholder="e.g. BLK-A, T1" 
                     value={blockForm.code} 
@@ -1520,7 +1516,7 @@ export default function BBSPage() {
                 </div>
                 <div className="bbs-form-group">
                   <label>Optional Description</label>
-                  <textarea 
+                  <Textarea 
                     placeholder="Notes about this block..." 
                     rows={2}
                     value={blockForm.description} 
@@ -1553,7 +1549,7 @@ export default function BBSPage() {
               <div className="bbs-modal-body">
                 <div className="bbs-form-group">
                   <label>Level Name <span className="bbs-required">*</span></label>
-                  <input 
+                  <Input 
                     type="text" 
                     placeholder="e.g. Footing, Basement 1, Ground Floor, First Floor, Terrace" 
                     value={levelForm.name} 
@@ -1564,7 +1560,7 @@ export default function BBSPage() {
                 </div>
                 <div className="bbs-form-group">
                   <label>Optional Level Code</label>
-                  <input 
+                  <Input 
                     type="text" 
                     placeholder="e.g. GF, 1F, B1, RF" 
                     value={levelForm.code} 
@@ -1573,7 +1569,7 @@ export default function BBSPage() {
                 </div>
                 <div className="bbs-form-group">
                   <label>Optional Description</label>
-                  <textarea 
+                  <Textarea 
                     placeholder="Level notes or structural elevation info..." 
                     rows={2}
                     value={levelForm.description} 
@@ -1628,7 +1624,7 @@ export default function BBSPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="bbs-form-group">
                       <label>Structural Category <span className="bbs-required">*</span></label>
-                      <select 
+                      <Select 
                         value={seriesForm.memberType} 
                         onChange={e => handleSeriesMemberTypeChange(e.target.value)}
                         required
@@ -1636,12 +1632,12 @@ export default function BBSPage() {
                         {MEMBER_TYPE_OPTIONS.map(opt => (
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
 
                     <div className="bbs-form-group">
                       <label>Design Concrete Grade <span className="bbs-required">*</span></label>
-                      <select 
+                      <Select 
                         value={seriesForm.concrete_grade} 
                         onChange={e => setSeriesForm({ ...seriesForm, concrete_grade: e.target.value })}
                         required
@@ -1649,14 +1645,14 @@ export default function BBSPage() {
                         {CONCRETE_GRADES.map(opt => (
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="bbs-form-row-3">
                     <div className="bbs-form-group">
                       <label>Mark Prefix <span className="bbs-required">*</span></label>
-                      <input 
+                      <Input 
                         type="text" 
                         placeholder={`e.g. ${DEFAULT_PREFIX_MAP[seriesForm.memberType] || 'C'}`}
                         value={seriesForm.prefix} 
@@ -1667,7 +1663,7 @@ export default function BBSPage() {
                     </div>
                     <div className="bbs-form-group">
                       <label>From No. <span className="bbs-required">*</span></label>
-                      <input 
+                      <Input 
                         type="number" 
                         min="1"
                         max="999"
@@ -1679,7 +1675,7 @@ export default function BBSPage() {
                     </div>
                     <div className="bbs-form-group">
                       <label>To No. <span className="bbs-required">*</span></label>
-                      <input 
+                      <Input 
                         type="number" 
                         min="1"
                         max="999"
@@ -1731,7 +1727,7 @@ export default function BBSPage() {
 
                   <div className="bbs-form-group">
                     <label>Optional Description / Notes (applied to all)</label>
-                    <input 
+                    <Input 
                       type="text"
                       placeholder="e.g. Main framing elements, standard reinforcement" 
                       value={seriesForm.description} 
@@ -1757,7 +1753,7 @@ export default function BBSPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="bbs-form-group">
                       <label>Structural Category <span className="bbs-required">*</span></label>
-                      <select 
+                      <Select 
                         value={memberForm.memberType} 
                         onChange={e => setMemberForm({ ...memberForm, memberType: e.target.value })}
                         required
@@ -1765,12 +1761,12 @@ export default function BBSPage() {
                         {MEMBER_TYPE_OPTIONS.map(opt => (
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
 
                     <div className="bbs-form-group">
                       <label>Design Concrete Grade <span className="bbs-required">*</span></label>
-                      <select 
+                      <Select 
                         value={memberForm.concrete_grade} 
                         onChange={e => setMemberForm({ ...memberForm, concrete_grade: e.target.value })}
                         required
@@ -1778,12 +1774,12 @@ export default function BBSPage() {
                         {CONCRETE_GRADES.map(opt => (
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   </div>
                   <div className="bbs-form-group">
                     <label>Member Display ID / Mark <span className="bbs-required">*</span></label>
-                    <input 
+                    <Input 
                       type="text" 
                       placeholder={`e.g. ${DEFAULT_PREFIX_MAP[memberForm.memberType] || 'C'}1`}
                       value={memberForm.displayId} 
@@ -1797,7 +1793,7 @@ export default function BBSPage() {
                   </div>
                   <div className="bbs-form-group">
                     <label>BBS Completion State</label>
-                    <select 
+                    <Select 
                       value={memberForm.completionPercentage} 
                       onChange={e => setMemberForm({ ...memberForm, completionPercentage: Number(e.target.value) })}
                     >
@@ -1806,11 +1802,11 @@ export default function BBSPage() {
                       <option value={50}>50% — In Progress</option>
                       <option value={75}>75% — Verification</option>
                       <option value={100}>100% — Completed</option>
-                    </select>
+                    </Select>
                   </div>
                   <div className="bbs-form-group">
                     <label>Optional Description / Drawing Grid Location</label>
-                    <textarea 
+                    <Textarea 
                       placeholder="e.g. Grid A-4 to B-6, Main framing beam, 400x600mm" 
                       rows={2}
                       value={memberForm.description} 
@@ -1844,7 +1840,7 @@ export default function BBSPage() {
               <div className="bbs-modal-body">
                 <div className="bbs-form-group">
                   <label>Project Name <span className="bbs-required">*</span></label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={projectForm.name} 
                     onChange={e => setProjectForm({ ...projectForm, name: e.target.value })}
@@ -1853,7 +1849,7 @@ export default function BBSPage() {
                 </div>
                 <div className="bbs-form-group">
                   <label>Location / Site Address</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={projectForm.location} 
                     onChange={e => setProjectForm({ ...projectForm, location: e.target.value })}
@@ -1861,7 +1857,7 @@ export default function BBSPage() {
                 </div>
                 <div className="bbs-form-group">
                   <label>Project Status</label>
-                  <select 
+                  <Select 
                     value={projectForm.status} 
                     onChange={e => setProjectForm({ ...projectForm, status: e.target.value })}
                   >
@@ -1869,11 +1865,11 @@ export default function BBSPage() {
                     <option value="Planning">Planning</option>
                     <option value="Completed">Completed</option>
                     <option value="On Hold">On Hold</option>
-                  </select>
+                  </Select>
                 </div>
                 <div className="bbs-form-group">
                   <label>Remarks / Description</label>
-                  <textarea 
+                  <Textarea 
                     rows={3}
                     value={projectForm.description} 
                     onChange={e => setProjectForm({ ...projectForm, description: e.target.value })}

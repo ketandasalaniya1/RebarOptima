@@ -24,6 +24,7 @@ import PmDailyProgressView from './components/PmDailyProgressView';
 import PmQualityView from './components/PmQualityView';
 import PmDelayModal from './components/PmDelayModal';
 import './ProjectManagementPage.css';
+import { Select } from '../../components/ui';
 
 export default function ProjectManagementPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -150,7 +151,7 @@ export default function ProjectManagementPage() {
           {projects.length > 0 && (
             <div className="pm-project-selector-wrap">
               <label>Active Project:</label>
-              <select
+              <Select
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
               >
@@ -159,7 +160,7 @@ export default function ProjectManagementPage() {
                     {p.code} — {p.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
 

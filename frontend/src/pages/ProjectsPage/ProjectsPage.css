@@ -45,7 +45,7 @@
 .pp-desc {
   margin: 4px 0 0;
   font-size: 0.88rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pp-create-btn {
@@ -131,7 +131,7 @@
 .pp-stat-label {
   font-size: 0.78rem;
   font-weight: 500;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 /* Filter Bar */
@@ -160,7 +160,7 @@
 }
 
 .pp-search-icon {
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pp-search-input {
@@ -184,9 +184,15 @@
   gap: 6px;
 }
 
+.pp-filter-count {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
 .pp-filter-label {
   font-size: 0.8rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pp-filter-select {
@@ -213,7 +219,7 @@
 
 .pp-loading {
   gap: 12px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pp-spinner {
@@ -272,7 +278,7 @@
   margin: 8px 0 24px;
   max-width: 520px;
   font-size: 0.9rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   line-height: 1.5;
 }
 
@@ -293,13 +299,13 @@
 
 .pp-empty-note {
   font-size: 0.85rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   max-width: 480px;
 }
 
 .pp-empty-filter {
   gap: 12px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pp-clear-btn {
@@ -384,7 +390,7 @@
 
 .pp-status-badge.inactive {
   background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .pp-active-context-badge {
@@ -412,7 +418,7 @@
 .pp-card-address {
   margin: 0;
   font-size: 0.82rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;

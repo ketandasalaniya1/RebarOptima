@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Building2, X } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function NewSiteModal({ isOpen, onClose, onCreateSite }) {
   const [siteForm, setSiteForm] = useState({ name: '', code: '', location: '' });
@@ -41,7 +42,7 @@ export default function NewSiteModal({ isOpen, onClose, onCreateSite }) {
         <form onSubmit={handleSubmit} className="pc-modal-body pc-form-stack">
           <div className="pc-form-group">
             <label>Site / Project Name <span className="pc-req">*</span></label>
-            <input
+            <Input
               type="text"
               required
               placeholder="e.g. Skyrise Commercial Tower"
@@ -54,7 +55,7 @@ export default function NewSiteModal({ isOpen, onClose, onCreateSite }) {
 
           <div className="pc-form-group">
             <label>Site Code (Optional)</label>
-            <input
+            <Input
               type="text"
               placeholder="e.g. SK-01"
               className="pc-input"
@@ -65,7 +66,7 @@ export default function NewSiteModal({ isOpen, onClose, onCreateSite }) {
 
           <div className="pc-form-group">
             <label>Location / Address (Optional)</label>
-            <input
+            <Input
               type="text"
               placeholder="e.g. Sector 26, Gandhinagar"
               className="pc-input"

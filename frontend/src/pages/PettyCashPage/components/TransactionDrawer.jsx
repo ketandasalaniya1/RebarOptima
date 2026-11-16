@@ -17,6 +17,7 @@ import {
   FileText
 } from 'lucide-react';
 import { formatINR, plural } from '../../../utils/money';
+import { Input } from '../../../components/ui';
 
 export default function TransactionDrawer({
   isOpen,
@@ -259,7 +260,7 @@ export default function TransactionDrawer({
 
                   {showRejectInput && (
                     <div className="pc-reject-input-box">
-                      <input
+                      <Input
                         type="text"
                         placeholder="Specify rejection reason (e.g. Missing GST bill)..."
                         className="pc-input-sm"

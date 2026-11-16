@@ -3,6 +3,7 @@ import { DollarSign, Scale, Save, X, AlertCircle, CheckCircle2 } from 'lucide-re
 import Drawer from '../../../components/Shared/Drawer';
 import { SHOW_FINANCIALS } from '../../../utils/steelFinancials';
 import './ScrapSaleDrawer.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Slide-over Drawer for Recording or Editing Scrap Sales
@@ -76,7 +77,7 @@ export default function ScrapSaleDrawer({
 
         <div className="form-group">
           <label className="form-label">Transaction Date *</label>
-          <input
+          <Input
             type="date"
             required
             value={formState.date}
@@ -87,7 +88,7 @@ export default function ScrapSaleDrawer({
 
         <div className="form-group">
           <label className="form-label">Scrap Buyer / Factory Name *</label>
-          <input
+          <Input
             type="text"
             required
             placeholder="e.g. Mittal Steel Scrap Buyers"
@@ -99,7 +100,7 @@ export default function ScrapSaleDrawer({
 
         <div className="form-group">
           <label className="form-label">Weight Sold (Kgs) *</label>
-          <input
+          <Input
             type="number"
             min="0.1"
             step="0.1"
@@ -114,7 +115,7 @@ export default function ScrapSaleDrawer({
         {SHOW_FINANCIALS && (
           <div className="form-group">
             <label className="form-label">Selling Price per Kg (₹) *</label>
-            <input
+            <Input
               type="number"
               min="0.1"
               step="0.1"

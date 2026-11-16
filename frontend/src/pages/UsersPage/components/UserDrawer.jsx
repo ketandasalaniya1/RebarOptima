@@ -3,6 +3,7 @@ import { UserPlus, UserCheck, Shield, Mail, Phone, Lock, Send, KeyRound, AlertCi
 import Drawer from '../../../components/Shared/Drawer';
 import ProjectChipPicker from './ProjectChipPicker';
 import './UserDrawer.css';
+import { Input, Select } from '../../../components/ui';
 
 /**
  * Slide-over Drawer for Creating and Editing Team Members
@@ -152,7 +153,7 @@ export default function UserDrawer({
           <div className="ud-grid-2">
             <div className="ud-field">
               <label className="ud-label">First Name *</label>
-              <input
+              <Input
                 type="text"
                 required
                 className="ud-input"
@@ -163,7 +164,7 @@ export default function UserDrawer({
             </div>
             <div className="ud-field">
               <label className="ud-label">Last Name *</label>
-              <input
+              <Input
                 type="text"
                 required
                 className="ud-input"
@@ -178,7 +179,7 @@ export default function UserDrawer({
             <label className="ud-label">Email Address *</label>
             <div className="ud-input-with-icon">
               <Mail size={15} className="ud-icon-prefix" />
-              <input
+              <Input
                 type="email"
                 required
                 disabled={isEditing}
@@ -197,7 +198,7 @@ export default function UserDrawer({
             <label className="ud-label">Mobile Number</label>
             <div className="ud-input-with-icon">
               <Phone size={15} className="ud-icon-prefix" />
-              <input
+              <Input
                 type="tel"
                 className="ud-input with-prefix"
                 placeholder="+91 98765 43210"
@@ -216,7 +217,7 @@ export default function UserDrawer({
             <label className="ud-label">Assigned Role *</label>
             <div className="ud-input-with-icon">
               <Shield size={15} className="ud-icon-prefix" />
-              <select
+              <Select
                 required
                 className="ud-select with-prefix"
                 value={roleId}
@@ -231,7 +232,7 @@ export default function UserDrawer({
                     </option>
                   );
                 })}
-              </select>
+              </Select>
             </div>
             <span className="ud-hint">
               Roles define operational capabilities (BBS, Inventory, CRM, Finances, Drawings).
@@ -246,7 +247,7 @@ export default function UserDrawer({
 
             <div className="ud-access-options">
               <label className={`ud-access-card ${accessMethod === 'invite' ? 'selected' : ''}`}>
-                <input
+                <Input
                   type="radio"
                   name="accessMethod"
                   value="invite"
@@ -267,7 +268,7 @@ export default function UserDrawer({
               </label>
 
               <label className={`ud-access-card ${accessMethod === 'password' ? 'selected' : ''}`}>
-                <input
+                <Input
                   type="radio"
                   name="accessMethod"
                   value="password"
@@ -292,7 +293,7 @@ export default function UserDrawer({
                 <label className="ud-label">Temporary Password *</label>
                 <div className="ud-input-with-icon">
                   <Lock size={15} className="ud-icon-prefix" />
-                  <input
+                  <Input
                     type="password"
                     required
                     className="ud-input with-prefix"

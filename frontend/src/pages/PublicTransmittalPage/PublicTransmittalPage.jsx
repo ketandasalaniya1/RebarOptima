@@ -71,7 +71,7 @@ export default function PublicTransmittalPage() {
   if (loading) {
     return (
       <div className="ro-public-transmittal-page">
-        <div style={{ textAlign: 'center', marginTop: '100px', color: '#94a3b8' }}>
+        <div style={{ textAlign: 'center', marginTop: '100px', color: 'var(--text-secondary)' }}>
           <Loader2 size={36} className="spin" style={{ margin: '0 auto 12px' }} />
           <div>Loading transmittal package...</div>
         </div>
@@ -85,7 +85,7 @@ export default function PublicTransmittalPage() {
         <div className="ro-public-card" style={{ textAlign: 'center', maxWidth: '480px' }}>
           <AlertCircle size={44} style={{ color: '#ef4444', margin: '0 auto 12px' }} />
           <h2>Transmittal Unavailable</h2>
-          <p style={{ color: '#94a3b8', fontSize: '13px' }}>{error || 'Invalid or expired transmission link.'}</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{error || 'Invalid or expired transmission link.'}</p>
         </div>
       </div>
     );
@@ -108,7 +108,7 @@ export default function PublicTransmittalPage() {
             <div style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>
               {transmittal.projectName || 'Project'}
             </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
               Issued by {transmittal.issuedByName || 'Lead Engineer'}
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function PublicTransmittalPage() {
             <div style={{ fontWeight: 700, fontSize: '14px', color: '#ffffff' }}>
               Electronic Receipt Acknowledgment
             </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
               Confirm that you have received this drawing transmission package for execution.
             </div>
           </div>

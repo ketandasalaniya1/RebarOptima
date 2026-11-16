@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
 import { formatINR } from '../../../utils/money';
+import { Input, Select } from '../../../components/ui';
 
 // Standard target CRM fields available for mapping
 const TARGET_FIELDS = [
@@ -339,7 +340,7 @@ export default function ImportLeadsView({
                   height: '28px',
                   borderRadius: '50%',
                   background: isDone ? '#22c55e' : (isCurrent ? '#38bdf8' : '#1e293b'),
-                  color: (isDone || isCurrent) ? '#0f172a' : '#94a3b8',
+                  color: (isDone || isCurrent) ? '#0f172a' : 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -396,7 +397,7 @@ export default function ImportLeadsView({
                 marginBottom: '20px'
               }}
             >
-              <input
+              <Input
                 ref={fileInputRef}
                 type="file"
                 accept=".csv, .xlsx, .xls"
@@ -548,7 +549,7 @@ export default function ImportLeadsView({
                         {String(sampleVal)}
                       </td>
                       <td style={{ padding: '10px 16px' }}>
-                        <select
+                        <Select
                           value={currentMapped}
                           onChange={(e) => handleMappingChange(header, e.target.value)}
                           style={{
@@ -556,7 +557,7 @@ export default function ImportLeadsView({
                             padding: '8px 12px',
                             borderRadius: '8px',
                             background: isMapped ? '#1e293b' : '#0f172a',
-                            color: isMapped ? '#38bdf8' : '#94a3b8',
+                            color: isMapped ? '#38bdf8' : 'var(--text-secondary)',
                             border: `1px solid ${isMapped ? '#38bdf8' : '#334155'}`,
                             fontSize: '0.84rem',
                             fontWeight: isMapped ? 600 : 400,
@@ -571,7 +572,7 @@ export default function ImportLeadsView({
                               </option>
                             ))}
                           </optgroup>
-                        </select>
+                        </Select>
                       </td>
                     </tr>
                   );
@@ -764,7 +765,7 @@ export default function ImportLeadsView({
             <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: "var(--text-primary)", marginBottom: '8px' }}>
               Target Project Assignment
             </label>
-            <select
+            <Select
               value={targetProjectId}
               onChange={(e) => setTargetProjectId(e.target.value)}
               style={{
@@ -783,7 +784,7 @@ export default function ImportLeadsView({
               {projects.map(p => (
                 <option key={p._id} value={p._id}>{p.name}</option>
               ))}
-            </select>
+            </Select>
             <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", marginTop: '6px' }}>
               If a row has its own project column mapped, that project takes precedence.
             </div>
@@ -828,7 +829,7 @@ export default function ImportLeadsView({
                     gap: '12px'
                   }}
                 >
-                  <input
+                  <Input
                     type="radio"
                     name="duplicateStrategy"
                     checked={isSelected}

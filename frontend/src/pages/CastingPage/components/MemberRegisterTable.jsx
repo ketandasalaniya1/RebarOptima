@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Edit3, Layers, Calculator, Info, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select } from '../../../components/ui';
 
 const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
 
@@ -234,7 +235,7 @@ export default function MemberRegisterTable({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="form-group">
                     <label className="form-label">Display Mark ID *</label>
-                    <input
+                    <Input
                       type="text"
                       className="form-input"
                       value={editDisplayId}
@@ -244,7 +245,7 @@ export default function MemberRegisterTable({
                   </div>
                   <div className="form-group">
                     <label className="form-label">Design Concrete Grade *</label>
-                    <select
+                    <Select
                       className="casting-select"
                       value={editConcreteGrade}
                       onChange={(e) => setEditConcreteGrade(e.target.value)}
@@ -252,12 +253,12 @@ export default function MemberRegisterTable({
                       {CONCRETE_GRADES.map(g => (
                         <option key={g} value={g}>{g}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Target Concrete Volume (m³) *</label>
-                  <input
+                  <Input
                     type="number"
                     step="0.001"
                     className="form-input"
@@ -268,7 +269,7 @@ export default function MemberRegisterTable({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Description</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     value={editDescription}

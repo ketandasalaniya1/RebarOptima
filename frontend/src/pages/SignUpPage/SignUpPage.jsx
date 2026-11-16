@@ -6,6 +6,7 @@ import { authApi } from '../../utils/api';
 import { useDispatch } from 'react-redux';
 import { setPermissions } from '../../store/slices/permissionsSlice';
 import './SignUpPage.css';
+import { Input } from '../../components/ui';
 
 const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
   const dispatch = useDispatch();
@@ -151,7 +152,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>First Name</label>
                     <div className="input-wrapper">
                       <User size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type="text" 
                         placeholder="First name" 
                         required 
@@ -165,7 +166,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Last Name</label>
                     <div className="input-wrapper">
                       <User size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type="text" 
                         placeholder="Last name" 
                         required 
@@ -181,7 +182,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Firm Name</label>
                     <div className="input-wrapper">
                       <Building2 size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type="text" 
                         placeholder="Company/Firm name" 
                         required 
@@ -195,7 +196,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Location</label>
                     <div className="input-wrapper">
                       <MapPin size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type="text" 
                         placeholder="e.g. Noida, India" 
                         value={location}
@@ -210,7 +211,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Email Address</label>
                     <div className="input-wrapper">
                       <Mail size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type="email" 
                         placeholder="Enter email address" 
                         required 
@@ -224,7 +225,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Mobile Number</label>
                     <div className="input-wrapper">
                       <Phone size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type="tel" 
                         placeholder="10-digit number" 
                         required 
@@ -241,7 +242,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Password</label>
                     <div className="input-wrapper">
                       <Lock size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type={showPassword ? "text" : "password"} 
                         placeholder="Create password" 
                         required
@@ -262,7 +263,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                     <label>Confirm Password</label>
                     <div className="input-wrapper">
                       <Lock size={18} className="input-icon" color="#8d86b8" />
-                      <input 
+                      <Input 
                         type={showConfirmPassword ? "text" : "password"} 
                         placeholder="Confirm password" 
                         required
@@ -292,7 +293,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
 
                 <div className="form-actions-consent">
                   <label className="checkbox-consent">
-                    <input 
+                    <Input 
                       type="checkbox" 
                       checked={promoConsent}
                       onChange={(e) => setPromoConsent(e.target.checked)}
@@ -301,7 +302,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                   </label>
 
                   <label className="checkbox-consent">
-                    <input 
+                    <Input 
                       type="checkbox" 
                       checked={newsletterConsent}
                       onChange={(e) => setNewsletterConsent(e.target.checked)}
@@ -310,7 +311,7 @@ const SignUpPage = ({ onSignUp, onNavigateToSignIn, onSignUpSuccess }) => {
                   </label>
 
                   <label className="checkbox-consent terms-consent">
-                    <input 
+                    <Input 
                       type="checkbox" 
                       required 
                       checked={termsConsent}

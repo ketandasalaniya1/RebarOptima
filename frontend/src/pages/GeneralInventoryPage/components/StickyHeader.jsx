@@ -1,5 +1,6 @@
 import React from 'react';
 import { Building2, Store, Plus, RefreshCw, Layers } from 'lucide-react';
+import { Select } from '../../../components/ui';
 
 export default function StickyHeader({
   projects = [],
@@ -19,7 +20,7 @@ export default function StickyHeader({
         <div className="gi-header-project-group">
           <Building2 size={16} className="gi-header-icon" />
           <span className="gi-header-label">Project:</span>
-          <select
+          <Select
             className="gi-project-select"
             value={selectedProjectId}
             onChange={(e) => onSelectProject(e.target.value)}
@@ -31,7 +32,7 @@ export default function StickyHeader({
                 {p.name} {p.code ? `(${p.code})` : ''}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* Store Selector Pills */}

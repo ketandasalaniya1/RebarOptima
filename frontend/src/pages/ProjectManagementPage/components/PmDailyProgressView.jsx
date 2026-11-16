@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, CheckCircle2, Clock, Users, Wrench, FileText, CheckSquare } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDprs }) {
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -165,7 +166,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
               <div className="pm-modal-body pm-form-grid">
                 <div className="pm-form-group pm-col-span-2">
                   <label>Select Activity *</label>
-                  <select
+                  <Select
                     required
                     value={formData.taskId}
                     onChange={(e) => handleTaskSelect(e.target.value)}
@@ -176,12 +177,12 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
                         {t.wbsCode} - {t.name} (Planned: {t.plannedQty || 0} {t.unit})
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group">
                   <label>Report Date *</label>
-                  <input
+                  <Input
                     type="date"
                     required
                     value={formData.reportDate}
@@ -191,19 +192,19 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group">
                   <label>Shift</label>
-                  <select
+                  <Select
                     value={formData.shift}
                     onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
                   >
                     <option value="DAY">Day Shift</option>
                     <option value="NIGHT">Night Shift</option>
                     <option value="GENERAL">General Shift</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group">
                   <label>Reporting Supervisor Name *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Suresh Patel"
@@ -214,7 +215,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group">
                   <label>Completed Quantity *</label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
                     required
@@ -229,7 +230,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group">
                   <label>Accepted Quantity</label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
                     value={formData.acceptedQty}
@@ -239,7 +240,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group">
                   <label>Unit of Measure</label>
-                  <input
+                  <Input
                     type="text"
                     value={formData.unit}
                     onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
@@ -248,7 +249,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group">
                   <label>Labour Deployed (Headcount)</label>
-                  <input
+                  <Input
                     type="number"
                     value={formData.labourCount}
                     onChange={(e) => setFormData({ ...formData, labourCount: e.target.value })}
@@ -257,7 +258,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group">
                   <label>Total Actual Labour Hours</label>
-                  <input
+                  <Input
                     type="number"
                     value={formData.actualLabourHours}
                     onChange={(e) => setFormData({ ...formData, actualLabourHours: e.target.value })}
@@ -266,7 +267,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Equipment & Machinery Deployed</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. Tower Crane #1, Concrete Pump, Bending Machine (comma-separated)"
                     value={formData.equipmentUsed}
@@ -276,7 +277,7 @@ export default function PmDailyProgressView({ project, tasks, dprs, onRefreshDpr
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Supervisor Remarks / Site Conditions</label>
-                  <textarea
+                  <Textarea
                     rows={2}
                     placeholder="Weather, quality notes, challenges, inspection sign-off..."
                     value={formData.remarks}

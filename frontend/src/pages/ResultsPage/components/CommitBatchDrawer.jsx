@@ -2,6 +2,7 @@ import React from 'react';
 import { Tag, CheckCircle2, Database, Check, Sparkles, AlertCircle, Layers } from 'lucide-react';
 import Drawer from '../../../components/Shared/Drawer';
 import './CommitBatchDrawer.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Slide-over Drawer for Committing Optimization Results to Yard Inventory
@@ -51,7 +52,7 @@ export default function CommitBatchDrawer({
           <>
             <div className="form-group">
               <label className="commit-field-label">Batch Reference / Name *</label>
-              <input
+              <Input
                 type="text"
                 className="commit-text-input"
                 value={batchNameInput}

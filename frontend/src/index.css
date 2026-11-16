@@ -140,7 +140,7 @@
   --z-base: 1;
   --z-dropdown: 50;
   --z-sticky: 100;
-  --z-drawer: 200;
+  --z-drawer: 11000;
   --z-modal: 300;
   --z-toast: 400;
   --z-tooltip: 500;
@@ -255,7 +255,7 @@
   --placeholder-text: #8fa0ba;
   /* 7.09:1 on #0b1120 >= 4.5:1 */
   --sidebar-bg: #0e1526;
-  --sidebar-text: #94a3b8;
+  --sidebar-text: var(--text-secondary);
   /* 7.10:1 on dark sidebar-bg */
   --sidebar-text-active: #ffffff;
   --sidebar-active-bg: rgba(5, 150, 105, 0.20);
@@ -333,7 +333,7 @@
     --input-bg: #0b1120;
     --input-border: #27364f;
     --sidebar-bg: #0e1526;
-    --sidebar-text: #94a3b8;
+    --sidebar-text: var(--text-secondary);
     --disabled-bg: #1e293b;
     --disabled-text: #64748b;
     --skeleton-base: #1e293b;
@@ -580,7 +580,7 @@ select {
   background-size: 14px;
 }
 
-h1, h2, h3, h4, label, th, .kpi-label, .sidenav-section-heading {
+h1, h2, h3, h4, label, th, .kpi-label, .sidenav-section-heading, .gi-header-label {
   text-transform: none;
 }
 

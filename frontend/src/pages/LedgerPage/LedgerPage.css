@@ -1090,7 +1090,7 @@
 .matrix-table th {
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-label, #94a3b8);
+  color: var(--text-label, var(--text-secondary));
   background: rgba(255, 255, 255, 0.03);
   padding: 10px 12px;
   border-bottom: 1px solid var(--card-border, #1f2937);
@@ -1550,7 +1550,7 @@
 }
 
 .print-sign-line {
-  border-top: 1px solid #94a3b8;
+  border-top: 1px solid var(--text-secondary);
   margin-bottom: 8px;
   width: 100%;
 }

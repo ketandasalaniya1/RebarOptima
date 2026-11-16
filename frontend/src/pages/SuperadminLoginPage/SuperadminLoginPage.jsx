@@ -7,6 +7,7 @@ import { clearProjectContext } from '../../store/slices/projectSlice';
 import { clearPermissions } from '../../store/slices/permissionsSlice';
 import { authApi, setActiveProjectHeader } from '../../utils/api';
 import './SuperadminLoginPage.css';
+import { Input } from '../../components/ui';
 
 export default function SuperadminLoginPage() {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ export default function SuperadminLoginPage() {
             <label>Developer Email</label>
             <div className="dev-input-wrapper">
               <Mail size={18} className="dev-input-icon" />
-              <input 
+              <Input 
                 type="email" 
                 placeholder="developer@rebaroptima.com" 
                 required 
@@ -77,7 +78,7 @@ export default function SuperadminLoginPage() {
             <label>Security Key</label>
             <div className="dev-input-wrapper">
               <Lock size={18} className="dev-input-icon" />
-              <input 
+              <Input 
                 type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••••••••••" 
                 required

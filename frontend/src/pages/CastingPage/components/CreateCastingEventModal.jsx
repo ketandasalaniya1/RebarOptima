@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, CheckSquare, Square, AlertCircle } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function CreateCastingEventModal({
   isOpen,
@@ -149,7 +150,7 @@ export default function CreateCastingEventModal({
         <div className="casting-modal-header">
           <div>
             <h3 className="casting-modal-title">Schedule Casting Event</h3>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
               Configure planned date, time window, and target structural members
             </span>
           </div>
@@ -171,7 +172,7 @@ export default function CreateCastingEventModal({
             <div className="form-grid-3">
               <div className="form-group">
                 <label className="form-label">Project *</label>
-                <select
+                <Select
                   className="casting-select"
                   value={projectId}
                   onChange={(e) => setProjectId(e.target.value)}
@@ -179,12 +180,12 @@ export default function CreateCastingEventModal({
                   {projects.map(p => (
                     <option key={p.id || p._id} value={p.id || p._id}>{p.name}</option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label className="form-label">Event Title / Description *</label>
-                <input
+                <Input
                   type="text"
                   className="form-input"
                   placeholder="e.g. Tower A & B Podium Combined Pour"
@@ -198,7 +199,7 @@ export default function CreateCastingEventModal({
             <div className="form-grid-3">
               <div className="form-group">
                 <label className="form-label">Activity Type</label>
-                <select
+                <Select
                   className="casting-select"
                   value={activityType}
                   onChange={(e) => setActivityType(e.target.value)}
@@ -208,12 +209,12 @@ export default function CreateCastingEventModal({
                   <option value="Foundation">Raft / Foundation</option>
                   <option value="Retaining_Wall">Retaining Wall</option>
                   <option value="Other">Other Elements</option>
-                </select>
+                </Select>
               </div>
 
               <div className="form-group">
                 <label className="form-label">Planned Date *</label>
-                <input
+                <Input
                   type="date"
                   className="form-input"
                   value={plannedDate}
@@ -225,14 +226,14 @@ export default function CreateCastingEventModal({
               <div className="form-group">
                 <label className="form-label">Planned Time Window</label>
                 <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-                  <input
+                  <Input
                     type="time"
                     className="form-input"
                     value={plannedStartTime}
                     onChange={(e) => setPlannedStartTime(e.target.value)}
                   />
-                  <span style={{ color: '#94a3b8' }}>to</span>
-                  <input
+                  <span style={{ color: 'var(--text-secondary)' }}>to</span>
+                  <Input
                     type="time"
                     className="form-input"
                     value={plannedEndTime}
@@ -251,8 +252,8 @@ export default function CreateCastingEventModal({
 
                 {distinctBlocks.length > 1 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Filter Block:</span>
-                    <select
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Filter Block:</span>
+                    <Select
                       className="casting-select"
                       style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', width: 'auto' }}
                       value={filterBlock}
@@ -262,15 +263,15 @@ export default function CreateCastingEventModal({
                       {distinctBlocks.map(b => (
                         <option key={b} value={b}>{b}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 )}
               </div>
 
               {isLoadingMembers ? (
-                <div style={{ padding: '1.5rem', textAlign: 'center', color: '#94a3b8' }}>Loading project members...</div>
+                <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading project members...</div>
               ) : availableMembers.length === 0 ? (
-                <div style={{ padding: '1.5rem', textAlign: 'center', color: '#94a3b8', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
                   No structural members registered in this project yet. Please add members in the Structural Register tab first.
                 </div>
               ) : (
@@ -307,7 +308,7 @@ export default function CreateCastingEventModal({
                             <td style={{ fontWeight: 700, color: '#f8fafc' }}>
                               {m.displayId}
                             </td>
-                            <td style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                            <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                               {m.blockName} • {m.levelName}
                             </td>
                             <td>
@@ -317,7 +318,7 @@ export default function CreateCastingEventModal({
                               {(m.totalRequiredVolumeM3 || 0).toFixed(3)} m³
                             </td>
                             <td>
-                              <input
+                              <Input
                                 type="number"
                                 step="0.001"
                                 className="form-input"
@@ -328,7 +329,7 @@ export default function CreateCastingEventModal({
                               />
                             </td>
                             <td>
-                              <input
+                              <Input
                                 type="number"
                                 className="form-input"
                                 style={{ width: '60px', padding: '0.3rem 0.5rem', fontSize: '0.825rem' }}
@@ -357,7 +358,7 @@ export default function CreateCastingEventModal({
 
             <div className="form-group">
               <label className="form-label">Notes & Specifications</label>
-              <input
+              <Input
                 type="text"
                 className="form-input"
                 placeholder="e.g. Pump #2 deployed, Boom length 36m"

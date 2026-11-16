@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Clock, ShieldCheck, ZoomIn, ZoomOut, AlertCircle, Calendar, Flag, ArrowRight, Edit3 } from 'lucide-react';
 import PmRescheduleModal from './PmRescheduleModal';
+import { Input } from '../../../components/ui';
 
 export default function PmGanttView({ project, tasks, dependencies, onOpenDelayModal, onLockBaseline, onRefreshSchedule }) {
   const [zoomLevel, setZoomLevel] = useState('DAYS'); // 'DAYS' | 'WEEKS'
@@ -97,7 +98,7 @@ export default function PmGanttView({ project, tasks, dependencies, onOpenDelayM
 
         <div className="pm-gantt-controls">
           <label className="pm-checkbox-label">
-            <input
+            <Input
               type="checkbox"
               checked={filterCriticalOnly}
               onChange={(e) => setFilterCriticalOnly(e.target.checked)}

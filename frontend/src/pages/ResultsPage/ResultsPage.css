@@ -1242,7 +1242,7 @@
   }
   .detail-lbl {
     font-size: 7px !important;
-    color: #94a3b8 !important;
+    color: var(--text-secondary) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
   }
@@ -1315,7 +1315,7 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     font-size: 7px !important;
-    border: 1px dashed #94a3b8 !important;
+    border: 1px dashed var(--text-secondary) !important;
   }
   .is-remnant-bar {
     background-color: #0891b2 !important;
@@ -2181,7 +2181,7 @@
   }
   .detail-lbl {
     font-size: 8.5px !important;
-    color: #94a3b8 !important;
+    color: var(--text-secondary) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
   }
@@ -2254,7 +2254,7 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     font-size: 10pt !important;
-    border: 1px dashed #94a3b8 !important;
+    border: 1px dashed var(--text-secondary) !important;
   }
   .is-remnant-bar {
     background-color: #0891b2 !important;
@@ -2524,7 +2524,7 @@
 
 .save-progress-subtitle {
   font-size: 13.5px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0 0 20px;
   line-height: 1.5;
   min-height: 21px;
@@ -2604,7 +2604,7 @@
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   transition: all 0.25s ease;
 }
 

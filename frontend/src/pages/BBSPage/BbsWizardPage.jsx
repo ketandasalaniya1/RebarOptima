@@ -5,6 +5,7 @@ import { bbsApi } from '../../utils/api';
 import { setView } from '../../store/slices/routingSlice';
 import { setLoading, setError } from '../../store/slices/bbsSlice';
 import './BbsWizardPage.css';
+import { Input, Select } from '../../components/ui';
 
 const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
 const STEEL_GRADES = ['Fe250', 'Fe415', 'Fe500', 'Fe500D', 'Fe550'];
@@ -202,7 +203,7 @@ export default function BbsWizardPage() {
             <div className="bbs-form-grid">
               <div className="bbs-form-group">
                 <label>Element Type (Template)</label>
-                <select
+                <Select
                   className="bbs-input"
                   value={member.template_id}
                   onChange={e => {
@@ -225,11 +226,11 @@ export default function BbsWizardPage() {
                 >
                   <option value="">Select Template...</option>
                   {templates.map(t => <option key={t._id} value={t._id}>{t.category} {t.is_custom ? '(Custom)' : ''}</option>)}
-                </select>
+                </Select>
               </div>
               <div className="bbs-form-group">
                 <label>Tracking ID (e.g., C1, B2)</label>
-                <input
+                <Input
                   type="text"
                   className="bbs-input"
                   value={member.member_id}
@@ -239,27 +240,27 @@ export default function BbsWizardPage() {
               </div>
               <div className="bbs-form-group">
                 <label>Concrete Grade (Ld driver)</label>
-                <select
+                <Select
                   className="bbs-input"
                   value={member.concrete_grade}
                   onChange={e => setMember({ ...member, concrete_grade: e.target.value })}
                 >
                   {CONCRETE_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-                </select>
+                </Select>
               </div>
               <div className="bbs-form-group">
                 <label>Steel Grade</label>
-                <select
+                <Select
                   className="bbs-input"
                   value={member.steel_grade}
                   onChange={e => setMember({ ...member, steel_grade: e.target.value })}
                 >
                   {STEEL_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-                </select>
+                </Select>
               </div>
               <div className="bbs-form-group">
                 <label>Clear Cover (mm)</label>
-                <input
+                <Input
                   type="number"
                   className="bbs-input"
                   value={member.clear_cover}
@@ -283,7 +284,7 @@ export default function BbsWizardPage() {
             <div className="bbs-form-grid">
               <div className="bbs-form-group">
                 <label>Gross Length</label>
-                <input
+                <Input
                   type="number"
                   className="bbs-input"
                   value={member.dimensions.length}
@@ -292,7 +293,7 @@ export default function BbsWizardPage() {
               </div>
               <div className="bbs-form-group">
                 <label>Gross Width</label>
-                <input
+                <Input
                   type="number"
                   className="bbs-input"
                   value={member.dimensions.width}
@@ -301,7 +302,7 @@ export default function BbsWizardPage() {
               </div>
               <div className="bbs-form-group">
                 <label>Gross Depth</label>
-                <input
+                <Input
                   type="number"
                   className="bbs-input"
                   value={member.dimensions.depth}
@@ -340,26 +341,26 @@ export default function BbsWizardPage() {
                   ) : rebars.map(r => (
                     <tr key={r._id}>
                       <td>
-                        <input className="bbs-table-input" value={r.description} onChange={e => handleRebarChange(r._id, 'description', e.target.value)} />
+                        <Input className="bbs-table-input" value={r.description} onChange={e => handleRebarChange(r._id, 'description', e.target.value)} />
                       </td>
                       <td>
-                        <select className="bbs-table-input" value={r.diameter} onChange={e => handleRebarChange(r._id, 'diameter', e.target.value)}>
+                        <Select className="bbs-table-input" value={r.diameter} onChange={e => handleRebarChange(r._id, 'diameter', e.target.value)}>
                           {DIAMETERS.map(d => <option key={d} value={d}>{d}</option>)}
-                        </select>
+                        </Select>
                       </td>
                       <td>
-                        <select className="bbs-table-input" value={r.shape_id} onChange={e => handleRebarChange(r._id, 'shape_id', e.target.value)}>
+                        <Select className="bbs-table-input" value={r.shape_id} onChange={e => handleRebarChange(r._id, 'shape_id', e.target.value)}>
                           {shapes.map(s => <option key={s._id} value={s._id}>{s.shape_code}</option>)}
-                        </select>
+                        </Select>
                       </td>
                       <td>
-                        <input type="number" className="bbs-table-input" value={r.spacing} onChange={e => handleRebarChange(r._id, 'spacing', e.target.value)} />
+                        <Input type="number" className="bbs-table-input" value={r.spacing} onChange={e => handleRebarChange(r._id, 'spacing', e.target.value)} />
                       </td>
                       <td>
-                        <input type="number" className="bbs-table-input" value={r.bar_count} onChange={e => handleRebarChange(r._id, 'bar_count', e.target.value)} />
+                        <Input type="number" className="bbs-table-input" value={r.bar_count} onChange={e => handleRebarChange(r._id, 'bar_count', e.target.value)} />
                       </td>
                       <td>
-                        <input type="number" className="bbs-table-input" value={r.cut_length} onChange={e => handleRebarChange(r._id, 'cut_length', e.target.value)} />
+                        <Input type="number" className="bbs-table-input" value={r.cut_length} onChange={e => handleRebarChange(r._id, 'cut_length', e.target.value)} />
                       </td>
                       <td>
                         <button className="bbs-icon-btn" onClick={() => handleRemoveRebar(r._id)}>

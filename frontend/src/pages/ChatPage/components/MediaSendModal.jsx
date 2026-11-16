@@ -16,6 +16,7 @@ import {
 import ReactionPickerModal from './ReactionPickerModal';
 import { chatApi } from '../../../utils/api';
 import { validateChatFile, CHAT_FILE_ACCEPT } from '../utils/chatFileSecurity';
+import { Input } from '../../../components/ui';
 
 /**
  * Format bytes into readable string: e.g. "6 KB", "2.4 MB"
@@ -459,7 +460,7 @@ export default function MediaSendModal({
       <div className="chat-media-modal-footer">
         {/* Caption Input with Emoji Button */}
         <div className="chat-media-caption-box">
-          <input
+          <Input
             type="text"
             ref={captionInputRef}
             placeholder="Type a message"
@@ -525,7 +526,7 @@ export default function MediaSendModal({
                       {isPdf ? (
                         <span className="chat-media-pdf-badge">PDF</span>
                       ) : (
-                        <FileText size={18} color="#94a3b8" />
+                        <FileText size={18} color="var(--text-secondary)" />
                       )}
                     </div>
                   )}
@@ -555,7 +556,7 @@ export default function MediaSendModal({
               <Plus size={20} />
             </button>
 
-            <input
+            <Input
               type="file"
               ref={addFilesInputRef}
               onChange={handleAddMoreFiles}

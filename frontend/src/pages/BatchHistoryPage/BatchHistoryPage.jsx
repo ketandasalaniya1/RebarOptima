@@ -3,24 +3,9 @@ import { batchesApi } from '../../utils/api'
 import { useActiveProject } from '../../hooks/useActiveProject'
 import html2pdf from 'html2pdf.js'
 import {
-  Calendar,
-  Layers,
-  TrendingUp,
-  ChevronDown,
-  ChevronUp,
-  Printer,
-  Pencil,
-  Trash2,
-  Save,
-  X,
-  Scale,
-  Scissors,
-  FileText,
-  BarChart3,
-  RotateCcw,
-  AlertCircle
+  Calendar, Layers, TrendingUp, ChevronDown, ChevronUp, Printer, Pencil, Trash2, Save, X, Scale, Scissors, FileText, BarChart3, RotateCcw, AlertCircle
 } from 'lucide-react'
-import { PageHeader, EmptyState, CardSkeleton, useDelayedSkeleton, SearchInput } from '../../components/ui'
+import { PageHeader, EmptyState, CardSkeleton, useDelayedSkeleton, SearchInput, Input, Select } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
 import './BatchHistoryPage.css'
 
@@ -229,7 +214,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
         />
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Diameter:</span>
-          <select
+          <Select
             value={filterDia}
             onChange={(e) => setFilterDia(e.target.value)}
             style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', background: 'var(--card-bg)', color: 'var(--text-primary)', fontSize: '0.84rem' }}
@@ -238,7 +223,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
             {[8, 10, 12, 16, 20, 25, 32].map((d) => (
               <option key={d} value={d}>Ø {d} mm</option>
             ))}
-          </select>
+          </Select>
           <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginLeft: '6px' }}>
             {filteredHistory.length} of {history.length} batches
           </span>
@@ -306,7 +291,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
                   <div className="batch-meta-left" onClick={(e) => e.stopPropagation()}>
                     {editingBatchId === batch._id ? (
                       <div className="batch-rename-form">
-                        <input
+                        <Input
                           type="text"
                           value={editBatchName}
                           onChange={(e) => setEditBatchName(e.target.value)}

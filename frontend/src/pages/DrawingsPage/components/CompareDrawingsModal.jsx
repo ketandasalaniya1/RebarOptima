@@ -5,6 +5,7 @@ import CADViewer from './CADViewer';
 import DxfViewerComponent from './DxfViewerComponent';
 import PDFViewer from './PDFViewer';
 import { GitCompare, ZoomIn, ZoomOut, Maximize2, SplitSquareVertical } from 'lucide-react';
+import { Select } from '../../../components/ui';
 
 export default function CompareDrawingsModal({
   isOpen,
@@ -30,7 +31,7 @@ export default function CompareDrawingsModal({
   const rightRev = revList.find((r) => String(r._id) === String(rightRevId)) || revList[0];
 
   const renderContent = (rev) => {
-    if (!rev) return <div style={{ color: '#94a3b8' }}>No revision selected</div>;
+    if (!rev) return <div style={{ color: 'var(--text-secondary)' }}>No revision selected</div>;
     const ext = (rev.fileType || rev.fileName?.split('.').pop() || 'dwg').toLowerCase();
 
     if (ext === 'dwg' || ext === 'dxf') {
@@ -60,7 +61,7 @@ export default function CompareDrawingsModal({
         />
       );
     }
-    return <div style={{ color: '#94a3b8' }}>Preview not available for this revision</div>;
+    return <div style={{ color: 'var(--text-secondary)' }}>Preview not available for this revision</div>;
   };
 
   return (
@@ -77,7 +78,7 @@ export default function CompareDrawingsModal({
           <div className="ro-compare-version-selectors">
             <div className="ro-compare-select-group">
               <label>Left Version:</label>
-              <select
+              <Select
                 className="ro-filter-select"
                 value={leftRevId}
                 onChange={(e) => setLeftRevId(e.target.value)}
@@ -87,14 +88,14 @@ export default function CompareDrawingsModal({
                     v{r.revisionNumber?.replace(/^R0*/i, '') || '1'} ({r.workflowStatus || 'Draft'})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <GitCompare size={18} style={{ color: 'var(--accent, #059669)' }} />
 
             <div className="ro-compare-select-group">
               <label>Right Version:</label>
-              <select
+              <Select
                 className="ro-filter-select"
                 value={rightRevId}
                 onChange={(e) => setRightRevId(e.target.value)}
@@ -104,7 +105,7 @@ export default function CompareDrawingsModal({
                     v{r.revisionNumber?.replace(/^R0*/i, '') || '1'} ({r.workflowStatus || 'Current'})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, Clock, Calendar, AlertCircle, Sparkles, Scale, FileText, Send, Save, ArrowUpRight, ArrowDownRight, Layers } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function ActualConsumptionModal({
   isOpen,
@@ -166,7 +167,7 @@ export default function ActualConsumptionModal({
       case 'UNDER_CONSUMPTION_MODERATE':
         return <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}><ArrowDownRight size={13} /> {pct}%</span>;
       case 'NOMINAL':
-        return <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(148, 163, 184, 0.15)', color: '#94a3b8', border: '1px solid rgba(148, 163, 184, 0.3)' }}>0.00% (On Spec)</span>;
+        return <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(148, 163, 184, 0.15)', color: 'var(--text-secondary)', border: '1px solid rgba(148, 163, 184, 0.3)' }}>0.00% (On Spec)</span>;
       case 'OVER_CONSUMPTION_TOLERABLE':
         return <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(234, 179, 8, 0.15)', color: '#facc15', border: '1px solid rgba(234, 179, 8, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}><ArrowUpRight size={13} /> +{pct}% (Tolerable)</span>;
       case 'OVER_CONSUMPTION_MODERATE':
@@ -174,7 +175,7 @@ export default function ActualConsumptionModal({
       case 'OVER_CONSUMPTION_HIGH':
         return <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}><ArrowUpRight size={13} /> +{pct}% (Excessive)</span>;
       default:
-        return <span style={{ color: '#94a3b8' }}>-</span>;
+        return <span style={{ color: 'var(--text-secondary)' }}>-</span>;
     }
   };
 
@@ -231,7 +232,7 @@ export default function ActualConsumptionModal({
               <Scale size={20} color="#38bdf8" />
               <h3 className="casting-modal-title" style={{ margin: 0 }}>Actual Casting & Material Consumption Record</h3>
             </div>
-            <span style={{ fontSize: '0.825rem', color: '#94a3b8', display: 'block', marginTop: '0.25rem' }}>
+            <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>
               Event: <strong style={{ color: '#f8fafc' }}>{event.eventNumber}</strong> — {event.title} (MRS Active: <strong style={{ color: '#38bdf8' }}>R{mrsData?.revisionNumber || event.activeMrsRevision || 1}</strong>)
             </span>
           </div>
@@ -256,7 +257,7 @@ export default function ActualConsumptionModal({
           )}
 
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
               <div className="casting-spinner" style={{ margin: '0 auto 1rem' }} />
               Loading Material Requirement Sheet and planned parameters...
             </div>
@@ -265,8 +266,8 @@ export default function ActualConsumptionModal({
               {/* Execution Metadata Bar */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', background: 'var(--card-bg, #1e293b)', padding: '1.25rem', borderRadius: '10px', marginBottom: '1.5rem', border: '1px solid var(--card-border, #334155)' }}>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)', display: 'block', marginBottom: '4px' }}>Actual Pour Date</label>
-                  <input
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))', display: 'block', marginBottom: '4px' }}>Actual Pour Date</label>
+                  <Input
                     type="date"
                     className="casting-input"
                     value={actualPourDate}
@@ -275,8 +276,8 @@ export default function ActualConsumptionModal({
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Start Time</label>
-                  <input
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Start Time</label>
+                  <Input
                     type="time"
                     className="casting-input"
                     value={actualPourStartTime}
@@ -285,8 +286,8 @@ export default function ActualConsumptionModal({
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>End Time</label>
-                  <input
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>End Time</label>
+                  <Input
                     type="time"
                     className="casting-input"
                     value={actualPourEndTime}
@@ -295,8 +296,8 @@ export default function ActualConsumptionModal({
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Batching Plant</label>
-                  <input
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Batching Plant</label>
+                  <Input
                     type="text"
                     className="casting-input"
                     value={batchingPlantName}
@@ -313,7 +314,7 @@ export default function ActualConsumptionModal({
                   <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Layers size={16} color="#38bdf8" /> Structural Segments Volume Breakdown
                   </h4>
-                  <div style={{ fontSize: '0.825rem', color: '#94a3b8' }}>
+                  <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
                     Total Planned: <strong style={{ color: '#f8fafc' }}>{totalPlannedVol.toFixed(3)} m³</strong> | Total Actual: <strong style={{ color: '#38bdf8' }}>{totalActualVol.toFixed(3)} m³</strong> ({volVariance >= 0 ? `+${volVariance.toFixed(3)}` : volVariance.toFixed(3)} m³, {volVariancePct >= 0 ? `+${volVariancePct}%` : `${volVariancePct}%`})
                   </div>
                 </div>
@@ -335,10 +336,10 @@ export default function ActualConsumptionModal({
                         return (
                           <tr key={seg.segmentId || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                             <td style={{ padding: '8px 12px', fontWeight: 500, color: 'var(--text-primary, #f8fafc)' }}>{seg.segmentName}</td>
-                            <td style={{ padding: '8px 12px', color: 'var(--text-secondary, #94a3b8)' }}>{seg.grade} ({seg.recipeCode})</td>
-                            <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary, #94a3b8)' }}>{(seg.plannedVolumeM3 || 0).toFixed(3)}</td>
+                            <td style={{ padding: '8px 12px', color: 'var(--text-secondary, var(--text-secondary))' }}>{seg.grade} ({seg.recipeCode})</td>
+                            <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary, var(--text-secondary))' }}>{(seg.plannedVolumeM3 || 0).toFixed(3)}</td>
                             <td style={{ padding: '8px 12px', textAlign: 'right' }}>
-                              <input
+                              <Input
                                 type="number"
                                 step="0.001"
                                 min="0"
@@ -348,7 +349,7 @@ export default function ActualConsumptionModal({
                                 style={{ width: '100px', textAlign: 'right', padding: '4px 8px' }}
                               />
                             </td>
-                            <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: sDiff > 0 ? '#fb923c' : (sDiff < 0 ? '#4ade80' : 'var(--text-secondary, #94a3b8)') }}>
+                            <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: sDiff > 0 ? '#fb923c' : (sDiff < 0 ? '#4ade80' : 'var(--text-secondary, var(--text-secondary))') }}>
                               {sDiff >= 0 ? `+${sDiff.toFixed(3)}` : sDiff.toFixed(3)} m³
                             </td>
                           </tr>
@@ -365,7 +366,7 @@ export default function ActualConsumptionModal({
                   <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Scale size={16} color="#38bdf8" /> Actual Material Consumption vs. MRS Planned
                   </h4>
-                  <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                     Canonical Inventory Base: Dry items in <strong>KG</strong>, Liquids in <strong>LITERS</strong>
                   </span>
                 </div>
@@ -386,10 +387,10 @@ export default function ActualConsumptionModal({
                         <tr key={mat.materialIdentifier || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                           <td style={{ padding: '8px 12px' }}>
                             <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{mat.name}</div>
-                            <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, #94a3b8)' }}>{mat.category} | {mat.materialIdentifier}</div>
+                            <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, var(--text-secondary))' }}>{mat.category} | {mat.materialIdentifier}</div>
                           </td>
                           <td style={{ padding: '8px 12px' }}>
-                            <input
+                            <Input
                               type="text"
                               className="casting-input"
                               placeholder="Batch # / Slip ref"
@@ -398,12 +399,12 @@ export default function ActualConsumptionModal({
                               style={{ width: '130px', padding: '4px 8px', fontSize: '0.775rem' }}
                             />
                           </td>
-                          <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary, #94a3b8)', whiteSpace: 'nowrap' }}>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary, var(--text-secondary))', whiteSpace: 'nowrap' }}>
                             {Number(mat.plannedQuantity).toFixed(2)} {mat.unit}
                           </td>
                           <td style={{ padding: '8px 12px', textAlign: 'right', whiteSpace: 'nowrap' }}>
                             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <input
+                              <Input
                                 type="number"
                                 step="0.01"
                                 min="0"
@@ -412,7 +413,7 @@ export default function ActualConsumptionModal({
                                 onChange={(e) => handleUpdateMaterialActual(idx, e.target.value)}
                                 style={{ width: '100px', textAlign: 'right', padding: '4px 8px' }}
                               />
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>{mat.unit}</span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))' }}>{mat.unit}</span>
                             </div>
                           </td>
                           <td style={{ padding: '8px 12px', textAlign: 'center' }}>
@@ -427,10 +428,10 @@ export default function ActualConsumptionModal({
 
               {/* General Notes */}
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
                   Execution Remarks & Field Notes
                 </label>
-                <textarea
+                <Textarea
                   className="casting-input"
                   rows="2"
                   value={generalNotes}

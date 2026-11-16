@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, DollarSign, TrendingUp, AlertTriangle, Layers, Calendar, CheckCircle2 } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function PmCostProductivityView({ project, tasks, costs, onRefreshCosts }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -155,7 +156,7 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
               <div className="pm-modal-body pm-form-grid">
                 <div className="pm-form-group">
                   <label>Cost Category *</label>
-                  <select
+                  <Select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   >
@@ -164,12 +165,12 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
                     <option value="EQUIPMENT">Machinery & Plant (Crane, Pump)</option>
                     <option value="SUBCONTRACTOR">Subcontractor Package</option>
                     <option value="OVERHEAD">Site Overhead / Testing</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group">
                   <label>Date *</label>
-                  <input
+                  <Input
                     type="date"
                     required
                     value={formData.date}
@@ -179,7 +180,7 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Expense Description *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. 50 MT TMT Rebar delivery bill #4190"
@@ -190,7 +191,7 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
 
                 <div className="pm-form-group">
                   <label>Planned Allocation (INR)</label>
-                  <input
+                  <Input
                     type="number"
                     value={formData.plannedAmount}
                     onChange={(e) => setFormData({ ...formData, plannedAmount: e.target.value })}
@@ -199,7 +200,7 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
 
                 <div className="pm-form-group">
                   <label>Actual Invoiced Amount (INR) *</label>
-                  <input
+                  <Input
                     type="number"
                     required
                     value={formData.actualAmount}
@@ -209,7 +210,7 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Link to Activity (Optional)</label>
-                  <select
+                  <Select
                     value={formData.taskId}
                     onChange={(e) => setFormData({ ...formData, taskId: e.target.value })}
                   >
@@ -219,7 +220,7 @@ export default function PmCostProductivityView({ project, tasks, costs, onRefres
                         {t.wbsCode} - {t.name}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 

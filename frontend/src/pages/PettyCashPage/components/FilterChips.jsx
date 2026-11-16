@@ -13,6 +13,7 @@ import {
   Clock,
   AlertCircle
 } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function FilterChips({
   datePreset,
@@ -127,14 +128,14 @@ export default function FilterChips({
               <div className="pc-custom-date-section">
                 <span className="pc-popover-subhead">Custom Range</span>
                 <div className="pc-date-inputs-row">
-                  <input
+                  <Input
                     type="date"
                     className="pc-input-sm"
                     value={startDate}
                     onChange={(e) => onCustomDateChange(e.target.value, endDate)}
                   />
                   <span className="pc-text-muted">to</span>
-                  <input
+                  <Input
                     type="date"
                     className="pc-input-sm"
                     value={endDate}
@@ -517,7 +518,7 @@ export default function FilterChips({
               {/* Category Filter */}
               <div className="pc-sheet-section">
                 <label className="pc-sheet-label">Category</label>
-                <select
+                <Select
                   className="pc-input"
                   value={categoryFilter}
                   onChange={(e) => onCategoryChange(e.target.value)}
@@ -526,13 +527,13 @@ export default function FilterChips({
                   {categories.map((c) => (
                     <option key={c.id || c.name} value={c.name}>{c.name}</option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {/* Person Filter */}
               <div className="pc-sheet-section">
                 <label className="pc-sheet-label">Person / Provider</label>
-                <select
+                <Select
                   className="pc-input"
                   value={personFilter}
                   onChange={(e) => onPersonChange(e.target.value)}
@@ -543,7 +544,7 @@ export default function FilterChips({
                       {p.name} {p.roleOrTitle ? `(${p.roleOrTitle})` : ''}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             </div>
 

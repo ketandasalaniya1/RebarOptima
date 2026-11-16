@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './DrawingActivityScreen.css';
 import StatusPill from '../../../components/Drawings/StatusPill';
 import { History, Download, Filter, Search, FileSpreadsheet } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 const ACTION_FILTERS = [
   { value: 'all', label: 'All Actions' },
@@ -125,7 +126,7 @@ export default function DrawingActivityScreen({ activeProject }) {
       <div className="ro-tabs-search-row">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>Action Filter:</label>
-          <select
+          <Select
             className="ro-filter-select"
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
@@ -133,12 +134,12 @@ export default function DrawingActivityScreen({ activeProject }) {
             {ACTION_FILTERS.map((f) => (
               <option key={f.value} value={f.value}>{f.label}</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="ro-search-box">
           <Search size={16} className="ro-search-icon" />
-          <input
+          <Input
             type="text"
             className="ro-search-input"
             placeholder="Search activity records..."

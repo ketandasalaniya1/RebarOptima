@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Users, AlertTriangle, ExternalLink, Camera, Loader2, Check, Tag, Calendar, DollarSign, Home, Phone } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function QuickAddLead({
   projects = [],
@@ -186,7 +187,7 @@ export default function QuickAddLead({
                                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
                                     <div>
                                       <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Full Name *</label>
-                                      <input
+                                      <Input
                                         type="text"
                                         required
                                         placeholder="e.g. Vikramaditya Singhania"
@@ -205,7 +206,7 @@ export default function QuickAddLead({
                     </span>
                   )}
                 </div>
-                <input
+                <Input
                   type="tel"
                   required
                   placeholder="e.g. +91 98201 23456"
@@ -217,7 +218,7 @@ export default function QuickAddLead({
 
                                             <div>
                                               <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Email Address</label>
-                                              <input
+                                              <Input
                                                 type="email"
                                                 placeholder="vikram@example.com"
                                                 value={formData.email}
@@ -228,7 +229,7 @@ export default function QuickAddLead({
 
                                             <div>
                                               <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Lead Source</label>
-                                              <select
+                                              <Select
                                                 value={formData.leadSource}
                                                 onChange={e => setFormData({ ...formData, leadSource: e.target.value })}
                                                 style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.85rem' }}
@@ -241,7 +242,7 @@ export default function QuickAddLead({
                                                 <option value="Portal: 99acres">Portal: 99acres</option>
                                                 <option value="Portal: MagicBricks">Portal: MagicBricks</option>
                                                 <option value="Site Hoarding">Site Billboard / Hoarding</option>
-                                              </select>
+                                              </Select>
                                             </div>
                                           </div>
                                         </div>
@@ -254,7 +255,7 @@ export default function QuickAddLead({
                                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
                                             <div>
                                               <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Project *</label>
-                                              <select
+                                              <Select
                                                 value={formData.projectId}
                                                 onChange={e => setFormData({ ...formData, projectId: e.target.value })}
                                                 style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.85rem' }}
@@ -265,12 +266,12 @@ export default function QuickAddLead({
                                                     {p.name}
                                                   </option>
                                                 ))}
-                                              </select>
+                                              </Select>
                                             </div>
 
                                               <div>
                                                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Initial Stage</label>
-                                                <select
+                                                <Select
                                                   value={formData.stage}
                                                   onChange={e => setFormData({ ...formData, stage: e.target.value })}
                                                   style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.85rem' }}
@@ -279,12 +280,12 @@ export default function QuickAddLead({
                                                   <option value="Contacted">Contacted</option>
                                                   <option value="Site visit">Site visit</option>
                                                   <option value="Negotiation">Negotiation</option>
-                                                </select>
+                                                </Select>
                                               </div>
 
                                               <div>
                                                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Interested In (Typology)</label>
-                                                <select
+                                                <Select
                                                   value={formData.preferredPropertyType}
                                                   onChange={e => setFormData({ ...formData, preferredPropertyType: e.target.value })}
                                                   style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.85rem' }}
@@ -296,12 +297,12 @@ export default function QuickAddLead({
                                                   <option value="Penthouse">Sky Penthouse</option>
                                                   <option value="Plot">Residential Villa Plot</option>
                                                   <option value="Commercial">Commercial / Retail Office</option>
-                                                </select>
+                                                </Select>
                                               </div>
 
                                                 <div>
                                                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Budget (INR)</label>
-                                                  <input
+                                                  <Input
                                                     type="number"
                                                     placeholder="e.g. 12500000 (1.25 Cr)"
                                                     value={formData.budgetMax}
@@ -349,7 +350,7 @@ export default function QuickAddLead({
                                                         <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Purpose</label>
                                                         <div style={{ display: 'flex', gap: '8px' }}>
                                                           <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', cursor: 'pointer' }}>
-                                                            <input
+                                                            <Input
                                                               type="radio"
                                                               name="purpose"
                                                               value="self_use"
@@ -359,7 +360,7 @@ export default function QuickAddLead({
                                                             Self-use
                                                           </label>
                                                           <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', cursor: 'pointer' }}>
-                                                            <input
+                                                            <Input
                                                               type="radio"
                                                               name="purpose"
                                                               value="investment"
@@ -374,7 +375,7 @@ export default function QuickAddLead({
                                                       <div>
                                                         <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Bank Loan Required?</label>
                                                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.84rem', cursor: 'pointer' }}>
-                                                          <input
+                                                          <Input
                                                             type="checkbox"
                                                             checked={formData.loanNeeded}
                                                             onChange={e => setFormData({ ...formData, loanNeeded: e.target.checked })}
@@ -385,7 +386,7 @@ export default function QuickAddLead({
 
                                                       <div>
                                                         <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Next Follow-up Date *</label>
-                                                        <input
+                                                        <Input
                                                           type="datetime-local"
                                                           required
                                                           value={formData.nextFollowUpDate}
@@ -396,7 +397,7 @@ export default function QuickAddLead({
 
                                                       <div>
                                                         <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Preferred Floor / Facing</label>
-                                                        <input
+                                                        <Input
                                                           type="text"
                                                           placeholder="e.g. Higher floor, East facing, Vastu"
                                                           value={formData.preferredFloor}
@@ -407,7 +408,7 @@ export default function QuickAddLead({
 
                                                       <div>
                                                         <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Tags (comma-separated)</label>
-                                                        <input
+                                                        <Input
                                                           type="text"
                                                           placeholder="Hot, Investor, Ready to visit"
                                                           value={formData.tags}
@@ -418,7 +419,7 @@ export default function QuickAddLead({
 
                                                       <div>
                                                         <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Notes / Context</label>
-                                                        <input
+                                                        <Input
                                                           type="text"
                                                           placeholder="Looking for possession by Diwali, visits on weekends"
                                                           value={formData.notes}
@@ -437,7 +438,7 @@ export default function QuickAddLead({
                                                         </div>
                                                         <label style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: "var(--input-bg)", color: "var(--text-primary)", borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}>
                                                           <Camera size={14} /> Snap Card
-                                                          <input
+                                                          <Input
                                                             type="file"
                                                             accept="image/*"
                                                             capture="environment"

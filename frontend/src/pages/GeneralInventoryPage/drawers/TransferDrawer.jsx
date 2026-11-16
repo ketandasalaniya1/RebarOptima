@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRightLeft, Store, Calendar } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
 import MaterialSearchSelect from '../components/MaterialSearchSelect';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function TransferDrawer({
   isOpen,
@@ -100,7 +101,7 @@ export default function TransferDrawer({
             <label className="gi-form-label">
               Source Store <span className="gi-required">*</span>
             </label>
-            <select
+            <Select
               className={`gi-input-field ${formErrors.sourceStoreId ? 'has-error' : ''}`}
               value={sourceStoreId}
               onChange={(e) => setSourceStoreId(e.target.value)}
@@ -111,7 +112,7 @@ export default function TransferDrawer({
                   {s.name}
                 </option>
               ))}
-            </select>
+            </Select>
             {formErrors.sourceStoreId && <div className="gi-field-error-msg">{formErrors.sourceStoreId}</div>}
           </div>
 
@@ -119,7 +120,7 @@ export default function TransferDrawer({
             <label className="gi-form-label">
               Destination Store <span className="gi-required">*</span>
             </label>
-            <select
+            <Select
               className={`gi-input-field ${formErrors.destinationStoreId ? 'has-error' : ''}`}
               value={destinationStoreId}
               onChange={(e) => setDestinationStoreId(e.target.value)}
@@ -130,7 +131,7 @@ export default function TransferDrawer({
                   {s.name}
                 </option>
               ))}
-            </select>
+            </Select>
             {formErrors.destinationStoreId && <div className="gi-field-error-msg">{formErrors.destinationStoreId}</div>}
           </div>
         </div>
@@ -149,7 +150,7 @@ export default function TransferDrawer({
             <label className="gi-form-label">
               Quantity to Transfer <span className="gi-required">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="any"
               min="0.01"
@@ -162,7 +163,7 @@ export default function TransferDrawer({
 
           <div className="gi-form-group">
             <label className="gi-form-label">Transfer Date</label>
-            <input
+            <Input
               type="date"
               className="gi-input-field"
               value={transferDate}
@@ -173,7 +174,7 @@ export default function TransferDrawer({
 
         <div className="gi-form-group">
           <label className="gi-form-label">Transfer Note / Reference #</label>
-          <input
+          <Input
             type="text"
             className="gi-input-field"
             placeholder="e.g. TR-2026-081"
@@ -184,7 +185,7 @@ export default function TransferDrawer({
 
         <div className="gi-form-group">
           <label className="gi-form-label">Remarks</label>
-          <textarea
+          <Textarea
             className="gi-textarea-field"
             rows={2}
             placeholder="Reason for transfer, vehicle number, handler..."

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Droplet, Calendar, Plus, CheckCircle2, AlertTriangle, ShieldCheck, RefreshCw, X, FileText, Info } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function CuringManagementView({
   events = [],
@@ -398,7 +399,7 @@ export default function CuringManagementView({
               <div className="casting-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Casting Event</label>
-                  <select
+                  <Select
                     className="casting-select"
                     value={selectedEventId}
                     onChange={(e) => {
@@ -411,12 +412,12 @@ export default function CuringManagementView({
                     {events.map(ev => (
                       <option key={ev.id || ev._id} value={ev.id || ev._id}>{ev.title} ({ev.eventNumber})</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Segment Identifier</label>
-                  <select
+                  <Select
                     className="casting-select"
                     value={selectedSegmentId}
                     onChange={(e) => setSelectedSegmentId(e.target.value)}
@@ -425,56 +426,56 @@ export default function CuringManagementView({
                     {selectedEvent?.segments?.map(s => (
                       <option key={s.segmentId} value={s.segmentId}>{s.segmentName} ({s.plannedVolumeM3} m³)</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Cement / Blend Type</label>
-                    <select className="casting-select" value={cementType} onChange={e => setCementType(e.target.value)}>
+                    <Select className="casting-select" value={cementType} onChange={e => setCementType(e.target.value)}>
                       <option value="OPC">OPC (Ordinary Portland)</option>
                       <option value="PPC">PPC (Portland Pozzolana)</option>
                       <option value="PSC">PSC (Portland Slag)</option>
                       <option value="GGBS_BLEND">GGBS Blend</option>
                       <option value="FLY_ASH_BLEND">Fly Ash Blend</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Curing Method</label>
-                    <select className="casting-select" value={curingMethod} onChange={e => setCuringMethod(e.target.value)}>
+                    <Select className="casting-select" value={curingMethod} onChange={e => setCuringMethod(e.target.value)}>
                       <option value="PONDING">Ponding (Standing Water)</option>
                       <option value="WET_BURLAP_HESSIAN">Wet Burlap / Hessian Cloth</option>
                       <option value="CURING_COMPOUND">Curing Membrane / Compound</option>
                       <option value="SPRINKLING">Continuous Sprinkling</option>
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Environmental Flag</label>
-                    <select className="casting-select" value={environmentalFlag} onChange={e => setEnvironmentalFlag(e.target.value)}>
+                    <Select className="casting-select" value={environmentalFlag} onChange={e => setEnvironmentalFlag(e.target.value)}>
                       <option value="NORMAL">Normal Weather (Standard Regime)</option>
                       <option value="HOT_WEATHER_ARID">Hot-Weather / Arid (Extended Regime)</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Start Date</label>
-                    <input type="date" className="casting-select" value={startDate} onChange={e => setStartDate(e.target.value)} required />
+                    <Input type="date" className="casting-select" value={startDate} onChange={e => setStartDate(e.target.value)} required />
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Daily Inspection Sessions</label>
-                    <input type="number" min="1" max="4" className="casting-select" value={sessionsPerDay} onChange={e => setSessionsPerDay(e.target.value)} required />
+                    <Input type="number" min="1" max="4" className="casting-select" value={sessionsPerDay} onChange={e => setSessionsPerDay(e.target.value)} required />
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Custom Duration Days (Optional)</label>
-                    <input type="number" placeholder="Default per IS 456" className="casting-select" value={customDays} onChange={e => setCustomDays(e.target.value)} />
+                    <Input type="number" placeholder="Default per IS 456" className="casting-select" value={customDays} onChange={e => setCustomDays(e.target.value)} />
                   </div>
                 </div>
 
@@ -506,36 +507,36 @@ export default function CuringManagementView({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Inspection Date</label>
-                    <input type="date" className="casting-select" value={logDate} onChange={e => setLogDate(e.target.value)} required />
+                    <Input type="date" className="casting-select" value={logDate} onChange={e => setLogDate(e.target.value)} required />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Session Index</label>
-                    <input type="number" min="1" max="4" className="casting-select" value={sessionIndex} onChange={e => setSessionIndex(e.target.value)} required />
+                    <Input type="number" min="1" max="4" className="casting-select" value={sessionIndex} onChange={e => setSessionIndex(e.target.value)} required />
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Moisture Check</label>
-                    <select className="casting-select" value={isAdequatelyWet ? 'YES' : 'NO'} onChange={e => setIsAdequatelyWet(e.target.value === 'YES')}>
+                    <Select className="casting-select" value={isAdequatelyWet ? 'YES' : 'NO'} onChange={e => setIsAdequatelyWet(e.target.value === 'YES')}>
                       <option value="YES">Adequately Wet (Saturated)</option>
                       <option value="NO">Inadequately Wet (DRIED OUT)</option>
-                    </select>
+                    </Select>
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Water Coverage (%)</label>
-                    <input type="number" min="0" max="100" className="casting-select" value={waterCoveragePercent} onChange={e => setWaterCoveragePercent(e.target.value)} required />
+                    <Input type="number" min="0" max="100" className="casting-select" value={waterCoveragePercent} onChange={e => setWaterCoveragePercent(e.target.value)} required />
                   </div>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Ponding Depth (mm)</label>
-                  <input type="number" min="0" className="casting-select" value={pondingDepthMm} onChange={e => setPondingDepthMm(e.target.value)} />
+                  <Input type="number" min="0" className="casting-select" value={pondingDepthMm} onChange={e => setPondingDepthMm(e.target.value)} />
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>
-                    <input type="checkbox" checked={interruptionLogged} onChange={e => setInterruptionLogged(e.target.checked)} />
+                    <Input type="checkbox" checked={interruptionLogged} onChange={e => setInterruptionLogged(e.target.checked)} />
                     Log Interruption / Moisture Defect
                   </label>
                 </div>
@@ -544,11 +545,11 @@ export default function CuringManagementView({
                   <>
                     <div>
                       <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Interruption Reason</label>
-                      <input type="text" placeholder="e.g. Ponding bund breached, burlap dried out" className="casting-select" value={interruptionReason} onChange={e => setInterruptionReason(e.target.value)} required />
+                      <Input type="text" placeholder="e.g. Ponding bund breached, burlap dried out" className="casting-select" value={interruptionReason} onChange={e => setInterruptionReason(e.target.value)} required />
                     </div>
                     <div>
                       <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Remedial Action Taken</label>
-                      <input type="text" placeholder="e.g. Bund rebuilt, water tanker re-filled" className="casting-select" value={remedialActionTaken} onChange={e => setRemedialActionTaken(e.target.value)} required />
+                      <Input type="text" placeholder="e.g. Bund rebuilt, water tanker re-filled" className="casting-select" value={remedialActionTaken} onChange={e => setRemedialActionTaken(e.target.value)} required />
                     </div>
                   </>
                 )}
@@ -579,12 +580,12 @@ export default function CuringManagementView({
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Corrected Water Coverage (%)</label>
-                  <input type="number" min="0" max="100" className="casting-select" value={waterCoveragePercent} onChange={e => setWaterCoveragePercent(e.target.value)} required />
+                  <Input type="number" min="0" max="100" className="casting-select" value={waterCoveragePercent} onChange={e => setWaterCoveragePercent(e.target.value)} required />
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>Mandatory Correction Reason</label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     placeholder="Provide professional rationale for updating inspection values..."
                     className="casting-select"

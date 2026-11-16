@@ -1,3 +1,4 @@
+import { Input, Select } from '../../components/ui';
 export const SALARY_UNITS = [
   { value: 'per_month', label: 'Per month' },
   { value: 'per_day', label: 'Per day' },
@@ -22,7 +23,7 @@ export function SalaryControl({ amount, unit, onAmountChange, onUnitChange, requ
         <label>
           Salary amount {required && <span className="req">*</span>}
         </label>
-        <input
+        <Input
           type="number"
           min="0"
           step="any"
@@ -35,13 +36,13 @@ export function SalaryControl({ amount, unit, onAmountChange, onUnitChange, requ
         <label>
           Salary unit {required && <span className="req">*</span>}
         </label>
-        <select value={unit} onChange={(e) => onUnitChange(e.target.value)} required={required}>
+        <Select value={unit} onChange={(e) => onUnitChange(e.target.value)} required={required}>
           {SALARY_UNITS.map((u) => (
             <option key={u.value} value={u.value}>
               {u.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
     </div>
   );

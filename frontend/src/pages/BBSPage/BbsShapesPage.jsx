@@ -6,6 +6,7 @@ import { setShapes, setTemplates, setLoading, setError } from '../../store/slice
 import { setView } from '../../store/slices/routingSlice';
 import ShapeRenderer from '../../components/ShapeRenderer/ShapeRenderer';
 import './BbsShapesPage.css';
+import { Input } from '../../components/ui';
 
 export default function BbsShapesPage() {
   const dispatch = useDispatch();
@@ -147,23 +148,23 @@ export default function BbsShapesPage() {
           <div className="bbs-form-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="bbs-form-group">
               <label>Shape Code (Name)</label>
-              <input className="bbs-input" value={newShape.shape_code} onChange={e => setNewShape({ ...newShape, shape_code: e.target.value })} />
+              <Input className="bbs-input" value={newShape.shape_code} onChange={e => setNewShape({ ...newShape, shape_code: e.target.value })} />
             </div>
             <div className="bbs-form-group">
               <label>Bend Count (45° equivalents)</label>
-              <input type="number" className="bbs-input" value={newShape.bend_45_count} onChange={e => setNewShape({ ...newShape, bend_45_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
+              <Input type="number" className="bbs-input" value={newShape.bend_45_count} onChange={e => setNewShape({ ...newShape, bend_45_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
             </div>
             <div className="bbs-form-group">
               <label>Bend Count (90° equivalents)</label>
-              <input type="number" className="bbs-input" value={newShape.bend_count} onChange={e => setNewShape({ ...newShape, bend_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
+              <Input type="number" className="bbs-input" value={newShape.bend_count} onChange={e => setNewShape({ ...newShape, bend_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
             </div>
             <div className="bbs-form-group">
               <label>Hook Count (135° equivalents)</label>
-              <input type="number" className="bbs-input" value={newShape.hook_count} onChange={e => setNewShape({ ...newShape, hook_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
+              <Input type="number" className="bbs-input" value={newShape.hook_count} onChange={e => setNewShape({ ...newShape, hook_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
             </div>
             <div className="bbs-form-group">
               <label>Angle Count (180° equivalents)</label>
-              <input type="number" className="bbs-input" value={newShape.bend_180_count} onChange={e => setNewShape({ ...newShape, bend_180_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
+              <Input type="number" className="bbs-input" value={newShape.bend_180_count} onChange={e => setNewShape({ ...newShape, bend_180_count: e.target.value === '' ? '' : parseInt(e.target.value, 10) })} />
             </div>
           </div>
           <div className="bbs-builder-actions">
@@ -177,15 +178,15 @@ export default function BbsShapesPage() {
           <div className="bbs-form-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="bbs-form-group">
               <label>Template Name</label>
-              <input className="bbs-input" value={newTemplate.name} onChange={e => setNewTemplate({ ...newTemplate, name: e.target.value })} />
+              <Input className="bbs-input" value={newTemplate.name} onChange={e => setNewTemplate({ ...newTemplate, name: e.target.value })} />
             </div>
             <div className="bbs-form-group">
               <label>Category</label>
-              <input className="bbs-input" value={newTemplate.category} onChange={e => setNewTemplate({ ...newTemplate, category: e.target.value })} />
+              <Input className="bbs-input" value={newTemplate.category} onChange={e => setNewTemplate({ ...newTemplate, category: e.target.value })} />
             </div>
             <div className="bbs-form-group">
               <label>Description</label>
-              <input className="bbs-input" value={newTemplate.description} onChange={e => setNewTemplate({ ...newTemplate, description: e.target.value })} />
+              <Input className="bbs-input" value={newTemplate.description} onChange={e => setNewTemplate({ ...newTemplate, description: e.target.value })} />
             </div>
           </div>
           <div className="bbs-builder-actions">

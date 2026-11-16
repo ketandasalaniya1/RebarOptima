@@ -40,6 +40,9 @@ export const ROUTES = [
   '/chat',
   '/profile',
   '/reports',
+  '/settings',
+  '/drawings/matrix',
+  '/drawings/versions',
 ];
 
 export async function openAs(page, request, email, password, theme = 'light') {
@@ -255,13 +258,70 @@ export async function measureShell(page) {
       if (rect.width < 2 || rect.height < 2) continue;
       const type = (el.getAttribute('type') || '').toLowerCase();
       if (['checkbox', 'radio', 'hidden', 'range', 'color'].includes(type)) continue;
-      if (el.classList.contains('ro-search-input')) continue;
+      if (el.classList.contains('ro-search-input') || el.classList.contains('ro-input') || el.classList.contains('ro-select') || el.classList.contains('ro-textarea')) continue;
       const border = parseFloat(style.borderTopWidth) || 0;
       const radius = parseFloat(style.borderTopLeftRadius) || 0;
       const bareSelect = el.tagName === 'SELECT' && style.appearance !== 'none';
       if (border < 1 || radius < 1 || bareSelect) natives.push((el.className || el.tagName).toString().slice(0, 40));
     }
     const money = /₹|\bRs\.?\b/.test(document.body.innerText) && document.body.innerText.includes('Rs');
+    function parseRgb(value) {
+      const parts = String(value || '').match(/[\d.]+/g)?.map(Number) || [];
+      if (parts.length < 3) return null;
+      return { r: parts[0], g: parts[1], b: parts[2], a: parts.length >= 4 ? parts[3] : 1 };
+    }
+    function over(fg, bg) {
+      const a = fg.a == null ? 1 : fg.a;
+      return {
+        r: fg.r * a + bg.r * (1 - a),
+        g: fg.g * a + bg.g * (1 - a),
+        b: fg.b * a + bg.b * (1 - a),
+        a: 1,
+      };
+    }
+    function lum(c) {
+      const channel = (v) => {
+        const s = v / 255;
+        return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+      };
+      return 0.2126 * channel(c.r) + 0.7152 * channel(c.g) + 0.0722 * channel(c.b);
+    }
+    let contrast = 0;
+    const contrastSample = [];
+    const textNodes = document.querySelectorAll('h1, h2, h3, label, button, .kpi-label, .dia-row-card, .pp-card-stat, .pp-action-select');
+    let seen = 0;
+    for (const el of textNodes) {
+      if (seen > 80 || contrast > 20) break;
+      seen += 1;
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) continue;
+      if (style.backgroundImage && style.backgroundImage !== 'none') continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 2 || rect.height < 2 || rect.bottom < 0 || rect.top > window.innerHeight) continue;
+      const text = (el.innerText || '').trim();
+      if (!text) continue;
+      const fg = parseRgb(style.color);
+      if (!fg) continue;
+      const layers = [];
+      let node = el;
+      while (node) {
+        const bg = parseRgb(getComputedStyle(node).backgroundColor);
+        if (bg && bg.a > 0) layers.push(bg);
+        if (bg && bg.a >= 0.99) break;
+        node = node.parentElement;
+      }
+      if (layers.length === 0) continue;
+      let mixed = { ...layers[layers.length - 1], a: 1 };
+      for (let i = layers.length - 2; i >= 0; i -= 1) mixed = over(layers[i], mixed);
+      const ratio = (Math.max(lum(fg), lum(mixed)) + 0.05) / (Math.min(lum(fg), lum(mixed)) + 0.05);
+      const size = parseFloat(style.fontSize) || 14;
+      const bold = Number(style.fontWeight) >= 700;
+      const needed = size >= 18 || (size >= 14 && bold) ? 3 : 4.5;
+      if (ratio + 0.05 < needed) {
+        contrast += 1;
+        if (contrastSample.length < 5) contrastSample.push(`${ratio.toFixed(2)} ${text.slice(0, 32)}`);
+      }
+    }
     return {
       shellMismatch,
       navWidth,
@@ -275,6 +335,8 @@ export async function measureShell(page) {
       natives: natives.length,
       nativeSample: natives.slice(0, 3),
       money,
+      contrast,
+      contrastSample,
     };
   });
 }

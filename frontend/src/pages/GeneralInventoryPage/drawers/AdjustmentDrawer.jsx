@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RefreshCw, Store } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
 import MaterialSearchSelect from '../components/MaterialSearchSelect';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function AdjustmentDrawer({
   isOpen,
@@ -89,7 +90,7 @@ export default function AdjustmentDrawer({
             <label className="gi-form-label">
               Store <span className="gi-required">*</span>
             </label>
-            <select
+            <Select
               className={`gi-input-field ${formErrors.storeId ? 'has-error' : ''}`}
               value={storeId}
               onChange={(e) => setStoreId(e.target.value)}
@@ -100,19 +101,19 @@ export default function AdjustmentDrawer({
                   {s.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="gi-form-group">
             <label className="gi-form-label">Adjustment Type</label>
-            <select
+            <Select
               className="gi-input-field"
               value={adjustmentType}
               onChange={(e) => setAdjustmentType(e.target.value)}
             >
               <option value="ADD">+ Increase System Stock (Found / Excess)</option>
               <option value="SUBTRACT">− Decrease System Stock (Write-off / Scrap)</option>
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -129,7 +130,7 @@ export default function AdjustmentDrawer({
           <label className="gi-form-label">
             Adjustment Quantity <span className="gi-required">*</span>
           </label>
-          <input
+          <Input
             type="number"
             step="any"
             min="0.01"
@@ -144,7 +145,7 @@ export default function AdjustmentDrawer({
           <label className="gi-form-label">
             Authorization Reason & Reference <span className="gi-required">*</span>
           </label>
-          <textarea
+          <Textarea
             className={`gi-textarea-field ${formErrors.reason ? 'has-error' : ''}`}
             rows={2}
             placeholder="e.g. Approved physical audit reconciliation by PM, Scrap write-off..."

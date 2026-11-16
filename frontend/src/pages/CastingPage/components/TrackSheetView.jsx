@@ -4,6 +4,7 @@ import {
   RefreshCw, Filter, Layers, CheckSquare, ChevronRight, Check, XCircle
 } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function TrackSheetView({ selectedProject, blocks = [], levels = {} }) {
   const [selectedBlockId, setSelectedBlockId] = useState('');
@@ -144,7 +145,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
         <div className="filter-group">
           <Layers size={14} />
           <span className="filter-label">Select Block:</span>
-          <select 
+          <Select 
             value={selectedBlockId} 
             onChange={(e) => handleBlockChange(e.target.value)}
             className="filter-select"
@@ -153,12 +154,12 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
             {blocks.map(b => (
               <option key={b._id || b.id} value={b._id || b.id}>{b.name || b.blockName}</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="filter-group">
           <span className="filter-label">Select Level / Floor:</span>
-          <select 
+          <Select 
             value={selectedLevelId} 
             onChange={(e) => setSelectedLevelId(e.target.value)}
             className="filter-select"
@@ -167,7 +168,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
             {currentBlockLevels.map(l => (
               <option key={l._id || l.id} value={l._id || l.id}>{l.name || l.levelName}</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="filter-info">
@@ -371,19 +372,19 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
 
                 <div className="form-group">
                   <label>Stage Clearance Gate *</label>
-                  <select
+                  <Select
                     value={signoffForm.stageName}
                     onChange={(e) => setSignoffForm({ ...signoffForm, stageName: e.target.value })}
                   >
                     <option value="SLAB_STRIPPING_CLEARANCE">Slab & Beam Formwork Stripping Clearance</option>
                     <option value="POST_CURING_STAGE_GATE">Post-Curing Final Quality Handover</option>
                     <option value="NEXT_LIFT_VERTICAL_CLEARANCE">Clearance for Next Lift / Column Staging</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="checklist-box">
                   <label className="checklist-item">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={signoffForm.curingSatisfied}
                       onChange={(e) => setSignoffForm({ ...signoffForm, curingSatisfied: e.target.checked })}
@@ -392,7 +393,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
                   </label>
 
                   <label className="checklist-item">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={signoffForm.cubeStrengthSatisfied}
                       onChange={(e) => setSignoffForm({ ...signoffForm, cubeStrengthSatisfied: e.target.checked })}
@@ -401,7 +402,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
                   </label>
 
                   <label className="checklist-item">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={signoffForm.formworkStrippingPermitted}
                       onChange={(e) => setSignoffForm({ ...signoffForm, formworkStrippingPermitted: e.target.checked })}
@@ -413,19 +414,19 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
                 <div className="form-row-grid mt-3">
                   <div className="form-group">
                     <label>Sign-off Role</label>
-                    <select
+                    <Select
                       value={signoffForm.signoffRole}
                       onChange={(e) => setSignoffForm({ ...signoffForm, signoffRole: e.target.value })}
                     >
                       <option value="PROJECT_QUALITY_MANAGER">Project Quality Manager / QA Lead</option>
                       <option value="SENIOR_STRUCTURAL_ENGINEER">Senior Structural Engineer</option>
                       <option value="PROJECT_DIRECTOR">Project Director</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="form-group">
                     <label>Signing In-Charge Name *</label>
-                    <input
+                    <Input
                       type="text"
                       value={signoffForm.signedBy}
                       onChange={(e) => setSignoffForm({ ...signoffForm, signedBy: e.target.value })}
@@ -436,7 +437,7 @@ export default function TrackSheetView({ selectedProject, blocks = [], levels = 
 
                 <div className="form-group">
                   <label>Audit Comments & Engineering Endorsement *</label>
-                  <textarea
+                  <Textarea
                     rows="3"
                     value={signoffForm.comments}
                     onChange={(e) => setSignoffForm({ ...signoffForm, comments: e.target.value })}

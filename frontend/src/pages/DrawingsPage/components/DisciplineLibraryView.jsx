@@ -7,6 +7,7 @@ import {
   Check,
   X
 } from 'lucide-react';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function DisciplineLibraryView({
   disciplines,
@@ -136,7 +137,7 @@ export default function DisciplineLibraryView({
                 <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '0.75rem' }}>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Code *</label>
-                    <input
+                    <Input
                       type="text"
                       className="dw-form-input"
                       placeholder="e.g. ELEC"
@@ -147,7 +148,7 @@ export default function DisciplineLibraryView({
                   </div>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Discipline Name *</label>
-                    <input
+                    <Input
                       type="text"
                       className="dw-form-input"
                       placeholder="e.g. Electrical Engineering"
@@ -185,7 +186,7 @@ export default function DisciplineLibraryView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Description / Scope</label>
-                  <textarea
+                  <Textarea
                     rows={2}
                     className="dw-form-textarea"
                     placeholder="Electrical distribution layouts, transformer yards, LT panels..."

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Users, Check, RefreshCw } from 'lucide-react';
 import { chatApi } from '../../../utils/api';
+import { Input } from '../../../components/ui';
 
 export default function NewGroupModal({ isOpen, onClose, onGroupCreated, projectId }) {
   const [title, setTitle] = useState('');
@@ -80,7 +81,7 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Group Subject / Name
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="e.g. Tower B Rebar Fixing Team"
                 value={title}
@@ -101,7 +102,7 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Group Description (Optional)
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Purpose of this channel..."
                 value={description}
@@ -125,7 +126,7 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
 
           <div className="chat-modal-body" style={{ padding: '8px 0' }}>
             {loading ? (
-              <div style={{ padding: '24px', textAlign: 'center', color: '#94a3b8' }}>
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
                 <RefreshCw className="spin" size={20} style={{ marginBottom: '6px' }} />
                 <p style={{ margin: 0, fontSize: '13px' }}>Loading colleagues...</p>
               </div>
@@ -167,7 +168,7 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '13px' }}>{u.name}</div>
-                      <div style={{ color: '#94a3b8', fontSize: '11px' }}>{u.role || u.email}</div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>{u.role || u.email}</div>
                     </div>
                   </div>
                 );

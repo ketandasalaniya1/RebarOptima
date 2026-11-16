@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Store, MapPin } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
+import { Input } from '../../../components/ui';
 
 export default function StoreFormDrawer({
   isOpen,
@@ -75,7 +76,7 @@ export default function StoreFormDrawer({
           <label className="gi-form-label">
             Store Name <span className="gi-required">*</span>
           </label>
-          <input
+          <Input
             type="text"
             className={`gi-input-field ${formErrors.name ? 'has-error' : ''}`}
             placeholder="e.g. Main Godown, Shed B, North Yard..."
@@ -87,7 +88,7 @@ export default function StoreFormDrawer({
 
         <div className="gi-form-group">
           <label className="gi-form-label">Store Code</label>
-          <input
+          <Input
             type="text"
             className="gi-input-field"
             placeholder="e.g. GDN-01, SHED-A"
@@ -100,7 +101,7 @@ export default function StoreFormDrawer({
           <label className="gi-form-label">Location on Site</label>
           <div className="gi-select-with-icon">
             <MapPin size={16} className="gi-input-icon" />
-            <input
+            <Input
               type="text"
               className="gi-input-field with-icon"
               placeholder="e.g. Gate 2 near Batching Plant, Basement 1"

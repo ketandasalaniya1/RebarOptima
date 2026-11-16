@@ -414,7 +414,7 @@ class CADErrorBoundary extends Component {
           <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 8px 0', color: '#f8fafc' }}>
             Unable to Display CAD Drawing
           </h3>
-          <p style={{ fontSize: '0.875rem', color: '#94a3b8', maxWidth: '480px', margin: '0 0 20px 0', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 0 20px 0', lineHeight: 1.5 }}>
             {this.state.error?.message || 'A WebGL or CAD rendering exception occurred while preparing this drawing.'}
           </p>
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -1334,7 +1334,7 @@ function CADViewerInner({ fileData, fileUrl, fileBlob, fileName, onDownloadOrigi
                     padding: '4px 10px',
                     fontSize: '0.75rem',
                     fontWeight: activeLayoutId === l.btrId ? 700 : 500,
-                    color: activeLayoutId === l.btrId ? '#ffffff' : '#94a3b8',
+                    color: activeLayoutId === l.btrId ? '#ffffff' : 'var(--text-secondary)',
                     backgroundColor: activeLayoutId === l.btrId ? '#0284c7' : 'transparent',
                     border: 'none',
                     borderRadius: '4px',

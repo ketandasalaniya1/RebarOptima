@@ -521,7 +521,7 @@
 
 .gi-drawer-subtitle {
   font-size: 0.84rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0;
   line-height: 1.45;
 }
@@ -529,7 +529,7 @@
 .gi-drawer-close {
   background: transparent;
   border: 1px solid transparent;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   padding: 0.4rem;
   border-radius: 8px;
@@ -828,7 +828,7 @@
 
 .gi-sign-box {
   width: 200px;
-  border-top: 1px solid #94a3b8;
+  border-top: 1px solid var(--text-secondary);
   text-align: center;
   font-size: 0.8rem;
   font-weight: 600;

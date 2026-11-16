@@ -209,7 +209,7 @@ export default function PDFViewer({ fileData, fileUrl, fileName }) {
         background: '#090e17'
       }}>
         {loading && (
-          <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
             Loading PDF drawing sheet...
           </div>
         )}

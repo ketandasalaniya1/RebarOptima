@@ -5,6 +5,7 @@ import {
   TrendingUp, Check, AlertOctagon
 } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function CubeTestingView({ selectedProject, events = [] }) {
   const [samples, setSamples] = useState([]);
@@ -301,7 +302,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
         <div className="filter-group">
           <Filter size={14} />
           <span className="filter-label">Filter Pour Event:</span>
-          <select 
+          <Select 
             value={filterEventId} 
             onChange={(e) => setFilterEventId(e.target.value)}
             className="filter-select"
@@ -312,12 +313,12 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                 {ev.pourType || 'Pour'} - {new Date(ev.scheduledDate || ev.pourDate).toLocaleDateString()}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="filter-group">
           <span className="filter-label">Grade:</span>
-          <select 
+          <Select 
             value={filterGrade} 
             onChange={(e) => setFilterGrade(e.target.value)}
             className="filter-select"
@@ -326,7 +327,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
             {['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'].map(g => (
               <option key={g} value={g}>{g}</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="filter-info">
@@ -563,7 +564,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                 <div className="form-row-grid">
                   <div className="form-group">
                     <label>Casting Event *</label>
-                    <select
+                    <Select
                       value={regForm.castingEventId}
                       onChange={(e) => setRegForm({ ...regForm, castingEventId: e.target.value })}
                       required
@@ -574,26 +575,26 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                           {ev.pourType || 'Pour'} ({new Date(ev.scheduledDate || ev.pourDate).toLocaleDateString()})
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="form-group">
                     <label>Concrete Grade *</label>
-                    <select
+                    <Select
                       value={regForm.concreteGrade}
                       onChange={(e) => setRegForm({ ...regForm, concreteGrade: e.target.value })}
                     >
                       {['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'].map(g => (
                         <option key={g} value={g}>{g}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
                 <div className="form-row-grid">
                   <div className="form-group">
                     <label>Pour Date *</label>
-                    <input
+                    <Input
                       type="date"
                       value={regForm.pourDate}
                       onChange={(e) => setRegForm({ ...regForm, pourDate: e.target.value })}
@@ -602,7 +603,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                   </div>
                   <div className="form-group">
                     <label>Testing Age (Days) *</label>
-                    <select
+                    <Select
                       value={regForm.testingAgeDays}
                       onChange={(e) => setRegForm({ ...regForm, testingAgeDays: e.target.value })}
                     >
@@ -610,14 +611,14 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                       <option value="7">7 Days (Early Indicative)</option>
                       <option value="14">14 Days</option>
                       <option value="3">3 Days (Early)</option>
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
                 <div className="form-row-grid">
                   <div className="form-group">
                     <label>Sample Tag / ID *</label>
-                    <input
+                    <Input
                       type="text"
                       value={regForm.sampleNumber}
                       onChange={(e) => setRegForm({ ...regForm, sampleNumber: e.target.value })}
@@ -627,13 +628,13 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                   </div>
                   <div className="form-group">
                     <label>Pour Shift *</label>
-                    <select
+                    <Select
                       value={regForm.shift}
                       onChange={(e) => setRegForm({ ...regForm, shift: e.target.value })}
                     >
                       <option value="DAY">Day Shift</option>
                       <option value="NIGHT">Night Shift</option>
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
@@ -647,7 +648,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                   <div className="specimen-inputs-row">
                     <div className="specimen-input-col">
                       <label>Specimen 1 (kN)</label>
-                      <input
+                      <Input
                         type="number"
                         step="0.1"
                         placeholder="e.g. 680"
@@ -662,7 +663,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
 
                     <div className="specimen-input-col">
                       <label>Specimen 2 (kN)</label>
-                      <input
+                      <Input
                         type="number"
                         step="0.1"
                         placeholder="e.g. 695"
@@ -677,7 +678,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
 
                     <div className="specimen-input-col">
                       <label>Specimen 3 (kN)</label>
-                      <input
+                      <Input
                         type="number"
                         step="0.1"
                         placeholder="e.g. 675"
@@ -714,7 +715,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
 
                 <div className="form-group mt-3">
                   <label>Testing Technician *</label>
-                  <input
+                  <Input
                     type="text"
                     value={regForm.testedBy}
                     onChange={(e) => setRegForm({ ...regForm, testedBy: e.target.value })}
@@ -751,43 +752,43 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                 <div className="form-row-grid">
                   <div className="form-group">
                     <label>Concrete Grade to Evaluate *</label>
-                    <select
+                    <Select
                       value={evalForm.concreteGrade}
                       onChange={(e) => setEvalForm({ ...evalForm, concreteGrade: e.target.value })}
                     >
                       {['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'].map(g => (
                         <option key={g} value={g}>{g}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="form-group">
                     <label>Testing Age Target</label>
-                    <input type="text" value="28 Days (IS 456 Table 11)" disabled />
+                    <Input type="text" value="28 Days (IS 456 Table 11)" disabled />
                   </div>
                 </div>
 
                 <div className="form-row-grid">
                   <div className="form-group">
                     <label>Standard Deviation Basis *</label>
-                    <select
+                    <Select
                       value={evalForm.standardDeviationSource}
                       onChange={(e) => setEvalForm({ ...evalForm, standardDeviationSource: e.target.value })}
                     >
                       <option value="IS456_TABLE_8">IS 456:2000 Table 8 (Assumed SD)</option>
                       <option value="ESTABLISHED_PLANT_DATA">Established Plant SD (Requires ≥ 30 Samples)</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="form-group">
                     <label>Degree of Site Quality Control *</label>
-                    <select
+                    <Select
                       value={evalForm.siteControlDegree}
                       onChange={(e) => setEvalForm({ ...evalForm, siteControlDegree: e.target.value })}
                     >
                       <option value="GOOD">Good Control (Standard SD)</option>
                       <option value="FAIR">Fair Control (+1.0 N/mm² Penalty per Table 8 Note)</option>
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
@@ -795,7 +796,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                   <div className="form-row-grid bg-muted p-2 rounded">
                     <div className="form-group">
                       <label>Total Historical Samples (Min 30)</label>
-                      <input
+                      <Input
                         type="number"
                         value={evalForm.totalSamplesInHistory}
                         onChange={(e) => setEvalForm({ ...evalForm, totalSamplesInHistory: e.target.value })}
@@ -803,7 +804,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                     </div>
                     <div className="form-group">
                       <label>Plant Established SD (N/mm²)</label>
-                      <input
+                      <Input
                         type="number"
                         step="0.1"
                         value={evalForm.customStandardDeviation}
@@ -866,7 +867,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
 
                 <div className="form-group">
                   <label>Formal Engineering Decision *</label>
-                  <select
+                  <Select
                     value={reviewForm.decision}
                     onChange={(e) => setReviewForm({ ...reviewForm, decision: e.target.value })}
                   >
@@ -875,12 +876,12 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                     <option value="NON_DESTRUCTIVE_INVESTIGATION_REQUIRED">NDT REQUIRED — Ultrasonic / Rebound Hammer / Core Test</option>
                     <option value="REJECTED">REJECTED — Strength inadequate, dismantle or structural strengthening</option>
                     <option value="UNDER_REVIEW">UNDER REVIEW — Additional analysis required</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="form-group">
                   <label>Technical Rationale & Structural Justification (min 10 chars) *</label>
-                  <textarea
+                  <Textarea
                     rows="3"
                     value={reviewForm.engineeringRationale}
                     onChange={(e) => setReviewForm({ ...reviewForm, engineeringRationale: e.target.value })}
@@ -892,7 +893,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                 <div className="form-row-grid">
                   <div className="form-group">
                     <label>Structural Implications</label>
-                    <input
+                    <Input
                       type="text"
                       value={reviewForm.structuralImplication}
                       onChange={(e) => setReviewForm({ ...reviewForm, structuralImplication: e.target.value })}
@@ -900,7 +901,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                   </div>
                   <div className="form-group">
                     <label>Professional Registration / License ID *</label>
-                    <input
+                    <Input
                       type="text"
                       value={reviewForm.professionalRegistrationId}
                       onChange={(e) => setReviewForm({ ...reviewForm, professionalRegistrationId: e.target.value })}
@@ -912,7 +913,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
 
                 <div className="form-group">
                   <label>Reviewing Chartered Engineer *</label>
-                  <input
+                  <Input
                     type="text"
                     value={reviewForm.reviewedBy}
                     onChange={(e) => setReviewForm({ ...reviewForm, reviewedBy: e.target.value })}
@@ -923,7 +924,7 @@ export default function CubeTestingView({ selectedProject, events = [] }) {
                 {reviewForm.decision === 'NON_DESTRUCTIVE_INVESTIGATION_REQUIRED' && (
                   <div className="form-group">
                     <label>Non-Destructive Testing Reference / Report ID</label>
-                    <input
+                    <Input
                       type="text"
                       value={reviewForm.ndtReference}
                       onChange={(e) => setReviewForm({ ...reviewForm, ndtReference: e.target.value })}

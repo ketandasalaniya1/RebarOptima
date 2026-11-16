@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
-import {
-  X,
-  FileText,
-  Eye,
-  Download,
-  Camera,
-  ChevronDown,
-  ChevronUp,
-  Square,
-} from 'lucide-react';
-import { Button } from '../../components/ui';
+import { X, FileText, Eye, Download, Camera, ChevronDown, ChevronUp, Square, } from 'lucide-react';
+import { Button, Input, Select } from '../../components/ui';
 
 export default function ReportBuilderModal({
   isOpen,
@@ -186,7 +177,7 @@ export default function ReportBuilderModal({
             <div className="rep-form-row">
               <div className="rep-form-group">
                 <label className="rep-form-label">From Date</label>
-                <input
+                <Input
                   type="date"
                   value={startDate}
                   onChange={(e) => {
@@ -198,7 +189,7 @@ export default function ReportBuilderModal({
               </div>
               <div className="rep-form-group">
                 <label className="rep-form-label">To Date</label>
-                <input
+                <Input
                   type="date"
                   value={endDate}
                   onChange={(e) => {
@@ -214,7 +205,7 @@ export default function ReportBuilderModal({
           {/* 3. Project Filter */}
           <div className="rep-form-group">
             <label className="rep-form-label">Project Scope</label>
-            <select
+            <Select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
               className="rep-select"
@@ -225,7 +216,7 @@ export default function ReportBuilderModal({
                   {p.name} {p.code ? `(${p.code})` : ''}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* 4. Include Photos Toggle */}
@@ -240,7 +231,7 @@ export default function ReportBuilderModal({
               </div>
             </div>
             <label className="rep-switch">
-              <input
+              <Input
                 type="checkbox"
                 checked={includePhotos}
                 onChange={(e) => setIncludePhotos(e.target.checked)}
@@ -287,7 +278,7 @@ export default function ReportBuilderModal({
               {openSections.operational && (
                 <div className="rep-accordion-content">
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.tasksAndProgress}
                       onChange={() => toggleSection('tasksAndProgress')}
@@ -296,7 +287,7 @@ export default function ReportBuilderModal({
                     <span>Task & CPM Progress (Schedule milestones, % progress, dates, workers)</span>
                   </label>
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.issues}
                       onChange={() => toggleSection('issues')}
@@ -321,7 +312,7 @@ export default function ReportBuilderModal({
               {openSections.inventory && (
                 <div className="rep-accordion-content">
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.inventory}
                       onChange={() => toggleSection('inventory')}
@@ -330,7 +321,7 @@ export default function ReportBuilderModal({
                     <span>Inventory Stock Balances (Active stock, threshold alerts)</span>
                   </label>
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.grn}
                       onChange={() => toggleSection('grn')}
@@ -339,7 +330,7 @@ export default function ReportBuilderModal({
                     <span>GRN (Goods Receipt Notes & Inward vendor challans)</span>
                   </label>
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.materialIssued}
                       onChange={() => toggleSection('materialIssued')}
@@ -348,7 +339,7 @@ export default function ReportBuilderModal({
                     <span>Material Issued (Outward issues & consumable tracking)</span>
                   </label>
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.siteTransfer}
                       onChange={() => toggleSection('siteTransfer')}
@@ -383,7 +374,7 @@ export default function ReportBuilderModal({
               {openSections.manpower && (
                 <div className="rep-accordion-content">
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.attendance}
                       onChange={() => toggleSection('attendance')}
@@ -392,7 +383,7 @@ export default function ReportBuilderModal({
                     <span>Attendance (Company Labour, Contractor Labour, Workforce Gangs)</span>
                   </label>
                   <label className="rep-checkbox-row">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={sections.payables}
                       onChange={() => toggleSection('payables')}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShieldAlert, Store, Calendar, User } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
 import MaterialSearchSelect from '../components/MaterialSearchSelect';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function IncidentDrawer({
   isOpen,
@@ -97,7 +98,7 @@ export default function IncidentDrawer({
             <label className="gi-form-label">
               Godown / Store <span className="gi-required">*</span>
             </label>
-            <select
+            <Select
               className={`gi-input-field ${formErrors.storeId ? 'has-error' : ''}`}
               value={storeId}
               onChange={(e) => setStoreId(e.target.value)}
@@ -108,12 +109,12 @@ export default function IncidentDrawer({
                   {s.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="gi-form-group">
             <label className="gi-form-label">Incident Type</label>
-            <select
+            <Select
               className="gi-input-field"
               value={incidentType}
               onChange={(e) => setIncidentType(e.target.value)}
@@ -122,7 +123,7 @@ export default function IncidentDrawer({
               <option value="Damaged">Damaged / Broken On-site</option>
               <option value="Theft">Suspected Theft</option>
               <option value="Expired">Expired / Spoilage</option>
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -140,7 +141,7 @@ export default function IncidentDrawer({
             <label className="gi-form-label">
               Affected Quantity <span className="gi-required">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="any"
               min="0.01"
@@ -153,7 +154,7 @@ export default function IncidentDrawer({
 
           <div className="gi-form-group">
             <label className="gi-form-label">Incident Date</label>
-            <input
+            <Input
               type="date"
               className="gi-input-field"
               value={date}
@@ -164,7 +165,7 @@ export default function IncidentDrawer({
 
         <div className="gi-form-group">
           <label className="gi-form-label">Reported By</label>
-          <input
+          <Input
             type="text"
             className="gi-input-field"
             value={reportedBy}
@@ -176,7 +177,7 @@ export default function IncidentDrawer({
           <label className="gi-form-label">
             Incident Description & Circumstances <span className="gi-required">*</span>
           </label>
-          <textarea
+          <Textarea
             className={`gi-textarea-field ${formErrors.description ? 'has-error' : ''}`}
             rows={3}
             placeholder="Where was the item located? When was it discovered missing or damaged? Any suspects or causes?"

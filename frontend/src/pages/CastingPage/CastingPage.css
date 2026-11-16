@@ -497,7 +497,7 @@
 }
 
 .casting-search-icon {
-  color: #94a3b8;
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
@@ -934,7 +934,7 @@
 
 .casting-member-stat-lbl {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1071,7 +1071,7 @@
 .btn-close {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0.35rem;
   border-radius: 8px;
@@ -1177,7 +1177,7 @@
 
 .calc-preview-lbl {
   font-size: 0.825rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -1274,7 +1274,7 @@
   font-size: 0.775rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: 600;
   margin-top: 0.15rem;
 }
@@ -1308,7 +1308,7 @@
 
 .recipe-panel-subtitle {
   font-size: 0.825rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-top: 0.2rem;
 }
 
@@ -1339,7 +1339,7 @@
   left: 0.85rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   pointer-events: none;
 }
 
@@ -1366,7 +1366,7 @@
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 0.8rem;
 }
@@ -1387,7 +1387,7 @@
 .filter-lbl {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .filter-select {
@@ -1407,7 +1407,7 @@
 .view-mode-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-secondary);
   padding: 0.45rem 0.65rem;
   border-radius: 6px;
   cursor: pointer;
@@ -1439,7 +1439,7 @@
   font-size: 0.8rem;
   font-weight: 500;
   background: rgba(255, 255, 255, 0.04);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   transition: all 0.15s;
@@ -1512,7 +1512,7 @@
 
 .recipe-status-pill.superseded {
   background: rgba(100, 116, 139, 0.15);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(100, 116, 139, 0.25);
 }
 
@@ -1642,17 +1642,17 @@
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .recipe-card-version {
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .recipe-card-slump {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-left: auto;
 }
 
@@ -1676,7 +1676,7 @@
 
 .ratio-lbl {
   font-size: 0.7rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -1720,7 +1720,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.7rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 /* Card Footer Actions */
@@ -1799,12 +1799,12 @@
   padding: 0.2rem 0.45rem;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .recipe-table-ver {
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .table-actions-cell {
@@ -1855,7 +1855,7 @@
 
 .recipe-empty-desc {
   font-size: 0.85rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   max-width: 420px;
   line-height: 1.4;
   margin-bottom: 0.5rem;
@@ -1927,7 +1927,7 @@
 
 .recipe-detail-subtitle {
   font-size: 0.825rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin: 0.35rem 0 0 0;
 }
 
@@ -1956,7 +1956,7 @@
 .recipe-kpi-label {
   font-size: 0.725rem;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -1998,7 +1998,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -2072,7 +2072,7 @@
   gap: 1rem;
   flex-wrap: wrap;
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .legend-item {
@@ -2100,7 +2100,7 @@
   font-size: 0.725rem;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -2199,7 +2199,7 @@
 
 .compliance-standard {
   font-size: 0.725rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .compliance-body {
@@ -2217,7 +2217,7 @@
 
 .compliance-note {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin: 0.25rem 0 0 0;
   line-height: 1.35;
 }
@@ -2275,7 +2275,7 @@
 
 .audit-remarks {
   font-style: italic;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -2320,7 +2320,7 @@
   display: flex;
   gap: 1rem;
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .recipe-detail-footer {
@@ -2380,7 +2380,7 @@
 
 .recipe-designer-sub {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin-top: 0.15rem;
 }
 
@@ -2451,7 +2451,7 @@
 
 .hud-lbl {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   text-transform: uppercase;
 }
 
@@ -2491,7 +2491,7 @@
   padding: 0.6rem 0.65rem;
   font-size: 0.72rem;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--text-secondary);
   letter-spacing: 0.05em;
   background: rgba(15, 23, 42, 0.6);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -2666,7 +2666,7 @@
 .approval-ver-pill {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .approval-submitter-text {
@@ -2674,7 +2674,7 @@
   align-items: center;
   gap: 0.25rem;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .recipe-approval-body {
@@ -2709,7 +2709,7 @@
 
 .checkpoint-lbl {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   text-transform: uppercase;
 }
 
@@ -2869,12 +2869,12 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .filter-label {
   font-weight: 500;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .filter-select {
@@ -2939,7 +2939,7 @@
 
 .curing-card-sub {
   font-size: 0.775rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-top: 0.2rem;
 }
 
@@ -2990,7 +2990,7 @@
 
 .quality-table th {
   background: var(--main-bg, rgba(15, 23, 42, 0.6));
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
@@ -3100,7 +3100,7 @@
 
 .status-badge.neutral {
   background: var(--card-border, rgba(148, 163, 184, 0.15));
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   border: 1px solid var(--card-border, rgba(148, 163, 184, 0.2));
 }
 
@@ -3158,7 +3158,7 @@
   justify-content: center;
   padding: 3rem 1.5rem;
   text-align: center;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   gap: 0.75rem;
 }
 
@@ -3173,7 +3173,7 @@
   justify-content: center;
   gap: 0.75rem;
   padding: 3rem 1.5rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.9rem;
 }
 
@@ -3370,7 +3370,7 @@
   background: transparent;
   border: none;
   border-radius: 6px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -3401,7 +3401,7 @@
 
 .kpi-label {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -4147,7 +4147,7 @@
   gap: 0.6rem;
   margin-top: 0.35rem;
   font-size: 0.8rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .stock-modal-badge {
@@ -4263,7 +4263,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-bottom: 0.35rem;
   display: block;
 }
@@ -4445,7 +4445,7 @@
 
 .stock-stat-mini-lbl {
   font-size: 0.725rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -4474,7 +4474,7 @@
   font-weight: 500;
   background: var(--main-bg, #0f172a);
   border: 1px solid var(--card-border, #243046);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -4517,7 +4517,7 @@
 
 .stock-cat-tag.coarse-agg {
   background: rgba(148, 163, 184, 0.12);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(148, 163, 184, 0.25);
 }
 

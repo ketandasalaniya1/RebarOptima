@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Plus, Pencil, Trash2, Search, AlertTriangle, Image as ImageIcon, UserRound } from 'lucide-react';
 import { manpowerApi } from '../../utils/api';
-import { PageHeader, Button, EmptyState } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input } from '../../components/ui';
 import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { SalaryControl, formatSalary } from './salaryUnits';
 import './ManpowerPage.css';
@@ -190,7 +190,7 @@ export default function CompanyLabourPage() {
           <div className="mp-toolbar">
             <div className="mp-search">
               <Search size={16} />
-              <input
+              <Input
                 value={listSearch}
                 onChange={(e) => setListSearch(e.target.value)}
                 placeholder="Search name, type, phone…"
@@ -272,7 +272,7 @@ export default function CompanyLabourPage() {
                 <label>
                   Name <span className="req">*</span>
                 </label>
-                <input
+                <Input
                   value={form.name}
                   onChange={(e) => updateField('name', e.target.value)}
                   required
@@ -282,7 +282,7 @@ export default function CompanyLabourPage() {
                 <label>
                   Labour type <span className="req">*</span>
                 </label>
-                <input
+                <Input
                   value={form.labourType}
                   onChange={(e) => updateField('labourType', e.target.value)}
                   placeholder="e.g. Mason, Helper"
@@ -293,13 +293,13 @@ export default function CompanyLabourPage() {
                 <label>
                   Phone <span className="mp-optional">(optional)</span>
                 </label>
-                <input value={form.phone} onChange={(e) => updateField('phone', e.target.value)} />
+                <Input value={form.phone} onChange={(e) => updateField('phone', e.target.value)} />
               </div>
               <div className="mp-field">
                 <label>
                   Address <span className="mp-optional">(optional)</span>
                 </label>
-                <input value={form.address} onChange={(e) => updateField('address', e.target.value)} />
+                <Input value={form.address} onChange={(e) => updateField('address', e.target.value)} />
               </div>
             </div>
 
@@ -323,7 +323,7 @@ export default function CompanyLabourPage() {
                     Remove
                   </button>
                 )}
-                <input
+                <Input
                   ref={aadharInputRef}
                   type="file"
                   accept="image/*,application/pdf"

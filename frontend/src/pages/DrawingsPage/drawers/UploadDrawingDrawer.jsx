@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, FileText, CheckCircle2, AlertTriangle, Info, Plus } from 'lucide-react';
 import { parseDrawingFilename } from '../utils/filenameParser';
 import { drawingsApi } from '../../../utils/drawingsApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 const DISCIPLINES = ['Architectural', 'Structural', 'MEPF', 'Civil', 'General'];
 const BLOCKS = ['Block A', 'Block B', 'Tower 1', 'Main Tower'];
@@ -369,7 +370,7 @@ export default function UploadDrawingDrawer({
               </div>
             ))}
 
-            <input
+            <Input
               type="file"
               ref={fileInputRef}
               style={{ display: 'none' }}
@@ -425,7 +426,7 @@ export default function UploadDrawingDrawer({
             <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: "var(--text-primary)", marginBottom: '0.35rem' }}>
               Drawing number
             </label>
-            <input
+            <Input
               type="text"
               className="drawings-search-input"
               style={{ paddingLeft: '0.875rem' }}
@@ -441,7 +442,7 @@ export default function UploadDrawingDrawer({
             <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: "var(--text-primary)", marginBottom: '0.35rem' }}>
               Title
             </label>
-            <input
+            <Input
               type="text"
               className="drawings-search-input"
               style={{ paddingLeft: '0.875rem' }}
@@ -501,7 +502,7 @@ export default function UploadDrawingDrawer({
             <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: "var(--text-primary)", marginBottom: '0.35rem' }}>
               Level
             </label>
-            <select
+            <Select
               className="drawings-sort-select"
               style={{ width: '100%', height: '42px' }}
               value={level}
@@ -512,7 +513,7 @@ export default function UploadDrawingDrawer({
                   {lvl}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Duplicate Banner */}
@@ -570,7 +571,7 @@ export default function UploadDrawingDrawer({
             <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: "var(--text-primary)", marginBottom: '0.35rem' }}>
               What changed in this revision?
             </label>
-            <textarea
+            <Textarea
               style={{
                 width: '100%',
                 minHeight: '80px',
@@ -620,7 +621,7 @@ export default function UploadDrawingDrawer({
                 </span>
               ))}
             </div>
-            <input
+            <Input
               type="text"
               className="drawings-search-input"
               style={{ paddingLeft: '0.875rem', height: '36px' }}

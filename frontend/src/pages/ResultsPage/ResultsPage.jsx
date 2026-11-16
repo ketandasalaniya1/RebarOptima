@@ -557,12 +557,12 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
             <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'var(--accent, #059669)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>1</span>
             <span>1. Review Layouts</span>
           </div>
-          <span style={{ color: 'var(--text-muted, #94a3b8)' }}>→</span>
+          <span style={{ color: 'var(--text-muted, var(--text-secondary))' }}>→</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: data?._id ? '#10b981' : 'var(--text-secondary)' }}>
             <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: data?._id ? '#10b981' : 'var(--input-bg, #f1f5f9)', color: data?._id ? '#fff' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>{data?._id ? '✓' : '2'}</span>
             <span>2. Save &amp; Commit Batch</span>
           </div>
-          <span style={{ color: 'var(--text-muted, #94a3b8)' }}>→</span>
+          <span style={{ color: 'var(--text-muted, var(--text-secondary))' }}>→</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
             <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'var(--input-bg, #f1f5f9)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>3</span>
             <span>3. Print &amp; Export</span>

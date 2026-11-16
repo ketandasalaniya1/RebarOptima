@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
 import { formatShortINR, formatINR } from '../../../utils/money';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export const DEFAULT_PIPELINE_STAGES = [
   { id: 'new', name: 'New enquiry', order: 1, color: "var(--accent)", is_won: false, is_lost: false },
@@ -401,7 +402,7 @@ return (
           borderRadius: '8px',
           border: 'none',
           background: activeProjectTab === 'all' ? '#38bdf8' : '#1e293b',
-          color: activeProjectTab === 'all' ? '#0f172a' : '#94a3b8',
+          color: activeProjectTab === 'all' ? '#0f172a' : 'var(--text-secondary)',
           fontSize: '0.82rem',
           fontWeight: 700,
           cursor: 'pointer',
@@ -437,7 +438,7 @@ return (
               borderRadius: '8px',
               border: 'none',
               background: isSelected ? '#38bdf8' : '#1e293b',
-              color: isSelected ? '#0f172a' : '#94a3b8',
+              color: isSelected ? '#0f172a' : 'var(--text-secondary)',
               fontSize: '0.82rem',
               fontWeight: isSelected ? 700 : 500,
               cursor: 'pointer',
@@ -499,8 +500,8 @@ return (
           alignItems: 'center',
           width: '200px'
         }}>
-          <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '8px' }} />
-          <input
+          <Search size={14} color="var(--text-secondary)" style={{ position: 'absolute', left: '8px' }} />
+          <Input
             type="text"
             placeholder="Search leads..."
             value={searchTerm}
@@ -535,7 +536,7 @@ return (
                 borderRadius: '6px',
                 border: 'none',
                 background: statusFilter === tab.key ? '#38bdf8' : 'transparent',
-                color: statusFilter === tab.key ? '#0f172a' : '#94a3b8',
+                color: statusFilter === tab.key ? '#0f172a' : 'var(--text-secondary)',
                 fontSize: '0.75rem',
                 fontWeight: statusFilter === tab.key ? 700 : 500,
                 cursor: 'pointer'
@@ -548,7 +549,7 @@ return (
 
         {/* Lead Source Filter */}
         {distinctSources.length > 0 && (
-          <select
+          <Select
             value={sourceFilter}
             onChange={e => setSourceFilter(e.target.value)}
             style={{
@@ -564,7 +565,7 @@ return (
             {distinctSources.map(s => (
               <option key={s} value={s}>{s}</option>
             ))}
-          </select>
+          </Select>
         )}
 
         {/* View Mode Toggle (Table / Board) */}
@@ -577,7 +578,7 @@ return (
               borderRadius: '6px',
               border: 'none',
               background: viewMode === 'table' ? '#38bdf8' : 'transparent',
-              color: viewMode === 'table' ? '#0f172a' : '#94a3b8',
+              color: viewMode === 'table' ? '#0f172a' : 'var(--text-secondary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -597,7 +598,7 @@ return (
               borderRadius: '6px',
               border: 'none',
               background: viewMode === 'kanban' ? '#38bdf8' : 'transparent',
-              color: viewMode === 'kanban' ? '#0f172a' : '#94a3b8',
+              color: viewMode === 'kanban' ? '#0f172a' : 'var(--text-secondary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -828,7 +829,7 @@ return (
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '4px',
-                              color: isOverdue ? '#ef4444' : '#94a3b8',
+                              color: isOverdue ? '#ef4444' : 'var(--text-secondary)',
                               fontWeight: isOverdue ? 700 : 500,
                               fontSize: '0.76rem'
                             }}>
@@ -952,7 +953,7 @@ return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span>Rows per page:</span>
-              <select
+              <Select
                 value={pageSize}
                 onChange={(e) => {
                   setPageSize(Number(e.target.value));
@@ -972,7 +973,7 @@ return (
                 <option value={50}>50</option>
                 <option value={100}>100</option>
                 <option value={250}>250</option>
-              </select>
+              </Select>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1224,7 +1225,7 @@ return (
                               alignItems: 'center',
                               gap: '4px',
                               fontSize: '0.72rem',
-                              color: isOverdue ? '#ef4444' : '#94a3b8',
+                              color: isOverdue ? '#ef4444' : 'var(--text-secondary)',
                               fontWeight: isOverdue ? 700 : 500,
                               background: isOverdue ? 'rgba(239, 68, 68, 0.1)' : 'transparent',
                               padding: isOverdue ? '2px 6px' : '0',
@@ -1362,7 +1363,7 @@ return (
               { key: 'showSalesRep', label: 'Show Assigned Sales Rep' }
             ].map(item => (
               <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.84rem', cursor: 'pointer' }}>
-                <input
+                <Input
                   type="checkbox"
                   checked={cardCustomization[item.key]}
                   onChange={e => handleSaveCardCustomization({
@@ -1417,7 +1418,7 @@ return (
                 border: "1px solid var(--card-border)"
               }}>
                 {/* Color Picker */}
-                <input
+                <Input
                   type="color"
                   value={st.color || '#38bdf8'}
                   onChange={e => {
@@ -1430,7 +1431,7 @@ return (
                 />
 
                 {/* Stage Name */}
-                <input
+                <Input
                   type="text"
                   value={st.name}
                   onChange={e => {
@@ -1559,7 +1560,7 @@ return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div>
               <label style={{ fontSize: '0.74rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Primary Reason Category *</label>
-              <select
+              <Select
                 value={lostReasonCategory}
                 onChange={e => setLostReasonCategory(e.target.value)}
                 style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.82rem' }}
@@ -1573,12 +1574,12 @@ return (
                 <option value="Unreachable / Invalid Contact">Unreachable / Invalid Contact</option>
                 <option value="Looking for Ready Possession">Looking for Ready Possession</option>
                 <option value="Other">Other</option>
-              </select>
+              </Select>
             </div>
 
             <div>
               <label style={{ fontSize: '0.74rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Additional Feedback / Context</label>
-              <textarea
+              <Textarea
                 rows={2}
                 placeholder="e.g. Purchased in Godrej Woods instead due to immediate possession."
                 value={lostReasonInput}
@@ -1631,7 +1632,7 @@ return (
 
           <div>
             <label style={{ fontSize: '0.74rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Hold Duration (Hours)</label>
-            <select
+            <Select
               value={holdHoursInput}
               onChange={e => setHoldHoursInput(Number(e.target.value))}
               style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.82rem' }}
@@ -1639,7 +1640,7 @@ return (
               <option value={24}>24 Hours</option>
               <option value={48}>48 Hours (Standard)</option>
               <option value={72}>72 Hours</option>
-            </select>
+            </Select>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>

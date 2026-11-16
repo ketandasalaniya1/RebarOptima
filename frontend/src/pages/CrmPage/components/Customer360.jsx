@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
 import { formatShortINR, formatINR } from '../../../utils/money';
+import { Textarea } from '../../../components/ui';
 
 export default function Customer360({
   customer: customerProp,
@@ -351,7 +352,7 @@ return (
                 </button>
               </div>
 
-              <textarea
+              <Textarea
                 rows={3}
                 className="crm-composer-textarea"
                 placeholder={

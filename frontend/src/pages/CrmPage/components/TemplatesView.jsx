@@ -4,6 +4,7 @@ import {
   Sparkles, CheckCircle2, ChevronRight, X
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function TemplatesView() {
   const [templates, setTemplates] = useState([]);
@@ -191,7 +192,7 @@ export default function TemplatesView() {
                 border: '1px solid',
                 borderColor: isActive ? '#38bdf8' : '#334155',
                 background: isActive ? '#38bdf8' : '#1e293b',
-                color: isActive ? '#0f172a' : '#94a3b8',
+                color: isActive ? '#0f172a' : 'var(--text-secondary)',
                 fontWeight: isActive ? 700 : 500,
                 fontSize: '0.8rem',
                 cursor: 'pointer',
@@ -309,7 +310,7 @@ export default function TemplatesView() {
                   gap: '4px',
                   background: "var(--card-bg)",
                   border: "1px solid var(--card-border)",
-                  color: copiedId === t._id ? '#10b981' : '#94a3b8',
+                  color: copiedId === t._id ? '#10b981' : 'var(--text-secondary)',
                   borderRadius: '6px',
                   padding: '4px 10px',
                   fontSize: '0.75rem',
@@ -392,7 +393,7 @@ export default function TemplatesView() {
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Template Name *
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="e.g. Follow-up #1: Warm Introduction"
@@ -406,7 +407,7 @@ export default function TemplatesView() {
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Category
                 </label>
-                <select
+                <Select
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.85rem' }}
@@ -420,7 +421,7 @@ export default function TemplatesView() {
                   <option value="payment_reminder">Payment Reminder</option>
                   <option value="handover">Possession & Handover</option>
                   <option value="general">General Broadcast</option>
-                </select>
+                </Select>
               </div>
 
               {/* Variable Insertion Pills */}
@@ -456,7 +457,7 @@ export default function TemplatesView() {
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Message Body *
                 </label>
-                <textarea
+                <Textarea
                   required
                   rows={4}
                   value={formBody}

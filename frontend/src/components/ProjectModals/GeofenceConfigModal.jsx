@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { projectsApi } from '../../utils/api';
 import { updateProjectInList, closeGeofenceModal } from '../../store/slices/projectSlice';
 import './GeofenceConfigModal.css';
+import { Input } from '../ui';
 
 export default function GeofenceConfigModal() {
   const dispatch = useDispatch();
@@ -337,7 +338,7 @@ export default function GeofenceConfigModal() {
 
                   <div className="gfm-field">
                     <label className="gfm-label">Zone Name</label>
-                    <input
+                    <Input
                       type="text"
                       className="gfm-input"
                       value={activeGf.name || ''}
@@ -373,7 +374,7 @@ export default function GeofenceConfigModal() {
                         <label className="gfm-label">
                           Radius: <strong>{activeGf.radius || 200} meters</strong>
                         </label>
-                        <input
+                        <Input
                           type="range"
                           min="30"
                           max="5000"

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import './NewBatchPage.css'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import { useActiveProject } from '../../hooks/useActiveProject'
-import { PageHeader, TableSkeleton, useDelayedSkeleton } from '../../components/ui'
+import { PageHeader, TableSkeleton, useDelayedSkeleton, Input, Select } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
 import PredefinedCutsModal from './components/PredefinedCutsModal'
 import InwardVoucherDrawer from '../InventoryPage/components/InwardVoucherDrawer'
@@ -779,7 +779,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                       <tr key={row.id}>
                         <td className="col-num">{i + 1}</td>
                         <td>
-                          <select
+                          <Select
                             ref={i === parts.rows.length - 1 ? parts.firstFieldRef : null}
                             className="form-select"
                             value={row.diameter}
@@ -788,10 +788,10 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                             {[8, 10, 12, 16, 20, 25, 32].map(d => (
                               <option key={d} value={d}>{d} mm</option>
                             ))}
-                          </select>
+                          </Select>
                         </td>
                         <td>
-                          <input
+                          <Input
                             className="form-input"
                             type="number"
                             value={row.length}
@@ -800,7 +800,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                           />
                         </td>
                         <td>
-                          <input
+                          <Input
                             className="form-input"
                             type="number"
                             value={row.quantity}
@@ -809,7 +809,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                           />
                         </td>
                         <td>
-                          <input
+                          <Input
                             className="form-input"
                             type="text"
                             value={row.label}
@@ -912,7 +912,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                         <tr key={row.id}>
                           <td className="col-num">{i + 1}</td>
                           <td>
-                            <select
+                            <Select
                               ref={i === stock.rows.length - 1 ? stock.firstFieldRef : null}
                               className="form-select"
                               value={row.diameter}
@@ -921,10 +921,10 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                               {[8, 10, 12, 16, 20, 25, 32].map(d => (
                                 <option key={d} value={d}>{d} mm</option>
                               ))}
-                            </select>
+                            </Select>
                           </td>
                           <td>
-                            <input
+                            <Input
                               className="form-input"
                               type="number"
                               value={row.length}
@@ -933,7 +933,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                             />
                           </td>
                           <td>
-                            <input
+                            <Input
                               className="form-input"
                               type="number"
                               value={row.quantity}
@@ -1005,7 +1005,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
 
               <div className="batch-name-input-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label className="adv-lbl" style={{ fontSize: '12.5px', fontWeight: '600', color: 'var(--text-secondary)' }}>Batch Name / Job Reference</label>
-                <input
+                <Input
                   type="text"
                   className="form-input"
                   value={batchName}
@@ -1017,7 +1017,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
               <div className="cutting-params-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--card-border)' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Kerf / Blade Cut Loss (mm)</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={kerf}
@@ -1036,7 +1036,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>End Trim Margin (mm)</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={trimMargin}
@@ -1066,7 +1066,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                       <Settings size={12} />
                     </button>
                   </div>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={remnantThreshold}

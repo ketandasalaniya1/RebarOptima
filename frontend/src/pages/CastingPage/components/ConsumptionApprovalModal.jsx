@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, AlertCircle, AlertTriangle, ShieldCheck, RotateCcw, Ban, ArrowRight, Scale, Clock, User, FileText } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input } from '../../../components/ui';
 
 export default function ConsumptionApprovalModal({
   isOpen,
@@ -138,7 +139,7 @@ export default function ConsumptionApprovalModal({
               <ShieldCheck size={20} color="#38bdf8" />
               <h3 className="casting-modal-title" style={{ margin: 0 }}>Consumption Review & Inventory Posting</h3>
             </div>
-            <span style={{ fontSize: '0.825rem', color: '#94a3b8', display: 'block', marginTop: '0.25rem' }}>
+            <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>
               Event: <strong style={{ color: '#f8fafc' }}>{event.eventNumber}</strong> — {event.title}
             </span>
           </div>
@@ -163,12 +164,12 @@ export default function ConsumptionApprovalModal({
           )}
 
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
               <div className="casting-spinner" style={{ margin: '0 auto 1rem' }} />
               Loading submitted consumption records and project stock balances...
             </div>
           ) : !consumptionRecord ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
               <AlertTriangle size={32} style={{ margin: '0 auto 1rem', color: '#facc15' }} />
               No consumption record has been drafted or submitted for this casting event yet.
             </div>
@@ -178,19 +179,19 @@ export default function ConsumptionApprovalModal({
               <div style={{ background: 'var(--card-bg, rgba(30, 41, 59, 0.6))', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem', border: '1px solid var(--card-border, rgba(255, 255, 255, 0.08))' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary, #94a3b8)' }}>Status</span>
+                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary, var(--text-secondary))' }}>Status</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
                       <span className={`status-badge ${consumptionRecord.status === 'APPROVED_POSTED' ? 'success' : (consumptionRecord.status === 'SUBMITTED' ? 'warning' : 'neutral')}`}>
                         {consumptionRecord.status}
                       </span>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                         MRS Baseline: <strong>R{consumptionRecord.mrsRevisionNumber}</strong>
                       </span>
                     </div>
                   </div>
 
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>Submitted By</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))' }}>Submitted By</span>
                     <div style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-primary, #f8fafc)' }}>
                       {consumptionRecord.createdBy?.name || 'Site Engineer'} ({consumptionRecord.createdBy?.role || 'Engineer'})
                     </div>
@@ -199,13 +200,13 @@ export default function ConsumptionApprovalModal({
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--card-border, #334155)', fontSize: '0.825rem' }}>
                   <div>
-                    <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>Actual Pour Date:</span> <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{consumptionRecord.actualPourDate}</strong>
+                    <span style={{ color: 'var(--text-secondary, var(--text-secondary))' }}>Actual Pour Date:</span> <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{consumptionRecord.actualPourDate}</strong>
                   </div>
                   <div>
-                    <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>Total Actual Volume:</span> <strong style={{ color: 'var(--accent, #38bdf8)' }}>{(consumptionRecord.totalActualVolumeM3 || 0).toFixed(3)} m³</strong>
+                    <span style={{ color: 'var(--text-secondary, var(--text-secondary))' }}>Total Actual Volume:</span> <strong style={{ color: 'var(--accent, #38bdf8)' }}>{(consumptionRecord.totalActualVolumeM3 || 0).toFixed(3)} m³</strong>
                   </div>
                   <div>
-                    <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>Batching Plant:</span> <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{consumptionRecord.batchingPlantName || 'N/A'}</strong>
+                    <span style={{ color: 'var(--text-secondary, var(--text-secondary))' }}>Batching Plant:</span> <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{consumptionRecord.batchingPlantName || 'N/A'}</strong>
                   </div>
                 </div>
               </div>
@@ -235,17 +236,17 @@ export default function ConsumptionApprovalModal({
                           <tr key={mat.materialIdentifier || idx} style={{ borderBottom: '1px solid var(--card-border, #1e293b)' }}>
                             <td style={{ padding: '8px 12px' }}>
                               <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>{mat.name}</div>
-                              <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, #94a3b8)' }}>{mat.materialIdentifier}</div>
+                              <div style={{ fontSize: '0.725rem', color: 'var(--text-secondary, var(--text-secondary))' }}>{mat.materialIdentifier}</div>
                             </td>
                             <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: '#38bdf8' }}>
                               {mat.actualQuantity} {mat.unit}
                             </td>
-                            <td style={{ padding: '8px 12px', textAlign: 'right', color: '#94a3b8' }}>
+                            <td style={{ padding: '8px 12px', textAlign: 'right', color: 'var(--text-secondary)' }}>
                               {mat.isUntrackedBulk ? 'Bulk (Unlimited)' : `${currentStock.toFixed(2)} ${mat.unit}`}
                             </td>
                             <td style={{ padding: '8px 12px', textAlign: 'center' }}>
                               {mat.isUntrackedBulk ? (
-                                <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Untracked</span>
+                                <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>Untracked</span>
                               ) : isSufficient ? (
                                 <span style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', background: 'rgba(34, 197, 94, 0.15)', color: '#4ade80' }}>Sufficient</span>
                               ) : (
@@ -263,10 +264,10 @@ export default function ConsumptionApprovalModal({
               {/* Approval Remarks Input */}
               {consumptionRecord.status === 'SUBMITTED' && (
                 <div style={{ marginBottom: '1.25rem' }}>
-                  <label style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
                     Approval Remarks / Sign-off Comments
                   </label>
-                  <input
+                  <Input
                     type="text"
                     className="casting-input"
                     value={approvalRemarks}
@@ -286,7 +287,7 @@ export default function ConsumptionApprovalModal({
                   <p style={{ fontSize: '0.8rem', color: '#cbd5e1', margin: '0 0 8px' }}>
                     This will restore 100% of the originally deducted materials back into the project store via compensating reversal ledger transactions and reset member poured volumes.
                   </p>
-                  <input
+                  <Input
                     type="text"
                     className="casting-input"
                     placeholder="Mandatory reversal reason (min. 5 chars)..."
@@ -309,7 +310,7 @@ export default function ConsumptionApprovalModal({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fb923c', fontWeight: 600, marginBottom: '6px' }}>
                     <Ban size={16} /> Reject Consumption Record
                   </div>
-                  <input
+                  <Input
                     type="text"
                     className="casting-input"
                     placeholder="Enter reason for rejection (returned to draft)..."

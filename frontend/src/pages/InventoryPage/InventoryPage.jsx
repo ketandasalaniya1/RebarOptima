@@ -4,38 +4,9 @@ import { setView } from '../../store/slices/routingSlice'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import { useActiveProject } from '../../hooks/useActiveProject'
 import {
-  Package,
-  Settings,
-  PlusSquare,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2,
-  List,
-  Plus,
-  Trash2,
-  TrendingDown,
-  DollarSign,
-  Pencil,
-  X,
-  Save,
-  Scale,
-  Download,
-  Search,
-  Calendar,
-  FileText,
-  Layers,
-  Scissors,
-  Target,
-  Calculator,
-  Recycle,
-  Wand2,
-  RotateCcw,
-  Zap,
-  RefreshCw,
-  ExternalLink,
-  Check
+  Package, Settings, PlusSquare, Sparkles, AlertCircle, CheckCircle2, List, Plus, Trash2, TrendingDown, DollarSign, Pencil, X, Save, Scale, Download, Search, Calendar, FileText, Layers, Scissors, Target, Calculator, Recycle, Wand2, RotateCcw, Zap, RefreshCw, ExternalLink, Check
 } from 'lucide-react'
-import { PageHeader, TableSkeleton, useDelayedSkeleton, Badge } from '../../components/ui'
+import { PageHeader, TableSkeleton, useDelayedSkeleton, Badge, Input, Select } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
 import InwardVoucherDrawer from './components/InwardVoucherDrawer'
 import ScrapSaleDrawer from './components/ScrapSaleDrawer'
@@ -1305,7 +1276,7 @@ export default function InventoryPage() {
               <div className="section-header-stats">
                 <div className="search-box standard-search-box">
                   <Search size={14} className="search-icon" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Search brand, vendor, dia..."
                     value={standardSearch}
@@ -1411,7 +1382,7 @@ export default function InventoryPage() {
                           </td>
                           <td className="font-bold" style={{ textAlign: 'right' }}>
                             {editingStockId === item._id ? (
-                              <input
+                              <Input
                                 type="number"
                                 min="0"
                                 value={editStockQty}
@@ -1514,7 +1485,7 @@ export default function InventoryPage() {
                         <div>
                           <span className="stock-mobile-lbl">Qty: </span>
                           {editingStockId === item._id ? (
-                            <input
+                            <Input
                               type="number"
                               min="0"
                               value={editStockQty}
@@ -1664,7 +1635,7 @@ export default function InventoryPage() {
                 <div className="matcher-controls-row">
                   <div className="matcher-input-group">
                     <label>Target Diameter</label>
-                    <select
+                    <Select
                       value={matcherDia}
                       onChange={(e) => setMatcherDia(Number(e.target.value))}
                       className="matcher-select"
@@ -1673,7 +1644,7 @@ export default function InventoryPage() {
                       {[8, 10, 12, 16, 20, 25, 32].map(d => (
                         <option key={d} value={d}>Ø {d} mm</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="matcher-input-group flex-2">
@@ -1697,7 +1668,7 @@ export default function InventoryPage() {
                     </div>
                     <div className="input-with-presets">
                       <div className="input-with-suffix-wrap">
-                        <input
+                        <Input
                           type="number"
                           min="50"
                           step="10"
@@ -1761,7 +1732,7 @@ export default function InventoryPage() {
 
                   <div className="matcher-input-group">
                     <label>Target Qty Needed (Optional)</label>
-                    <input
+                    <Input
                       type="number"
                       min="1"
                       value={matcherTargetQty}
@@ -2118,7 +2089,7 @@ export default function InventoryPage() {
               <div className="remnant-toolbar-right">
                 <div className="search-box">
                   <Search size={14} className="search-icon" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Search length, brand..."
                     value={remnantSearch}
@@ -2132,7 +2103,7 @@ export default function InventoryPage() {
                   )}
                 </div>
 
-                <select
+                <Select
                   value={remnantSortBy}
                   onChange={(e) => setRemnantSortBy(e.target.value)}
                   className="remnant-sort-select"
@@ -2142,7 +2113,7 @@ export default function InventoryPage() {
                   <option value="length-desc">Length: Long to Short</option>
                   <option value="qty-desc">Quantity: High to Low</option>
                   <option value="weight-desc">Weight: High to Low</option>
-                </select>
+                </Select>
               </div>
             </div>
 
@@ -2182,7 +2153,7 @@ export default function InventoryPage() {
                           </td>
                           <td className="font-bold" style={{ textAlign: 'right' }}>
                             {editingRemnantId === item._id ? (
-                              <input
+                              <Input
                                 type="number"
                                 min="0"
                                 value={editRemnantQty}
@@ -2288,7 +2259,7 @@ export default function InventoryPage() {
                         <div>
                           <span className="stock-mobile-lbl">Offcuts: </span>
                           {editingRemnantId === item._id ? (
-                            <input
+                            <Input
                               type="number"
                               min="0"
                               value={editRemnantQty}
@@ -2452,7 +2423,7 @@ export default function InventoryPage() {
                   {voucherRows.map((row, idx) => (
                     <tr key={row.id}>
                       <td>
-                        <select
+                        <Select
                           value={row.diameter}
                           onChange={(e) => handleVoucherRowChange(row.id, 'diameter', Number(e.target.value))}
                           className="voucher-select"
@@ -2460,10 +2431,10 @@ export default function InventoryPage() {
                           {[8, 10, 12, 16, 20, 25, 32].map(d => (
                             <option key={d} value={d}>{d} mm</option>
                           ))}
-                        </select>
+                        </Select>
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="number"
                           step="0.01"
                           placeholder="e.g. 2.5"
@@ -2473,7 +2444,7 @@ export default function InventoryPage() {
                         />
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="number"
                           step="1"
                           placeholder="e.g. 52000"
@@ -2489,7 +2460,7 @@ export default function InventoryPage() {
                         <span className="total-preview font-bold">₹{row.totalPriceWithGst.toLocaleString('en-IN')}</span>
                       </td>
                       <td style={{ position: 'relative' }}>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Brand name"
                           value={row.brandName}
@@ -2535,7 +2506,7 @@ export default function InventoryPage() {
                         )}
                       </td>
                       <td style={{ position: 'relative' }}>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Vendor name"
                           value={row.vendorName}
@@ -2644,7 +2615,7 @@ export default function InventoryPage() {
               <form onSubmit={handleScrapSaleSubmit} className="scrap-sale-form">
                 <div className="form-group">
                   <label>Transaction Date</label>
-                  <input
+                  <Input
                     type="date"
                     required
                     value={scrapSaleForm.date}
@@ -2654,7 +2625,7 @@ export default function InventoryPage() {
                 </div>
                 <div className="form-group">
                   <label>Scrap Buyer / Factory</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Mittal Steel Scrap Buyers"
@@ -2665,7 +2636,7 @@ export default function InventoryPage() {
                 </div>
                 <div className="form-group">
                   <label>Weight Sold (Kgs)</label>
-                  <input
+                  <Input
                     type="number"
                     required
                     placeholder="e.g. 500"
@@ -2677,7 +2648,7 @@ export default function InventoryPage() {
                 {SHOW_FINANCIALS && (
                   <div className="form-group">
                     <label>Selling Price per Kg (₹)</label>
-                    <input
+                    <Input
                       type="number"
                       step="0.1"
                       required
@@ -2791,7 +2762,7 @@ export default function InventoryPage() {
                   <div className="edit-modal-body">
                     <div className="form-group">
                       <label>Transaction Date</label>
-                      <input
+                      <Input
                         type="date"
                         value={editForm.date}
                         onChange={(e) => handleEditFormChange('date', e.target.value)}
@@ -2800,7 +2771,7 @@ export default function InventoryPage() {
                     </div>
                     <div className="form-group">
                       <label>Scrap Buyer / Factory</label>
-                      <input
+                      <Input
                         type="text"
                         placeholder="e.g. Mittal Steel Scrap Buyers"
                         value={editForm.buyer}
@@ -2810,7 +2781,7 @@ export default function InventoryPage() {
                     </div>
                     <div className="form-group">
                       <label>Weight Sold (Kgs)</label>
-                      <input
+                      <Input
                         type="number"
                         placeholder="e.g. 500"
                         value={editForm.weight}
@@ -2820,7 +2791,7 @@ export default function InventoryPage() {
                     </div>
                     <div className="form-group">
                       <label>Selling Price per Kg (₹)</label>
-                      <input
+                      <Input
                         type="number"
                         step="0.1"
                         placeholder="e.g. 22.5"
@@ -2931,7 +2902,7 @@ export default function InventoryPage() {
           {/* Search Filter */}
           <div className="scrap-search-wrapper">
             <Search size={16} className="search-icon" />
-            <input
+            <Input
               type="text"
               placeholder="Search by Batch Name or Diameter (e.g. 12mm)..."
               value={scrapSearchQuery}

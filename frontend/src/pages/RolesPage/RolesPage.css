@@ -302,7 +302,7 @@
 }
 
 .rd-empty-members .empty-icon {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   opacity: 0.6;
 }
 
@@ -334,7 +334,7 @@
 }
 
 .roles-empty-selection .empty-icon {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   opacity: 0.5;
 }
 

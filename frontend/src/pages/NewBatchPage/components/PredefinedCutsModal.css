@@ -77,14 +77,14 @@
 
 .pc-modal-subtitle {
   font-size: 0.8rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 2px 0 0 0;
 }
 
 .pc-close-btn {
   background: none;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
@@ -116,7 +116,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -244,7 +244,7 @@
   background: var(--card-bg, #1e293b);
   border: 1px solid var(--navbar-border, #334155);
   border-radius: 6px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
@@ -514,7 +514,7 @@
 .pc-form-group label {
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .pc-input {
@@ -557,7 +557,7 @@
   gap: 8px;
   background: none;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.8rem;
   cursor: pointer;
   padding: 0;
@@ -590,7 +590,7 @@
 
 .pc-table th {
   background: var(--main-bg, #0f172a);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: 600;
   padding: 9px 10px;
   border-bottom: 1px solid var(--navbar-border, #334155);
@@ -623,7 +623,7 @@
 .pc-cell-check {
   background: none;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -680,7 +680,7 @@
   background: transparent;
   border: none;
   border-radius: 4px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -729,7 +729,7 @@
   padding: 40px 16px;
   gap: 10px;
   text-align: center;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .pc-empty-icon {
@@ -785,7 +785,7 @@
 .pc-upload-section-subtitle {
   margin: 3px 0 0 0;
   font-size: 0.78rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .pc-dropzone {
@@ -831,7 +831,7 @@
 .pc-drop-desc {
   margin: 4px 0 0 0;
   font-size: 0.78rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .pc-file-selected-box {
@@ -936,7 +936,7 @@
   padding: 8px;
   text-align: center;
   font-size: 0.75rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   background: var(--main-bg, #0f172a);
   border-top: 1px solid var(--navbar-border, #334155);
 }

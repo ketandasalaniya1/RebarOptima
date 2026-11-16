@@ -36,6 +36,7 @@ import {
   Clock
 } from 'lucide-react';
 import './ShapeDetailsModal.css';
+import { Input, Select } from '../../components/ui';
 
 export default function ShapeDetailsModal({
   shape,
@@ -513,7 +514,7 @@ export default function ShapeDetailsModal({
                               <span className="shape-param-name">{param.name}</span>
                               <span className="shape-param-display">{param.displayName || param.name} ({param.unit || 'mm'})</span>
                             </div>
-                            <input
+                            <Input
                               type="number"
                               className="shape-param-input"
                               value={curVal}
@@ -544,7 +545,7 @@ export default function ShapeDetailsModal({
                 <div className="tab-pane-content">
                   <div className="shape-form-group">
                     <label className="shape-info-label">Engineering Calculation Standard</label>
-                    <select
+                    <Select
                       className="cad-rule-select"
                       value={selectedRuleSetId}
                       onChange={(e) => setSelectedRuleSetId(e.target.value)}
@@ -552,7 +553,7 @@ export default function ShapeDetailsModal({
                       {engineeringRuleProvider.getAllRuleSets().map(rs => (
                         <option key={rs.id} value={rs.id}>{rs.name} ({rs.standardCode})</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {liveCalculation ? (

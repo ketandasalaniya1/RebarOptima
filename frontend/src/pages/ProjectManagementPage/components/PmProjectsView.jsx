@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Building2, MapPin, Calendar, Clock, DollarSign, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function PmProjectsView({ projects, selectedProjectId, onSelectProject, onRefreshProjects }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -141,7 +142,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
               <div className="pm-modal-body pm-form-grid">
                 <div className="pm-form-group pm-col-span-2">
                   <label>Project Title *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Prestige Falcon Tower — Substructure & Frame"
@@ -152,7 +153,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
 
                 <div className="pm-form-group">
                   <label>Project Code</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. PRJ-TOW-02"
                     value={formData.code}
@@ -162,7 +163,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
 
                 <div className="pm-form-group">
                   <label>Project Manager / Lead Engineer</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. Er. Rajesh Varma"
                     value={formData.projectManager}
@@ -172,7 +173,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Site Location & Address</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. Sector 128, Expressway Corridor"
                     value={formData.location}
@@ -182,7 +183,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
 
                 <div className="pm-form-group">
                   <label>Planned Start Date *</label>
-                  <input
+                  <Input
                     type="date"
                     required
                     value={formData.plannedStart}
@@ -192,7 +193,7 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
 
                 <div className="pm-form-group">
                   <label>Approved Budget (INR)</label>
-                  <input
+                  <Input
                     type="number"
                     value={formData.approvedBudget}
                     onChange={(e) => setFormData({ ...formData, approvedBudget: e.target.value })}
@@ -201,19 +202,19 @@ export default function PmProjectsView({ projects, selectedProjectId, onSelectPr
 
                 <div className="pm-form-group">
                   <label>Work Week Schedule</label>
-                  <select
+                  <Select
                     value={formData.workingDaysPerWeek}
                     onChange={(e) => setFormData({ ...formData, workingDaysPerWeek: e.target.value })}
                   >
                     <option value={6}>6 Days / Week (Mon - Sat) — Construction Standard</option>
                     <option value={5}>5 Days / Week (Mon - Fri)</option>
                     <option value={7}>7 Days / Week (Continuous Shift)</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Scope Description</label>
-                  <textarea
+                  <Textarea
                     rows={2}
                     placeholder="Detailed scope, structural concrete grade, milestones..."
                     value={formData.description}

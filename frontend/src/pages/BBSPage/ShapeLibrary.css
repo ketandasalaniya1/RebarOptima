@@ -78,7 +78,7 @@
 
 .shape-header-text p {
   font-size: 0.88rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0;
   line-height: 1.4;
 }
@@ -186,7 +186,7 @@
 
 .shape-stat-icon-wrapper.archived {
   background: rgba(100, 116, 139, 0.14);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(100, 116, 139, 0.25);
 }
 
@@ -214,7 +214,7 @@
 .text-emerald { color: var(--accent-text) !important; }
 .text-amber { color: #fbbf24 !important; }
 .text-cyan { color: #38bdf8 !important; }
-.text-slate { color: #94a3b8 !important; }
+.text-slate { color: var(--text-secondary) !important; }
 
 /* ── CONTROLS & FILTER CARD ── */
 .shape-controls-card {
@@ -244,7 +244,7 @@
 .shape-tab-pill {
   background: transparent;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   padding: 0.45rem 0.85rem;
   border-radius: 7px;
   font-size: 0.82rem;
@@ -355,7 +355,7 @@
   right: 0.6rem;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -434,7 +434,7 @@
 .shape-section-badge {
   font-size: 0.72rem;
   background: rgba(51, 65, 85, 0.5);
-  color: #94a3b8;
+  color: var(--text-secondary);
   padding: 0.15rem 0.6rem;
   border-radius: 12px;
   font-weight: 600;
@@ -443,7 +443,7 @@
 
 .shape-section-sub {
   font-size: 0.82rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0;
 }
 
@@ -629,7 +629,7 @@
 
 .shape-badge-status.archived {
   background: rgba(148, 163, 184, 0.1);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
@@ -691,7 +691,7 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.74rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   background: rgba(51, 65, 85, 0.3);
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
@@ -702,7 +702,7 @@
 
 .shape-card-meta {
   font-size: 0.76rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -813,7 +813,7 @@
 .shape-action-icon-btn {
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(51, 65, 85, 0.6);
-  color: #94a3b8;
+  color: var(--text-secondary);
   padding: 0.42rem;
   border-radius: 6px;
   cursor: pointer;
@@ -877,7 +877,7 @@
 
 .shape-empty-state p {
   font-size: 0.88rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   max-width: 480px;
   margin: 0 0 0.8rem 0;
   line-height: 1.5;

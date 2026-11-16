@@ -4,6 +4,7 @@ import {
   ChevronDown, ChevronUp, CheckCircle2, Clock, X
 } from 'lucide-react';
 import { formatINR, formatShortINR } from '../../../utils/money';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function MoneyList({
   bookings = [],
@@ -252,7 +253,7 @@ export default function MoneyList({
                 Cancelling this booking will automatically release <strong>Unit {cancelModalBooking.unitCode}</strong> back to Available inventory.
               </p>
               <label className="crm-form-label">Mandatory Cancellation Reason *</label>
-              <textarea
+              <Textarea
                 rows={2}
                 required
                 className="crm-form-input"
@@ -291,7 +292,7 @@ export default function MoneyList({
                 Reversing will create a linked negative ledger entry for <strong>{formatINR(reverseModalPayment.amount)}</strong> and restore milestone balances.
               </p>
               <label className="crm-form-label">Mandatory Reversal Reason *</label>
-              <input
+              <Input
                 type="text"
                 required
                 className="crm-form-input"

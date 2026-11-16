@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AlertTriangle, Clock, ArrowRight, ShieldCheck, CheckCircle2, X } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function PmDelayModal({ isOpen, onClose, projectId, tasks, onDelayApplied }) {
   const [selectedTaskId, setSelectedTaskId] = useState('');
@@ -86,7 +87,7 @@ export default function PmDelayModal({ isOpen, onClose, projectId, tasks, onDela
           <div className="pm-form-grid">
             <div className="pm-form-group">
               <label>Affected Task *</label>
-              <select
+              <Select
                 value={selectedTaskId}
                 onChange={(e) => {
                   setSelectedTaskId(e.target.value);
@@ -99,12 +100,12 @@ export default function PmDelayModal({ isOpen, onClose, projectId, tasks, onDela
                     {t.wbsCode} - {t.name} {t.isCritical ? '🔴 (Critical)' : `(Float: ${t.totalFloatDays ?? 0}d)`}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="pm-form-group">
               <label>Delay Duration (Working Days) *</label>
-              <input
+              <Input
                 type="number"
                 min="1"
                 max="180"
@@ -118,7 +119,7 @@ export default function PmDelayModal({ isOpen, onClose, projectId, tasks, onDela
 
             <div className="pm-form-group">
               <label>Delay Category *</label>
-              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <Select value={category} onChange={(e) => setCategory(e.target.value)}>
                 <option value="MATERIAL_SHORTAGE">Material Shortage / Delivery Slip</option>
                 <option value="LABOUR_SHORTAGE">Labour Shortage / Subcontractor Absenteeism</option>
                 <option value="EQUIPMENT_FAILURE">Equipment / Crane Breakdown</option>
@@ -128,12 +129,12 @@ export default function PmDelayModal({ isOpen, onClose, projectId, tasks, onDela
                 <option value="SITE_ACCESS">Site Access / Civil Blocker</option>
                 <option value="CLIENT_APPROVAL">Consultant / Authority Approval</option>
                 <option value="OTHER">Other Reason</option>
-              </select>
+              </Select>
             </div>
 
             <div className="pm-form-group">
               <label>Delay Explanation & Root Cause *</label>
-              <textarea
+              <Textarea
                 placeholder="State the root cause and why the activity cannot proceed on original schedule..."
                 rows={2}
                 value={reason}
@@ -143,7 +144,7 @@ export default function PmDelayModal({ isOpen, onClose, projectId, tasks, onDela
 
             <div className="pm-form-group pm-col-span-2">
               <label>Mitigation & Recovery Action Plan</label>
-              <input
+              <Input
                 type="text"
                 placeholder="e.g. Deploy 2nd shift of steel fixers, overlap MEP rough-in by 2 days..."
                 value={recoveryAction}

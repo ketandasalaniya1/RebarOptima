@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react';
 import { EMOJI_CATEGORIES, EMOJI_DATABASE } from './emojiData';
+import { Input } from '../../../components/ui';
 
 const CATEGORY_ICONS = {
   recent: Clock,
@@ -160,7 +161,7 @@ export default function ReactionPickerModal({
       <div className="chat-rp-search-bar">
         <div className="chat-rp-search-input-box">
           <Search size={16} className="search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search reaction"
             value={search}

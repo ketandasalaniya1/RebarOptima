@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { Camera, Image as ImageIcon, X } from 'lucide-react';
 import { compressImage } from '../../../utils/money';
+import { Input } from '../../../components/ui';
 
 export default function PhotoPicker({ photos = [], onChange, disabled = false }) {
   const cameraInputRef = useRef(null);
@@ -39,7 +40,7 @@ export default function PhotoPicker({ photos = [], onChange, disabled = false })
   return (
     <div className="pc-photo-picker">
       {/* Hidden File Inputs */}
-      <input
+      <Input
         type="file"
         accept="image/*"
         capture="environment"
@@ -51,7 +52,7 @@ export default function PhotoPicker({ photos = [], onChange, disabled = false })
           e.target.value = '';
         }}
       />
-      <input
+      <Input
         type="file"
         accept="image/*"
         multiple

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 import { generalInventoryApi } from '../../../utils/api';
+import { Input, Select } from '../../../components/ui';
 
 export default function LedgerHub({
   projectId = '',
@@ -494,7 +495,7 @@ export default function LedgerHub({
             {/* Search Input */}
             <div className="gi-ledger-search-box">
               <Search size={16} />
-              <input
+              <Input
                 type="text"
                 placeholder="Search by material, slip #, vendor, worker..."
                 value={searchQuery}
@@ -538,7 +539,7 @@ export default function LedgerHub({
             <div className="gi-date-range-inputs">
               <div className="gi-date-input-group">
                 <span className="gi-date-sublabel">From:</span>
-                <input
+                <Input
                   type="date"
                   className="gi-date-picker"
                   value={startDate}
@@ -550,7 +551,7 @@ export default function LedgerHub({
               </div>
               <div className="gi-date-input-group">
                 <span className="gi-date-sublabel">To:</span>
-                <input
+                <Input
                   type="date"
                   className="gi-date-picker"
                   value={endDate}
@@ -731,7 +732,7 @@ export default function LedgerHub({
         <div className="gi-ledger-reports-view">
           <div className="gi-toolbar" style={{ flexWrap: 'wrap', gap: '0.75rem' }}>
             <div className="gi-toolbar-left" style={{ gap: '0.5rem' }}>
-              <select
+              <Select
                 className="gi-filter-select"
                 value={reportType}
                 onChange={(e) => setReportType(e.target.value)}
@@ -742,7 +743,7 @@ export default function LedgerHub({
                 <option value="inward-register">Inward Goods Receipt Register</option>
                 <option value="outward-register">Outward Material Issue Register</option>
                 <option value="vendor-wise-inward">Vendor-Wise Inward Deliveries</option>
-              </select>
+              </Select>
 
               <button
                 type="button"

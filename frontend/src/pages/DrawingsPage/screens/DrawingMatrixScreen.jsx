@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './DrawingMatrixScreen.css';
 import { useGetDrawingMatrixQuery, useGetBlocksQuery } from '../../../store/api/drawingsApi';
 import { Check, X, Minus } from 'lucide-react';
+import { Select } from '../../../components/ui';
 
 const STANDARD_DISCIPLINES = [
   { code: 'all', name: 'All Disciplines' },
@@ -102,7 +103,7 @@ export default function DrawingMatrixScreen({
       <div className="ro-matrix-filters-row">
         <div className="ro-matrix-filter-item">
           <label htmlFor="matrix-block-select">Block:</label>
-          <select
+          <Select
             id="matrix-block-select"
             className="ro-filter-select"
             value={selectedBlock}
@@ -114,12 +115,12 @@ export default function DrawingMatrixScreen({
                 {b.name || b.blockName}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="ro-matrix-filter-item">
           <label htmlFor="matrix-disc-select">Discipline:</label>
-          <select
+          <Select
             id="matrix-disc-select"
             className="ro-filter-select"
             value={selectedDiscipline}
@@ -130,7 +131,7 @@ export default function DrawingMatrixScreen({
                 {d.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

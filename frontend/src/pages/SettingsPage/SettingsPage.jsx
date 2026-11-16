@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setThemeMode, setThemeColor, setDefaults } from '../../store/slices/settingsSlice';
 import { Save, Palette, Sliders, Moon, Sun, Database, Scale, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { companyApi, inventoryApi } from '../../utils/api';
-import { PageHeader } from '../../components/ui';
+import { PageHeader, Input } from '../../components/ui';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                           </td>
                           <td>
                             <div className="rule-input-group">
-                              <input
+                              <Input
                                 type="number"
                                 value={rule.scrapLengthThreshold !== undefined && rule.scrapLengthThreshold !== null ? rule.scrapLengthThreshold : ''}
                                 onChange={(e) => handleRuleChange(idx, e.target.value)}
@@ -249,7 +249,7 @@ export default function SettingsPage() {
             <div className="form-group">
               <label className="setting-label">Default Kerf (mm)</label>
               <div className="input-with-unit">
-                <input 
+                <Input 
                   type="number" 
                   step="0.1"
                   min="0"
@@ -266,7 +266,7 @@ export default function SettingsPage() {
             <div className="form-group">
               <label className="setting-label">Default Trim Margin (mm)</label>
               <div className="input-with-unit">
-                <input 
+                <Input 
                   type="number" 
                   step="1"
                   min="0"

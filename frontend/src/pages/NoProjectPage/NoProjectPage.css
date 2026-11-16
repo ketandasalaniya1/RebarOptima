@@ -45,7 +45,7 @@
   margin: 0 0 1.5rem;
   font-size: 0.95rem;
   line-height: 1.55;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .no-project-primary {
@@ -74,7 +74,7 @@
   padding: 0.5rem 0.85rem;
   border: none;
   background: transparent;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   font-size: 0.875rem;
 }

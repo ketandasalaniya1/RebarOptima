@@ -15,6 +15,7 @@ import {
   UploadCloud,
   FileCheck
 } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function DrawingRegisterView({
   drawings,
@@ -195,7 +196,7 @@ export default function DrawingRegisterView({
       >
         <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
           <Search size={15} style={{ position: 'absolute', left: '0.65rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
-          <input
+          <Input
             type="text"
             className="dw-form-input"
             style={{ width: '100%', paddingLeft: '2rem' }}
@@ -207,7 +208,7 @@ export default function DrawingRegisterView({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           <span style={{ fontSize: '0.76rem', color: 'var(--text-label)' }}>Project:</span>
-          <select
+          <Select
             className="dw-form-select"
             value={selectedProjectId}
             onChange={(e) => onProjectFilterChange(e.target.value)}
@@ -216,12 +217,12 @@ export default function DrawingRegisterView({
             {(projects || []).map(p => (
               <option key={p._id} value={p._id}>{p.projectName} ({p.projectCode})</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           <span style={{ fontSize: '0.76rem', color: 'var(--text-label)' }}>Discipline:</span>
-          <select
+          <Select
             className="dw-form-select"
             value={selectedDisciplineId}
             onChange={(e) => onDisciplineFilterChange(e.target.value)}
@@ -230,12 +231,12 @@ export default function DrawingRegisterView({
             {(disciplines || []).map(d => (
               <option key={d._id} value={d._id}>{d.name} ({d.code})</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           <span style={{ fontSize: '0.76rem', color: 'var(--text-label)' }}>Status:</span>
-          <select
+          <Select
             className="dw-form-select"
             value={selectedStatus}
             onChange={(e) => onStatusFilterChange(e.target.value)}
@@ -246,7 +247,7 @@ export default function DrawingRegisterView({
             <option value="Pending Approval">Pending Approval</option>
             <option value="Changes Requested">Changes Requested</option>
             <option value="Draft">Draft</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -256,7 +257,7 @@ export default function DrawingRegisterView({
           <thead>
             <tr>
               <th style={{ width: '40px', textAlign: 'center' }}>
-                <input
+                <Input
                   type="checkbox"
                   onChange={handleSelectAll}
                   checked={(drawings || []).length > 0 && selectedIds.length === (drawings || []).length}
@@ -295,7 +296,7 @@ export default function DrawingRegisterView({
                 return (
                   <tr key={dw._id} onClick={() => onSelectDrawing(dw)}>
                     <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
-                      <input
+                      <Input
                         type="checkbox"
                         checked={selectedIds.includes(dw._id)}
                         onChange={(e) => handleToggleSelect(dw._id, e)}
@@ -385,7 +386,7 @@ export default function DrawingRegisterView({
                     <span style={{ fontSize: '0.7rem', color: '#38bdf8' }}>PDF, DWG, DXF, PNG, SVG</span>
                   </label>
 
-                  <input
+                  <Input
                     type="file"
                     ref={fileInputRef}
                     style={{ display: 'none' }}
@@ -423,7 +424,7 @@ export default function DrawingRegisterView({
                           <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#f8fafc', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {selectedFile.name}
                           </div>
-                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                             {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • Checksum SHA-256 Calculated
                           </div>
                         </div>
@@ -449,7 +450,7 @@ export default function DrawingRegisterView({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Project *</label>
-                    <select
+                    <Select
                       className="dw-form-select"
                       required
                       value={formData.projectId}
@@ -458,11 +459,11 @@ export default function DrawingRegisterView({
                       {(projects || []).map(p => (
                         <option key={p._id} value={p._id}>{p.projectName} ({p.projectCode})</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Discipline *</label>
-                    <select
+                    <Select
                       className="dw-form-select"
                       required
                       value={formData.disciplineId}
@@ -471,13 +472,13 @@ export default function DrawingRegisterView({
                       {(disciplines || []).map(d => (
                         <option key={d._id} value={d._id}>{d.name} ({d.code})</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Drawing Number (Leave blank for auto-generation)</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. AR-F-002 or leave blank"
@@ -488,7 +489,7 @@ export default function DrawingRegisterView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Drawing Title *</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. First Floor Slab Reinforcement Plan"
@@ -500,7 +501,7 @@ export default function DrawingRegisterView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Drawing Type</label>
-                  <select
+                  <Select
                     className="dw-form-select"
                     value={formData.drawingType}
                     onChange={(e) => setFormData({ ...formData, drawingType: e.target.value })}
@@ -511,12 +512,12 @@ export default function DrawingRegisterView({
                     <option value="Detail">Detail</option>
                     <option value="Schematic">Schematic</option>
                     <option value="Statutory Submission">Statutory Submission</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Initial Revision Notes (R00)</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. Initial design draft for review"

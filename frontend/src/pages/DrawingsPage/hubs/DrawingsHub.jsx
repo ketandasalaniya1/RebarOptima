@@ -11,6 +11,7 @@ import {
   ArrowRight,
   FilterX,
 } from 'lucide-react';
+import { Select } from '../../../components/ui';
 
 export default function DrawingsHub({
   drawings = [],
@@ -434,7 +435,7 @@ export default function DrawingsHub({
               </div>
 
               {/* Sort Dropdown */}
-              <select
+              <Select
                 className="drawings-sort-select"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -443,7 +444,7 @@ export default function DrawingsHub({
                 <option value="updated">Sort: Recently updated</option>
                 <option value="number">Sort: Drawing number</option>
                 <option value="title">Sort: Title</option>
-              </select>
+              </Select>
             </div>
           </div>
 

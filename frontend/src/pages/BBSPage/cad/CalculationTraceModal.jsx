@@ -1,3 +1,4 @@
+import { Select } from '../../../components/ui';
 /**
  * RebarOptima Phase 2F — Interactive Calculation Trace & Engineering Breakdown Modal
  * 
@@ -106,8 +107,8 @@ export default function CalculationTraceModal({
         {/* Rule Selector Bar */}
         <div className="cad-calc-rule-bar">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8' }}>Engineering Rule Set:</span>
-            <select
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Engineering Rule Set:</span>
+            <Select
               className="cad-calc-rule-select"
               value={currentRuleSetId || ruleSet.id}
               onChange={e => onRuleSetChange(e.target.value)}
@@ -117,7 +118,7 @@ export default function CalculationTraceModal({
                   {r.name} (v{r.version}) — {r.jurisdiction}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <span style={{ fontSize: '11px', color: '#64748b' }}>
             Switching rules recalculates without changing geometry
@@ -244,7 +245,7 @@ export default function CalculationTraceModal({
                             <td style={{ color: b.adjustmentMm < 0 ? '#f87171' : '#cbd5e1' }}>
                               {b.adjustmentMm >= 0 ? '+' : ''}{b.adjustmentMm} mm
                             </td>
-                            <td style={{ fontSize: '11px', color: '#94a3b8' }}>{b.explanation}</td>
+                            <td style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{b.explanation}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -275,7 +276,7 @@ export default function CalculationTraceModal({
                             <td>{formatAngle(h.angleDeg)}</td>
                             <td style={{ color: '#38bdf8', fontWeight: 700 }}>{formatLength(h.extensionMm)}</td>
                             <td>{h.adjustmentMm} mm</td>
-                            <td style={{ fontSize: '11px', color: '#94a3b8' }}>{h.explanation}</td>
+                            <td style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{h.explanation}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -321,7 +322,7 @@ export default function CalculationTraceModal({
             <div className="cad-calc-rules-container">
               <div className="cad-rule-spec-card">
                 <h3 style={{ color: '#38bdf8', margin: '0 0 6px 0' }}>{ruleSet.name}</h3>
-                <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '12px' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                   Standard: <strong>{ruleSet.standard}</strong> • Version: <strong>{ruleSet.version}</strong> • Jurisdiction: <strong>{ruleSet.jurisdiction}</strong>
                 </div>
                 <p style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.5' }}>
@@ -330,7 +331,7 @@ export default function CalculationTraceModal({
 
                 <div style={{ marginTop: '16px', background: '#0f172a', padding: '12px', borderRadius: '6px', border: '1px solid #334155' }}>
                   <h4 style={{ margin: '0 0 8px 0', color: '#fbbf24', fontSize: '12px' }}>Calculation Invariants</h4>
-                  <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px', color: '#94a3b8', lineHeight: '1.6' }}>
+                  <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
                     <li>Geometric Engine provides pure 2D/3D world coordinates (mm).</li>
                     <li>Calculation Engine computes centerline developed length without mutating geometry.</li>
                     <li>Engineering Rule Set applies statutory or shop deductions at the cutting-length stage.</li>

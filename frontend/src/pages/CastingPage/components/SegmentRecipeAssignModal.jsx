@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, AlertTriangle, Save, Sparkles } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function SegmentRecipeAssignModal({
   isOpen,
@@ -127,7 +128,7 @@ export default function SegmentRecipeAssignModal({
                       <td><strong>{b.segmentName}</strong></td>
                       <td>{b.plannedVolumeM3} m³</td>
                       <td>
-                        <select
+                        <Select
                           className="casting-select"
                           style={{ fontSize: '0.8rem', minWidth: '180px' }}
                           value={b.recipeId}
@@ -140,20 +141,20 @@ export default function SegmentRecipeAssignModal({
                               [{r.grade}] {r.recipeCode} - {r.displayName} (v{r.activeApprovedVersion})
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </td>
                       <td>
                         {selectedRec ? (
                           <span className="casting-badge casting-badge-info">{selectedRec.grade}</span>
                         ) : (
-                          <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>—</span>
+                          <span style={{ color: 'var(--text-secondary, var(--text-secondary))' }}>—</span>
                         )}
                       </td>
                       <td>
                         {b.versionNumber ? `v${b.versionNumber}` : '—'}
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="number"
                           step="0.5"
                           className="casting-input"

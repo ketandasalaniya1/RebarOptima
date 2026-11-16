@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import SearchInput from './SearchInput';
 import './ui.css';
 
 export default function DataToolbar({
@@ -14,13 +14,11 @@ export default function DataToolbar({
     <div className={`ro-toolbar${className ? ` ${className}` : ''}`}>
       {onSearchChange ? (
         <div className="ro-toolbar__search">
-          <Search size={16} className="ro-toolbar__search-icon" aria-hidden />
-          <input
-            type="search"
+          <SearchInput
             value={searchValue}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={onSearchChange}
+            onClear={() => onSearchChange('')}
             placeholder={searchPlaceholder}
-            aria-label={searchPlaceholder}
           />
         </div>
       ) : null}

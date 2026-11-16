@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Loader2
 } from 'lucide-react';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 const REASON_OPTIONS = [
   { value: 'CLIENT_REQUEST', label: 'Client Request' },
@@ -305,7 +306,7 @@ export default function UploadVersionModal({
             <div className="ro-drop-zone-subtitle">
               PDF, DWG, JPG, PNG (Max 500 MB)
             </div>
-            <input
+            <Input
               ref={fileInputRef}
               type="file"
               accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg"
@@ -359,7 +360,7 @@ export default function UploadVersionModal({
               <strong>{duplicateWarning.version || duplicateWarning.revisionNumber}</strong> uploaded by{' '}
               {duplicateWarning.uploadedByName} on {new Date(duplicateWarning.uploadedAt).toLocaleDateString('en-GB')}.
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', cursor: 'pointer', fontWeight: 600 }}>
-                <input
+                <Input
                   type="checkbox"
                   checked={proceedDuplicate}
                   onChange={(e) => setProceedDuplicate(e.target.checked)}
@@ -376,7 +377,7 @@ export default function UploadVersionModal({
             <label className="ro-field-label" htmlFor="change-note-input">Change Note *</label>
             <span className="ro-char-counter">{changeNote.length}/500</span>
           </div>
-          <textarea
+          <Textarea
             id="change-note-input"
             className="ro-textarea-input"
             required
@@ -392,7 +393,7 @@ export default function UploadVersionModal({
         <div className="ro-dropdown-grid">
           <div className="ro-upload-field">
             <label className="ro-field-label" htmlFor="upload-reason">Reason *</label>
-            <select
+            <Select
               id="upload-reason"
               className="ro-form-select"
               value={reason}
@@ -401,12 +402,12 @@ export default function UploadVersionModal({
               {REASON_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="ro-upload-field">
             <label className="ro-field-label" htmlFor="upload-purpose">Purpose *</label>
-            <select
+            <Select
               id="upload-purpose"
               className="ro-form-select"
               value={purpose}
@@ -415,7 +416,7 @@ export default function UploadVersionModal({
               {PURPOSE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -424,7 +425,7 @@ export default function UploadVersionModal({
           className="ro-approval-checkbox-card"
           onClick={() => setSubmitForApproval((prev) => !prev)}
         >
-          <input
+          <Input
             type="checkbox"
             className="ro-checkbox-input"
             checked={submitForApproval}

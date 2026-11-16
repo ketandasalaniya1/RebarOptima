@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Settings as SettingsIcon, Tag, Users, Plus, Trash2, X } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function SettingsModal({
   isOpen,
@@ -102,7 +103,7 @@ export default function SettingsModal({
                 <div className="pc-form-row pc-form-grid-2">
                   <div className="pc-form-group">
                     <label>Category Name <span className="pc-req">*</span></label>
-                    <input
+                    <Input
                       type="text"
                       required
                       placeholder="e.g. Safety & Equipment"
@@ -113,7 +114,7 @@ export default function SettingsModal({
                   </div>
                   <div className="pc-form-group">
                     <label>Subcategories (Comma separated)</label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. Helmets, Safety Shoes, Vests"
                       className="pc-input"
@@ -170,7 +171,7 @@ export default function SettingsModal({
                 <div className="pc-form-row pc-form-grid-3">
                   <div className="pc-form-group">
                     <label>Full Name <span className="pc-req">*</span></label>
-                    <input
+                    <Input
                       type="text"
                       required
                       placeholder="e.g. Ramesh Patel"
@@ -181,7 +182,7 @@ export default function SettingsModal({
                   </div>
                   <div className="pc-form-group">
                     <label>Role / Title</label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. Managing Director"
                       className="pc-input"
@@ -191,7 +192,7 @@ export default function SettingsModal({
                   </div>
                   <div className="pc-form-group">
                     <label>Phone Number</label>
-                    <input
+                    <Input
                       type="tel"
                       placeholder="e.g. 9876543210"
                       className="pc-input"

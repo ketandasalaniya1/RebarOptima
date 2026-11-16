@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Save, AlertCircle, Building2, User, Globe } from 'lucide-react';
 import Drawer from '../../../components/Shared/Drawer';
 import './RoleDrawer.css';
+import { Input, Textarea } from '../../../components/ui';
 
 /**
  * Slide-over Drawer for Creating or Editing Custom Roles
@@ -94,7 +95,7 @@ export default function RoleDrawer({
 
         <div className="rd-field">
           <label className="rd-label">Role Name *</label>
-          <input
+          <Input
             type="text"
             required
             className="rd-input"
@@ -106,7 +107,7 @@ export default function RoleDrawer({
 
         <div className="rd-field">
           <label className="rd-label">Description</label>
-          <textarea
+          <Textarea
             className="rd-textarea"
             rows={3}
             placeholder="Describe what responsibilities this role handles on site or in office..."
@@ -119,7 +120,7 @@ export default function RoleDrawer({
           <label className="rd-label">Data Visibility Scope *</label>
           <div className="rd-scope-options">
             <label className={`rd-scope-card ${scope === 'organization' ? 'selected' : ''}`}>
-              <input
+              <Input
                 type="radio"
                 name="dataScope"
                 value="organization"
@@ -139,7 +140,7 @@ export default function RoleDrawer({
             </label>
 
             <label className={`rd-scope-card ${scope === 'project' ? 'selected' : ''}`}>
-              <input
+              <Input
                 type="radio"
                 name="dataScope"
                 value="project"
@@ -159,7 +160,7 @@ export default function RoleDrawer({
             </label>
 
             <label className={`rd-scope-card ${scope === 'own' ? 'selected' : ''}`}>
-              <input
+              <Input
                 type="radio"
                 name="dataScope"
                 value="own"

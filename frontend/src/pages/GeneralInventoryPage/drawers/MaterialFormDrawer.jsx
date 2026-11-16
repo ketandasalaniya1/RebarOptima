@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tag, Plus, Edit2, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 const DEFAULT_CATEGORIES = [
   'Electrical',
@@ -214,7 +215,7 @@ export default function MaterialFormDrawer({
           <label className="gi-form-label">
             Material Name <span className="gi-required">*</span>
           </label>
-          <input
+          <Input
             type="text"
             className={`gi-input-field ${formErrors.name ? 'has-error' : ''}`}
             placeholder="e.g. PVC Conduit Pipe 25mm, Bosch GSB 500W Drill..."
@@ -230,7 +231,7 @@ export default function MaterialFormDrawer({
             <label className="gi-form-label">
               Category <span className="gi-required">*</span>
             </label>
-            <select
+            <Select
               className={`gi-input-field ${formErrors.category ? 'has-error' : ''}`}
               value={category}
               onChange={handleCategoryChange}
@@ -241,9 +242,9 @@ export default function MaterialFormDrawer({
                 </option>
               ))}
               <option value="Other">+ Other (Custom Category)</option>
-            </select>
+            </Select>
             {isCustomCategory && (
-              <input
+              <Input
                 type="text"
                 className="gi-input-field"
                 style={{ marginTop: '0.4rem' }}
@@ -259,7 +260,7 @@ export default function MaterialFormDrawer({
             <label className="gi-form-label">
               Unit of Measurement (UOM) <span className="gi-required">*</span>
             </label>
-            <select
+            <Select
               className={`gi-input-field ${formErrors.uom ? 'has-error' : ''}`}
               value={uom}
               onChange={handleUomChange}
@@ -270,9 +271,9 @@ export default function MaterialFormDrawer({
                 </option>
               ))}
               <option value="Other">+ Other (Custom UOM)</option>
-            </select>
+            </Select>
             {isCustomUom && (
-              <input
+              <Input
                 type="text"
                 className="gi-input-field"
                 style={{ marginTop: '0.4rem' }}
@@ -291,7 +292,7 @@ export default function MaterialFormDrawer({
             <label className="gi-form-label">
               Low Stock Alert Threshold
             </label>
-            <input
+            <Input
               type="number"
               step="any"
               min="0"
@@ -305,7 +306,7 @@ export default function MaterialFormDrawer({
 
           <div className="gi-form-group">
             <label className="gi-form-label">Item / Material Code</label>
-            <input
+            <Input
               type="text"
               className="gi-input-field"
               placeholder="e.g. ELEC-042"
@@ -331,7 +332,7 @@ export default function MaterialFormDrawer({
               <div className="gi-form-row two-col">
                 <div className="gi-form-group">
                   <label className="gi-form-label">Brand / Manufacturer</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. Bosch, Finolex, UltraTech"
@@ -342,7 +343,7 @@ export default function MaterialFormDrawer({
 
                 <div className="gi-form-group">
                   <label className="gi-form-label">Size / Specification</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. 25mm Heavy Duty 3-core"
@@ -355,7 +356,7 @@ export default function MaterialFormDrawer({
               <div className="gi-form-row two-col">
                 <div className="gi-form-group">
                   <label className="gi-form-label">Subcategory</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. Power Tools, Cables"
@@ -366,7 +367,7 @@ export default function MaterialFormDrawer({
 
                 <div className="gi-form-group">
                   <label className="gi-form-label">Preferred Vendor</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. National Hardware"
@@ -378,7 +379,7 @@ export default function MaterialFormDrawer({
 
               <div className="gi-form-group">
                 <label className="gi-form-label">Description / Remarks</label>
-                <textarea
+                <Textarea
                   className="gi-textarea-field"
                   rows={2}
                   placeholder="Storage guidelines, safety precautions, maintenance notes..."

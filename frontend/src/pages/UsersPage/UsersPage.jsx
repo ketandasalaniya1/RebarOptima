@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  Users, Plus, Search, Filter, Shield, AlertCircle, CheckCircle2,
-  Building2, UserCheck, UserX, RefreshCw, X
+  Users, Plus, Search, Filter, Shield, AlertCircle, CheckCircle2, Building2, UserCheck, UserX, RefreshCw, X
 } from 'lucide-react';
 import { usersApi, rolesApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
@@ -10,7 +9,7 @@ import GovernanceHeader from '../../components/Shared/GovernanceHeader';
 import UserCard from './components/UserCard';
 import UserDrawer from './components/UserDrawer';
 import ConfirmStatusDrawer from './components/ConfirmStatusDrawer';
-import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
+import { TableSkeleton, useDelayedSkeleton, Input, Select } from '../../components/ui';
 import './UsersPage.css';
 
 /**
@@ -295,7 +294,7 @@ export default function UsersPage() {
       <div className="users-toolbar-card">
         <div className="users-search-box">
           <Search size={16} className="users-search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search by name, email, or role..."
             value={search}
@@ -318,7 +317,7 @@ export default function UsersPage() {
           {/* Active project filter checkbox */}
           {activeProjectId && (
             <label className="users-checkbox-filter">
-              <input
+              <Input
                 type="checkbox"
                 checked={filterByActiveProject}
                 onChange={(e) => setFilterByActiveProject(e.target.checked)}
@@ -329,7 +328,7 @@ export default function UsersPage() {
 
           {/* Status selector */}
           <div className="users-status-select-wrap">
-            <select
+            <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="users-status-select"
@@ -337,7 +336,7 @@ export default function UsersPage() {
               <option value="all">All Statuses ({totalCount})</option>
               <option value="active">Active ({activeCount})</option>
               <option value="inactive">Deactivated ({inactiveCount})</option>
-            </select>
+            </Select>
           </div>
 
           {/* Refresh button */}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, ShieldCheck, Send, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 import { developerApi } from '../../../utils/api';
+import { Input } from '../../../components/ui';
 
 export default function SmtpPanel() {
   const [config, setConfig] = useState({
@@ -72,7 +73,7 @@ export default function SmtpPanel() {
 
   if (loading) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+      <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
         <RefreshCw className="spin" size={24} style={{ marginBottom: '8px' }} />
         <p>Loading SMTP configuration...</p>
       </div>
@@ -114,7 +115,7 @@ export default function SmtpPanel() {
 
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-            <input
+            <Input
               type="checkbox"
               checked={config.enabled}
               onChange={(e) => setConfig({ ...config, enabled: e.target.checked })}
@@ -130,7 +131,7 @@ export default function SmtpPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 SMTP Host
               </label>
-              <input
+              <Input
                 type="text"
                 value={config.host || ''}
                 onChange={(e) => setConfig({ ...config, host: e.target.value })}
@@ -151,7 +152,7 @@ export default function SmtpPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Port
               </label>
-              <input
+              <Input
                 type="number"
                 value={config.port ?? 587}
                 onFocus={(e) => e.target.select()}
@@ -174,7 +175,7 @@ export default function SmtpPanel() {
           </div>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-            <input
+            <Input
               type="checkbox"
               checked={config.secure}
               onChange={(e) => setConfig({ ...config, secure: e.target.checked })}
@@ -190,7 +191,7 @@ export default function SmtpPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Username / API Key
               </label>
-              <input
+              <Input
                 type="text"
                 value={config.username || ''}
                 onChange={(e) => setConfig({ ...config, username: e.target.value })}
@@ -210,7 +211,7 @@ export default function SmtpPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Password / API Secret
               </label>
-              <input
+              <Input
                 type="password"
                 value={config.password || ''}
                 onChange={(e) => setConfig({ ...config, password: e.target.value })}
@@ -233,7 +234,7 @@ export default function SmtpPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 From Sender Name
               </label>
-              <input
+              <Input
                 type="text"
                 value={config.fromName || ''}
                 onChange={(e) => setConfig({ ...config, fromName: e.target.value })}
@@ -254,7 +255,7 @@ export default function SmtpPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 From Email Address
               </label>
-              <input
+              <Input
                 type="email"
                 value={config.fromEmail || ''}
                 onChange={(e) => setConfig({ ...config, fromEmail: e.target.value })}
@@ -277,7 +278,7 @@ export default function SmtpPanel() {
             <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
               Reply-To Address (Optional)
             </label>
-            <input
+            <Input
               type="email"
               value={config.replyTo || ''}
               onChange={(e) => setConfig({ ...config, replyTo: e.target.value })}
@@ -328,7 +329,7 @@ export default function SmtpPanel() {
             <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>
               Test Recipient Email (Optional)
             </label>
-            <input
+            <Input
               type="email"
               value={testRecipient}
               onChange={(e) => setTestRecipient(e.target.value)}

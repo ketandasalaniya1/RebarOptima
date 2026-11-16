@@ -4,6 +4,7 @@ import { X, UserCheck, Search, AlertCircle, CheckCircle, Loader2 } from 'lucide-
 import { projectsApi, usersApi } from '../../utils/api';
 import { updateProjectInList, closeAssignPartnerModal } from '../../store/slices/projectSlice';
 import './AssignPartnerModal.css';
+import { Input } from '../ui';
 
 export default function AssignPartnerModal() {
   const dispatch = useDispatch();
@@ -121,7 +122,7 @@ export default function AssignPartnerModal() {
 
           <div className="apm-search-row">
             <Search size={15} className="apm-search-icon" />
-            <input
+            <Input
               type="text"
               placeholder="Search by name, email, or role..."
               value={searchQuery}
@@ -152,7 +153,7 @@ export default function AssignPartnerModal() {
                     className={`apm-user-item ${isAssigned ? 'assigned' : ''}`}
                     onClick={() => handleToggleUser(uId)}
                   >
-                    <input
+                    <Input
                       type="checkbox"
                       checked={isAssigned}
                       onChange={() => handleToggleUser(uId)}

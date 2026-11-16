@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, CheckCircle2, AlertCircle, ShieldAlert, FileCheck, ClipboardList } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function PmQualityView({ project, tasks, inspections, onRefreshInspections }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -131,7 +132,7 @@ export default function PmQualityView({ project, tasks, inspections, onRefreshIn
               <div className="pm-modal-body pm-form-grid">
                 <div className="pm-form-group pm-col-span-2">
                   <label>Select Activity *</label>
-                  <select
+                  <Select
                     required
                     value={formData.taskId}
                     onChange={(e) => setFormData({ ...formData, taskId: e.target.value })}
@@ -142,12 +143,12 @@ export default function PmQualityView({ project, tasks, inspections, onRefreshIn
                         {t.wbsCode} - {t.name} {t.requiresInspection ? '★ (QA Gate Required)' : ''}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group">
                   <label>Inspection Title *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Pre-Pouring Raft Rebar Check"
@@ -158,7 +159,7 @@ export default function PmQualityView({ project, tasks, inspections, onRefreshIn
 
                 <div className="pm-form-group">
                   <label>Inspector Name *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Er. Rajesh Varma (QA Lead)"
@@ -169,7 +170,7 @@ export default function PmQualityView({ project, tasks, inspections, onRefreshIn
 
                 <div className="pm-form-group">
                   <label>Inspection Date</label>
-                  <input
+                  <Input
                     type="date"
                     value={formData.inspectionDate}
                     onChange={(e) => setFormData({ ...formData, inspectionDate: e.target.value })}
@@ -178,19 +179,19 @@ export default function PmQualityView({ project, tasks, inspections, onRefreshIn
 
                 <div className="pm-form-group">
                   <label>Inspection Outcome *</label>
-                  <select
+                  <Select
                     value={formData.outcome}
                     onChange={(e) => setFormData({ ...formData, outcome: e.target.value })}
                   >
                     <option value="PASSED">Passed (Approved for Next Phase)</option>
                     <option value="REWORK_REQUIRED">Rework Required (Conditional)</option>
                     <option value="FAILED">Failed (Stop Work)</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group pm-col-span-2">
                   <label>Checklist Items (one per line)</label>
-                  <textarea
+                  <Textarea
                     rows={4}
                     value={formData.checklistText}
                     onChange={(e) => setFormData({ ...formData, checklistText: e.target.value })}
@@ -200,7 +201,7 @@ export default function PmQualityView({ project, tasks, inspections, onRefreshIn
                 {formData.outcome !== 'PASSED' && (
                   <div className="pm-form-group pm-col-span-2">
                     <label>Defect Description / Rework Instructions *</label>
-                    <textarea
+                    <Textarea
                       rows={2}
                       required
                       placeholder="Specify non-compliance, corrective action required..."

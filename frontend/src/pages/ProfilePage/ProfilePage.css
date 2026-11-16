@@ -145,7 +145,7 @@
   gap: 16px;
   flex-wrap: wrap;
   font-size: 13.5px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .profile-role-badge {
@@ -165,7 +165,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .profile-header-actions {
@@ -208,7 +208,7 @@
   gap: 7px;
   padding: 8px 14px;
   background: transparent;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   border: 1px solid var(--navbar-border, rgba(255, 255, 255, 0.15));
   border-radius: 8px;
   font-size: 13px;
@@ -220,7 +220,7 @@
 .btn-secondary-outline:hover {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary, #ffffff);
-  border-color: var(--text-secondary, #94a3b8);
+  border-color: var(--text-secondary, var(--text-secondary));
 }
 
 .remove-avatar-btn:hover {
@@ -273,7 +273,7 @@
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -338,7 +338,7 @@
 
 .card-subtitle {
   font-size: 13px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0;
   line-height: 1.45;
 }
@@ -361,7 +361,7 @@
 .form-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .metric-unit-tag {
@@ -393,7 +393,7 @@
 
 .disabled-input {
   background: rgba(255, 255, 255, 0.03);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: not-allowed;
   border-color: rgba(255, 255, 255, 0.06);
 }
@@ -427,7 +427,7 @@
 .field-inner-icon {
   position: absolute;
   left: 12px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .form-input.with-icon {
@@ -445,7 +445,7 @@
   right: 12px;
   background: transparent;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -484,7 +484,7 @@
 .role-scope-tag {
   font-size: 11px;
   font-weight: 500;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   background: rgba(255, 255, 255, 0.05);
   padding: 2px 8px;
   border-radius: 4px;
@@ -499,7 +499,7 @@
 .permissions-box-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0 0 10px 0;
 }
 
@@ -560,7 +560,7 @@
 
 .metric-info-desc {
   font-size: 12.5px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0;
   line-height: 1.5;
 }
@@ -584,7 +584,7 @@
 .rules-title {
   font-size: 12.5px;
   font-weight: 700;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0 0 10px 0;
 }
 
@@ -673,7 +673,7 @@
 .kpi-label {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -697,7 +697,7 @@
 }
 
 .loading-stats-text {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 13px;
   padding: 16px;
 }
@@ -732,7 +732,7 @@
 .profile-activity-table th {
   padding: 10px 12px;
   border-bottom: 1px solid var(--navbar-border, rgba(255, 255, 255, 0.1));
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -745,7 +745,7 @@
 }
 
 .log-timestamp {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 12px;
   white-space: nowrap;
 }
@@ -821,7 +821,7 @@
 .crop-close-btn {
   background: transparent;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 18px;
   cursor: pointer;
   padding: 4px;
@@ -833,7 +833,7 @@
 
 .crop-modal-desc {
   font-size: 12.5px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin: 0 0 16px 0;
   line-height: 1.45;
 }
@@ -890,7 +890,7 @@
 .crop-control-lbl {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .crop-zoom-slider {

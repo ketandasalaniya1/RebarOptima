@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   X
 } from 'lucide-react';
+import { Select, Textarea } from '../../../components/ui';
 
 export default function ReviewApprovalQueueView({
   selectedDrawing,
@@ -277,7 +278,7 @@ export default function ReviewApprovalQueueView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Decision Outcome</label>
-                  <select
+                  <Select
                     className="dw-form-select"
                     value={decisionType}
                     onChange={(e) => setDecisionType(e.target.value)}
@@ -285,12 +286,12 @@ export default function ReviewApprovalQueueView({
                     <option value="Approved">Approved (Ready for Publication)</option>
                     <option value="Changes Requested">Changes Requested (Requires New Revision Draft)</option>
                     <option value="Rejected">Rejected</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Approver Remarks / Instructions *</label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     className="dw-form-textarea"
                     placeholder="Enter formal approval remarks or specific items requiring correction..."

@@ -5,6 +5,7 @@ import ReviewApprovalModal from '../components/ReviewApprovalModal';
 import { useGetDrawingsQuery } from '../../../store/api/drawingsApi';
 import RoleGate from '../../../components/RoleGate';
 import { ShieldCheck, Eye, CheckCircle, Search, Inbox } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function ApprovalsInboxScreen({
   activeProject,
@@ -62,7 +63,7 @@ export default function ApprovalsInboxScreen({
 
         <div className="ro-search-box">
           <Search size={16} className="ro-search-icon" />
-          <input
+          <Input
             type="text"
             className="ro-search-input"
             placeholder="Search by drawing number or title..."

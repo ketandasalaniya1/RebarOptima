@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { attendanceApi, contractorsApi, manpowerApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader, Button, EmptyState } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input, Select } from '../../components/ui';
 import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { SOURCES, STATUSES, summarizeStatuses, todayISO } from './attendanceConstants';
 import './AttendancePage.css';
@@ -324,19 +324,19 @@ export default function MarkAttendancePage() {
       <div className="att-toolbar">
         <div className="att-field">
           <label>Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </div>
         <div className="att-field">
           <label>Shift</label>
-          <select value={shift} onChange={(e) => setShift(e.target.value)}>
+          <Select value={shift} onChange={(e) => setShift(e.target.value)}>
             <option value="day">Day</option>
             <option value="night">Night</option>
-          </select>
+          </Select>
         </div>
         {source !== 'company_labour' && (
           <div className="att-field">
             <label>Contractor</label>
-            <select
+            <Select
               value={contractorId}
               onChange={(e) => setContractorId(e.target.value)}
               disabled={compatibleContractors.length === 0}
@@ -350,12 +350,12 @@ export default function MarkAttendancePage() {
                   </option>
                 ))
               )}
-            </select>
+            </Select>
           </div>
         )}
         <div className="att-field">
           <label>Search</label>
-          <input
+          <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Name / type…"
@@ -390,7 +390,7 @@ export default function MarkAttendancePage() {
               const checked = selectedAssign.includes(id);
               return (
                 <label key={id} className="att-chip" style={{ cursor: 'pointer' }}>
-                  <input
+                  <Input
                     type="checkbox"
                     checked={checked}
                     onChange={() =>
@@ -463,7 +463,7 @@ export default function MarkAttendancePage() {
                     <td>{r.eligibleCount}</td>
                     {['present', 'halfDay', 'absent', 'leave', 'weeklyOff', 'holiday'].map((k) => (
                       <td key={k}>
-                        <input
+                        <Input
                           type="number"
                           min="0"
                           value={r[k]}
@@ -521,7 +521,7 @@ export default function MarkAttendancePage() {
                       <td>{s.name}</td>
                       <td>{s.labourType || '—'}</td>
                       <td>
-                        <select
+                        <Select
                           value={s.status || ''}
                           onChange={(e) =>
                             setSubjects((prev) =>
@@ -539,10 +539,10 @@ export default function MarkAttendancePage() {
                               {st.label}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={s.remark || ''}
                           onChange={(e) =>

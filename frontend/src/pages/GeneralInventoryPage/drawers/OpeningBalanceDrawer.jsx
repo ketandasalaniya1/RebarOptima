@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Store } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function OpeningBalanceDrawer({
   isOpen,
@@ -100,7 +101,7 @@ export default function OpeningBalanceDrawer({
           </label>
           <div className="gi-select-with-icon">
             <Store size={16} className="gi-input-icon" />
-            <select
+            <Select
               className={`gi-input-field with-icon ${formErrors.storeId ? 'has-error' : ''}`}
               value={storeId}
               onChange={(e) => setStoreId(e.target.value)}
@@ -111,7 +112,7 @@ export default function OpeningBalanceDrawer({
                   {s.name} {s.isDefault ? '(Main)' : ''}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           {formErrors.storeId && <div className="gi-field-error-msg">{formErrors.storeId}</div>}
         </div>
@@ -120,7 +121,7 @@ export default function OpeningBalanceDrawer({
           <label className="gi-form-label">
             Opening Quantity ({openingMaterial?.uom || 'units'}) <span className="gi-required">*</span>
           </label>
-          <input
+          <Input
             type="number"
             step="any"
             min="0"
@@ -134,7 +135,7 @@ export default function OpeningBalanceDrawer({
 
         <div className="gi-form-group">
           <label className="gi-form-label">Reason / Remarks</label>
-          <textarea
+          <Textarea
             className="gi-textarea-field"
             rows={2}
             placeholder="e.g. Audit verification count, site handover stock..."

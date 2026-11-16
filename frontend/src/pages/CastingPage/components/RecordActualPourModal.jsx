@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function RecordActualPourModal({
   isOpen,
@@ -80,7 +81,7 @@ export default function RecordActualPourModal({
         <div className="casting-modal-header">
           <div>
             <h3 className="casting-modal-title">Record Actual Pour Execution</h3>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
               Event: {event.eventNumber} — {event.title}
             </span>
           </div>
@@ -102,7 +103,7 @@ export default function RecordActualPourModal({
             <div className="form-grid-3">
               <div className="form-group">
                 <label className="form-label">Actual Pour Date *</label>
-                <input
+                <Input
                   type="date"
                   className="form-input"
                   value={actualPourDate}
@@ -113,7 +114,7 @@ export default function RecordActualPourModal({
 
               <div className="form-group">
                 <label className="form-label">Actual Start Time</label>
-                <input
+                <Input
                   type="time"
                   className="form-input"
                   value={actualPourStartTime}
@@ -123,7 +124,7 @@ export default function RecordActualPourModal({
 
               <div className="form-group">
                 <label className="form-label">Actual End Time</label>
-                <input
+                <Input
                   type="time"
                   className="form-input"
                   value={actualPourEndTime}
@@ -159,14 +160,14 @@ export default function RecordActualPourModal({
                           <td style={{ fontWeight: 700, color: '#f8fafc' }}>
                             {seg.displayId || 'Member'}
                           </td>
-                          <td style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                          <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                             {seg.segmentName} (Lift {seg.segmentLiftNumber || 1})
                           </td>
                           <td style={{ fontSize: '0.85rem' }}>
                             {(seg.plannedVolumeM3 || 0).toFixed(3)} m³
                           </td>
                           <td>
-                            <input
+                            <Input
                               type="number"
                               step="0.001"
                               className="form-input"
@@ -214,7 +215,7 @@ export default function RecordActualPourModal({
 
             <div className="form-group">
               <label className="form-label">Site Notes / Observations</label>
-              <textarea
+              <Textarea
                 className="form-input"
                 rows={2}
                 placeholder="e.g. Slump checked at 130mm, ambient temperature 28°C, no cold joints observed."

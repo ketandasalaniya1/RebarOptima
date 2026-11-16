@@ -89,6 +89,7 @@ import { engineeringRuleProvider } from './engineeringRules';
 import CalculationPanel from './CalculationPanel';
 import CalculationTraceModal from './CalculationTraceModal';
 import './CADEditor.css';
+import { Input } from '../../../components/ui';
 
 // Smooth local numeric property input component
 function CADPropInput({ value, onChange, min = -Infinity, allowZero = true }) {
@@ -129,7 +130,7 @@ function CADPropInput({ value, onChange, min = -Infinity, allowZero = true }) {
   };
 
   return (
-    <input
+    <Input
       type="text"
       className="cad-prop-input"
       value={localVal}
@@ -914,7 +915,7 @@ export default function CADEditor({
           <div className="cad-divider" />
 
           <div className="cad-shape-title-wrapper">
-            <input
+            <Input
               type="text"
               className="cad-shape-name-input"
               value={shapeName}
@@ -949,7 +950,7 @@ export default function CADEditor({
           {/* Quick Config: Fillet & Offset */}
           <div className="cad-param-quick" title="Corner Fillet Radius (mm)">
             <span>Fillet R:</span>
-            <input
+            <Input
               type="number"
               className="cad-param-input"
               value={filletRadius}
@@ -960,7 +961,7 @@ export default function CADEditor({
 
           <div className="cad-param-quick" title="Offset Distance (mm)">
             <span>Offset:</span>
-            <input
+            <Input
               type="number"
               className="cad-param-input"
               value={offsetDistance}
@@ -1470,7 +1471,7 @@ export default function CADEditor({
 
                         {/* Standard Diameter Quick Select Chips */}
                         <div style={{ display: 'flex', gap: '4px', marginTop: '4px', marginBottom: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
-                          <span style={{ fontSize: '10.5px', color: '#94a3b8', marginRight: '2px' }}>Standard Ø:</span>
+                          <span style={{ fontSize: '10.5px', color: 'var(--text-secondary)', marginRight: '2px' }}>Standard Ø:</span>
                           {STANDARD_BAR_DIAMETERS.map(dia => (
                             <button
                               key={dia}
@@ -1800,7 +1801,7 @@ export default function CADEditor({
 
                         {/* Quick Mandrel Radius Multipliers (e.g. 2d, 3d, 4d, 5d) */}
                         <div style={{ display: 'flex', gap: '4px', marginTop: '4px', marginBottom: '12px', alignItems: 'center' }}>
-                          <span style={{ fontSize: '10.5px', color: '#94a3b8', marginRight: '2px' }}>Mandrel:</span>
+                          <span style={{ fontSize: '10.5px', color: 'var(--text-secondary)', marginRight: '2px' }}>Mandrel:</span>
                           {[2, 3, 4, 5, 6].map(mult => (
                             <button
                               key={mult}
@@ -1815,7 +1816,7 @@ export default function CADEditor({
                         </div>
 
                         {/* SEMANTIC SUB-ELEMENTS INFO */}
-                        <div style={{ background: '#090d16', border: '1px solid #1e293b', borderRadius: '6px', padding: '8px', marginTop: '6px', fontSize: '11px', color: '#94a3b8' }}>
+                        <div style={{ background: '#090d16', border: '1px solid #1e293b', borderRadius: '6px', padding: '8px', marginTop: '6px', fontSize: '11px', color: 'var(--text-secondary)' }}>
                           <div style={{ fontWeight: 600, color: '#e2e8f0', marginBottom: '4px' }}>Semantic Structure</div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
                             <span>Centerline Vertices:</span>
@@ -1848,15 +1849,15 @@ export default function CADEditor({
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '3px' }}>
-                              <span style={{ color: '#94a3b8' }}>Cutting Length:</span>
+                              <span style={{ color: 'var(--text-secondary)' }}>Cutting Length:</span>
                               <strong style={{ color: '#38bdf8', fontFamily: 'monospace' }}>{activeCalculation.cuttingLength} mm</strong>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '3px' }}>
-                              <span style={{ color: '#94a3b8' }}>Developed Length:</span>
+                              <span style={{ color: 'var(--text-secondary)' }}>Developed Length:</span>
                               <span style={{ color: '#cbd5e1', fontFamily: 'monospace' }}>{activeCalculation.developedLength} mm</span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
-                              <span style={{ color: '#94a3b8' }}>Total Steel Weight:</span>
+                              <span style={{ color: 'var(--text-secondary)' }}>Total Steel Weight:</span>
                               <strong style={{ color: '#22c55e', fontFamily: 'monospace' }}>{activeCalculation.totalWeight.toFixed(3)} kg</strong>
                             </div>
 
@@ -1958,7 +1959,7 @@ export default function CADEditor({
 
                         {/* Quick Preset Angles */}
                         <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-                          <span style={{ fontSize: '10.5px', color: '#94a3b8', marginRight: '2px' }}>Presets:</span>
+                          <span style={{ fontSize: '10.5px', color: 'var(--text-secondary)', marginRight: '2px' }}>Presets:</span>
                           {[0, 30, 45, 60, 90, 135, 180, 270].map(deg => (
                             <button
                               key={deg}
@@ -2120,13 +2121,13 @@ export default function CADEditor({
 
                   {/* Manual Rotation Angle Control */}
                   <div style={{ marginTop: '10px', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '8px 10px' }}>
-                    <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '6px' }}>Rotate by Angle</div>
+                    <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>Rotate by Angle</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <CADPropInput
                         value={customRotateAngle}
                         onChange={(num) => setCustomRotateAngle(num)}
                       />
-                      <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>°</span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>°</span>
                       <button
                         className="cad-quick-btn"
                         style={{ padding: '4px 10px', fontSize: '11px', background: '#0284c7', color: '#ffffff', borderColor: '#0369a1' }}
@@ -2146,7 +2147,7 @@ export default function CADEditor({
                 // MULTI-SELECTION PAIR CONSTRAINTS
                 <div className="cad-panel-section">
                   <div className="cad-section-title">Multi-Selection ({selectedObjectIds.length} Objects)</div>
-                  <div style={{ fontSize: '11.5px', color: '#94a3b8', marginBottom: '10px' }}>
+                  <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
                     Apply geometric relationship rules between selected entities:
                   </div>
 
@@ -2213,7 +2214,7 @@ export default function CADEditor({
               </div>
 
               {parameters.length === 0 ? (
-                <div style={{ color: '#94a3b8', fontSize: '12px', padding: '12px 0' }}>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '12px', padding: '12px 0' }}>
                   No parameters defined. Create parameters to drive geometry dynamically (e.g. WIDTH, HEIGHT, RADIUS).
                 </div>
               ) : (
@@ -2241,7 +2242,7 @@ export default function CADEditor({
                           allowZero={false}
                           onChange={(newVal) => handleParameterValueChange(param.id, newVal)}
                         />
-                        <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>{param.unit || 'mm'}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{param.unit || 'mm'}</span>
                       </div>
                     </div>
                   ))}
@@ -2271,8 +2272,8 @@ export default function CADEditor({
                     New Parameter
                   </div>
                   <div style={{ marginBottom: '8px' }}>
-                    <label style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Name</label>
-                    <input
+                    <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Name</label>
+                    <Input
                       type="text"
                       className="cad-shape-name-input"
                       style={{ width: '100%', minWidth: 'unset', fontSize: '12px' }}
@@ -2283,8 +2284,8 @@ export default function CADEditor({
                     />
                   </div>
                   <div style={{ marginBottom: '8px' }}>
-                    <label style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Value</label>
-                    <input
+                    <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Value</label>
+                    <Input
                       type="text"
                       className="cad-shape-name-input"
                       style={{ width: '100%', minWidth: 'unset', fontSize: '12px' }}
@@ -2324,7 +2325,7 @@ export default function CADEditor({
               {/* Degrees of Freedom (DOF) Summary Card */}
               <div className="cad-dof-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>System State:</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>System State:</span>
                   <span className={`cad-dof-badge ${dofInfo.status}`}>
                     {dofInfo.status.replace('-', ' ')}
                   </span>
@@ -2337,7 +2338,7 @@ export default function CADEditor({
 
               {/* Constraints List */}
               {constraints.length === 0 ? (
-                <div style={{ color: '#94a3b8', fontSize: '12px', padding: '12px 0' }}>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '12px', padding: '12px 0' }}>
                   No constraints applied yet. Select lines or shapes in the canvas and apply Horizontal, Vertical, Parallel, Perpendicular, Equal, or Fixed rules.
                 </div>
               ) : (
@@ -2347,7 +2348,7 @@ export default function CADEditor({
                       <div className="cad-constraint-card-header">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span className="cad-constraint-type-badge">{c.type}</span>
-                          <span style={{ fontSize: '10.5px', color: '#94a3b8' }}>({c.references?.length || 1} ref)</span>
+                          <span style={{ fontSize: '10.5px', color: 'var(--text-secondary)' }}>({c.references?.length || 1} ref)</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <button

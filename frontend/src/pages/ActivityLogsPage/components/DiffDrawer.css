@@ -121,7 +121,7 @@
 
 .dd-diff-count {
   font-size: 0.78rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .dd-diff-list {
@@ -263,14 +263,14 @@
 }
 
 .dd-diff-arrow {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   flex-shrink: 0;
 }
 
 .dd-diff-empty {
   padding: 24px;
   font-size: 0.82rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-style: italic;
   text-align: center;
   border: 1px dashed var(--card-border, #cbd5e1);

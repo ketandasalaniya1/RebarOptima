@@ -262,7 +262,7 @@
 
 .pc-btn-secondary:hover {
   background-color: var(--bg-secondary, #f1f5f9);
-  border-color: var(--text-muted, #94a3b8);
+  border-color: var(--text-muted, var(--text-secondary));
 }
 
 .pc-btn-action-header {
@@ -455,7 +455,7 @@
 .pc-balance-currency-tag {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   background: var(--bg-secondary, #f1f5f9);
   padding: 2px 6px;
   border-radius: 4px;
@@ -545,7 +545,7 @@
 .pc-equation-op {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   user-select: none;
 }
 
@@ -736,7 +736,7 @@
 
 .pc-filter-chip:hover {
   background-color: var(--bg-secondary, #f8fafc);
-  border-color: var(--text-muted, #94a3b8);
+  border-color: var(--text-muted, var(--text-secondary));
 }
 
 .pc-filter-chip.pc-chip-active {
@@ -746,7 +746,7 @@
 }
 
 .pc-chevron {
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   transition: transform 0.2s ease;
 }
 
@@ -1179,7 +1179,7 @@
 
 .pc-no-photos {
   font-size: 13px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pc-amount-val {
@@ -1198,7 +1198,7 @@
 .pc-btn-row-action {
   background: transparent;
   border: none;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   padding: 6px;
   border-radius: 4px;
   cursor: pointer;
@@ -2247,7 +2247,7 @@
 
 .pc-lightbox-pager {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .pc-lightbox-actions {
@@ -2567,7 +2567,7 @@
 .pc-btn-trash-sm {
   background: transparent;
   border: none;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;

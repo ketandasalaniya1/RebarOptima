@@ -15,6 +15,7 @@ import {
   X,
   RotateCcw
 } from 'lucide-react';
+import { Textarea } from '../../../components/ui';
 
 export default function RecipeApprovalModal({
   isOpen,
@@ -245,7 +246,7 @@ export default function RecipeApprovalModal({
                   <Check size={12} /> Digital Approval Stamp
                 </span>
               </div>
-              <textarea
+              <Textarea
                 className="form-input"
                 rows={2}
                 value={remarks}
@@ -260,7 +261,7 @@ export default function RecipeApprovalModal({
                   Mandatory Rejection Remarks & Corrective Actions *
                 </label>
               </div>
-              <textarea
+              <Textarea
                 className="form-input"
                 rows={3}
                 value={rejectReason}

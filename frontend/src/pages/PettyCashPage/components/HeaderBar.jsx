@@ -11,6 +11,7 @@ import {
   FolderPlus
 } from 'lucide-react';
 import { formatINR } from '../../../utils/money';
+import { Input, Select } from '../../../components/ui';
 
 export default function HeaderBar({
   sites = [],
@@ -43,7 +44,7 @@ export default function HeaderBar({
         {/* Site Switcher */}
         <div className="pc-site-switcher-box">
           <Building2 size={16} className="pc-site-icon" />
-          <select
+          <Select
             id="pc-active-site-select"
             className="pc-site-select"
             value={selectedSiteName}
@@ -56,7 +57,7 @@ export default function HeaderBar({
                 {s.name} {s.code ? `(${s.code})` : ''} — Bal: {formatINR(s.currentBalance || 0)}
               </option>
             ))}
-          </select>
+          </Select>
           <button
             type="button"
             className="pc-btn-icon-ghost"
@@ -71,7 +72,7 @@ export default function HeaderBar({
         {/* Desktop Search Bar */}
         <div className="pc-header-search-wrap">
           <Search size={15} className="pc-search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search entries, bills, persons..."
             className="pc-header-search-input"

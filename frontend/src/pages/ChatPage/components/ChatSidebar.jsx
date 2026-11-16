@@ -8,6 +8,7 @@ import {
   Pin,
 } from 'lucide-react';
 import { getPushPermission, subscribeToPushNotifications } from '../../../utils/pushNotifications';
+import { Input } from '../../../components/ui';
 
 export default function ChatSidebar({
   conversations,
@@ -140,7 +141,7 @@ export default function ChatSidebar({
       <div className="chat-search-wrap">
         <div className="chat-search-input-box">
           <Search size={16} />
-          <input
+          <Input
             type="text"
             placeholder="Search conversations..."
             value={search}

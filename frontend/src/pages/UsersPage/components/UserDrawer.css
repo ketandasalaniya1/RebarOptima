@@ -74,7 +74,7 @@
 .ud-icon-prefix {
   position: absolute;
   left: 12px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   pointer-events: none;
 }
 
@@ -105,14 +105,14 @@
 
 .ud-input.disabled {
   background: var(--input-bg, #f1f5f9);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: not-allowed;
   opacity: 0.8;
 }
 
 .ud-hint {
   font-size: 0.74rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   line-height: 1.3;
 }
 

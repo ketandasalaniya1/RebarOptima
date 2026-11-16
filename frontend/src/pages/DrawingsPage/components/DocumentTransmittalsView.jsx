@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   X
 } from 'lucide-react';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function DocumentTransmittalsView({
   transmittals,
@@ -184,7 +185,7 @@ export default function DocumentTransmittalsView({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
                   <div className="dw-form-group">
                     <label className="dw-form-label">Project *</label>
-                    <select
+                    <Select
                       className="dw-form-select"
                       required
                       value={formData.projectId}
@@ -193,12 +194,12 @@ export default function DocumentTransmittalsView({
                       {(projects || []).map(p => (
                         <option key={p._id} value={p._id}>{p.projectName} ({p.projectCode})</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="dw-form-group">
                     <label className="dw-form-label">Transmittal Number *</label>
-                    <input
+                    <Input
                       type="text"
                       className="dw-form-input"
                       required
@@ -209,7 +210,7 @@ export default function DocumentTransmittalsView({
 
                   <div className="dw-form-group">
                     <label className="dw-form-label">Purpose *</label>
-                    <select
+                    <Select
                       className="dw-form-select"
                       value={formData.purpose}
                       onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
@@ -219,13 +220,13 @@ export default function DocumentTransmittalsView({
                       <option value="For Information">For Information</option>
                       <option value="As-Built">As-Built</option>
                       <option value="Tender">Tender</option>
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Recipients (comma separated)</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. Site Team, Project Manager, Consultant"
@@ -254,7 +255,7 @@ export default function DocumentTransmittalsView({
                         {(availableDrawings || []).map((dw) => (
                           <tr key={dw._id} onClick={() => handleToggleDrawing(dw._id)}>
                             <td>
-                              <input
+                              <Input
                                 type="checkbox"
                                 checked={formData.selectedDrawingIds.includes(dw._id)}
                                 onChange={() => handleToggleDrawing(dw._id)}
@@ -281,7 +282,7 @@ export default function DocumentTransmittalsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Transmittal Remarks / Notes</label>
-                  <textarea
+                  <Textarea
                     rows={2}
                     className="dw-form-textarea"
                     placeholder="Issued for immediate site reinforcement works and foundation inspection..."
@@ -383,11 +384,11 @@ export default function DocumentTransmittalsView({
               {/* Signatures */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px dashed #cbd5e1', fontSize: '0.8rem' }}>
                 <div>
-                  <div style={{ borderBottom: '1px solid #94a3b8', height: '35px', marginBottom: '0.35rem' }}></div>
+                  <div style={{ borderBottom: '1px solid var(--text-secondary)', height: '35px', marginBottom: '0.35rem' }}></div>
                   <span>Issued By: {selectedSlip.issuedByName}</span>
                 </div>
                 <div>
-                  <div style={{ borderBottom: '1px solid #94a3b8', height: '35px', marginBottom: '0.35rem' }}></div>
+                  <div style={{ borderBottom: '1px solid var(--text-secondary)', height: '35px', marginBottom: '0.35rem' }}></div>
                   <span>Received &amp; Acknowledged By (Sign &amp; Date)</span>
                 </div>
               </div>

@@ -311,7 +311,7 @@ export default function CADCanvas({
     ctx.arc(origin.x, origin.y, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#94a3b8';
+    ctx.fillStyle = 'var(--text-secondary)';
     ctx.font = '10px Inter, system-ui, sans-serif';
     ctx.fillText('0,0 (mm)', origin.x + 6, origin.y - 6);
   };

@@ -6,6 +6,7 @@ import {
   CalendarDays, GitCommit, SlidersHorizontal, ChevronDown, CheckSquare, Shield
 } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function CastingTimelineView({ selectedProject, blocks = [], levels = {}, members = [] }) {
   const [events, setEvents] = useState([]);
@@ -353,7 +354,7 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
         <div className="filter-item">
           <Layers size={14} />
           <span className="filter-label">Block:</span>
-          <select
+          <Select
             value={selectedBlockId}
             onChange={(e) => {
               setSelectedBlockId(e.target.value);
@@ -365,12 +366,12 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
             {blocks.map(b => (
               <option key={b._id || b.id} value={b._id || b.id}>{b.name || b.blockName}</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="filter-item">
           <span className="filter-label">Level:</span>
-          <select
+          <Select
             value={selectedLevelId}
             onChange={(e) => setSelectedLevelId(e.target.value)}
             className="filter-select"
@@ -380,12 +381,12 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
             {currentBlockLevels.map(l => (
               <option key={l._id || l.id} value={l._id || l.id}>{l.name || l.levelName}</option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="filter-item">
           <span className="filter-label">Status:</span>
-          <select
+          <Select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="filter-select"
@@ -395,13 +396,13 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
             <option value="POURING">Pouring Active</option>
             <option value="POURED">Poured</option>
             <option value="CANCELLED">Cancelled</option>
-          </select>
+          </Select>
         </div>
 
         <div className="filter-item">
           <Calendar size={14} />
           <span className="filter-label">Range:</span>
-          <select
+          <Select
             value={dateRangePreset}
             onChange={(e) => setDateRangePreset(e.target.value)}
             className="filter-select"
@@ -411,19 +412,19 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
             <option value="NEXT_MONTH">Next Month</option>
             <option value="UPCOMING">Upcoming (Today+)</option>
             <option value="CUSTOM">Custom Range</option>
-          </select>
+          </Select>
         </div>
 
         {dateRangePreset === 'CUSTOM' && (
           <div className="custom-range-inputs">
-            <input
+            <Input
               type="date"
               value={customStartDate}
               onChange={(e) => setCustomStartDate(e.target.value)}
               className="filter-date-input"
             />
             <span className="range-to">to</span>
-            <input
+            <Input
               type="date"
               value={customEndDate}
               onChange={(e) => setCustomEndDate(e.target.value)}
@@ -434,7 +435,7 @@ export default function CastingTimelineView({ selectedProject, blocks = [], leve
 
         <div className="search-filter-box">
           <Search size={14} className="search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search title, event #, member..."
             value={searchQuery}

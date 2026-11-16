@@ -14,6 +14,7 @@ import {
   X
 } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function MaterialRequirementSheetModal({
   isOpen,
@@ -172,7 +173,7 @@ export default function MaterialRequirementSheetModal({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', background: 'var(--card-bg, #f8fafc)', borderBottom: '1px solid var(--card-border, #e2e8f0)', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary, #475569)' }}>Historical Revision:</span>
-            <select
+            <Select
               className="casting-select"
               style={{ minWidth: '180px', fontSize: '0.85rem' }}
               value={selectedRevision || currentMRS?.revisionNumber || ''}
@@ -183,7 +184,7 @@ export default function MaterialRequirementSheetModal({
                   Rev {rev.revisionNumber} ({rev.mrsCode}) {rev.isActive ? '(Active)' : ''}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {currentMRS && (
@@ -369,7 +370,7 @@ export default function MaterialRequirementSheetModal({
                                     <AlertTriangle size={12} /> {ing.moistureAdjustment.notes}
                                   </span>
                                 ) : (
-                                  <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>—</span>
+                                  <span style={{ color: 'var(--text-secondary, var(--text-secondary))' }}>—</span>
                                 )}
                               </td>
                             </tr>
@@ -395,7 +396,7 @@ export default function MaterialRequirementSheetModal({
 
               <div style={{ marginBottom: '1rem' }}>
                 <label className="casting-label">Reason for Revision *</label>
-                <input
+                <Input
                   type="text"
                   className="casting-input"
                   placeholder="e.g. Updated column pour volume / switched to summer mix"

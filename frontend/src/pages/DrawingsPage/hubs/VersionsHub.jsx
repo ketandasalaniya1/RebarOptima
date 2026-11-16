@@ -13,6 +13,7 @@ import {
   Search,
 } from 'lucide-react';
 import { drawingsApi } from '../../../utils/drawingsApi';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function VersionsHub({
   drawings = [],
@@ -155,7 +156,7 @@ export default function VersionsHub({
           {/* Search */}
           <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
             <Search size={14} style={{ position: 'absolute', left: '10px', top: '10px', color: "var(--text-label)" }} />
-            <input
+            <Input
               type="text"
               placeholder="Search drawings..."
               value={searchQuery}
@@ -435,7 +436,7 @@ export default function VersionsHub({
                                   className={`drawings-status-badge ${isCurrent ? 'drawings-status-gfc' : ''}`}
                                   style={{
                                     background: isCurrent ? 'rgba(16, 185, 129, 0.15)' : '#1e293b',
-                                    color: isCurrent ? '#10b981' : '#94a3b8',
+                                    color: isCurrent ? '#10b981' : 'var(--text-secondary)',
                                   }}
                                 >
                                   {isCurrent ? 'Current' : 'Superseded'}
@@ -447,7 +448,7 @@ export default function VersionsHub({
                             {/* Note Text */}
                             {editingNoteRevId === (rev._id || rev.id) ? (
                               <div style={{ margin: '0.5rem 0' }}>
-                                <textarea
+                                <Textarea
                                   value={editingNoteText}
                                   onChange={(e) => setEditingNoteText(e.target.value)}
                                   style={{

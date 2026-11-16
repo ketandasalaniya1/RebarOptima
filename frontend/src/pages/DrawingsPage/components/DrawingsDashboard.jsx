@@ -47,7 +47,7 @@ export default function DrawingsDashboard({
         <div className="drawings-kpi-card" onClick={() => onNavigateTab('projects')} style={{ cursor: 'pointer' }}>
           <div className="drawings-kpi-label">
             <span>Total Projects</span>
-            <FolderKanban size={16} color="#94a3b8" />
+            <FolderKanban size={16} color="var(--text-secondary)" />
           </div>
           <div className="drawings-kpi-value">{d.totalProjects ?? 4}</div>
           <div className="drawings-kpi-sub" style={{ color: '#38bdf8' }}>
@@ -58,7 +58,7 @@ export default function DrawingsDashboard({
         <div className="drawings-kpi-card" onClick={() => onNavigateTab('register')} style={{ cursor: 'pointer' }}>
           <div className="drawings-kpi-label">
             <span>Total Drawings</span>
-            <FileText size={16} color="#94a3b8" />
+            <FileText size={16} color="var(--text-secondary)" />
           </div>
           <div className="drawings-kpi-value">{d.totalDrawings ?? 248}</div>
           <div className="drawings-kpi-sub" style={{ color: '#10b981' }}>
@@ -105,7 +105,7 @@ export default function DrawingsDashboard({
             <History size={16} color="#c084fc" />
           </div>
           <div className="drawings-kpi-value">{d.superseded ?? 42}</div>
-          <div className="drawings-kpi-sub" style={{ color: '#94a3b8' }}>
+          <div className="drawings-kpi-sub" style={{ color: 'var(--text-secondary)' }}>
             Archived history
           </div>
         </div>

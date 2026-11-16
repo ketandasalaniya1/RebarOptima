@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { formatINR, formatShortINR } from '../../../utils/money';
 import { crmApi } from '../../../utils/crmApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function InventoryGrid({
   units = [],
@@ -351,7 +352,7 @@ export default function InventoryGrid({
             {/* Search Input */}
             <div style={{ position: 'relative', width: '220px' }}>
               <Search size={14} style={{ position: 'absolute', left: '10px', top: '10px', color: '#64748b' }} />
-              <input
+              <Input
                 type="text"
                 placeholder="Search unit #, tower..."
                 value={searchQuery}
@@ -369,7 +370,7 @@ export default function InventoryGrid({
             </div>
 
             {/* Tower / Block Filter */}
-            <select
+            <Select
               value={selectedTower}
               onChange={(e) => setSelectedTower(e.target.value)}
               style={{
@@ -387,10 +388,10 @@ export default function InventoryGrid({
               {towers.map(t => (
                 <option key={t} value={t}>{t}</option>
               ))}
-            </select>
+            </Select>
 
             {/* Status Filter */}
-            <select
+            <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               style={{
@@ -410,10 +411,10 @@ export default function InventoryGrid({
               <option value="Reserved">Reserved</option>
               <option value="Booked">Booked / Sold</option>
               <option value="Blocked">Management Blocked</option>
-            </select>
+            </Select>
 
             {/* Typology / Configuration Filter */}
-            <select
+            <Select
               value={configFilter}
               onChange={(e) => setConfigFilter(e.target.value)}
               style={{
@@ -431,10 +432,10 @@ export default function InventoryGrid({
               {configurations.map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
-            </select>
+            </Select>
 
             {/* Floor / Level Filter */}
-            <select
+            <Select
               value={floorFilter}
               onChange={(e) => setFloorFilter(e.target.value)}
               style={{
@@ -454,7 +455,7 @@ export default function InventoryGrid({
                   {f.name} {f.blockName && selectedTower === 'ALL' ? `(${f.blockName})` : `(L${f.floorNumber})`}
                 </option>
               ))}
-            </select>
+            </Select>
 
             {/* Toggle Advanced Filters Button */}
             <button
@@ -467,7 +468,7 @@ export default function InventoryGrid({
                 padding: '7px 12px',
                 borderRadius: '8px',
                 background: showAdvancedFilters ? '#38bdf8' : '#1e293b',
-                color: showAdvancedFilters ? '#0f172a' : '#94a3b8',
+                color: showAdvancedFilters ? '#0f172a' : 'var(--text-secondary)',
                 border: "1px solid var(--card-border)",
                 fontSize: '0.82rem',
                 fontWeight: 600,
@@ -540,7 +541,7 @@ export default function InventoryGrid({
                 borderRadius: '6px',
                 border: 'none',
                 background: viewMode === 'matrix' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'matrix' ? '#0f172a' : '#94a3b8',
+                color: viewMode === 'matrix' ? '#0f172a' : 'var(--text-secondary)',
                 fontSize: '0.82rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -560,7 +561,7 @@ export default function InventoryGrid({
                 borderRadius: '6px',
                 border: 'none',
                 background: viewMode === 'table' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'table' ? '#0f172a' : '#94a3b8',
+                color: viewMode === 'table' ? '#0f172a' : 'var(--text-secondary)',
                 fontSize: '0.82rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -585,7 +586,7 @@ export default function InventoryGrid({
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '0.78rem', color: "var(--text-secondary)" }}>Price Range (₹):</span>
-              <input
+              <Input
                 type="number"
                 placeholder="Min Price"
                 value={minPrice}
@@ -593,7 +594,7 @@ export default function InventoryGrid({
                 style={{ width: '110px', padding: '5px 8px', borderRadius: '6px', background: "var(--input-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.8rem' }}
               />
               <span style={{ color: '#64748b' }}>-</span>
-              <input
+              <Input
                 type="number"
                 placeholder="Max Price"
                 value={maxPrice}
@@ -604,7 +605,7 @@ export default function InventoryGrid({
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '0.78rem', color: "var(--text-secondary)" }}>Carpet Area (sq.ft):</span>
-              <input
+              <Input
                 type="number"
                 placeholder="Min sqft"
                 value={minArea}
@@ -612,7 +613,7 @@ export default function InventoryGrid({
                 style={{ width: '90px', padding: '5px 8px', borderRadius: '6px', background: "var(--input-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.8rem' }}
               />
               <span style={{ color: '#64748b' }}>-</span>
-              <input
+              <Input
                 type="number"
                 placeholder="Max sqft"
                 value={maxArea}

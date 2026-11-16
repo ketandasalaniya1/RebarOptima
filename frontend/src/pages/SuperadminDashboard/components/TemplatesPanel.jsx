@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Save, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 import { developerApi } from '../../../utils/api';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function TemplatesPanel() {
   const [templates, setTemplates] = useState([]);
@@ -51,7 +52,7 @@ export default function TemplatesPanel() {
 
   if (loading) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+      <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
         <RefreshCw className="spin" size={24} style={{ marginBottom: '8px' }} />
         <p>Loading notification templates...</p>
       </div>
@@ -103,7 +104,7 @@ export default function TemplatesPanel() {
               </span>
             </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <input
+              <Input
                 type="checkbox"
                 checked={selectedTemplate.enabled !== false}
                 onChange={(e) => setSelectedTemplate({ ...selectedTemplate, enabled: e.target.checked })}
@@ -138,7 +139,7 @@ export default function TemplatesPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Email Subject
               </label>
-              <input
+              <Input
                 type="text"
                 value={selectedTemplate.subject || ''}
                 onChange={(e) => setSelectedTemplate({ ...selectedTemplate, subject: e.target.value })}
@@ -159,7 +160,7 @@ export default function TemplatesPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 HTML Body Content
               </label>
-              <textarea
+              <Textarea
                 rows={6}
                 value={selectedTemplate.htmlContent || ''}
                 onChange={(e) => setSelectedTemplate({ ...selectedTemplate, htmlContent: e.target.value })}
@@ -180,7 +181,7 @@ export default function TemplatesPanel() {
               <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Plain Text Fallback
               </label>
-              <textarea
+              <Textarea
                 rows={4}
                 value={selectedTemplate.plainTextContent || ''}
                 onChange={(e) => setSelectedTemplate({ ...selectedTemplate, plainTextContent: e.target.value })}

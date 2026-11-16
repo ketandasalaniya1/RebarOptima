@@ -66,7 +66,7 @@ export default function MessageInfoModal({
                 </div>
               )}
               {message.attachments && message.attachments.length > 0 && (
-                <div style={{ marginTop: '6px', fontSize: '12px', color: '#94a3b8' }}>
+                <div style={{ marginTop: '6px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                   📎 {message.attachments.map((a) => a.name).join(', ')}
                 </div>
               )}
@@ -144,7 +144,7 @@ export default function MessageInfoModal({
             <div className="chat-info-section">
               <div className="chat-info-section-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <CheckCheck size={16} color="#94a3b8" />
+                  <CheckCheck size={16} color="var(--text-secondary)" />
                   <span className="chat-info-section-title">Delivered</span>
                 </div>
                 {deliveredToList.length > 0 && (

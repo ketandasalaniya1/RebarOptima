@@ -14,6 +14,7 @@ import { setView } from '../../store/slices/routingSlice';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import { openCreateModal } from '../../store/slices/projectSlice';
 import './BbsProjectsPage.css';
+import { Input } from '../../components/ui';
 
 const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
 const STEEL_GRADES = ['Fe250', 'Fe415', 'Fe500', 'Fe500D', 'Fe550'];
@@ -298,7 +299,7 @@ export default function BbsProjectsPage() {
             
             {editingProjectId === p._id ? (
               <div className="bbs-project-card-name" onClick={(e) => e.stopPropagation()}>
-                <input
+                <Input
                   type="text"
                   value={editProjectName}
                   onChange={(e) => setEditProjectName(e.target.value)}
@@ -372,7 +373,7 @@ export default function BbsProjectsPage() {
                   >
                     {editingBlockId === block._id ? (
                       <div className="bbs-add-item-row" style={{ flex: 1 }}>
-                        <input
+                        <Input
                           className="bbs-add-item-input"
                           value={editBlockName}
                           onChange={(e) => setEditBlockName(e.target.value)}
@@ -395,7 +396,7 @@ export default function BbsProjectsPage() {
                 ))}
                 {addingBlock && (
                   <div className="bbs-add-item-row">
-                    <input
+                    <Input
                       className="bbs-add-item-input"
                       value={newBlockName}
                       onChange={(e) => setNewBlockName(e.target.value)}
@@ -437,7 +438,7 @@ export default function BbsProjectsPage() {
                   <div key={level._id} className="bbs-hierarchy-item bbs-level-item">
                     {editingLevelId === level._id ? (
                       <div className="bbs-add-item-row" style={{ flex: 1 }}>
-                        <input
+                        <Input
                           className="bbs-add-item-input"
                           value={editLevelName}
                           onChange={(e) => setEditLevelName(e.target.value)}
@@ -480,7 +481,7 @@ export default function BbsProjectsPage() {
                 )))}
                 {addingLevel && activeBlockId && (
                   <div className="bbs-add-item-row">
-                    <input
+                    <Input
                       className="bbs-add-item-input"
                       value={newLevelName}
                       onChange={(e) => setNewLevelName(e.target.value)}
@@ -517,7 +518,7 @@ export default function BbsProjectsPage() {
               )}
               <div className="bbs-form-group" style={{ marginBottom: 0 }}>
                 <label>Your Password</label>
-                <input 
+                <Input 
                   type="password" 
                   value={actionPassword} 
                   onChange={(e) => setActionPassword(e.target.value)}

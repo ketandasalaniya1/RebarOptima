@@ -19,6 +19,7 @@ import { projectsApi, MAX_BLOCKS_PER_PROJECT } from '../../utils/api';
 import { addProject, updateProjectInList, closeCreateModal } from '../../store/slices/projectSlice';
 import { setView } from '../../store/slices/routingSlice';
 import './ProjectFormModal.css';
+import { Input, Select, Textarea } from '../ui';
 
 // Fix Leaflet default icon URLs in Vite
 delete L.Icon.Default.prototype._getIconUrl;
@@ -318,7 +319,7 @@ export default function ProjectFormModal() {
           });
         });
 
-        marker.bindTooltip(`Corner #${idx + 1}<br/><span style="font-size:10px;color:#94a3b8">Drag to adjust</span>`, {
+        marker.bindTooltip(`Corner #${idx + 1}<br/><span style="font-size:10px;color:var(--text-secondary)">Drag to adjust</span>`, {
           direction: 'top',
           offset: [0, -10],
         });
@@ -698,7 +699,7 @@ export default function ProjectFormModal() {
                   <label className="pm-label">
                     Project Name <span className="text-red">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     className={`pm-input ${validationErrors.name ? 'has-error' : ''}`}
                     placeholder="e.g. Skyline Heights"
@@ -714,7 +715,7 @@ export default function ProjectFormModal() {
                   <label className="pm-label">
                     Project Type <span className="text-red">*</span>
                   </label>
-                  <select
+                  <Select
                     className="pm-select"
                     value={projectType}
                     onChange={(e) => setProjectType(e.target.value)}
@@ -724,14 +725,14 @@ export default function ProjectFormModal() {
                         {t}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-field">
                   <label className="pm-label">
                     Project Site Address <span className="text-red">*</span>
                   </label>
-                  <textarea
+                  <Textarea
                     className={`pm-textarea ${validationErrors.address ? 'has-error' : ''}`}
                     placeholder="Street address, landmark, sector..."
                     rows={2}
@@ -747,7 +748,7 @@ export default function ProjectFormModal() {
                   <label className="pm-label">
                     PIN Code (India 6-Digit) <span className="text-red">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     maxLength={6}
                     className={`pm-input ${validationErrors.pincode ? 'has-error' : ''}`}
@@ -763,14 +764,14 @@ export default function ProjectFormModal() {
                 {editingProject && (
                   <div className="pm-field">
                     <label className="pm-label">Status</label>
-                    <select
+                    <Select
                       className="pm-select"
                       value={status}
                       onChange={(e) => setStatus(e.target.value)}
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
-                    </select>
+                    </Select>
                   </div>
                 )}
               </div>
@@ -815,7 +816,7 @@ export default function ProjectFormModal() {
                 <div className="pm-coord-grid">
                   <div className="pm-field">
                     <label className="pm-label">Latitude</label>
-                    <input
+                    <Input
                       type="number"
                       step="any"
                       className={`pm-input ${validationErrors.latitude ? 'has-error' : ''}`}
@@ -829,7 +830,7 @@ export default function ProjectFormModal() {
                   </div>
                   <div className="pm-field">
                     <label className="pm-label">Longitude</label>
-                    <input
+                    <Input
                       type="number"
                       step="any"
                       className={`pm-input ${validationErrors.longitude ? 'has-error' : ''}`}
@@ -852,7 +853,7 @@ export default function ProjectFormModal() {
                       </span>
                     </div>
                     <label className="pm-switch">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={enableGeofence}
                         onChange={(e) => setEnableGeofence(e.target.checked)}
@@ -888,7 +889,7 @@ export default function ProjectFormModal() {
                             <label className="pm-label">
                               Radius: <strong>{radius} meters</strong>
                             </label>
-                            <input
+                            <Input
                               type="range"
                               min="20"
                               max="5000"
@@ -962,7 +963,7 @@ export default function ProjectFormModal() {
                 <label className="pm-label" htmlFor="pm-block-count">
                   Number of blocks
                 </label>
-                <input
+                <Input
                   id="pm-block-count"
                   type="number"
                   min={0}
@@ -990,7 +991,7 @@ export default function ProjectFormModal() {
                       <label className="pm-label">
                         Block {i + 1} name <span className="text-red">*</span>
                       </label>
-                      <input
+                      <Input
                         type="text"
                         className={`pm-input ${validationErrors[`block_${i}`] ? 'has-error' : ''}`}
                         placeholder={`e.g. Tower ${String.fromCharCode(65 + (i % 26))}`}

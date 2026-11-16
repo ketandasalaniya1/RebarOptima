@@ -4,6 +4,7 @@ import {
   CheckCircle2, AlertTriangle, Save
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
+import { Input } from '../../../components/ui';
 
 export default function SettingsView({
   onRefreshData
@@ -89,7 +90,7 @@ export default function SettingsView({
           <form onSubmit={handleSaveHoldHours} style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <label style={{ fontSize: '0.88rem', fontWeight: 500 }}>Default Hold Duration:</label>
-              <input
+              <Input
                 type="number"
                 min="1"
                 max="168"

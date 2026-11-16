@@ -21,6 +21,7 @@ import {
   FileSpreadsheet,
   X
 } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function RecipeListTable({
   recipes = [],
@@ -191,7 +192,7 @@ export default function RecipeListTable({
         <div className="recipe-toolbar">
           <div className="recipe-search-box">
             <Search size={16} className="search-icon" />
-            <input
+            <Input
               type="text"
               className="recipe-search-input"
               placeholder="Search by code (e.g. REC-M25), name, or supplier..."
@@ -209,7 +210,7 @@ export default function RecipeListTable({
             {/* Grade Filter */}
             <div className="recipe-filter-item">
               <span className="filter-lbl">Grade:</span>
-              <select
+              <Select
                 className="casting-select filter-select"
                 value={selectedGrade}
                 onChange={(e) => setSelectedGrade(e.target.value)}
@@ -217,13 +218,13 @@ export default function RecipeListTable({
                 {grades.map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {/* Status Filter */}
             <div className="recipe-filter-item">
               <span className="filter-lbl">Status:</span>
-              <select
+              <Select
                 className="casting-select filter-select"
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
@@ -233,13 +234,13 @@ export default function RecipeListTable({
                 <option value="SUBMITTED_FOR_REVIEW">Under Review</option>
                 <option value="DRAFT">Draft</option>
                 <option value="REJECTED">Rejected</option>
-              </select>
+              </Select>
             </div>
 
             {/* Mix Type Filter */}
             <div className="recipe-filter-item">
               <span className="filter-lbl">Mix Type:</span>
-              <select
+              <Select
                 className="casting-select filter-select"
                 value={selectedMixType}
                 onChange={(e) => setSelectedMixType(e.target.value)}
@@ -247,7 +248,7 @@ export default function RecipeListTable({
                 <option value="ALL">All Types</option>
                 <option value="SITE_BATCHING">Site Batching</option>
                 <option value="RMC_PROCUREMENT">RMC Ready-Mix</option>
-              </select>
+              </Select>
             </div>
 
             {/* View Mode Toggle */}
@@ -551,7 +552,7 @@ export default function RecipeListTable({
                           {recipe.displayName}
                         </div>
                         {recipe.description && (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                             {recipe.description}
                           </div>
                         )}
@@ -578,14 +579,14 @@ export default function RecipeListTable({
                             {wcVal.toFixed(3)}
                           </strong>
                         ) : (
-                          <span style={{ color: '#94a3b8' }}>—</span>
+                          <span style={{ color: 'var(--text-secondary)' }}>—</span>
                         )}
                       </td>
                       <td>
                         {wcmVal !== null && wcmVal !== undefined ? (
                           <strong>{wcmVal.toFixed(3)}</strong>
                         ) : (
-                          <span style={{ color: '#94a3b8' }}>—</span>
+                          <span style={{ color: 'var(--text-secondary)' }}>—</span>
                         )}
                       </td>
                       <td>

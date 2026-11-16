@@ -777,7 +777,7 @@
 
 .print-opt-desc {
   font-size: 11px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   line-height: 1.3;
 }
 
@@ -962,7 +962,7 @@ body.has-active-print .batch-print-portal {
   .print-layout-card {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
-    border: 1.5px solid #94a3b8 !important;
+    border: 1.5px solid var(--text-secondary) !important;
     border-radius: 6px !important;
     padding: 10px 14px !important;
     background: #ffffff !important;
@@ -983,7 +983,7 @@ body.has-active-print .batch-print-portal {
   .layout-avatar-id {
     background: #e2e8f0 !important;
     color: #000000 !important;
-    border: 1px solid #94a3b8 !important;
+    border: 1px solid var(--text-secondary) !important;
     font-size: 12pt !important;
   }
 }

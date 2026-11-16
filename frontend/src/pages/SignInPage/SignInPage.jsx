@@ -7,6 +7,7 @@ import { autoRegisterPushDevice } from '../../utils/pushNotifications';
 import { useDispatch } from 'react-redux';
 import { setPermissions } from '../../store/slices/permissionsSlice';
 import './SignInPage.css';
+import { Input } from '../../components/ui';
 
 const REMEMBER_EMAIL_KEY = 'rebar_remember_email';
 const REMEMBER_FLAG_KEY = 'rebar_remember_me';
@@ -181,7 +182,7 @@ const SignInPage = ({
                   <label>Email Address</label>
                   <div className="input-wrapper">
                     <User size={18} className="input-icon" color="#8d86b8" />
-                    <input 
+                    <Input 
                       type="email" 
                       placeholder="Enter your email" 
                       required 
@@ -195,7 +196,7 @@ const SignInPage = ({
                   <label>Password</label>
                   <div className="input-wrapper">
                     <Lock size={18} className="input-icon" color="#8d86b8" />
-                    <input 
+                    <Input 
                       type={showPassword ? "text" : "password"} 
                       placeholder="Enter your password" 
                       required
@@ -214,7 +215,7 @@ const SignInPage = ({
 
                 <div className="form-actions">
                   <label className="remember-me">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(e) => {

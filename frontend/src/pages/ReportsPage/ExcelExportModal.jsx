@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
-import {
-  X,
-  FileSpreadsheet,
-  Download,
-} from 'lucide-react';
-import { Button } from '../../components/ui';
+import { X, FileSpreadsheet, Download, } from 'lucide-react';
+import { Button, Input, Select } from '../../components/ui';
 
 export const EXCEL_REPORT_TYPES = [
   { id: 'grn', label: 'Goods Receipt Note (GRN) Extract', desc: 'Inward challans, received quantities, vendor details, and unit values' },
@@ -73,7 +69,7 @@ export default function ExcelExportModal({
           {/* 1. Report Type Dropdown */}
           <div className="rep-form-group">
             <label className="rep-form-label">Select Report Type</label>
-            <select
+            <Select
               value={extractType}
               onChange={(e) => setExtractType(e.target.value)}
               className="rep-select"
@@ -83,7 +79,7 @@ export default function ExcelExportModal({
                   {type.label}
                 </option>
               ))}
-            </select>
+            </Select>
             {selectedTypeObj && (
               <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 {selectedTypeObj.desc}
@@ -97,7 +93,7 @@ export default function ExcelExportModal({
             <div className="rep-form-row">
               <div className="rep-form-group">
                 <label style={{ fontSize: '11px', color: 'var(--text-label)' }}>From Date</label>
-                <input
+                <Input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
@@ -106,7 +102,7 @@ export default function ExcelExportModal({
               </div>
               <div className="rep-form-group">
                 <label style={{ fontSize: '11px', color: 'var(--text-label)' }}>To Date</label>
-                <input
+                <Input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
@@ -119,7 +115,7 @@ export default function ExcelExportModal({
           {/* 3. Project Scope */}
           <div className="rep-form-group">
             <label className="rep-form-label">Project Scope</label>
-            <select
+            <Select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
               className="rep-select"
@@ -130,7 +126,7 @@ export default function ExcelExportModal({
                   {p.name} {p.code ? `(${p.code})` : ''}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Users, Shield, Calendar, Info, UserPlus, UserMinus, LogOut } from 'lucide-react';
 import { chatApi } from '../../../utils/api';
+import { Select } from '../../../components/ui';
 
 export default function GroupInfoModal({
   isOpen,
@@ -109,7 +110,7 @@ export default function GroupInfoModal({
               <Users size={32} />
             </div>
             <h3 style={{ margin: '0 0 4px 0', color: '#f8fafc' }}>{conversation.name || 'Project Group'}</h3>
-            <p style={{ margin: 0, color: '#94a3b8', fontSize: '13px' }}>
+            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '13px' }}>
               {conversation.description || 'No description provided'}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '10px', color: '#64748b', fontSize: '11px' }}>
@@ -146,7 +147,7 @@ export default function GroupInfoModal({
             {/* Admin Add Member Row */}
             {isAdding && (
               <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', background: '#111722', padding: '8px', borderRadius: '6px' }}>
-                <select
+                <Select
                   value={selectedUserToAdd}
                   onChange={(e) => setSelectedUserToAdd(e.target.value)}
                   style={{
@@ -165,7 +166,7 @@ export default function GroupInfoModal({
                       {c.name} ({c.role || 'Member'})
                     </option>
                   ))}
-                </select>
+                </Select>
                 <button
                   type="button"
                   onClick={handleAddMember}

@@ -64,13 +64,13 @@
 .ufm-subtitle {
   margin: 2px 0 0;
   font-size: 0.78rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .ufm-close-btn {
   background: none;
   border: none;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
@@ -208,7 +208,7 @@
   position: absolute;
   right: 10px;
   font-size: 0.72rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   pointer-events: none;
 }
 

@@ -19,6 +19,7 @@ import {
   Save,
   X
 } from 'lucide-react';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 const PRESETS = {
   M15: {
@@ -802,7 +803,7 @@ export default function CreateRecipeModal({
                   <h4 style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-primary, #f8fafc)' }}>
                     Raw Materials & Batching Rates (SSD Condition)
                   </h4>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                     Specify exact quantities per 1.0 m³ concrete. Real-time w/c ratios update automatically.
                   </p>
                 </div>
@@ -835,7 +836,7 @@ export default function CreateRecipeModal({
                     {ingredients.map((ing, idx) => (
                       <tr key={ing.ingredientId || idx}>
                         <td>
-                          <input
+                          <Input
                             type="text"
                             className="casting-input input-compact monospace"
                             value={ing.materialIdentifier}
@@ -845,7 +846,7 @@ export default function CreateRecipeModal({
                           />
                         </td>
                         <td>
-                          <input
+                          <Input
                             type="text"
                             className="casting-input input-compact"
                             value={ing.name}
@@ -855,7 +856,7 @@ export default function CreateRecipeModal({
                           />
                         </td>
                         <td>
-                          <select
+                          <Select
                             className="casting-select input-compact"
                             value={ing.category}
                             onChange={(e) => handleIngredientChange(idx, 'category', e.target.value)}
@@ -867,10 +868,10 @@ export default function CreateRecipeModal({
                             <option value="WATER">Water</option>
                             <option value="CHEMICAL_ADMIXTURE">Admixture</option>
                             <option value="READY_MIX_CONCRETE">RMC Bulk</option>
-                          </select>
+                          </Select>
                         </td>
                         <td>
-                          <input
+                          <Input
                             type="number"
                             step="0.1"
                             min="0"
@@ -881,7 +882,7 @@ export default function CreateRecipeModal({
                           />
                         </td>
                         <td>
-                          <select
+                          <Select
                             className="casting-select input-compact"
                             value={ing.baseUnit}
                             onChange={(e) => handleIngredientChange(idx, 'baseUnit', e.target.value)}
@@ -889,10 +890,10 @@ export default function CreateRecipeModal({
                             <option value="KG">KG</option>
                             <option value="LITERS">LITERS</option>
                             <option value="M3">M3</option>
-                          </select>
+                          </Select>
                         </td>
                         <td>
-                          <select
+                          <Select
                             className="casting-select input-compact"
                             value={ing.displayUnit}
                             onChange={(e) => handleIngredientChange(idx, 'displayUnit', e.target.value)}
@@ -902,10 +903,10 @@ export default function CreateRecipeModal({
                             <option value="METRIC_TONNE">METRIC_TONNE</option>
                             <option value="LITERS">LITERS</option>
                             <option value="M3">M3</option>
-                          </select>
+                          </Select>
                         </td>
                         <td>
-                          <input
+                          <Input
                             type="number"
                             step="0.5"
                             min="0"
@@ -917,7 +918,7 @@ export default function CreateRecipeModal({
                         </td>
                         <td>
                           {ing.category === 'CHEMICAL_ADMIXTURE' ? (
-                            <input
+                            <Input
                               type="number"
                               step="0.01"
                               className="casting-input input-compact"
@@ -926,7 +927,7 @@ export default function CreateRecipeModal({
                               onChange={(e) => handleIngredientChange(idx, 'specificGravity', e.target.value)}
                             />
                           ) : (
-                            <span style={{ color: 'var(--text-secondary, #94a3b8)', fontSize: '0.8rem', textAlign: 'center', display: 'block' }}>—</span>
+                            <span style={{ color: 'var(--text-secondary, var(--text-secondary))', fontSize: '0.8rem', textAlign: 'center', display: 'block' }}>—</span>
                           )}
                         </td>
                         <td>
@@ -953,7 +954,7 @@ export default function CreateRecipeModal({
               <div className="form-grid-3" style={{ marginBottom: '1.25rem' }}>
                 <div className="form-group">
                   <label className="form-label">Recipe Code *</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input monospace"
                     placeholder="e.g. REC-M25-PUMP-01"
@@ -965,7 +966,7 @@ export default function CreateRecipeModal({
 
                 <div className="form-group">
                   <label className="form-label">Concrete Grade *</label>
-                  <select
+                  <Select
                     className="casting-select"
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
@@ -973,25 +974,25 @@ export default function CreateRecipeModal({
                     {['M10', 'M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50', 'M60', 'CUSTOM'].map(g => (
                       <option key={g} value={g}>{g}</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">Mix Supply Method *</label>
-                  <select
+                  <Select
                     className="casting-select"
                     value={mixType}
                     onChange={(e) => setMixType(e.target.value)}
                   >
                     <option value="SITE_BATCHING">Site Batching Plant</option>
                     <option value="RMC_PROCUREMENT">Ready-Mix Concrete (RMC)</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div className="form-group" style={{ marginBottom: '1.25rem' }}>
                 <label className="form-label">Display Name *</label>
-                <input
+                <Input
                   type="text"
                   className="form-input"
                   placeholder="e.g. M25 Standard Slab & Beam Concrete"
@@ -1003,7 +1004,7 @@ export default function CreateRecipeModal({
 
               <div className="form-group" style={{ marginBottom: '1.25rem' }}>
                 <label className="form-label">Description & Application Scope</label>
-                <textarea
+                <Textarea
                   className="form-input"
                   rows={3}
                   placeholder="e.g. Structural frame mix with slump 140mm, designed for severe exposure per IS 456 Table 5."
@@ -1020,7 +1021,7 @@ export default function CreateRecipeModal({
                   <div className="form-grid-3">
                     <div className="form-group">
                       <label className="form-label">RMC Supplier Name</label>
-                      <input
+                      <Input
                         type="text"
                         className="form-input"
                         placeholder="e.g. UltraTech Concrete / ACC RMC"
@@ -1030,7 +1031,7 @@ export default function CreateRecipeModal({
                     </div>
                     <div className="form-group">
                       <label className="form-label">Vendor Mix Code</label>
-                      <input
+                      <Input
                         type="text"
                         className="form-input monospace"
                         placeholder="e.g. UTC-M25-P-09"
@@ -1040,7 +1041,7 @@ export default function CreateRecipeModal({
                     </div>
                     <div className="form-group">
                       <label className="form-label">Batch Plant Location</label>
-                      <input
+                      <Input
                         type="text"
                         className="form-input"
                         placeholder="e.g. Peenya Industrial Area Plant 2"
@@ -1067,7 +1068,7 @@ export default function CreateRecipeModal({
               <div className="form-grid-3" style={{ marginBottom: '1.25rem' }}>
                 <div className="form-group">
                   <label className="form-label">Min Pure Cement (kg/m³)</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={minCement}
@@ -1078,7 +1079,7 @@ export default function CreateRecipeModal({
 
                 <div className="form-group">
                   <label className="form-label">Max Total Binder (kg/m³)</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={maxTotalBinder}
@@ -1089,7 +1090,7 @@ export default function CreateRecipeModal({
 
                 <div className="form-group">
                   <label className="form-label">Max Permissible w/c Ratio</label>
-                  <input
+                  <Input
                     type="number"
                     step="0.01"
                     className="form-input"
@@ -1103,7 +1104,7 @@ export default function CreateRecipeModal({
               <div className="form-grid-3">
                 <div className="form-group">
                   <label className="form-label">Max Permissible w/cm Ratio</label>
-                  <input
+                  <Input
                     type="number"
                     step="0.01"
                     className="form-input"
@@ -1115,7 +1116,7 @@ export default function CreateRecipeModal({
 
                 <div className="form-group">
                   <label className="form-label">Target Slump Min (mm)</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={slumpMin}
@@ -1126,7 +1127,7 @@ export default function CreateRecipeModal({
 
                 <div className="form-group">
                   <label className="form-label">Target Slump Max (mm)</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={slumpMax}
@@ -1141,7 +1142,7 @@ export default function CreateRecipeModal({
           {/* Modal Footer Actions */}
           <div className="recipe-designer-footer">
             <label className="recipe-review-checkbox-lbl">
-              <input
+              <Input
                 type="checkbox"
                 checked={submitForReview}
                 onChange={(e) => setSubmitForReview(e.target.checked)}

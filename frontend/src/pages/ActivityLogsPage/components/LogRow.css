@@ -190,7 +190,7 @@
 
 .ltr-time-abs {
   font-size: 0.72rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .ltr-inspect-cell {
@@ -287,7 +287,7 @@
   align-items: center;
   gap: 4px;
   font-size: 0.72rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .lmc-desc {

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { predefinedCutsApi } from '../../../utils/api';
 import './PredefinedCutsModal.css';
+import { Input, Select } from '../../../components/ui';
 
 const STANDARD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32];
 
@@ -540,7 +541,7 @@ export default function PredefinedCutsModal({
                   <span className="pc-schedule-badge-label">Active Schedule:</span>
                   {isRenamingGroup ? (
                     <div className="pc-rename-row">
-                      <input
+                      <Input
                         type="text"
                         value={newScheduleName}
                         onChange={(e) => setNewScheduleName(e.target.value)}
@@ -571,7 +572,7 @@ export default function PredefinedCutsModal({
                     </div>
                   ) : (
                     <div className="pc-schedule-view-row">
-                      <select
+                      <Select
                         value={selectedGroup}
                         onChange={(e) => {
                           setSelectedGroup(e.target.value);
@@ -585,7 +586,7 @@ export default function PredefinedCutsModal({
                             {g.name} ({g.itemCount} cut{g.itemCount === 1 ? '' : 's'}{g.totalQuantity ? ` • ${g.totalQuantity} pcs` : ''})
                           </option>
                         ))}
-                      </select>
+                      </Select>
 
                       {selectedGroup !== 'all' && (
                         <div className="pc-schedule-quick-actions">
@@ -643,7 +644,7 @@ export default function PredefinedCutsModal({
             <div className="pc-toolbar-row">
               <div className="pc-search-box">
                 <Search size={15} className="pc-search-icon" />
-                <input
+                <Input
                   type="text"
                   placeholder={
                     selectedGroup !== 'all'
@@ -689,7 +690,7 @@ export default function PredefinedCutsModal({
                 <div className="pc-inline-form-grid">
                   <div className="pc-form-group">
                     <label>Diameter (mm)</label>
-                    <select
+                    <Select
                       value={newCut.diameter}
                       onChange={(e) => setNewCut({ ...newCut, diameter: Number(e.target.value) })}
                       className="pc-input"
@@ -697,11 +698,11 @@ export default function PredefinedCutsModal({
                       {STANDARD_DIAMETERS.map((d) => (
                         <option key={d} value={d}>{d} mm</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                   <div className="pc-form-group">
                     <label>Required Length (mm) *</label>
-                    <input
+                    <Input
                       type="number"
                       placeholder="e.g. 3500"
                       value={newCut.length}
@@ -712,7 +713,7 @@ export default function PredefinedCutsModal({
                   </div>
                   <div className="pc-form-group">
                     <label>Quantity (pcs) *</label>
-                    <input
+                    <Input
                       type="number"
                       placeholder="e.g. 10"
                       value={newCut.quantity}
@@ -723,7 +724,7 @@ export default function PredefinedCutsModal({
                   </div>
                   <div className="pc-form-group">
                     <label>Member Label</label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. Beam-B1"
                       value={newCut.label}
@@ -733,7 +734,7 @@ export default function PredefinedCutsModal({
                   </div>
                   <div className="pc-form-group">
                     <label>Schedule / Group</label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. GF Beams"
                       value={newCut.groupName}
@@ -846,7 +847,7 @@ export default function PredefinedCutsModal({
                             <td></td>
                             <td>{idx + 1}</td>
                             <td>
-                              <select
+                              <Select
                                 value={editForm.diameter}
                                 onChange={(e) => setEditForm({ ...editForm, diameter: Number(e.target.value) })}
                                 className="pc-input-sm"
@@ -854,10 +855,10 @@ export default function PredefinedCutsModal({
                                 {STANDARD_DIAMETERS.map((d) => (
                                   <option key={d} value={d}>{d} mm</option>
                                 ))}
-                              </select>
+                              </Select>
                             </td>
                             <td>
-                              <input
+                              <Input
                                 type="number"
                                 value={editForm.length}
                                 onChange={(e) => setEditForm({ ...editForm, length: e.target.value })}
@@ -865,7 +866,7 @@ export default function PredefinedCutsModal({
                               />
                             </td>
                             <td>
-                              <input
+                              <Input
                                 type="number"
                                 value={editForm.quantity}
                                 onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })}
@@ -873,7 +874,7 @@ export default function PredefinedCutsModal({
                               />
                             </td>
                             <td>
-                              <input
+                              <Input
                                 type="text"
                                 value={editForm.label}
                                 onChange={(e) => setEditForm({ ...editForm, label: e.target.value })}
@@ -881,7 +882,7 @@ export default function PredefinedCutsModal({
                               />
                             </td>
                             <td>
-                              <input
+                              <Input
                                 type="text"
                                 value={editForm.groupName}
                                 onChange={(e) => setEditForm({ ...editForm, groupName: e.target.value })}
@@ -988,7 +989,7 @@ export default function PredefinedCutsModal({
               <div className="pc-upload-options-grid">
                 <div className="pc-form-group">
                   <label>Schedule / Dataset Name *</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. Ground Floor Footings, Tower A Beams"
                     value={uploadGroupName}
@@ -1018,7 +1019,7 @@ export default function PredefinedCutsModal({
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <input
+                <Input
                   ref={fileInputRef}
                   type="file"
                   accept=".csv,.tsv,.txt"
@@ -1049,7 +1050,7 @@ export default function PredefinedCutsModal({
               {/* Checkbox: Load into Optimizer */}
               <div className="pc-auto-apply-row">
                 <label className="pc-check-label">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={autoApplyToOptimizer}
                     onChange={(e) => setAutoApplyToOptimizer(e.target.checked)}

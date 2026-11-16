@@ -29,6 +29,7 @@ import {
 import { profileApi } from '../../utils/api';
 import { updateUserSuccess } from '../../store/slices/authSlice';
 import './ProfilePage.css';
+import { Input, Select } from '../../components/ui';
 
 export default function ProfilePage({ onNavigate }) {
   const dispatch = useDispatch();
@@ -370,7 +371,7 @@ export default function ProfilePage({ onNavigate }) {
             >
               <Camera size={15} />
             </button>
-            <input 
+            <Input 
               type="file" 
               ref={fileInputRef} 
               accept="image/*" 
@@ -492,7 +493,7 @@ export default function ProfilePage({ onNavigate }) {
                 <div className="form-fields-grid two-col">
                   <div className="form-group">
                     <label className="form-label">First Name *</label>
-                    <input 
+                    <Input 
                       type="text" 
                       className="form-input" 
                       value={formData.firstName}
@@ -503,7 +504,7 @@ export default function ProfilePage({ onNavigate }) {
 
                   <div className="form-group">
                     <label className="form-label">Last Name *</label>
-                    <input 
+                    <Input 
                       type="text" 
                       className="form-input" 
                       value={formData.lastName}
@@ -515,7 +516,7 @@ export default function ProfilePage({ onNavigate }) {
                   <div className="form-group">
                     <label className="form-label">Work Email</label>
                     <div className="input-with-badge">
-                      <input 
+                      <Input 
                         type="email" 
                         className="form-input disabled-input" 
                         value={formData.email} 
@@ -533,7 +534,7 @@ export default function ProfilePage({ onNavigate }) {
                     <label className="form-label">Mobile Number</label>
                     <div className="input-icon-wrapper">
                       <Phone size={15} className="field-inner-icon" />
-                      <input 
+                      <Input 
                         type="tel" 
                         className="form-input with-icon" 
                         placeholder="+91 98765 43210"
@@ -557,7 +558,7 @@ export default function ProfilePage({ onNavigate }) {
                 <div className="form-fields-grid two-col">
                   <div className="form-group">
                     <label className="form-label">Company / Firm</label>
-                    <input 
+                    <Input 
                       type="text" 
                       className="form-input disabled-input" 
                       value={formData.companyName} 
@@ -568,7 +569,7 @@ export default function ProfilePage({ onNavigate }) {
 
                   <div className="form-group">
                     <label className="form-label">Primary Project / Site</label>
-                    <input 
+                    <Input 
                       type="text" 
                       className="form-input disabled-input" 
                       value={formData.projectName || 'General Site Operations'} 
@@ -579,7 +580,7 @@ export default function ProfilePage({ onNavigate }) {
 
                   <div className="form-group">
                     <label className="form-label">Site Location</label>
-                    <input 
+                    <Input 
                       type="text" 
                       className="form-input disabled-input" 
                       value={formData.location || 'Headquarters / Main Yard'} 
@@ -660,7 +661,7 @@ export default function ProfilePage({ onNavigate }) {
                     <label className="form-label">
                       Default Saw Blade Kerf (<span className="metric-unit-tag">mm</span>)
                     </label>
-                    <input 
+                    <Input 
                       type="number" 
                       min="0" 
                       max="20" 
@@ -690,7 +691,7 @@ export default function ProfilePage({ onNavigate }) {
                     <label className="form-label">
                       Default Bar Trim Margin (<span className="metric-unit-tag">mm</span>)
                     </label>
-                    <input 
+                    <Input 
                       type="number" 
                       min="0" 
                       max="150" 
@@ -718,7 +719,7 @@ export default function ProfilePage({ onNavigate }) {
 
                   <div className="form-group">
                     <label className="form-label">Default Optimization Engine</label>
-                    <select 
+                    <Select 
                       className="form-input form-select"
                       value={currentPrefs.defaultAlgorithm || 'genetic'}
                       onChange={(e) => setFormData({
@@ -728,7 +729,7 @@ export default function ProfilePage({ onNavigate }) {
                     >
                       <option value="genetic">Genetic Algorithm (Yield Priority - Minimal Steel Scrap)</option>
                       <option value="first-fit">Best-Fit Decreasing (Speed Priority - Instant Results)</option>
-                    </select>
+                    </Select>
                     <span className="form-hint">Preferred cutting pattern calculation strategy.</span>
                   </div>
                 </div>
@@ -777,7 +778,7 @@ export default function ProfilePage({ onNavigate }) {
                   <div className="form-group">
                     <label className="form-label">Current Password *</label>
                     <div className="input-password-wrapper">
-                      <input 
+                      <Input 
                         type={showCurrentPass ? 'text' : 'password'}
                         className="form-input"
                         placeholder="Enter your current password"
@@ -799,7 +800,7 @@ export default function ProfilePage({ onNavigate }) {
                     <div className="form-group">
                       <label className="form-label">New Password *</label>
                       <div className="input-password-wrapper">
-                        <input 
+                        <Input 
                           type={showNewPass ? 'text' : 'password'}
                           className="form-input"
                           placeholder="Enter new strong password"
@@ -820,7 +821,7 @@ export default function ProfilePage({ onNavigate }) {
                     <div className="form-group">
                       <label className="form-label">Confirm New Password *</label>
                       <div className="input-password-wrapper">
-                        <input 
+                        <Input 
                           type={showConfirmPass ? 'text' : 'password'}
                           className="form-input"
                           placeholder="Re-enter new password"
@@ -1059,7 +1060,7 @@ export default function ProfilePage({ onNavigate }) {
 
             <div className="crop-controls-row">
               <span className="crop-control-lbl">Zoom</span>
-              <input 
+              <Input 
                 type="range" 
                 min="1" 
                 max="3" 

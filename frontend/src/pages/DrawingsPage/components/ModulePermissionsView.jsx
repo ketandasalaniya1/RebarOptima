@@ -8,6 +8,7 @@ import {
   Mail,
   X
 } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function ModulePermissionsView({
   users,
@@ -167,7 +168,7 @@ export default function ModulePermissionsView({
               <div className="dw-modal-body">
                 <div className="dw-form-group">
                   <label className="dw-form-label">Full Name *</label>
-                  <input
+                  <Input
                     type="text"
                     className="dw-form-input"
                     placeholder="e.g. Priya Mehta"
@@ -179,7 +180,7 @@ export default function ModulePermissionsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Work Email *</label>
-                  <input
+                  <Input
                     type="email"
                     className="dw-form-input"
                     placeholder="e.g. priya.mehta@rebaroptima.com"
@@ -191,7 +192,7 @@ export default function ModulePermissionsView({
 
                 <div className="dw-form-group">
                   <label className="dw-form-label">Module Role *</label>
-                  <select
+                  <Select
                     className="dw-form-select"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
@@ -202,7 +203,7 @@ export default function ModulePermissionsView({
                     <option value="reviewer">Reviewer</option>
                     <option value="uploader">Drawing Uploader</option>
                     <option value="readonly">Read-Only User</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 

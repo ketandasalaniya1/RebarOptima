@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
 import MaterialSearchSelect from '../components/MaterialSearchSelect';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function InwardEntryDrawer({
   isOpen,
@@ -278,7 +279,7 @@ export default function InwardEntryDrawer({
             </label>
             <div className="gi-select-with-icon">
               <Store size={16} className="gi-input-icon" />
-              <select
+              <Select
                 className={`gi-input-field with-icon ${formErrors.storeId ? 'has-error' : ''}`}
                 value={storeId}
                 onChange={(e) => setStoreId(e.target.value)}
@@ -289,7 +290,7 @@ export default function InwardEntryDrawer({
                     {s.name} {s.isDefault ? '(Main)' : ''}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             {formErrors.storeId && <div className="gi-field-error-msg">{formErrors.storeId}</div>}
           </div>
@@ -300,7 +301,7 @@ export default function InwardEntryDrawer({
             </label>
             <div className="gi-select-with-icon">
               <Calendar size={16} className="gi-input-icon" />
-              <input
+              <Input
                 type="date"
                 className={`gi-input-field with-icon ${formErrors.receiptDate ? 'has-error' : ''}`}
                 value={receiptDate}
@@ -319,7 +320,7 @@ export default function InwardEntryDrawer({
             </label>
             <div className="gi-select-with-icon">
               <Truck size={16} className="gi-input-icon" />
-              <input
+              <Input
                 type="text"
                 className={`gi-input-field with-icon ${formErrors.vendorName ? 'has-error' : ''}`}
                 placeholder="e.g. UltraTech, Bosch, Schneider..."
@@ -334,7 +335,7 @@ export default function InwardEntryDrawer({
             <label className="gi-form-label">
               Challan / DC / Slip # <span className="gi-required">*</span>
             </label>
-            <input
+            <Input
               type="text"
               className={`gi-input-field ${formErrors.vendorChallanNumber ? 'has-error' : ''}`}
               placeholder="e.g. DC-9842"
@@ -411,7 +412,7 @@ export default function InwardEntryDrawer({
                           Received Qty {item.uom && `(${item.uom})`} <span className="gi-required">*</span>
                         </label>
                       </div>
-                      <input
+                      <Input
                         type="number"
                         step="any"
                         min="0.01"
@@ -438,7 +439,7 @@ export default function InwardEntryDrawer({
                           </span>
                         )}
                       </div>
-                      <input
+                      <Input
                         type="number"
                         step="any"
                         min="0"
@@ -499,7 +500,7 @@ export default function InwardEntryDrawer({
                           <label className="gi-form-label-sub" style={{ color: '#d97706', fontWeight: 600 }}>
                             Damaged in Transit / Broken ({item.uom || 'units'})
                           </label>
-                          <input
+                          <Input
                             type="number"
                             step="any"
                             min="0"
@@ -515,7 +516,7 @@ export default function InwardEntryDrawer({
                           <label className="gi-form-label-sub" style={{ color: '#dc2626', fontWeight: 600 }}>
                             Rejected / Vendor Shortage ({item.uom || 'units'})
                           </label>
-                          <input
+                          <Input
                             type="number"
                             step="any"
                             min="0"
@@ -544,7 +545,7 @@ export default function InwardEntryDrawer({
                         <label className="gi-form-label-sub" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
                           Mandatory Explanation / Discrepancy Reason <span className="gi-required">*</span>
                         </label>
-                        <input
+                        <Input
                           type="text"
                           className={`gi-input-field ${formErrors[`item_${idx}_remarks`] ? 'has-error' : ''}`}
                           placeholder="e.g. 10 Cu.Mtr blocks arrived cracked / short delivered on truck by vendor"
@@ -565,7 +566,7 @@ export default function InwardEntryDrawer({
                   <div className="gi-item-sub-grid">
                     <div className="gi-form-group">
                       <label className="gi-form-label-sub">Unit Price (₹)</label>
-                      <input
+                      <Input
                         type="number"
                         step="any"
                         min="0"
@@ -578,7 +579,7 @@ export default function InwardEntryDrawer({
                     {!hasDiscrepancy && (
                       <div className="gi-form-group">
                         <label className="gi-form-label-sub">Item Remarks</label>
-                        <input
+                        <Input
                           type="text"
                           className="gi-input-field-sm"
                           placeholder="Optional batch/heat #"
@@ -619,7 +620,7 @@ export default function InwardEntryDrawer({
               <div className="gi-form-row two-col">
                 <div className="gi-form-group">
                   <label className="gi-form-label">Invoice Number</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. INV-2026-891"
@@ -629,7 +630,7 @@ export default function InwardEntryDrawer({
                 </div>
                 <div className="gi-form-group">
                   <label className="gi-form-label">Vendor Phone / Contact</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. +91 98765 43210"
@@ -641,7 +642,7 @@ export default function InwardEntryDrawer({
 
               <div className="gi-form-group">
                 <label className="gi-form-label">Delivery Notes / Remarks</label>
-                <textarea
+                <Textarea
                   className="gi-textarea-field"
                   rows={2}
                   placeholder="Gate pass number, truck details, condition of materials..."

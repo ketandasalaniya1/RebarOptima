@@ -40,7 +40,7 @@
 
 .crm-header-title-group .crm-subtitle {
   font-size: 0.82rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-top: 0.15rem;
 }
 
@@ -158,7 +158,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -218,7 +218,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .crm-kpi-icon-wrap {
@@ -322,7 +322,7 @@
 .crm-filter-group-mini label {
   font-size: 0.68rem;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -354,7 +354,7 @@
   background: var(--input-bg, #0b1120);
   border: 1px solid var(--input-border, #27364f);
   border-radius: 6px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.76rem;
   font-weight: 600;
   cursor: pointer;
@@ -396,7 +396,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.76rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .crm-legend-box-sample {
@@ -459,7 +459,7 @@
 .crm-chessboard-floor-td {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   text-align: right;
   padding-right: 0.6rem;
   vertical-align: middle;
@@ -527,7 +527,7 @@
 .crm-cell-blocked {
   background-color: #475569;
   /* Dark Slate / Management Hold */
-  border: 1px dashed #94a3b8 !important;
+  border: 1px dashed var(--text-secondary) !important;
   color: #f1f5f9;
 }
 
@@ -558,7 +558,7 @@
 
 .crm-inspect-unit-specs-line {
   font-size: 0.78rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   margin-top: 0.15rem;
 }
 
@@ -774,7 +774,7 @@
   border: none;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -821,7 +821,7 @@
   border-radius: 20px;
   font-size: 0.76rem;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -901,7 +901,7 @@
 
 .crm-feed-body {
   font-size: 0.82rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   line-height: 1.45;
 }
 
@@ -934,7 +934,7 @@
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
@@ -1018,7 +1018,7 @@
   padding: 0.1rem 0.4rem;
   border-radius: 10px;
   background: var(--input-bg);
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .crm-kanban-cards-list {
@@ -1117,7 +1117,7 @@
 .crm-modal-close-btn {
   background: transparent;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1170,7 +1170,7 @@
 .crm-form-label {
   font-size: 0.76rem;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .crm-form-input,
@@ -1223,7 +1223,7 @@
 .crm-table th {
   background: var(--table-header-bg);
   padding: 0.65rem 0.85rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: 600;
   font-size: 0.74rem;
   text-transform: none;
@@ -1306,7 +1306,7 @@
 
 .crm-badge-stage-onhold {
   background: rgba(100, 116, 139, 0.15);
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .crm-badge-unit-available {
@@ -1335,7 +1335,7 @@
 
 .crm-badge-unit-blocked {
   background: rgba(100, 116, 139, 0.2);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(100, 116, 139, 0.3);
 }
 
@@ -1568,7 +1568,7 @@
   --bg-secondary: #1e293b;
   --bg-card: #1e293b;
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --text-secondary: var(--text-secondary);
   --border-color: #334155;
 }
 

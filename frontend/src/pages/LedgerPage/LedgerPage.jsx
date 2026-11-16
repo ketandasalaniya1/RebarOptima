@@ -4,39 +4,9 @@ import { inventoryApi, batchesApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
 import html2pdf from 'html2pdf.js';
 import {
-  TrendingUp,
-  TrendingDown,
-  Sparkles,
-  BookOpen,
-  ClipboardCheck,
-  Calendar,
-  Filter,
-  Search,
-  PackagePlus,
-  Scale,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Plus,
-  Printer,
-  RotateCcw,
-  SlidersHorizontal,
-  X,
-  FileDown,
-  AlertCircle,
-  Layers,
-  ChevronRight,
-  ChevronDown,
-  ChevronsUpDown,
-  ListFilter,
-  DollarSign,
-  PieChart,
-  BarChart3,
-  FileSpreadsheet,
-  FileText,
-  Truck
+  TrendingUp, TrendingDown, Sparkles, BookOpen, ClipboardCheck, Calendar, Filter, Search, PackagePlus, Scale, CheckCircle2, XCircle, Clock, Plus, Printer, RotateCcw, SlidersHorizontal, X, FileDown, AlertCircle, Layers, ChevronRight, ChevronDown, ChevronsUpDown, ListFilter, DollarSign, PieChart, BarChart3, FileSpreadsheet, FileText, Truck
 } from 'lucide-react';
-import { PageHeader, StatusBadge, Badge, TableSkeleton, useDelayedSkeleton } from '../../components/ui';
+import { PageHeader, StatusBadge, Badge, TableSkeleton, useDelayedSkeleton, Input, Select } from '../../components/ui';
 import SteelHeader from '../../components/Shared/SteelHeader';
 import { SHOW_FINANCIALS } from '../../utils/steelFinancials';
 import './LedgerPage.css';
@@ -636,7 +606,7 @@ export default function LedgerPage() {
               <div className="table-header-right">
                 <div className="search-box">
                   <Search size={14} className="search-icon" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Search vendor, brand, diameter, batch..."
                     value={searchQuery}
@@ -699,7 +669,7 @@ export default function LedgerPage() {
                   {/* Date Range Start */}
                   <div className="filter-field">
                     <label>From Date</label>
-                    <input
+                    <Input
                       type="date"
                       value={filterStartDate}
                       onChange={(e) => setFilterStartDate(e.target.value)}
@@ -710,7 +680,7 @@ export default function LedgerPage() {
                   {/* Date Range End */}
                   <div className="filter-field">
                     <label>To Date</label>
-                    <input
+                    <Input
                       type="date"
                       value={filterEndDate}
                       onChange={(e) => setFilterEndDate(e.target.value)}
@@ -721,7 +691,7 @@ export default function LedgerPage() {
                   {/* Diameter Filter */}
                   <div className="filter-field">
                     <label>Diameter</label>
-                    <select
+                    <Select
                       value={filterDiameter}
                       onChange={(e) => setFilterDiameter(e.target.value)}
                       className="filter-select"
@@ -730,13 +700,13 @@ export default function LedgerPage() {
                       {[8, 10, 12, 16, 20, 25, 32].map(d => (
                         <option key={d} value={d}>{d} mm</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Type Filter */}
                   <div className="filter-field">
                     <label>Transaction Type</label>
-                    <select
+                    <Select
                       value={ledgerFilter}
                       onChange={(e) => setLedgerFilter(e.target.value)}
                       className="filter-select"
@@ -746,13 +716,13 @@ export default function LedgerPage() {
                       <option value="OUTWARD">Outwards (Consumed)</option>
                       <option value="REMNANT">Remnants (Yield)</option>
                       <option value="SCRAP">Scraps (Waste)</option>
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Vendor / Brand Filter */}
                   <div className="filter-field">
                     <label>Vendor / Brand</label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. Tata, Jindal, Sai Traders"
                       value={filterVendor}
@@ -1164,7 +1134,7 @@ export default function LedgerPage() {
               <div className="table-header-right">
                 <div className="search-box">
                   <Search size={14} className="search-icon" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Search vendor, brand, dia..."
                     value={searchQuery}
@@ -1206,7 +1176,7 @@ export default function LedgerPage() {
                 <div className="filter-controls-grid">
                   <div className="filter-field">
                     <label>From Date</label>
-                    <input
+                    <Input
                       type="date"
                       value={filterStartDate}
                       onChange={(e) => setFilterStartDate(e.target.value)}
@@ -1215,7 +1185,7 @@ export default function LedgerPage() {
                   </div>
                   <div className="filter-field">
                     <label>To Date</label>
-                    <input
+                    <Input
                       type="date"
                       value={filterEndDate}
                       onChange={(e) => setFilterEndDate(e.target.value)}
@@ -1224,7 +1194,7 @@ export default function LedgerPage() {
                   </div>
                   <div className="filter-field">
                     <label>Diameter</label>
-                    <select
+                    <Select
                       value={filterDiameter}
                       onChange={(e) => setFilterDiameter(e.target.value)}
                       className="filter-select"
@@ -1233,7 +1203,7 @@ export default function LedgerPage() {
                       {[8, 10, 12, 16, 20, 25, 32].map(d => (
                         <option key={d} value={d}>{d} mm</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
@@ -1473,7 +1443,7 @@ export default function LedgerPage() {
             <div className="table-header-right">
               <div className="search-box">
                 <Search size={14} className="search-icon" />
-                <input
+                <Input
                   type="text"
                   placeholder="Search batch name..."
                   value={searchQuery}
@@ -1515,7 +1485,7 @@ export default function LedgerPage() {
               <div className="filter-controls-grid">
                 <div className="filter-field">
                   <label>From Date</label>
-                  <input
+                  <Input
                     type="date"
                     value={filterStartDate}
                     onChange={(e) => setFilterStartDate(e.target.value)}
@@ -1524,7 +1494,7 @@ export default function LedgerPage() {
                 </div>
                 <div className="filter-field">
                   <label>To Date</label>
-                  <input
+                  <Input
                     type="date"
                     value={filterEndDate}
                     onChange={(e) => setFilterEndDate(e.target.value)}
@@ -1643,7 +1613,7 @@ export default function LedgerPage() {
               <form onSubmit={handleRequestSubmit} className="request-form">
                 <div className="form-group">
                   <label>Project / Site Location</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     value={requestForm.site}
@@ -1654,7 +1624,7 @@ export default function LedgerPage() {
 
                 <div className="form-group">
                   <label>Diameter of Steel Bar (mm)</label>
-                  <select
+                  <Select
                     value={requestForm.diameter}
                     onChange={(e) => setRequestForm(prev => ({ ...prev, diameter: Number(e.target.value) }))}
                     className="voucher-select"
@@ -1662,12 +1632,12 @@ export default function LedgerPage() {
                     {[8, 10, 12, 16, 20, 25, 32].map(d => (
                       <option key={d} value={d}>{d} mm</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="form-group">
                   <label>Required Quantity (Bars)</label>
-                  <input
+                  <Input
                     type="number"
                     required
                     placeholder="e.g. 150"
@@ -1729,7 +1699,7 @@ export default function LedgerPage() {
                               <td>{req.quantity}</td>
                               <td>
                                 {isPending && isOwnerAdmin ? (
-                                  <input
+                                  <Input
                                     type="number"
                                     className="voucher-input edit-qty-input"
                                     style={{ maxWidth: '80px', padding: '4px 8px' }}

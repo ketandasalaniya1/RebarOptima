@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Search, Users, User, Send, Check } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function ForwardModal({
   isOpen,
@@ -58,7 +59,7 @@ export default function ForwardModal({
         <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
           <div className="chat-search-input-box">
             <Search size={16} />
-            <input
+            <Input
               type="text"
               placeholder="Search chats and groups..."
               value={search}
@@ -103,7 +104,7 @@ export default function ForwardModal({
                           {conv.displayName || conv.name || 'Chat'}
                         </span>
                         {isGroup && (
-                          <span style={{ fontSize: '10px', background: '#1f2937', color: '#94a3b8', padding: '1px 5px', borderRadius: '4px' }}>
+                          <span style={{ fontSize: '10px', background: '#1f2937', color: 'var(--text-secondary)', padding: '1px 5px', borderRadius: '4px' }}>
                             Group
                           </span>
                         )}
@@ -125,7 +126,7 @@ export default function ForwardModal({
 
         {/* Footer */}
         <div className="chat-modal-footer" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: '12px', color: '#94a3b8', maxWidth: '60%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '60%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             Forwarding: "{message.content ? message.content.substring(0, 50) : (message.attachments?.[0]?.name || 'Attachment')}"
           </div>
 

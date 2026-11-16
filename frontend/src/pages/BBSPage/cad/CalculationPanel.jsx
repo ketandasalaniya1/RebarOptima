@@ -1,3 +1,4 @@
+import { Select } from '../../../components/ui';
 /**
  * RebarOptima Phase 2F — Engineering Calculation & Validation Sidebar Panel
  * 
@@ -21,7 +22,7 @@ export default function CalculationPanel({
   if (!calculation) {
     return (
       <div className="cad-panel-section">
-        <div style={{ color: '#94a3b8', fontSize: '12px', padding: '12px 0' }}>
+        <div style={{ color: 'var(--text-secondary)', fontSize: '12px', padding: '12px 0' }}>
           Select or create a rebar shape to view engineering calculations.
         </div>
       </div>
@@ -53,7 +54,7 @@ export default function CalculationPanel({
       {/* 1. Status & Trust Card */}
       <div className={`cad-calc-status-card ${status.toLowerCase()}`}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Engineering Status
           </span>
           <span className={`cad-calc-badge ${status.toLowerCase()}`}>
@@ -70,7 +71,7 @@ export default function CalculationPanel({
       {/* 2. Engineering Rule Set Selector */}
       <div className="cad-calc-field-group">
         <label className="cad-calc-field-label">Engineering Rule Set</label>
-        <select
+        <Select
           className="cad-calc-rule-dropdown"
           value={currentRuleSetId}
           onChange={(e) => onRuleSetChange(e.target.value)}
@@ -80,7 +81,7 @@ export default function CalculationPanel({
               {r.name}
             </option>
           ))}
-        </select>
+        </Select>
         <span style={{ fontSize: '10px', color: '#64748b', marginTop: '2px', display: 'block' }}>
           Applies statutory bend deductions and unit weights
         </span>

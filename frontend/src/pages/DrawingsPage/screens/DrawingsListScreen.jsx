@@ -6,6 +6,7 @@ import AppModal from '../../../components/ui/AppModal';
 import ReviewApprovalModal from '../components/ReviewApprovalModal';
 import { useGetDrawingsQuery, useGetBlocksQuery, useCreateDrawingMutation } from '../../../store/api/drawingsApi';
 import { Search } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function DrawingsListScreen({
   activeProject,
@@ -128,7 +129,7 @@ export default function DrawingsListScreen({
         {/* Debounced Search */}
         <div className="ro-search-box">
           <Search size={16} className="ro-search-icon" />
-          <input
+          <Input
             type="text"
             className="ro-search-input"
             placeholder="Search drawing number or title..."
@@ -167,7 +168,7 @@ export default function DrawingsListScreen({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div className="ro-form-field">
               <label className="ro-form-label">Block / Tower</label>
-              <select
+              <Select
                 className="ro-form-select"
                 value={newForm.blockName}
                 onChange={(e) => setNewForm({ ...newForm, blockName: e.target.value })}
@@ -175,12 +176,12 @@ export default function DrawingsListScreen({
                 <option value="Block A">Block A</option>
                 <option value="Block B">Block B</option>
                 <option value="Tower 1">Tower 1</option>
-              </select>
+              </Select>
             </div>
 
             <div className="ro-form-field">
               <label className="ro-form-label">Discipline</label>
-              <select
+              <Select
                 className="ro-form-select"
                 value={newForm.disciplineCode}
                 onChange={(e) => setNewForm({ ...newForm, disciplineCode: e.target.value })}
@@ -194,14 +195,14 @@ export default function DrawingsListScreen({
                 <option value="LAND">Landscape</option>
                 <option value="INT">Interior</option>
                 <option value="CIVIL">Civil</option>
-              </select>
+              </Select>
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div className="ro-form-field">
               <label className="ro-form-label">Level / Floor</label>
-              <select
+              <Select
                 className="ro-form-select"
                 value={newForm.level}
                 onChange={(e) => setNewForm({ ...newForm, level: e.target.value })}
@@ -216,12 +217,12 @@ export default function DrawingsListScreen({
                 <option value="L5">L5 (Level 5)</option>
                 <option value="TERRACE">Terrace</option>
                 <option value="GENERAL">General</option>
-              </select>
+              </Select>
             </div>
 
             <div className="ro-form-field">
               <label className="ro-form-label">Drawing Number (Optional)</label>
-              <input
+              <Input
                 type="text"
                 className="ro-form-input"
                 placeholder="e.g. AR-L1-001 (auto if empty)"
@@ -233,7 +234,7 @@ export default function DrawingsListScreen({
 
           <div className="ro-form-field">
             <label className="ro-form-label">Drawing Title *</label>
-            <input
+            <Input
               type="text"
               required
               className="ro-form-input"

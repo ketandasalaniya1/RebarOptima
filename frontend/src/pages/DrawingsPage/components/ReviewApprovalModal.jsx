@@ -11,6 +11,7 @@ import {
   RefreshCw,
   AlertCircle
 } from 'lucide-react';
+import { Input, Textarea } from '../../../components/ui';
 
 export default function ReviewApprovalModal({
   isOpen,
@@ -212,7 +213,7 @@ export default function ReviewApprovalModal({
                   }
                 }}
               >
-                <input
+                <Input
                   type="radio"
                   name="reviewAction"
                   checked={action === 'Approve'}
@@ -233,7 +234,7 @@ export default function ReviewApprovalModal({
                   }
                 }}
               >
-                <input
+                <Input
                   type="radio"
                   name="reviewAction"
                   checked={action === 'Reject'}
@@ -253,7 +254,7 @@ export default function ReviewApprovalModal({
               <label htmlFor="approval-note-input">Approval Note *</label>
               <span className="ro-char-counter">{approvalNote.length}/500</span>
             </div>
-            <textarea
+            <Textarea
               id="approval-note-input"
               required
               maxLength={500}

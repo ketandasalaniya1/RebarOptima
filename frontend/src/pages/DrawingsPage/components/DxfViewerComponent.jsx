@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DxfViewer } from 'dxf-viewer';
 import { Color } from 'three';
 import { Maximize2, Layers, Loader2, Download, AlertCircle } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function DxfViewerComponent({
   dxfUrl,
@@ -359,7 +360,7 @@ export default function DxfViewerComponent({
                 padding: '6px 12px',
                 fontSize: '0.78rem',
                 fontWeight: 600,
-                color: showLayers ? '#38bdf8' : '#94a3b8',
+                color: showLayers ? '#38bdf8' : 'var(--text-secondary)',
                 backgroundColor: showLayers ? '#1e293b' : 'transparent',
                 border: '1px solid #334155',
                 borderRadius: '5px',
@@ -419,7 +420,7 @@ export default function DxfViewerComponent({
                   backgroundColor: l.visible ? 'rgba(51, 65, 85, 0.4)' : 'transparent'
                 }}
               >
-                <input
+                <Input
                   type="checkbox"
                   checked={l.visible}
                   onChange={() => handleToggleLayer(l.name)}

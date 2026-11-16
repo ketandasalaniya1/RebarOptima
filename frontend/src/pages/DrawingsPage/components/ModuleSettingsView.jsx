@@ -8,6 +8,7 @@ import {
   Save,
   RefreshCw
 } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function ModuleSettingsView({
   settings,
@@ -84,7 +85,7 @@ export default function ModuleSettingsView({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="dw-form-group">
               <label className="dw-form-label">Drawing Numbering Pattern Template</label>
-              <input
+              <Input
                 type="text"
                 className="dw-form-input"
                 value={formData.numberingConvention}
@@ -99,7 +100,7 @@ export default function ModuleSettingsView({
               <label className="dw-form-label">Revision Convention Format</label>
               <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.82rem', cursor: 'pointer' }}>
-                  <input
+                  <Input
                     type="radio"
                     name="revisionFormat"
                     value="R00"
@@ -110,7 +111,7 @@ export default function ModuleSettingsView({
                 </label>
 
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.82rem', cursor: 'pointer' }}>
-                  <input
+                  <Input
                     type="radio"
                     name="revisionFormat"
                     value="A"
@@ -134,7 +135,7 @@ export default function ModuleSettingsView({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', cursor: 'pointer' }}>
-              <input
+              <Input
                 type="checkbox"
                 style={{ marginTop: '0.25rem' }}
                 checked={!formData.allowSelfApproval}
@@ -151,7 +152,7 @@ export default function ModuleSettingsView({
             </label>
 
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', cursor: 'pointer' }}>
-              <input
+              <Input
                 type="checkbox"
                 style={{ marginTop: '0.25rem' }}
                 checked={formData.mandatoryReviewsRequired}

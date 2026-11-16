@@ -5,6 +5,7 @@ import { setSelectedProject, openCreateModal } from '../../store/slices/projectS
 import { setView } from '../../store/slices/routingSlice';
 import { setActiveProjectHeader } from '../../utils/api';
 import './ProjectSelector.css';
+import { Input } from '../ui';
 
 export default function ProjectSelector({ isCollapsed = false }) {
   const dispatch = useDispatch();
@@ -116,7 +117,7 @@ export default function ProjectSelector({ isCollapsed = false }) {
       {projects.length > 3 && (
         <div className="ps-search-bar">
           <Search size={14} className="ps-search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search projects..."
             value={searchQuery}

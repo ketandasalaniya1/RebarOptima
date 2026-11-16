@@ -5,6 +5,7 @@ import {
   Trash2, X, ChevronDown, ChevronRight, User, Building, DollarSign
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function TasksView({
   leads = [],
@@ -357,7 +358,7 @@ export default function TasksView({
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontSize: '0.82rem', color: "var(--text-secondary)" }}>
             <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{stats.openCount} open</span>
             <span>•</span>
-            <span style={{ fontWeight: 700, color: stats.overdueCount > 0 ? '#ef4444' : '#94a3b8' }}>
+            <span style={{ fontWeight: 700, color: stats.overdueCount > 0 ? '#ef4444' : 'var(--text-secondary)' }}>
               {stats.overdueCount} overdue
             </span>
             <span>•</span>
@@ -379,7 +380,7 @@ export default function TasksView({
                 borderRadius: '6px',
                 border: 'none',
                 background: viewMode === 'list' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'list' ? '#0f172a' : '#94a3b8',
+                color: viewMode === 'list' ? '#0f172a' : 'var(--text-secondary)',
                 fontWeight: 600,
                 fontSize: '0.78rem',
                 cursor: 'pointer'
@@ -398,7 +399,7 @@ export default function TasksView({
                 borderRadius: '6px',
                 border: 'none',
                 background: viewMode === 'board' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'board' ? '#0f172a' : '#94a3b8',
+                color: viewMode === 'board' ? '#0f172a' : 'var(--text-secondary)',
                 fontWeight: 600,
                 fontSize: '0.78rem',
                 cursor: 'pointer'
@@ -443,7 +444,7 @@ export default function TasksView({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: '220px' }}>
           <Plus size={16} color="var(--accent)" />
-          <input
+          <Input
             ref={quickInputRef}
             type="text"
             placeholder="Quick add task... (Press 'N' anywhere to focus)"
@@ -460,7 +461,7 @@ export default function TasksView({
           />
         </div>
 
-        <select
+        <Select
           value={quickDue}
           onChange={(e) => setQuickDue(e.target.value)}
           style={{
@@ -476,9 +477,9 @@ export default function TasksView({
           <option value="tomorrow">Due Tomorrow</option>
           <option value="in_3_days">In 3 Days</option>
           <option value="next_week">Next Week</option>
-        </select>
+        </Select>
 
-        <select
+        <Select
           value={quickPriority}
           onChange={(e) => setQuickPriority(e.target.value)}
           style={{
@@ -494,7 +495,7 @@ export default function TasksView({
           <option value="High">High</option>
           <option value="Medium">Medium</option>
           <option value="Low">Low</option>
-        </select>
+        </Select>
 
         <button
           type="submit"
@@ -543,7 +544,7 @@ export default function TasksView({
                   border: '1px solid',
                   borderColor: isActive ? '#38bdf8' : 'transparent',
                   background: isActive ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-                  color: isActive ? '#38bdf8' : '#94a3b8',
+                  color: isActive ? '#38bdf8' : 'var(--text-secondary)',
                   fontWeight: isActive ? 700 : 500,
                   fontSize: '0.82rem',
                   cursor: 'pointer',
@@ -560,7 +561,7 @@ export default function TasksView({
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ position: 'relative' }}>
             <Search size={14} style={{ position: 'absolute', left: '8px', top: '8px', color: '#64748b' }} />
-            <input
+            <Input
               type="text"
               placeholder="Filter tasks..."
               value={searchQuery}
@@ -577,7 +578,7 @@ export default function TasksView({
             />
           </div>
 
-          <select
+          <Select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
             style={{
@@ -593,7 +594,7 @@ export default function TasksView({
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -722,7 +723,7 @@ export default function TasksView({
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Task Title *
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="e.g. Schedule lawyer review for agreement drafting"
@@ -736,7 +737,7 @@ export default function TasksView({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>Priority</label>
-                  <select
+                  <Select
                     value={modalPriority}
                     onChange={(e) => setModalPriority(e.target.value)}
                     style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '8px', color: getPriorityColor(modalPriority), fontWeight: 700, fontSize: '0.84rem' }}
@@ -745,12 +746,12 @@ export default function TasksView({
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>Status</label>
-                  <select
+                  <Select
                     value={modalStatus}
                     onChange={(e) => setModalStatus(e.target.value)}
                     style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '8px', color: "var(--text-primary)", fontSize: '0.84rem' }}
@@ -758,7 +759,7 @@ export default function TasksView({
                     <option value="Pending">To do</option>
                     <option value="In Progress">In progress</option>
                     <option value="Completed">Completed</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
@@ -766,13 +767,13 @@ export default function TasksView({
               <div>
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>Due Date & Time</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '8px', marginBottom: '8px' }}>
-                  <input
+                  <Input
                     type="date"
                     value={modalDueDate}
                     onChange={(e) => setModalDueDate(e.target.value)}
                     style={{ padding: '8px 10px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.84rem' }}
                   />
-                  <input
+                  <Input
                     type="time"
                     value={modalDueTime}
                     onChange={(e) => setModalDueTime(e.target.value)}
@@ -813,7 +814,7 @@ export default function TasksView({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>Repeat</label>
-                  <select
+                  <Select
                     value={modalRepeat}
                     onChange={(e) => setModalRepeat(e.target.value)}
                     style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '8px', color: "var(--text-primary)", fontSize: '0.84rem' }}
@@ -822,12 +823,12 @@ export default function TasksView({
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>Reminder</label>
-                  <select
+                  <Select
                     value={modalReminder}
                     onChange={(e) => setModalReminder(e.target.value)}
                     style={{ width: '100%', padding: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '8px', color: "var(--text-primary)", fontSize: '0.84rem' }}
@@ -836,7 +837,7 @@ export default function TasksView({
                     <option value="reminder">At Due Time</option>
                     <option value="15m">15 mins before</option>
                     <option value="1h">1 hour before</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
@@ -844,7 +845,7 @@ export default function TasksView({
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '8px' }}>
                 <div>
                   <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Linked Lead</label>
-                  <select
+                  <Select
                     value={modalLeadId}
                     onChange={(e) => setModalLeadId(e.target.value)}
                     style={{ width: '100%', padding: '7px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.8rem' }}
@@ -853,12 +854,12 @@ export default function TasksView({
                     {leads.map(l => (
                       <option key={l._id || l.id} value={l._id || l.id}>{l.name || l.customerName}</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
                   <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Linked Unit</label>
-                  <select
+                  <Select
                     value={modalUnitId}
                     onChange={(e) => setModalUnitId(e.target.value)}
                     style={{ width: '100%', padding: '7px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.8rem' }}
@@ -867,12 +868,12 @@ export default function TasksView({
                     {units.map(u => (
                       <option key={u._id} value={u._id}>Unit {u.unitCode || u.unitNumber}</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
                   <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Linked Booking</label>
-                  <select
+                  <Select
                     value={modalBookingId}
                     onChange={(e) => setModalBookingId(e.target.value)}
                     style={{ width: '100%', padding: '7px', background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '6px', color: "var(--text-primary)", fontSize: '0.8rem' }}
@@ -881,7 +882,7 @@ export default function TasksView({
                     {bookings.map(b => (
                       <option key={b._id} value={b._id}>{b.bookingReference} ({b.customerName})</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
@@ -897,7 +898,7 @@ export default function TasksView({
                         onClick={() => handleToggleChecklistItem(item.id)}
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flex: 1 }}
                       >
-                        {item.done ? <CheckCircle2 size={15} color="#10b981" /> : <Circle size={15} color="#94a3b8" />}
+                        {item.done ? <CheckCircle2 size={15} color="#10b981" /> : <Circle size={15} color="var(--text-secondary)" />}
                         <span style={{ fontSize: '0.82rem', textDecoration: item.done ? 'line-through' : 'none', color: item.done ? '#64748b' : '#f8fafc' }}>
                           {item.text}
                         </span>
@@ -912,7 +913,7 @@ export default function TasksView({
                     </div>
                   ))}
                 </div>
-                <input
+                <Input
                   type="text"
                   placeholder="Add item + press Enter"
                   value={newChecklistText}
@@ -924,7 +925,7 @@ export default function TasksView({
 
               <div>
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px', fontWeight: 600 }}>Notes</label>
-                <textarea
+                <Textarea
                   rows={2}
                   value={modalNotes}
                   onChange={(e) => setModalNotes(e.target.value)}
@@ -1013,7 +1014,7 @@ function TaskCardRow({ task, onToggle, onEdit, onDelete, getPriorityColor, isBoa
             </span>
 
             {task.dueDateTime && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: task.isOverdue ? '#ef4444' : '#94a3b8' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: task.isOverdue ? '#ef4444' : 'var(--text-secondary)' }}>
                 <Clock size={11} />
                 {new Date(task.dueDateTime).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
               </span>

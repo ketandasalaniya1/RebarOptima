@@ -13,6 +13,7 @@ import {
   Info
 } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function PmCalendarView({ project, onRefreshProject }) {
   const [workingDaysPerWeek, setWorkingDaysPerWeek] = useState(6);
@@ -208,7 +209,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
           <div className="pm-card-body">
             <div className="pm-form-group">
               <label>Standard Work Week Model</label>
-              <select
+              <Select
                 value={workingDaysPerWeek}
                 onChange={(e) => {
                   const val = Number(e.target.value);
@@ -221,7 +222,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
                 <option value={6}>6-Day Construction Week (Mon – Sat) — Standard</option>
                 <option value={5}>5-Day Engineering Week (Mon – Fri)</option>
                 <option value={7}>7-Day Continuous Site Shifts (No Weekly Off)</option>
-              </select>
+              </Select>
             </div>
 
             <div className="pm-form-group">
@@ -231,7 +232,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
                   const isOff = weeklyOffDays.includes(d.idx);
                   return (
                     <label key={d.idx} className={`pm-day-chip ${isOff ? 'pm-chip-off' : 'pm-chip-work'}`}>
-                      <input
+                      <Input
                         type="checkbox"
                         checked={isOff}
                         onChange={() => handleToggleWeeklyOff(d.idx)}
@@ -262,7 +263,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
             <div className="pm-form-row-2">
               <div className="pm-form-group">
                 <label>Shift Start Time</label>
-                <input
+                <Input
                   type="time"
                   value={workStartTime}
                   onChange={(e) => setWorkStartTime(e.target.value)}
@@ -270,7 +271,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
               </div>
               <div className="pm-form-group">
                 <label>Shift End Time</label>
-                <input
+                <Input
                   type="time"
                   value={workEndTime}
                   onChange={(e) => setWorkEndTime(e.target.value)}
@@ -285,7 +286,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
             <div className="pm-form-row-3">
               <div className="pm-form-group">
                 <label>Start</label>
-                <input
+                <Input
                   type="time"
                   value={lunchStartTime}
                   onChange={(e) => setLunchStartTime(e.target.value)}
@@ -293,7 +294,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
               </div>
               <div className="pm-form-group">
                 <label>End</label>
-                <input
+                <Input
                   type="time"
                   value={lunchEndTime}
                   onChange={(e) => setLunchEndTime(e.target.value)}
@@ -301,7 +302,7 @@ export default function PmCalendarView({ project, onRefreshProject }) {
               </div>
               <div className="pm-form-group">
                 <label>Duration (mins)</label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="5"
@@ -324,20 +325,20 @@ export default function PmCalendarView({ project, onRefreshProject }) {
             <div className="pm-recess-list">
               {recessIntervals.map((rec, idx) => (
                 <div key={idx} className="pm-recess-item-row">
-                  <input
+                  <Input
                     type="text"
                     className="pm-input-sm pm-recess-name"
                     value={rec.name}
                     placeholder="Break Name"
                     onChange={(e) => handleUpdateRecess(idx, 'name', e.target.value)}
                   />
-                  <input
+                  <Input
                     type="time"
                     className="pm-input-sm"
                     value={rec.startTime}
                     onChange={(e) => handleUpdateRecess(idx, 'startTime', e.target.value)}
                   />
-                  <input
+                  <Input
                     type="time"
                     className="pm-input-sm"
                     value={rec.endTime}
@@ -374,21 +375,21 @@ export default function PmCalendarView({ project, onRefreshProject }) {
             <div className="pm-add-holiday-box">
               <label>Add Holiday / Project Shutdown</label>
               <div className="pm-form-row-2">
-                <input
+                <Input
                   type="date"
                   value={newHolidayDate}
                   onChange={(e) => setNewHolidayDate(e.target.value)}
                 />
-                <select
+                <Select
                   value={newHolidayType}
                   onChange={(e) => setNewHolidayType(e.target.value)}
                 >
                   <option value="PUBLIC">Public Holiday</option>
                   <option value="PROJECT_SPECIFIC">Site Shutdown / Weather</option>
-                </select>
+                </Select>
               </div>
               <div className="pm-form-row-action">
-                <input
+                <Input
                   type="text"
                   placeholder="Holiday Description (e.g. Independence Day, Heavy Rain)"
                   value={newHolidayName}

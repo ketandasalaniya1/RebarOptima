@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { developerApi } from '../../../utils/api';
 import { subscribeToPushNotifications, getPushPermission } from '../../../utils/pushNotifications';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function WebPushPanel() {
   const [activeTab, setActiveTab] = useState('fcm'); // 'vapid' | 'fcm'
@@ -275,7 +276,7 @@ export default function WebPushPanel() {
 
   if (loading) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+      <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
         <RefreshCw className="spin" size={24} style={{ marginBottom: '8px' }} />
         <p>Loading push notification engines...</p>
       </div>
@@ -453,7 +454,7 @@ export default function WebPushPanel() {
                     Quick Import: Paste Service Account JSON
                   </span>
                 </div>
-                <textarea
+                <Textarea
                   rows={2}
                   value={serviceAccountJsonInput}
                   onChange={(e) => handleParseServiceAccountJson(e.target.value)}
@@ -473,7 +474,7 @@ export default function WebPushPanel() {
 
               <form onSubmit={handleSaveFcm} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                  <input
+                  <Input
                     type="checkbox"
                     checked={fcmConfig.enabled}
                     onChange={(e) => setFcmConfig({ ...fcmConfig, enabled: e.target.checked })}
@@ -488,7 +489,7 @@ export default function WebPushPanel() {
                   <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                     Firebase Project ID
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={fcmConfig.projectId || ''}
                     onChange={(e) => setFcmConfig({ ...fcmConfig, projectId: e.target.value })}
@@ -510,7 +511,7 @@ export default function WebPushPanel() {
                   <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                     Client Email
                   </label>
-                  <input
+                  <Input
                     type="email"
                     value={fcmConfig.clientEmail || ''}
                     onChange={(e) => setFcmConfig({ ...fcmConfig, clientEmail: e.target.value })}
@@ -532,7 +533,7 @@ export default function WebPushPanel() {
                   <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                     Private Key
                   </label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     value={fcmConfig.privateKey || ''}
                     onChange={(e) => setFcmConfig({ ...fcmConfig, privateKey: e.target.value })}
@@ -584,7 +585,7 @@ export default function WebPushPanel() {
                   <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>
                     Target Device Token <span style={{ color: '#8b949e' }}>(Optional)</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={fcmTargetToken}
                     onChange={(e) => setFcmTargetToken(e.target.value)}
@@ -604,7 +605,7 @@ export default function WebPushPanel() {
 
                 <div>
                   <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Notification Title</label>
-                  <input
+                  <Input
                     type="text"
                     value={testPayload.title}
                     onChange={(e) => setTestPayload({ ...testPayload, title: e.target.value })}
@@ -622,7 +623,7 @@ export default function WebPushPanel() {
 
                 <div>
                   <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Notification Body</label>
-                  <textarea
+                  <Textarea
                     rows={2}
                     value={testPayload.body}
                     onChange={(e) => setTestPayload({ ...testPayload, body: e.target.value })}
@@ -814,7 +815,7 @@ export default function WebPushPanel() {
               <form onSubmit={handleRegisterManualToken} style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 1fr 1fr auto', gap: '10px', alignItems: 'end' }}>
                 <div>
                   <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>User ID</label>
-                  <input
+                  <Input
                     type="text"
                     value={manualUserId}
                     onChange={(e) => setManualUserId(e.target.value)}
@@ -834,7 +835,7 @@ export default function WebPushPanel() {
 
                 <div>
                   <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>FCM Device Token</label>
-                  <input
+                  <Input
                     type="text"
                     value={manualToken}
                     onChange={(e) => setManualToken(e.target.value)}
@@ -855,7 +856,7 @@ export default function WebPushPanel() {
 
                 <div>
                   <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>Platform</label>
-                  <select
+                  <Select
                     value={manualPlatform}
                     onChange={(e) => setManualPlatform(e.target.value)}
                     style={{
@@ -871,12 +872,12 @@ export default function WebPushPanel() {
                     <option value="android">Android</option>
                     <option value="ios">iOS</option>
                     <option value="web">Web</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>Device Label</label>
-                  <input
+                  <Input
                     type="text"
                     value={manualDeviceInfo}
                     onChange={(e) => setManualDeviceInfo(e.target.value)}
@@ -956,7 +957,7 @@ export default function WebPushPanel() {
 
             <form onSubmit={handleSaveVapid} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                <input
+                <Input
                   type="checkbox"
                   checked={vapidConfig.enabled}
                   onChange={(e) => setVapidConfig({ ...vapidConfig, enabled: e.target.checked })}
@@ -971,7 +972,7 @@ export default function WebPushPanel() {
                 <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                   VAPID Subject (mailto: or URL)
                 </label>
-                <input
+                <Input
                   type="text"
                   value={vapidConfig.subject || ''}
                   onChange={(e) => setVapidConfig({ ...vapidConfig, subject: e.target.value })}
@@ -993,7 +994,7 @@ export default function WebPushPanel() {
                 <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                   VAPID Public Key (Safe for client browsers)
                 </label>
-                <textarea
+                <Textarea
                   rows={3}
                   value={vapidConfig.publicKey || ''}
                   onChange={(e) => setVapidConfig({ ...vapidConfig, publicKey: e.target.value })}
@@ -1016,7 +1017,7 @@ export default function WebPushPanel() {
                 <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                   VAPID Private Key (Encrypted Secret)
                 </label>
-                <input
+                <Input
                   type="text"
                   value={vapidConfig.privateKey || ''}
                   onChange={(e) => setVapidConfig({ ...vapidConfig, privateKey: e.target.value })}
@@ -1096,7 +1097,7 @@ export default function WebPushPanel() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
               <div>
                 <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Notification Title</label>
-                <input
+                <Input
                   type="text"
                   value={testPayload.title}
                   onChange={(e) => setTestPayload({ ...testPayload, title: e.target.value })}
@@ -1114,7 +1115,7 @@ export default function WebPushPanel() {
 
               <div>
                 <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Message Body</label>
-                <textarea
+                <Textarea
                   rows={2}
                   value={testPayload.body}
                   onChange={(e) => setTestPayload({ ...testPayload, body: e.target.value })}

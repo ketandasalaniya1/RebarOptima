@@ -21,6 +21,7 @@ import { projectsApi, MAX_BLOCKS_PER_PROJECT } from '../../utils/api';
 import { formatINR } from '../../utils/money';
 import UnitFormModal from './UnitFormModal';
 import './ProjectBlocksPanel.css';
+import { Input } from '../../components/ui';
 
 function normalizeName(name) {
   return String(name || '')
@@ -580,7 +581,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
         <div className="pbp-empty-box">
           <Layers size={28} className="pbp-empty-icon" />
           <p className="pbp-empty">No construction blocks added yet.</p>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted, #94a3b8)' }}>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted, var(--text-secondary))' }}>
             Start by adding a block (e.g. Tower A, Wing B) below.
           </span>
         </div>
@@ -610,7 +611,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
                   <span className="pbp-order">{block.displayOrder ?? idx + 1}</span>
 
                   {isEditing ? (
-                    <input
+                    <Input
                       className="pbp-input pbp-input-inline"
                       value={editBlockName}
                       onChange={(e) => setEditBlockName(e.target.value)}
@@ -751,7 +752,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
 
                                 {isEditingFloor ? (
                                   <div className="pbp-floor-edit-group">
-                                    <input
+                                    <Input
                                       className="pbp-input pbp-input-sm"
                                       value={editFloorName}
                                       onChange={(e) => setEditFloorName(e.target.value)}
@@ -759,7 +760,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
                                       placeholder="Floor name"
                                       autoFocus
                                     />
-                                    <input
+                                    <Input
                                       type="number"
                                       className="pbp-input pbp-input-sm pbp-input-number"
                                       value={editFloorNumber}
@@ -977,7 +978,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
                     {canEdit && (
                       <div className="pbp-add-floor-box">
                         <div className="pbp-add-floor-form">
-                          <input
+                          <Input
                             className="pbp-input pbp-input-sm"
                             placeholder="Floor name (e.g. Ground Floor, 1st Floor)"
                             value={(newFloorInput[blockId] || {}).name || ''}
@@ -992,7 +993,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
                             }
                             maxLength={80}
                           />
-                          <input
+                          <Input
                             type="number"
                             className="pbp-input pbp-input-sm pbp-input-number"
                             placeholder="Level No."
@@ -1064,7 +1065,7 @@ export default function ProjectBlocksPanel({ project, canEdit = false, onBlocksC
       {/* Add New Block Form */}
       {canEdit && (
         <form className="pbp-add-form" onSubmit={handleAddBlock}>
-          <input
+          <Input
             className="pbp-input"
             placeholder="New block name (e.g. Tower A, Wing B)"
             value={newName}

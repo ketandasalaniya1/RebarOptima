@@ -152,7 +152,7 @@
 
 .shape-badge-status.archived {
   background: rgba(148, 163, 184, 0.1);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
@@ -176,7 +176,7 @@
 .shape-header-close {
   background: transparent;
   border: none;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   padding: 0.45rem;
   border-radius: 8px;
@@ -239,7 +239,7 @@
 .shape-canvas-btn {
   background: transparent;
   border: 1px solid transparent;
-  color: #94a3b8;
+  color: var(--text-secondary);
   padding: 0.4rem 0.65rem;
   font-size: 0.78rem;
   font-weight: 500;
@@ -300,7 +300,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.82rem;
   font-weight: 500;
   padding: 0 0.85rem;
@@ -372,7 +372,7 @@
 
 .shape-tag-pill {
   background: rgba(51, 65, 85, 0.4);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(51, 65, 85, 0.6);
   font-size: 0.72rem;
   font-weight: 500;
@@ -417,7 +417,7 @@
 
 .shape-info-val.text-muted {
   font-size: 0.82rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -454,7 +454,7 @@
 }
 
 .shape-calc-row .label {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 .shape-calc-row .val {
@@ -507,7 +507,7 @@
 
 .shape-param-display {
   font-size: 0.76rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .shape-param-input {
@@ -617,7 +617,7 @@
 
 .shape-val-sub {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .shape-val-badge {

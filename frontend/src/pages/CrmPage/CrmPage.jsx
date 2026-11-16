@@ -9,6 +9,7 @@ import {
 import { crmApi } from '../../utils/crmApi';
 import { setView } from '../../store/slices/routingSlice';
 import { useActiveProject } from '../../hooks/useActiveProject';
+import { Input, Select } from '../../components/ui';
 
 // Modular Split Components
 import TodayScreen from './components/TodayScreen';
@@ -321,7 +322,7 @@ export default function CrmPage({ subView }) {
         {/* Project Switcher */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ position: 'relative' }}>
-            <select
+            <Select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
               style={{
@@ -340,7 +341,7 @@ export default function CrmPage({ subView }) {
               {projects.map(p => (
                 <option key={p._id} value={p._id}>{p.name}</option>
               ))}
-            </select>
+            </Select>
             <ChevronDown size={14} style={{ position: 'absolute', right: '10px', top: '10px', pointerEvents: 'none', color: 'var(--text-secondary)' }} />
           </div>
         </div>
@@ -349,7 +350,7 @@ export default function CrmPage({ subView }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ position: 'relative' }}>
             <Search size={14} style={{ position: 'absolute', left: '10px', top: '9px', color: 'var(--text-label)' }} />
-            <input
+            <Input
               type="text"
               placeholder="Search phone, buyer, unit..."
               value={searchQuery}
@@ -768,12 +769,12 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>Schedule Appointment</h3>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={18} /></button>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Title *</label>
-            <input
+            <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Title *</label>
+            <Input
               type="text"
               required
               placeholder="e.g. Site Walkthrough - Vikram"
@@ -784,8 +785,8 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Type</label>
-              <select
+              <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Type</label>
+              <Select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
                 style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
@@ -795,11 +796,11 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
                 <option value="call">Call</option>
                 <option value="registration">Registration</option>
                 <option value="handover">Handover</option>
-              </select>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Date &amp; Time</label>
-              <input
+              <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Date &amp; Time</label>
+              <Input
                 type="datetime-local"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
@@ -808,8 +809,8 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
             </div>
           </div>
           <div>
-            <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Location</label>
-            <input
+            <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Location</label>
+            <Input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -817,8 +818,8 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
             />
           </div>
           <div>
-            <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Associated Lead (Optional)</label>
-            <select
+            <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Associated Lead (Optional)</label>
+            <Select
               value={leadId}
               onChange={(e) => setLeadId(e.target.value)}
               style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
@@ -827,7 +828,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
               {leads.map(l => (
                 <option key={l._id} value={l._id}>{l.customerName} ({l.projectName || 'Lead'})</option>
               ))}
-            </select>
+            </Select>
           </div>
           <button
             type="submit"
@@ -885,12 +886,12 @@ function NewTaskModal({ leads, onClose, onCreated }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>+ Add Task</h3>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={18} /></button>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Task Title *</label>
-            <input
+            <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Task Title *</label>
+            <Input
               type="text"
               required
               placeholder="e.g. Call regarding loan sanction letter"
@@ -901,8 +902,8 @@ function NewTaskModal({ leads, onClose, onCreated }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Priority</label>
-              <select
+              <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Priority</label>
+              <Select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
                 style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
@@ -911,11 +912,11 @@ function NewTaskModal({ leads, onClose, onCreated }) {
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
-              </select>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Due Date &amp; Time</label>
-              <input
+              <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Due Date &amp; Time</label>
+              <Input
                 type="datetime-local"
                 value={dueDateTime}
                 onChange={(e) => setDueDateTime(e.target.value)}
@@ -924,8 +925,8 @@ function NewTaskModal({ leads, onClose, onCreated }) {
             </div>
           </div>
           <div>
-            <label style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Linked Lead (Optional)</label>
-            <select
+            <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Linked Lead (Optional)</label>
+            <Select
               value={leadId}
               onChange={(e) => setLeadId(e.target.value)}
               style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
@@ -934,7 +935,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
               {leads.map(l => (
                 <option key={l._id} value={l._id}>{l.customerName} ({l.projectName || 'Lead'})</option>
               ))}
-            </select>
+            </Select>
           </div>
           <button
             type="submit"

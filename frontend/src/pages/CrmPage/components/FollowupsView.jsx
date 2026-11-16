@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
 import { formatINR, formatShortINR } from '../../../utils/money';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function FollowupsView({
   selectedProjectId,
@@ -185,7 +186,7 @@ export default function FollowupsView({
         <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px' }}>
           <div style={{ position: 'relative', width: '260px' }}>
             <Search size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: "var(--text-secondary)" }} />
-            <input
+            <Input
               type="text"
               placeholder="Search buyer, phone, unit…"
               value={searchQuery}
@@ -414,7 +415,7 @@ export default function FollowupsView({
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, display: 'block', marginBottom: '6px' }}>
                   Outcome
                 </label>
-                <select
+                <Select
                   value={interactionOutcome}
                   onChange={(e) => setInteractionOutcome(e.target.value)}
                   style={{ width: '100%', padding: '10px', borderRadius: '8px', background: "var(--input-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.86rem' }}
@@ -426,14 +427,14 @@ export default function FollowupsView({
                   <option value="No Response / Ringing">No Response / Ringing</option>
                   <option value="Not Interested / Lost">Not Interested / Lost</option>
                   <option value="Deal Won / Ready to Book">Deal Won / Ready to Book</option>
-                </select>
+                </Select>
               </div>
 
               <div>
                 <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, display: 'block', marginBottom: '6px' }}>
                   Interaction Notes
                 </label>
-                <textarea
+                <Textarea
                   rows={3}
                   value={interactionNotes}
                   onChange={(e) => setInteractionNotes(e.target.value)}
@@ -447,7 +448,7 @@ export default function FollowupsView({
                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, display: 'block', marginBottom: '6px' }}>
                     Next Follow-up Date
                   </label>
-                  <input
+                  <Input
                     type="date"
                     value={nextFollowupDate}
                     onChange={(e) => setNextFollowupDate(e.target.value)}
@@ -458,7 +459,7 @@ export default function FollowupsView({
                   <label style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, display: 'block', marginBottom: '6px' }}>
                     Assigned Salesperson
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={assignedEmployee || selectedLeadForLog.assignedTo || ''}
                     onChange={(e) => setAssignedEmployee(e.target.value)}

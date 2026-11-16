@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { AlertTriangle } from 'lucide-react';
 import { attendanceApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader, Button, EmptyState } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input, Select } from '../../components/ui';
 import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { selectHasFeature } from '../../store/slices/permissionsSlice';
 import { SOURCES, sourceLabel, todayISO } from './attendanceConstants';
@@ -95,30 +95,30 @@ export default function AttendanceHistoryPage() {
       <div className="att-toolbar">
         <div className="att-field">
           <label>From</label>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+          <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
         </div>
         <div className="att-field">
           <label>To</label>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+          <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
         <div className="att-field">
           <label>Shift</label>
-          <select value={shift} onChange={(e) => setShift(e.target.value)}>
+          <Select value={shift} onChange={(e) => setShift(e.target.value)}>
             <option value="">All</option>
             <option value="day">Day</option>
             <option value="night">Night</option>
-          </select>
+          </Select>
         </div>
         <div className="att-field">
           <label>Source</label>
-          <select value={source} onChange={(e) => setSource(e.target.value)}>
+          <Select value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="">All</option>
             {SOURCES.map((s) => (
               <option key={s.value} value={s.value}>
                 {s.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <Button variant="secondary" onClick={load}>
           Refresh

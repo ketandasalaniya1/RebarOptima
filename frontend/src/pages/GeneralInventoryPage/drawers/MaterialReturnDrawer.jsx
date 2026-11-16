@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { RotateCcw, Calendar, User, Package, AlertCircle, ShieldAlert, CheckCircle2, Check, AlertTriangle, X } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function MaterialReturnDrawer({
   isOpen,
@@ -152,7 +153,7 @@ export default function MaterialReturnDrawer({
               <label className="gi-form-label">
                 Select Issued Item to Return <span className="gi-required">*</span>
               </label>
-              <select
+              <Select
                 className={`gi-input-field ${formErrors.outwardId ? 'has-error' : ''}`}
                 value={outwardId}
                 onChange={(e) => handleOutwardChange(e.target.value)}
@@ -165,7 +166,7 @@ export default function MaterialReturnDrawer({
                     </option>
                   );
                 })}
-              </select>
+              </Select>
               {formErrors.outwardId && <div className="gi-field-error-msg">{formErrors.outwardId}</div>}
             </div>
 
@@ -214,7 +215,7 @@ export default function MaterialReturnDrawer({
                 </label>
                 <div className="gi-select-with-icon">
                   <Calendar size={16} className="gi-input-icon" />
-                  <input
+                  <Input
                     type="date"
                     className="gi-input-field with-icon"
                     value={returnDate}
@@ -229,7 +230,7 @@ export default function MaterialReturnDrawer({
                 </label>
                 <div className="gi-select-with-icon">
                   <User size={16} className="gi-input-icon" />
-                  <input
+                  <Input
                     type="text"
                     className={`gi-input-field with-icon ${formErrors.returnedByPerson ? 'has-error' : ''}`}
                     placeholder="Person handing over item"
@@ -259,7 +260,7 @@ export default function MaterialReturnDrawer({
                   <label className="gi-form-label-sub" style={{ color: 'var(--success-text, #059669)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Check size={12} /> Accepted (Good Condition)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
                     min="0"
@@ -274,7 +275,7 @@ export default function MaterialReturnDrawer({
                   <label className="gi-form-label-sub" style={{ color: 'var(--warning-text, #d97706)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <AlertTriangle size={12} /> Damaged / Defective
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
                     min="0"
@@ -288,7 +289,7 @@ export default function MaterialReturnDrawer({
                   <label className="gi-form-label-sub" style={{ color: 'var(--danger-text, #dc2626)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <X size={12} /> Missing / Lost
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
                     min="0"
@@ -312,7 +313,7 @@ export default function MaterialReturnDrawer({
             {/* Remarks / Condition Notes */}
             <div className="gi-form-group">
               <label className="gi-form-label">Return Notes & Condition</label>
-              <textarea
+              <Textarea
                 className="gi-textarea-field"
                 rows={2}
                 placeholder="Physical condition, cleanliness, reason for any damaged or missing quantity..."

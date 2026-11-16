@@ -227,7 +227,7 @@
 .ro-thumb-page-num {
   font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .ro-thumb-box.active+.ro-thumb-page-num {

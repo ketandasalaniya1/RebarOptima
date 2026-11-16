@@ -14,6 +14,7 @@ import MessageBubble from './MessageBubble';
 import MessageComposer from './MessageComposer';
 import MessageInfoModal from './MessageInfoModal';
 import { chatApi } from '../../../utils/api';
+import { Input } from '../../../components/ui';
 
 export default function ChatWindow({
   activeConversation,
@@ -282,7 +283,7 @@ export default function ChatWindow({
           gap: '8px'
         }}>
           <Search size={15} color="#8b949e" />
-          <input
+          <Input
             type="text"
             placeholder="Search within this chat..."
             value={searchQuery}

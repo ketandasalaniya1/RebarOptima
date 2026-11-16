@@ -17,6 +17,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
   const [manpower, setManpower] = useState([]);
@@ -425,7 +426,7 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
               <div className="pm-modal-body">
                 <div className="pm-form-group">
                   <label>Resource or Crew Name *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Er. Vikram Patel or Gang A - Raft Rebar Crew"
@@ -437,17 +438,17 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
                 <div className="pm-form-row-2">
                   <div className="pm-form-group">
                     <label>Category</label>
-                    <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                    <Select value={category} onChange={(e) => setCategory(e.target.value)}>
                       <option value="STAFF">Site Staff / Engineer</option>
                       <option value="LABOUR_GANG">Labour Gang / Crew</option>
                       <option value="SUBCONTRACTOR">Subcontractor</option>
                       <option value="SPECIALIST">Specialist Consultant</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="pm-form-group">
                     <label>Primary Role / Trade</label>
-                    <select value={role} onChange={(e) => setRole(e.target.value)}>
+                    <Select value={role} onChange={(e) => setRole(e.target.value)}>
                       <option value="Senior Site Engineer">Senior Site Engineer</option>
                       <option value="Planning Lead">Planning Lead</option>
                       <option value="QA/QC Lead Inspector">QA/QC Lead Inspector</option>
@@ -457,14 +458,14 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
                       <option value="Excavation Contractor">Excavation Contractor</option>
                       <option value="Concreting Gang">Concreting Gang</option>
                       <option value="MEP Contractor">MEP Contractor</option>
-                    </select>
+                    </Select>
                   </div>
                 </div>
 
                 <div className="pm-form-row-2">
                   <div className="pm-form-group">
                     <label>Headcount (Persons in Crew)</label>
-                    <input
+                    <Input
                       type="number"
                       min="1"
                       value={headcount}
@@ -474,7 +475,7 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
 
                   <div className="pm-form-group">
                     <label>Daily Working Capacity (Hours)</label>
-                    <input
+                    <Input
                       type="number"
                       step="0.5"
                       min="1"
@@ -487,7 +488,7 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
 
                 <div className="pm-form-group">
                   <label>Contact Phone</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="+91 98XXX XXXXX"
                     value={contactPhone}
@@ -497,7 +498,7 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
 
                 <div className="pm-form-group">
                   <label>Trade Skills (Comma separated)</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. 32mm Rebar Bending, Slump Test, Staging"
                     value={skillsStr}
@@ -541,7 +542,7 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
 
                 <div className="pm-form-group">
                   <label>Select Workforce Resource / Crew *</label>
-                  <select
+                  <Select
                     value={assignResourceId}
                     onChange={(e) => setAssignResourceId(e.target.value)}
                     required
@@ -552,12 +553,12 @@ export default function PmManpowerView({ project, tasks, onRefreshTasks }) {
                         {m.name} ({m.role} — {m.headcount} pax, {m.dailyCapacityHours}h/d)
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="pm-form-group">
                   <label>Allocated Daily Hours per Working Day</label>
-                  <input
+                  <Input
                     type="number"
                     step="0.5"
                     min="1"

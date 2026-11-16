@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Sliders, Save, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, Sparkles, Settings } from 'lucide-react';
 import Drawer from '../../../components/Shared/Drawer';
 import './ScrapRulesDrawer.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Slide-over Drawer for Configuring Scrap Classification Threshold Rules
@@ -150,7 +151,7 @@ export default function ScrapRulesDrawer({
               )}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <input
+              <Input
                 type="number"
                 min="100"
                 max="12000"
@@ -255,7 +256,7 @@ export default function ScrapRulesDrawer({
                     </td>
                     <td>
                       <div className="rule-input-wrap">
-                        <input
+                        <Input
                           type="number"
                           min="100"
                           max="12000"

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GitBranch, X, Shield, Plus } from 'lucide-react';
 import './ShapeDetailsModal.css';
+import { Textarea } from '../../components/ui';
 
 export default function NewVersionModal({
   isOpen,
@@ -77,7 +78,7 @@ export default function NewVersionModal({
                   <div style={{ fontWeight: 700, color: '#f8fafc', fontSize: '14px' }}>
                     Minor Bump: v{minorNext}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '3px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
                     Refinements, parameter tweaks, or small hook revisions.
                   </div>
                 </div>
@@ -96,7 +97,7 @@ export default function NewVersionModal({
                   <div style={{ fontWeight: 700, color: '#f8fafc', fontSize: '14px' }}>
                     Major Bump: v{majorNext}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '3px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
                     Significant topological or standard code geometry changes.
                   </div>
                 </div>
@@ -108,7 +109,7 @@ export default function NewVersionModal({
               <label className="shape-info-label" style={{ display: 'block', marginBottom: '4px' }}>
                 Change Summary / Engineering Notes *
               </label>
-              <textarea
+              <Textarea
                 required
                 className="shape-param-input"
                 style={{ width: '100%', height: '80px', textAlign: 'left', padding: '8px 12px', fontSize: '13px', resize: 'none' }}

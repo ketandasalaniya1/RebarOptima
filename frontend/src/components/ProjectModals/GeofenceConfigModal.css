@@ -59,13 +59,13 @@
 .gfm-subtitle {
   margin: 2px 0 0;
   font-size: 0.8rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .gfm-close-btn {
   background: none;
   border: none;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
@@ -136,7 +136,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .gfm-add-zone-btn {
@@ -200,7 +200,7 @@
 .gfm-zone-delete {
   background: none;
   border: none;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -275,7 +275,7 @@
   background: rgba(30, 41, 59, 0.8);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   border-radius: 6px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -302,7 +302,7 @@
 .gfm-hint {
   margin: 0;
   font-size: 0.74rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   line-height: 1.3;
 }
 
@@ -359,7 +359,7 @@
 
 .gfm-map-coord {
   font-size: 0.74rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .gfm-map-viewport {

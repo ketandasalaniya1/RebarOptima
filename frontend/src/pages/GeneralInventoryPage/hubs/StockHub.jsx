@@ -13,6 +13,7 @@ import {
   Filter,
   Layers
 } from 'lucide-react';
+import { Input, Select } from '../../../components/ui';
 
 export default function StockHub({
   materials = [],
@@ -67,7 +68,7 @@ export default function StockHub({
         <div className="gi-toolbar-left">
           <div className="gi-search-box">
             <Search size={16} />
-            <input
+            <Input
               type="text"
               placeholder="Search materials by name, code, brand..."
               value={searchQuery}
@@ -75,7 +76,7 @@ export default function StockHub({
             />
           </div>
 
-          <select
+          <Select
             className="gi-filter-select"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -86,7 +87,7 @@ export default function StockHub({
                 {c}
               </option>
             ))}
-          </select>
+          </Select>
 
           {/* Status Filter Pills */}
           <div className="gi-status-pills">

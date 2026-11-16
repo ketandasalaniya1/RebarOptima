@@ -36,6 +36,7 @@ import {
   Settings2
 } from 'lucide-react';
 import './ShapeLibrary.css';
+import { Input, Select } from '../../components/ui';
 
 export default function ShapeLibrary({
   customShapes = [],
@@ -438,7 +439,7 @@ export default function ShapeLibrary({
           {/* Category Dropdown */}
           <div className="shape-select-wrapper">
             <Filter size={14} className="shape-select-icon" />
-            <select
+            <Select
               className="shape-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -446,13 +447,13 @@ export default function ShapeLibrary({
               {SHAPE_CATEGORIES.map(cat => (
                 <option key={cat} value={cat}>Category: {cat}</option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Sort Dropdown */}
           <div className="shape-select-wrapper">
             <ArrowUpDown size={14} className="shape-select-icon" />
-            <select
+            <Select
               className="shape-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -461,13 +462,13 @@ export default function ShapeLibrary({
               <option value="name">Sort: Name (A-Z)</option>
               <option value="code">Sort: Shape Code</option>
               <option value="usage">Sort: Most Used</option>
-            </select>
+            </Select>
           </div>
 
           {/* Search Input */}
           <div className="shape-search-wrapper">
             <Search size={15} className="shape-search-icon" />
-            <input
+            <Input
               type="text"
               className="shape-search-input"
               placeholder="Search code, name, tags..."

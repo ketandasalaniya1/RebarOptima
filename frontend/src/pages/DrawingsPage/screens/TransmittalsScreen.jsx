@@ -13,6 +13,7 @@ import {
   ExternalLink,
   RefreshCw
 } from 'lucide-react';
+import { Select, Textarea } from '../../../components/ui';
 
 const PARTY_OPTIONS = [
   'Client - ABC Constructions',
@@ -285,7 +286,7 @@ export default function TransmittalsScreen({
           <form onSubmit={handleSendTransmittal} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div className="ro-upload-field">
               <label className="ro-field-label">To Party *</label>
-              <select
+              <Select
                 className="ro-form-select"
                 value={toParty}
                 onChange={(e) => setToParty(e.target.value)}
@@ -293,12 +294,12 @@ export default function TransmittalsScreen({
                 {PARTY_OPTIONS.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="ro-upload-field">
               <label className="ro-field-label">Purpose *</label>
-              <select
+              <Select
                 className="ro-form-select"
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
@@ -306,7 +307,7 @@ export default function TransmittalsScreen({
                 {PURPOSE_OPTIONS.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {/* Selected Drawings Chips */}
@@ -316,7 +317,7 @@ export default function TransmittalsScreen({
               </label>
               <div className="ro-selected-drawings-list">
                 {selectedDrawings.length === 0 ? (
-                  <div style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', padding: '8px 0' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontStyle: 'italic', padding: '8px 0' }}>
                     No drawings selected. Choose drawings from the register to include.
                   </div>
                 ) : (
@@ -348,7 +349,7 @@ export default function TransmittalsScreen({
                 <label className="ro-field-label">Note</label>
                 <span className="ro-char-counter">{notes.length}/500</span>
               </div>
-              <textarea
+              <Textarea
                 className="ro-textarea-input"
                 maxLength={500}
                 rows={3}

@@ -143,7 +143,7 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
 
   if (!drawing) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+      <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
         <p>No drawing selected.</p>
         <button
           className="dw-btn-secondary"
@@ -238,7 +238,7 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
                   padding: '0.15rem 0.45rem',
                   borderRadius: '4px',
                   backgroundColor: '#1e293b',
-                  color: '#94a3b8',
+                  color: 'var(--text-secondary)',
                   border: '1px solid #334155',
                   textTransform: 'uppercase'
                 }}
@@ -247,10 +247,10 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
               </span>
             </div>
             <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
-              Project: <span style={{ color: '#94a3b8' }}>{projectName}</span>
+              Project: <span style={{ color: 'var(--text-secondary)' }}>{projectName}</span>
               {rev?.fileName && (
                 <>
-                  {' '}• File: <span style={{ color: '#94a3b8' }}>{rev.fileName}</span>
+                  {' '}• File: <span style={{ color: 'var(--text-secondary)' }}>{rev.fileName}</span>
                 </>
               )}
             </div>
@@ -516,7 +516,7 @@ export default function SimpleDrawingViewer({ drawingData, onBack }) {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.4rem' }}>
               No Image File Uploaded Yet
             </h3>
-            <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
               This drawing record does not have an attached image or PDF sheet.
             </p>
             <button

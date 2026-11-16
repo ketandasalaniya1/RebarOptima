@@ -2,43 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { setView } from '../../store/slices/routingSlice';
 import {
-  Sun,
-  Moon,
-  Laptop,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Info,
-  Layers,
-  ArrowRight,
-  ShieldCheck,
-  Search,
-  Plus,
-  Trash2,
-  Download,
-  Smartphone,
-  Tablet,
-  Monitor,
-  Eye,
-  Settings,
-  Database,
-  BarChart2,
-} from 'lucide-react';
+  Sun, Moon, Laptop, CheckCircle, AlertTriangle, XCircle, Info, Layers, ArrowRight, ShieldCheck, Search, Plus, Trash2, Download, Smartphone, Tablet, Monitor, Eye, Settings, Database, BarChart2, } from 'lucide-react';
 import {
-  Button,
-  Drawer,
-  Modal,
-  Card,
-  KpiCard,
-  Table,
-  Badge,
-  Tabs,
-  SearchInput,
-  PageLayout,
-  TableSkeleton,
-  CardSkeleton,
-  KpiSkeleton,
-} from '../../components/ui';
+  Button, Drawer, Modal, Card, KpiCard, Table, Badge, Tabs, SearchInput, PageLayout, TableSkeleton, CardSkeleton, KpiSkeleton, Input, Select } from '../../components/ui';
 import './DesignSystemPage.css';
 
 // ── PROGRAMMATIC WCAG 2.1 RELATIVE LUMINANCE & CONTRAST FORMULA ──
@@ -108,7 +74,7 @@ export default function DesignSystemPage() {
     const mainBg = isDark ? '#0b1120' : '#f8fafc';
     const accentBg = '#047857';
     const sidebarBg = isDark ? '#0e1526' : '#1e293b';
-    const sidebarText = '#94a3b8';
+    const sidebarText = 'var(--text-secondary)';
 
     const textColors = isDark
       ? {
@@ -686,7 +652,7 @@ export default function DesignSystemPage() {
                   <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-label)', marginBottom: '6px' }}>
                     Number Input (No spinner arrows, tabular numbers)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     defaultValue={12000}
                     style={{
@@ -819,7 +785,7 @@ export default function DesignSystemPage() {
             <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-label)', marginBottom: '4px' }}>
               Diameter
             </label>
-            <select
+            <Select
               style={{
                 width: '100%',
                 height: 'var(--control-height)',
@@ -837,14 +803,14 @@ export default function DesignSystemPage() {
               <option>Ø 20 mm</option>
               <option>Ø 25 mm</option>
               <option>Ø 32 mm</option>
-            </select>
+            </Select>
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-label)', marginBottom: '4px' }}>
               Weight (Metric Tons)
             </label>
-            <input
+            <Input
               type="number"
               placeholder="e.g. 5.25 MT"
               style={{
@@ -863,7 +829,7 @@ export default function DesignSystemPage() {
             <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-label)', marginBottom: '4px' }}>
               Supplier / Vendor
             </label>
-            <input
+            <Input
               type="text"
               placeholder="e.g. Shivshakti Steel Corp"
               style={{
@@ -882,7 +848,7 @@ export default function DesignSystemPage() {
             <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-label)', marginBottom: '4px' }}>
               Brand Name
             </label>
-            <input
+            <Input
               type="text"
               placeholder="e.g. Tata Tiscon 550D"
               style={{

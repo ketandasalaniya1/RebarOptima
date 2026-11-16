@@ -245,7 +245,7 @@ export default function MessageBubble({
 
         {/* Deleted message indicator */}
         {isDeleted ? (
-          <span style={{ fontStyle: 'italic', color: '#94a3b8', fontSize: '13px' }}>
+          <span style={{ fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: '13px' }}>
             🚫 This message was deleted
           </span>
         ) : (
@@ -308,11 +308,11 @@ export default function MessageBubble({
                         <div style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {att.name || 'Document'}
                         </div>
-                        <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                           {att.sizeBytes ? `${(att.sizeBytes / 1024).toFixed(0)} KB` : 'File'}
                         </div>
                       </div>
-                      <Download size={16} color="#94a3b8" />
+                      <Download size={16} color="var(--text-secondary)" />
                     </a>
                   );
                 })}
@@ -494,7 +494,7 @@ export default function MessageBubble({
           {Object.entries(reactionsMap).map(([emoji, count]) => (
             <span key={emoji} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
               <span>{emoji}</span>
-              {count > 1 && <span style={{ fontSize: '10px', color: '#94a3b8' }}>{count}</span>}
+              {count > 1 && <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{count}</span>}
             </span>
           ))}
         </div>

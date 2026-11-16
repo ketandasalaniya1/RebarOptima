@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, X, RefreshCw, Download, Filter } from 'lucide-react';
 import './LogFilters.css';
+import { Input, Select } from '../../../components/ui';
 
 const MODULE_OPTIONS = [
   { value: 'all', label: 'All Modules' },
@@ -58,7 +59,7 @@ export default function LogFilters({
       {/* Search Input */}
       <div className="lf-search-wrap">
         <Search size={15} className="lf-search-icon" />
-        <input
+        <Input
           type="text"
           placeholder="Search by action, user name, email, or keywords..."
           value={searchQuery}
@@ -80,7 +81,7 @@ export default function LogFilters({
       {/* Dropdown Filters */}
       <div className="lf-dropdowns-row">
         {/* Module Filter */}
-        <select
+        <Select
           value={selectedModule}
           onChange={(e) => onModuleChange(e.target.value)}
           className="lf-select"
@@ -88,10 +89,10 @@ export default function LogFilters({
           {MODULE_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
-        </select>
+        </Select>
 
         {/* Action Filter */}
-        <select
+        <Select
           value={selectedAction}
           onChange={(e) => onActionChange(e.target.value)}
           className="lf-select"
@@ -99,10 +100,10 @@ export default function LogFilters({
           {ACTION_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
-        </select>
+        </Select>
 
         {/* User Filter */}
-        <select
+        <Select
           value={selectedUser}
           onChange={(e) => onUserChange(e.target.value)}
           className="lf-select"
@@ -116,10 +117,10 @@ export default function LogFilters({
               </option>
             );
           })}
-        </select>
+        </Select>
 
         {/* Date Range Filter */}
-        <select
+        <Select
           value={dateRange}
           onChange={(e) => onDateRangeChange(e.target.value)}
           className="lf-select"
@@ -127,7 +128,7 @@ export default function LogFilters({
           {DATE_RANGE_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
-        </select>
+        </Select>
 
         {/* Refresh Button */}
         <button

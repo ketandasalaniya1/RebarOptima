@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Plus, ChevronRight, ChevronDown, Layers, Building, FolderPlus, Trash2, Edit3, X, ExternalLink } from 'lucide-react';
 import { castingApi } from '../castingApi';
 import { openCreateModal } from '../../../store/slices/projectSlice';
+import { Input, Select } from '../../../components/ui';
 
 export default function ProjectHierarchyManager({
   projects,
@@ -157,7 +158,7 @@ export default function ProjectHierarchyManager({
       {/* Project Selector */}
       <div className="project-select-row">
         <label className="project-select-lbl">Active Project</label>
-        <select
+        <Select
           className="casting-select"
           value={selectedProject ? (selectedProject.id || selectedProject._id) : ''}
           onChange={(e) => {
@@ -171,7 +172,7 @@ export default function ProjectHierarchyManager({
               {p.name} ({p.code || 'PRJ'})
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Blocks & Levels Tree */}
@@ -304,7 +305,7 @@ export default function ProjectHierarchyManager({
                 )}
                 <div className="form-group">
                   <label className="form-label">Project Name *</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. Skyline Heights Tower"
@@ -316,7 +317,7 @@ export default function ProjectHierarchyManager({
                 <div className="form-grid-2">
                   <div className="form-group">
                     <label className="form-label">Project Code</label>
-                    <input
+                    <Input
                       type="text"
                       className="form-input"
                       placeholder="e.g. SHT-01"
@@ -326,7 +327,7 @@ export default function ProjectHierarchyManager({
                   </div>
                   <div className="form-group">
                     <label className="form-label">Location</label>
-                    <input
+                    <Input
                       type="text"
                       className="form-input"
                       placeholder="e.g. Mumbai, Sector 4"
@@ -337,7 +338,7 @@ export default function ProjectHierarchyManager({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Client / Developer Name</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. Godrej Properties"
@@ -371,7 +372,7 @@ export default function ProjectHierarchyManager({
             </div>
             <form onSubmit={handleCreateBlock}>
               <div className="casting-modal-body">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: '#94a3b8', background: 'rgba(56, 189, 248, 0.08)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', background: 'rgba(56, 189, 248, 0.08)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
                   <Layers size={15} style={{ color: '#38bdf8', flexShrink: 0 }} />
                   <span>Blocks and towers added here are automatically shared with Project Management, CRM, BBS, and Drawings.</span>
                 </div>
@@ -382,7 +383,7 @@ export default function ProjectHierarchyManager({
                 )}
                 <div className="form-group">
                   <label className="form-label">Block Name *</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. Tower A, Podium Block, Wing 1"
@@ -393,7 +394,7 @@ export default function ProjectHierarchyManager({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Block Code</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. BLK-A"
@@ -434,7 +435,7 @@ export default function ProjectHierarchyManager({
                 )}
                 <div className="form-group">
                   <label className="form-label">Floor / Level Name *</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. Ground Floor, Level 1 Slab, Basement 2"
@@ -445,7 +446,7 @@ export default function ProjectHierarchyManager({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Floor Index Number</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     placeholder="e.g. 1"

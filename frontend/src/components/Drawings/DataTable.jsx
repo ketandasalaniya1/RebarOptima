@@ -3,6 +3,7 @@ import './DataTable.css';
 import StatusPill from './StatusPill';
 import RoleGate from '../RoleGate';
 import { MoreVertical, Upload, History, Send, Download, Trash2, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
+import { Input } from '../ui';
 
 export default function DataTable({
   drawings = [],
@@ -72,7 +73,7 @@ export default function DataTable({
           <thead>
             <tr>
               <th className="ro-col-checkbox">
-                <input
+                <Input
                   type="checkbox"
                   className="ro-checkbox-input"
                   checked={isAllSelected}
@@ -126,7 +127,7 @@ export default function DataTable({
                 return (
                   <tr key={id} className={isSelected ? 'selected-row' : ''}>
                     <td className="ro-col-checkbox">
-                      <input
+                      <Input
                         type="checkbox"
                         className="ro-checkbox-input"
                         checked={isSelected}

@@ -3,6 +3,7 @@ import { RotateCcw, Sparkles, Plus, Trash2, CheckCircle2, AlertCircle } from 'lu
 import Drawer from '../../../components/Shared/Drawer';
 import { SHOW_FINANCIALS } from '../../../utils/steelFinancials';
 import './InwardVoucherDrawer.css';
+import { Input, Select } from '../../../components/ui';
 
 /**
  * Slide-over Inward Delivery Voucher Drawer
@@ -147,7 +148,7 @@ export default function InwardVoucherDrawer({
               {voucherRows.map((row, idx) => (
                 <tr key={row.id}>
                   <td>
-                    <select
+                    <Select
                       value={row.diameter}
                       onChange={(e) => handleVoucherRowChange(row.id, 'diameter', Number(e.target.value))}
                       className="voucher-select"
@@ -157,10 +158,10 @@ export default function InwardVoucherDrawer({
                           Ø {d} mm
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </td>
                   <td>
-                    <input
+                    <Input
                       type="number"
                       step="0.01"
                       min="0"
@@ -173,7 +174,7 @@ export default function InwardVoucherDrawer({
                   {SHOW_FINANCIALS && (
                     <>
                       <td>
-                        <input
+                        <Input
                           type="number"
                           step="1"
                           min="0"
@@ -192,7 +193,7 @@ export default function InwardVoucherDrawer({
                     </>
                   )}
                   <td style={{ position: 'relative' }}>
-                    <input
+                    <Input
                       type="text"
                       placeholder="Brand name"
                       value={row.brandName}
@@ -238,7 +239,7 @@ export default function InwardVoucherDrawer({
                     )}
                   </td>
                   <td style={{ position: 'relative' }}>
-                    <input
+                    <Input
                       type="text"
                       placeholder="Vendor name"
                       value={row.vendorName}

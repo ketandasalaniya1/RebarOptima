@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Edit2, CheckCircle2, Clock, ShieldAlert, Flag } from 'lucide-react';
 import { pmApi } from '../../../utils/pmApi';
-import { SearchInput } from '../../../components/ui';
+import { SearchInput, Input, Select } from '../../../components/ui';
 
 export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDelayModal }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -98,14 +98,14 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
         />
 
         <div className="pm-toolbar-actions">
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="ALL">All Statuses</option>
             <option value="NOT_STARTED">Not Started</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="BLOCKED">Blocked</option>
             <option value="COMPLETED">Completed</option>
             <option value="UNDER_INSPECTION">Under Inspection</option>
-          </select>
+          </Select>
 
           <button className="pm-btn pm-btn-primary" onClick={() => setIsCreateOpen(true)}>
             <Plus size={16} />
@@ -177,7 +177,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
                       </div>
                     </td>
                     <td>
-                      <select
+                      <Select
                         className="pm-status-select"
                         value={t.status}
                         onChange={(e) => handleStatusChange(t._id, e.target.value)}
@@ -187,7 +187,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
                         <option value="BLOCKED">Blocked</option>
                         <option value="UNDER_INSPECTION">Under Inspection</option>
                         <option value="COMPLETED">Completed</option>
-                      </select>
+                      </Select>
                     </td>
                     <td>
                       <div className="pm-actions-cell">
@@ -220,7 +220,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
               <div className="pm-modal-body pm-form-grid">
                 <div className="pm-form-group pm-col-span-2">
                   <label>Activity Name *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Raft Bottom Rebar Mat Fixing"
@@ -231,7 +231,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group">
                   <label>WBS Code</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. 1.3"
                     value={formData.wbsCode}
@@ -241,7 +241,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group">
                   <label>Working Duration (Days) *</label>
-                  <input
+                  <Input
                     type="number"
                     min="1"
                     required
@@ -252,7 +252,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group">
                   <label>Planned Quantity</label>
-                  <input
+                  <Input
                     type="number"
                     value={formData.plannedQty}
                     onChange={(e) => setFormData({ ...formData, plannedQty: e.target.value })}
@@ -261,7 +261,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group">
                   <label>Unit of Measure</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="MT, m3, m2, etc."
                     value={formData.unit}
@@ -271,7 +271,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group">
                   <label>Assigned Trade / Role</label>
-                  <input
+                  <Input
                     type="text"
                     value={formData.assignedRole}
                     onChange={(e) => setFormData({ ...formData, assignedRole: e.target.value })}
@@ -280,7 +280,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group">
                   <label>Estimated Cost (INR)</label>
-                  <input
+                  <Input
                     type="number"
                     value={formData.plannedCost}
                     onChange={(e) => setFormData({ ...formData, plannedCost: e.target.value })}
@@ -289,7 +289,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
 
                 <div className="pm-form-group pm-col-span-2 pm-flex-checkboxes">
                   <label className="pm-checkbox-label">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={formData.isMilestone}
                       onChange={(e) => setFormData({ ...formData, isMilestone: e.target.checked })}
@@ -298,7 +298,7 @@ export default function PmTasksView({ project, tasks, onRefreshTasks, onOpenDela
                   </label>
 
                   <label className="pm-checkbox-label">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={formData.requiresInspection}
                       onChange={(e) => setFormData({ ...formData, requiresInspection: e.target.checked })}

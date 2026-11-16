@@ -7,6 +7,7 @@ import {
 } from './cad/shapeDefinitionModel';
 import { Sparkles, Layers, Pencil, Plus, X, Check, BookOpen } from 'lucide-react';
 import './ShapeDetailsModal.css';
+import { Input, Select, Textarea } from '../../components/ui';
 
 export default function CreateShapeModal({
   isOpen,
@@ -126,7 +127,7 @@ export default function CreateShapeModal({
                         <div style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
                           {tpl.name}
                         </div>
-                        <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                           {tpl.category}
                         </div>
                       </div>
@@ -142,7 +143,7 @@ export default function CreateShapeModal({
                 <label className="shape-info-label" style={{ display: 'block', marginBottom: '4px' }}>
                   Shape Name *
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   className="shape-param-input"
@@ -157,7 +158,7 @@ export default function CreateShapeModal({
                 <label className="shape-info-label" style={{ display: 'block', marginBottom: '4px' }}>
                   Category *
                 </label>
-                <select
+                <Select
                   className="cad-rule-select"
                   style={{ width: '100%', padding: '8px 12px', background: '#030712', border: '1px solid #334155', color: '#f8fafc', borderRadius: '6px', fontSize: '13px' }}
                   value={category}
@@ -166,7 +167,7 @@ export default function CreateShapeModal({
                   {SHAPE_CATEGORIES.filter(c => c !== 'All').map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
-                </select>
+                </Select>
               </div>
             </div>
 
@@ -174,7 +175,7 @@ export default function CreateShapeModal({
               <label className="shape-info-label" style={{ display: 'block', marginBottom: '4px' }}>
                 Engineering Description
               </label>
-              <textarea
+              <Textarea
                 className="shape-param-input"
                 style={{ width: '100%', height: '60px', textAlign: 'left', padding: '8px 12px', fontSize: '13px', resize: 'none' }}
                 value={description}
@@ -187,7 +188,7 @@ export default function CreateShapeModal({
               <label className="shape-info-label" style={{ display: 'block', marginBottom: '4px' }}>
                 Tags (comma separated)
               </label>
-              <input
+              <Input
                 type="text"
                 className="shape-param-input"
                 style={{ width: '100%', textAlign: 'left', padding: '8px 12px', fontSize: '13px' }}

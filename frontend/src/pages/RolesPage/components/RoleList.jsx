@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Shield, Users, Plus, Search, Check, Sparkles } from 'lucide-react';
 import './RoleList.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Left-side Role List Panel
@@ -59,7 +60,7 @@ export default function RoleList({
       {roles.length > 4 && (
         <div className="rl-search-wrap">
           <Search size={14} className="rl-search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search roles..."
             value={search}

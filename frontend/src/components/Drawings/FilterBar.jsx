@@ -2,6 +2,7 @@ import React from 'react';
 import './FilterBar.css';
 import RoleGate from '../RoleGate';
 import { Plus, Building2 } from 'lucide-react';
+import { Select } from '../ui';
 
 const STANDARD_DISCIPLINES = [
   { code: 'all', name: 'All Disciplines' },
@@ -57,7 +58,7 @@ export default function FilterBar({
         {/* Block */}
         <div className="ro-filter-group compact">
           <label className="ro-filter-label" htmlFor="filter-block">Block</label>
-          <select
+          <Select
             id="filter-block"
             className="ro-filter-select"
             value={selectedBlock}
@@ -77,13 +78,13 @@ export default function FilterBar({
                 <option value="Tower 1">Tower 1</option>
               </>
             )}
-          </select>
+          </Select>
         </div>
 
         {/* Discipline (10 values) */}
         <div className="ro-filter-group">
           <label className="ro-filter-label" htmlFor="filter-discipline">Discipline</label>
-          <select
+          <Select
             id="filter-discipline"
             className="ro-filter-select"
             value={selectedDiscipline}
@@ -94,13 +95,13 @@ export default function FilterBar({
                 {d.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* Level / Floor */}
         <div className="ro-filter-group compact">
           <label className="ro-filter-label" htmlFor="filter-level">Level / Floor</label>
-          <select
+          <Select
             id="filter-level"
             className="ro-filter-select"
             value={selectedLevel}
@@ -111,7 +112,7 @@ export default function FilterBar({
                 {lvl.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

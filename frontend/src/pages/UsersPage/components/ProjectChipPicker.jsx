@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, X, Check, Building2, Plus } from 'lucide-react';
 import './ProjectChipPicker.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Searchable Project Chip Picker with "All Projects" Quick Toggle
@@ -103,7 +104,7 @@ export default function ProjectChipPicker({
       {projects.length > 5 && (
         <div className="pcp-search-box">
           <Search size={14} className="pcp-search-icon" />
-          <input
+          <Input
             type="text"
             placeholder="Search projects to assign..."
             value={search}

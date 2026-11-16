@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { crmApi } from '../../../utils/crmApi';
 import { formatINR } from '../../../utils/money';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function GuidedFollowupModal({
   leads = [],
@@ -416,7 +417,7 @@ export default function GuidedFollowupModal({
               <span style={{ fontSize: '0.72rem', color: "var(--accent)" }}>Variables auto-resolved</span>
             </div>
 
-            <select
+            <Select
               value={selectedTemplateId}
               onChange={(e) => handleSelectTemplate(e.target.value)}
               style={{
@@ -438,10 +439,10 @@ export default function GuidedFollowupModal({
                   {t.title || t.name || t.category || 'Message Template'}
                 </option>
               ))}
-            </select>
+            </Select>
 
             <div style={{ position: 'relative' }}>
-              <textarea
+              <Textarea
                 rows={4}
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
@@ -619,7 +620,7 @@ export default function GuidedFollowupModal({
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <label style={{ fontSize: '0.8rem', color: "var(--text-secondary)" }}>Remind me in:</label>
-                  <select
+                  <Select
                     value={noReplyDays}
                     onChange={(e) => setNoReplyDays(Number(e.target.value))}
                     style={{ padding: '6px 10px', borderRadius: '6px', background: "var(--card-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.82rem' }}
@@ -629,7 +630,7 @@ export default function GuidedFollowupModal({
                     <option value={3}>3 days (Standard)</option>
                     <option value={5}>5 days</option>
                     <option value={7}>7 days</option>
-                  </select>
+                  </Select>
                 </div>
                 <button
                   type="button"
@@ -649,7 +650,7 @@ export default function GuidedFollowupModal({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Move to Stage</label>
-                    <select
+                    <Select
                       value={repliedStage}
                       onChange={(e) => setRepliedStage(e.target.value)}
                       style={{ width: '100%', padding: '7px', borderRadius: '6px', background: "var(--card-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.82rem' }}
@@ -658,11 +659,11 @@ export default function GuidedFollowupModal({
                       <option value="Qualified">Qualified</option>
                       <option value="Visit Scheduled">Visit Scheduled</option>
                       <option value="Negotiation">Negotiation</option>
-                    </select>
+                    </Select>
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Next Follow-up Date</label>
-                    <input
+                    <Input
                       type="date"
                       value={repliedNextDate}
                       onChange={(e) => setRepliedNextDate(e.target.value)}
@@ -688,7 +689,7 @@ export default function GuidedFollowupModal({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Visit Date & Time *</label>
-                    <input
+                    <Input
                       type="datetime-local"
                       value={visitDate}
                       onChange={(e) => setVisitDate(e.target.value)}
@@ -697,7 +698,7 @@ export default function GuidedFollowupModal({
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: "var(--text-secondary)", display: 'block', marginBottom: '4px' }}>Location</label>
-                    <input
+                    <Input
                       type="text"
                       value={visitLocation}
                       onChange={(e) => setVisitLocation(e.target.value)}
@@ -724,7 +725,7 @@ export default function GuidedFollowupModal({
                   <label style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
                     Mandatory Lost Reason *
                   </label>
-                  <select
+                  <Select
                     value={lostReason}
                     onChange={(e) => setLostReason(e.target.value)}
                     style={{ width: '100%', padding: '7px', borderRadius: '6px', background: "var(--card-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.82rem' }}
@@ -737,9 +738,9 @@ export default function GuidedFollowupModal({
                     <option value="Home loan rejected">Home loan rejected</option>
                     <option value="Just exploring / Invalid lead">Just exploring / Invalid lead</option>
                     <option value="Other">Other reason</option>
-                  </select>
+                  </Select>
                 </div>
-                <textarea
+                <Textarea
                   placeholder="Optional detail on why the prospect dropped..."
                   rows={2}
                   value={lostNotes}

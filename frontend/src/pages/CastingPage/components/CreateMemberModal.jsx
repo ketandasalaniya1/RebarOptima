@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Calculator, Edit2, Zap, AlertCircle } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 const CONCRETE_GRADES = ['M15', 'M20', 'M25', 'M30', 'M35', 'M40', 'M45', 'M50'];
 
@@ -154,7 +155,7 @@ export default function CreateMemberModal({
             <h3 className="casting-modal-title">
               {mode === 'single' ? 'Add Structural Member' : 'Batch Generate Members'}
             </h3>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
               Target: {selectedBlock?.name || 'Block'} • {selectedLevel?.name || 'Level'}
             </span>
           </div>
@@ -196,7 +197,7 @@ export default function CreateMemberModal({
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
               <div className="form-group">
                 <label className="form-label">Member Element Type *</label>
-                <select
+                <Select
                   className="casting-select"
                   value={memberType}
                   onChange={(e) => {
@@ -210,12 +211,12 @@ export default function CreateMemberModal({
                   {memberTypes.map(t => (
                     <option key={t} value={t}>{t}</option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div className="form-group">
                 <label className="form-label">Design Concrete Grade *</label>
-                <select
+                <Select
                   className="casting-select"
                   value={concreteGrade}
                   onChange={(e) => setConcreteGrade(e.target.value)}
@@ -223,13 +224,13 @@ export default function CreateMemberModal({
                   {CONCRETE_GRADES.map(g => (
                     <option key={g} value={g}>{g}</option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {mode === 'single' ? (
                 <div className="form-group">
                   <label className="form-label">Mark / Display ID *</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. C1, B-102, SL-1"
@@ -241,7 +242,7 @@ export default function CreateMemberModal({
               ) : (
                 <div className="form-group">
                   <label className="form-label">Series Prefix *</label>
-                  <input
+                  <Input
                     type="text"
                     className="form-input"
                     placeholder="e.g. C, B, F"
@@ -257,7 +258,7 @@ export default function CreateMemberModal({
               <div className="form-grid-2">
                 <div className="form-group">
                   <label className="form-label">Start Number</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={batchStartNum}
@@ -268,7 +269,7 @@ export default function CreateMemberModal({
                 </div>
                 <div className="form-group">
                   <label className="form-label">End Number</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     value={batchEndNum}
@@ -318,7 +319,7 @@ export default function CreateMemberModal({
               <div className="form-grid-3">
                 <div className="form-group">
                   <label className="form-label">Length (mm) *</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     placeholder="e.g. 6000"
@@ -330,7 +331,7 @@ export default function CreateMemberModal({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Width (mm) *</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     placeholder="e.g. 450"
@@ -342,7 +343,7 @@ export default function CreateMemberModal({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Depth / Thick (mm) *</label>
-                  <input
+                  <Input
                     type="number"
                     className="form-input"
                     placeholder="e.g. 600"
@@ -358,7 +359,7 @@ export default function CreateMemberModal({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div className="form-group">
                   <label className="form-label">Required Concrete Volume (m³) *</label>
-                  <input
+                  <Input
                     type="number"
                     step="0.001"
                     className="form-input"
@@ -371,7 +372,7 @@ export default function CreateMemberModal({
                 </div>
                 <div className="form-group">
                   <label className="form-label">Basis / Calculation Notes *</label>
-                  <textarea
+                  <Textarea
                     className="form-input"
                     rows={2}
                     placeholder="e.g. Circular Column (Dia: 600mm, H: 3.5m) -> π × r² × h = 0.989 m³"
@@ -393,7 +394,7 @@ export default function CreateMemberModal({
 
             <div className="form-group">
               <label className="form-label">Description / Grid Location (Optional)</label>
-              <input
+              <Input
                 type="text"
                 className="form-input"
                 placeholder="e.g. Grid A1-A4 Main Frame Beam"

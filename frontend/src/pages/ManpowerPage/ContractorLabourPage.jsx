@@ -1,17 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  AlertTriangle,
-  Image as ImageIcon,
-  HardHat,
-  UserRound,
-  History,
-} from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertTriangle, Image as ImageIcon, HardHat, UserRound, History, } from 'lucide-react';
 import { contractorsApi, manpowerApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader, Button, EmptyState } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input, Select } from '../../components/ui';
 import { CardSkeleton, TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { SalaryControl, formatSalary } from './salaryUnits';
 import './ManpowerPage.css';
@@ -377,7 +368,7 @@ export default function ContractorLabourPage() {
       ) : (
         <>
           <div className="mp-toolbar">
-            <select
+            <Select
               className="mp-contractor-select"
               value={contractorId}
               onChange={(e) => setContractorId(e.target.value)}
@@ -387,7 +378,7 @@ export default function ContractorLabourPage() {
                   {c.name}
                 </option>
               ))}
-            </select>
+            </Select>
             {effectiveMode && (
               <span className="mp-mode-badge">
                 {effectiveMode === 'named' ? 'Named workers (Depart labour)' : 'Workforce rows'}
@@ -501,7 +492,7 @@ export default function ContractorLabourPage() {
                           Remove
                         </button>
                       )}
-                      <input
+                      <Input
                         ref={photoInputRef}
                         type="file"
                         accept="image/*"
@@ -521,7 +512,7 @@ export default function ContractorLabourPage() {
                       <label>
                         Name <span className="req">*</span>
                       </label>
-                      <input
+                      <Input
                         value={workerForm.name}
                         onChange={(e) => updateWorkerField('name', e.target.value)}
                         required
@@ -531,7 +522,7 @@ export default function ContractorLabourPage() {
                       <label>
                         Labour type <span className="req">*</span>
                       </label>
-                      <input
+                      <Input
                         value={workerForm.labourType}
                         onChange={(e) => updateWorkerField('labourType', e.target.value)}
                         required
@@ -541,7 +532,7 @@ export default function ContractorLabourPage() {
                       <label>
                         Phone <span className="mp-optional">(optional)</span>
                       </label>
-                      <input
+                      <Input
                         value={workerForm.phone}
                         onChange={(e) => updateWorkerField('phone', e.target.value)}
                       />
@@ -550,7 +541,7 @@ export default function ContractorLabourPage() {
                       <label>
                         Address <span className="mp-optional">(optional)</span>
                       </label>
-                      <input
+                      <Input
                         value={workerForm.address}
                         onChange={(e) => updateWorkerField('address', e.target.value)}
                       />
@@ -581,7 +572,7 @@ export default function ContractorLabourPage() {
                           Remove
                         </button>
                       )}
-                      <input
+                      <Input
                         ref={aadharInputRef}
                         type="file"
                         accept="image/*,application/pdf"
@@ -617,7 +608,7 @@ export default function ContractorLabourPage() {
                         <label>
                           Labour type <span className="req">*</span>
                         </label>
-                        <input
+                        <Input
                           value={row.labourType}
                           onChange={(e) => updateWorkforceRow(index, 'labourType', e.target.value)}
                           placeholder="e.g. Mason"
@@ -627,7 +618,7 @@ export default function ContractorLabourPage() {
                         <label>
                           Count <span className="req">*</span>
                         </label>
-                        <input
+                        <Input
                           type="number"
                           min="1"
                           value={row.count}
@@ -638,7 +629,7 @@ export default function ContractorLabourPage() {
                         <label>
                           Salary amount <span className="req">*</span>
                         </label>
-                        <input
+                        <Input
                           type="number"
                           min="0"
                           step="any"
@@ -650,14 +641,14 @@ export default function ContractorLabourPage() {
                         <label>
                           Unit <span className="req">*</span>
                         </label>
-                        <select
+                        <Select
                           value={row.salaryUnit}
                           onChange={(e) => updateWorkforceRow(index, 'salaryUnit', e.target.value)}
                         >
                           <option value="per_month">Per month</option>
                           <option value="per_day">Per day</option>
                           <option value="per_hour">Per hour</option>
-                        </select>
+                        </Select>
                       </div>
                       <button
                         type="button"

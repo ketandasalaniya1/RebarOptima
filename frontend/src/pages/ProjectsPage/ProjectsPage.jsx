@@ -24,7 +24,7 @@ import {
   openAssignPartnerModal,
   updateProjectInList,
 } from '../../store/slices/projectSlice';
-import { PageHeader, Button, EmptyState, StatusBadge, DataToolbar } from '../../components/ui';
+import { PageHeader, Button, EmptyState, StatusBadge, FilterBar, Field, Select } from '../../components/ui';
 import ProjectBlocksPanel from './ProjectBlocksPanel';
 import './ProjectsPage.css';
 
@@ -175,45 +175,49 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <DataToolbar
+      <FilterBar
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder="Search by project name, address, or PIN code..."
-        countLabel={`${filteredProjects.length} of ${projects.length}`}
+        activeCount={(statusFilter !== 'all' ? 1 : 0) + (typeFilter !== 'all' ? 1 : 0)}
+        onReset={() => {
+          setSearchQuery('');
+          setStatusFilter('all');
+          setTypeFilter('all');
+        }}
         filters={
           <>
-            <label className="pp-filter-label" htmlFor="pp-status-filter">
-              Status
-            </label>
-            <select
-              id="pp-status-filter"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="pp-filter-select"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-            <label className="pp-filter-label" htmlFor="pp-type-filter">
-              Type
-            </label>
-            <select
-              id="pp-type-filter"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="pp-filter-select"
-            >
-              <option value="all">All Types</option>
-              <option value="Residential">Residential</option>
-              <option value="Commercial">Commercial</option>
-              <option value="Mixed-use">Mixed-use</option>
-              <option value="Villa">Villa</option>
-              <option value="Other">Other</option>
-            </select>
+            <Field label="Status" htmlFor="pp-status-filter">
+              <Select
+                id="pp-status-filter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="pp-filter-select"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </Select>
+            </Field>
+            <Field label="Type" htmlFor="pp-type-filter">
+              <Select
+                id="pp-type-filter"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="pp-filter-select"
+              >
+                <option value="all">All Types</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Mixed-use">Mixed-use</option>
+                <option value="Villa">Villa</option>
+                <option value="Other">Other</option>
+              </Select>
+            </Field>
           </>
         }
       />
+      <p className="pp-filter-count">{filteredProjects.length} of {projects.length}</p>
 
       {/* Main Content Area */}
       {loading ? (

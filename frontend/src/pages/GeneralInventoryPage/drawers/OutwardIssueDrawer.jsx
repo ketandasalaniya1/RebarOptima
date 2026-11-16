@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowUpRight, Store, User, Building, Calendar, MapPin, ChevronDown, ChevronUp, AlertCircle, Clock, Package, RotateCcw, AlertTriangle } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
 import MaterialSearchSelect from '../components/MaterialSearchSelect';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function OutwardIssueDrawer({
   isOpen,
@@ -170,7 +171,7 @@ export default function OutwardIssueDrawer({
           </label>
           <div className="gi-select-with-icon">
             <Store size={16} className="gi-input-icon" />
-            <select
+            <Select
               className={`gi-input-field with-icon ${formErrors.storeId ? 'has-error' : ''}`}
               value={storeId}
               onChange={(e) => setStoreId(e.target.value)}
@@ -181,7 +182,7 @@ export default function OutwardIssueDrawer({
                   {s.name} {s.isDefault ? '(Main)' : ''}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           {formErrors.storeId && <div className="gi-field-error-msg">{formErrors.storeId}</div>}
         </div>
@@ -215,7 +216,7 @@ export default function OutwardIssueDrawer({
             )}
           </div>
 
-          <input
+          <Input
             type="number"
             step="any"
             min="0.01"
@@ -243,7 +244,7 @@ export default function OutwardIssueDrawer({
             </label>
             <div className="gi-select-with-icon">
               <User size={16} className="gi-input-icon" />
-              <input
+              <Input
                 type="text"
                 className={`gi-input-field with-icon ${formErrors.personReceiving ? 'has-error' : ''}`}
                 placeholder="e.g. Ramesh / Site Foreman"
@@ -262,7 +263,7 @@ export default function OutwardIssueDrawer({
                 Contractor / Agency {!isAgencyNA && <span className="gi-required">*</span>}
               </label>
               <label className="gi-inline-checkbox-label">
-                <input
+                <Input
                   type="checkbox"
                   checked={isAgencyNA}
                   onChange={(e) => setIsAgencyNA(e.target.checked)}
@@ -272,7 +273,7 @@ export default function OutwardIssueDrawer({
             </div>
             <div className="gi-select-with-icon">
               <Building size={16} className="gi-input-icon" />
-              <input
+              <Input
                 type="text"
                 disabled={isAgencyNA}
                 className={`gi-input-field with-icon ${isAgencyNA ? 'disabled' : ''} ${formErrors.agency ? 'has-error' : ''}`}
@@ -319,7 +320,7 @@ export default function OutwardIssueDrawer({
             </p>
             <div className="gi-select-with-icon" style={{ marginTop: '0.4rem' }}>
               <Calendar size={16} className="gi-input-icon" />
-              <input
+              <Input
                 type="date"
                 className={`gi-input-field with-icon ${formErrors.expectedReturnDate ? 'has-error' : ''}`}
                 value={expectedReturnDate}
@@ -350,7 +351,7 @@ export default function OutwardIssueDrawer({
                   <label className="gi-form-label">Location / Work Front</label>
                   <div className="gi-select-with-icon">
                     <MapPin size={16} className="gi-input-icon" />
-                    <input
+                    <Input
                       type="text"
                       className="gi-input-field with-icon"
                       placeholder="e.g. Tower B - 5th Floor"
@@ -362,7 +363,7 @@ export default function OutwardIssueDrawer({
 
                 <div className="gi-form-group">
                   <label className="gi-form-label">Purpose / Work Description</label>
-                  <input
+                  <Input
                     type="text"
                     className="gi-input-field"
                     placeholder="e.g. Plumbing conduit laying"
@@ -374,7 +375,7 @@ export default function OutwardIssueDrawer({
 
               <div className="gi-form-group">
                 <label className="gi-form-label">General Remarks</label>
-                <textarea
+                <Textarea
                   className="gi-textarea-field"
                   rows={2}
                   placeholder="Notes, condition of tool when issued, supervisor sign-off..."

@@ -8,6 +8,7 @@ import {
   isModuleEnabled,
 } from '../permissionMatrix';
 import './PermissionMatrix.css';
+import { Input } from '../../../components/ui';
 
 /**
  * Granular Permissions Matrix Component
@@ -117,7 +118,7 @@ export default function PermissionMatrix({
                               <td className="pm-cell-info">
                                 <div className="pm-info-box">
                                   <label className="pm-master-toggle" title="Enable or disable entire module">
-                                    <input
+                                    <Input
                                       type="checkbox"
                                       checked={modEnabled}
                                       onChange={() => onModuleToggle(modKey)}
@@ -137,7 +138,7 @@ export default function PermissionMatrix({
                               {/* CRUD: View (locked ON when module is enabled) */}
                               <td className="pm-cell-toggle">
                                 <label className="pm-checkbox-pill">
-                                  <input
+                                  <Input
                                     type="checkbox"
                                     checked={modEnabled && modPerms.view !== false}
                                     onChange={() => onFeatureToggle(modKey, 'view')}
@@ -153,7 +154,7 @@ export default function PermissionMatrix({
                               <td className="pm-cell-toggle">
                                 {crud.create ? (
                                   <label className="pm-checkbox-pill">
-                                    <input
+                                    <Input
                                       type="checkbox"
                                       checked={Boolean(modPerms[crud.create])}
                                       onChange={() => onFeatureToggle(modKey, crud.create)}
@@ -172,7 +173,7 @@ export default function PermissionMatrix({
                               <td className="pm-cell-toggle">
                                 {crud.edit ? (
                                   <label className="pm-checkbox-pill">
-                                    <input
+                                    <Input
                                       type="checkbox"
                                       checked={Boolean(modPerms[crud.edit])}
                                       onChange={() => onFeatureToggle(modKey, crud.edit)}
@@ -191,7 +192,7 @@ export default function PermissionMatrix({
                               <td className="pm-cell-toggle">
                                 {crud.delete ? (
                                   <label className="pm-checkbox-pill">
-                                    <input
+                                    <Input
                                       type="checkbox"
                                       checked={Boolean(modPerms[crud.delete])}
                                       onChange={() => onFeatureToggle(modKey, crud.delete)}
@@ -238,7 +239,7 @@ export default function PermissionMatrix({
 
                                         return (
                                           <label key={featKey} className="pm-more-item-card">
-                                            <input
+                                            <Input
                                               type="checkbox"
                                               checked={isFeatActive}
                                               onChange={() => onFeatureToggle(modKey, featKey)}

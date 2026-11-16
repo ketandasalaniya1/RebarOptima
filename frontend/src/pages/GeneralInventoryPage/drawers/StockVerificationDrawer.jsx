@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ClipboardCheck, Store, Calendar } from 'lucide-react';
 import InventoryDrawer from './InventoryDrawer';
 import MaterialSearchSelect from '../components/MaterialSearchSelect';
+import { Input, Select, Textarea } from '../../../components/ui';
 
 export default function StockVerificationDrawer({
   isOpen,
@@ -87,7 +88,7 @@ export default function StockVerificationDrawer({
           <label className="gi-form-label">
             Godown / Store <span className="gi-required">*</span>
           </label>
-          <select
+          <Select
             className={`gi-input-field ${formErrors.storeId ? 'has-error' : ''}`}
             value={storeId}
             onChange={(e) => setStoreId(e.target.value)}
@@ -98,7 +99,7 @@ export default function StockVerificationDrawer({
                 {s.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <MaterialSearchSelect
@@ -115,7 +116,7 @@ export default function StockVerificationDrawer({
             <label className="gi-form-label">
               Physical Count Observed <span className="gi-required">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="any"
               min="0"
@@ -130,7 +131,7 @@ export default function StockVerificationDrawer({
 
           <div className="gi-form-group">
             <label className="gi-form-label">Audit Date</label>
-            <input
+            <Input
               type="date"
               className="gi-input-field"
               value={verificationDate}
@@ -141,7 +142,7 @@ export default function StockVerificationDrawer({
 
         <div className="gi-form-group">
           <label className="gi-form-label">Audit Notes & Observations</label>
-          <textarea
+          <Textarea
             className="gi-textarea-field"
             rows={2}
             placeholder="Visual condition, location within shed, counting method..."

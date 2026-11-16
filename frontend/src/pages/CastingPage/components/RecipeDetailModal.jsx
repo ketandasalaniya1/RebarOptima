@@ -22,6 +22,7 @@ import {
   TrendingDown,
   X
 } from 'lucide-react';
+import { Input } from '../../../components/ui';
 
 export default function RecipeDetailModal({
   isOpen,
@@ -339,11 +340,11 @@ export default function RecipeDetailModal({
                         <div style={{ fontWeight: 600, color: 'var(--text-primary, #f8fafc)' }}>
                           {ing.name}
                         </div>
-                        <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                        <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                           {ing.materialIdentifier}
                         </div>
                       </td>
-                      <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                      <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                         {ing.specificationStandard || 'Standard'}
                       </td>
                       <td>
@@ -355,7 +356,7 @@ export default function RecipeDetailModal({
                         <strong style={{ fontSize: '0.95rem', color: '#2dd4bf', fontFamily: 'monospace' }}>
                           {ing.quantityPerM3}
                         </strong>{' '}
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                           {ing.baseUnit}
                         </span>
                       </td>
@@ -397,7 +398,7 @@ export default function RecipeDetailModal({
                   <h4 style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-primary, #f8fafc)' }}>
                     Transit Mixer / Site Batch Scaling Calculator
                   </h4>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                     Enter the target pour volume or truck capacity to see exact batching weights with wastage.
                   </p>
                 </div>
@@ -416,7 +417,7 @@ export default function RecipeDetailModal({
                   </button>
                 ))}
                 <div className="batch-input-wrap">
-                  <input
+                  <Input
                     type="number"
                     step="0.5"
                     min="0.5"
@@ -426,7 +427,7 @@ export default function RecipeDetailModal({
                     className="casting-input"
                     style={{ width: '80px', padding: '0.4rem 0.6rem' }}
                   />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>m³</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>m³</span>
                 </div>
               </div>
             </div>
@@ -454,7 +455,7 @@ export default function RecipeDetailModal({
                       <tr key={idx}>
                         <td>
                           <strong>{ing.name}</strong>
-                          <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary, #94a3b8)' }}>
+                          <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
                             {ing.category}
                           </span>
                         </td>
@@ -471,7 +472,7 @@ export default function RecipeDetailModal({
                           )}
                         </td>
                         <td>
-                          <span style={{ color: wastage > 0 ? '#fbbf24' : '#94a3b8', fontSize: '0.8rem' }}>
+                          <span style={{ color: wastage > 0 ? '#fbbf24' : 'var(--text-secondary)', fontSize: '0.8rem' }}>
                             +{wastage}% ({(grossQty - netQty).toFixed(1)})
                           </span>
                         </td>
@@ -627,7 +628,7 @@ export default function RecipeDetailModal({
                         </strong>
                         {getStatusBadge(ver.approvalStatus)}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary, #94a3b8)', marginTop: '0.2rem' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary, var(--text-secondary))', marginTop: '0.2rem' }}>
                         Created on {ver.createdAt ? new Date(ver.createdAt).toLocaleDateString() : 'N/A'}{' '}
                         {ver.submittedBy?.name && `by ${ver.submittedBy.name}`}
                       </div>
@@ -649,7 +650,7 @@ export default function RecipeDetailModal({
         {/* Modal Footer Actions */}
         <div className="recipe-detail-footer">
           <div className="recipe-footer-left">
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, var(--text-secondary))' }}>
               Last updated {activeVer?.updatedAt ? new Date(activeVer.updatedAt).toLocaleDateString() : 'recently'}
             </span>
           </div>

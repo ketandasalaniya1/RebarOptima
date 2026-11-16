@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { AlertTriangle, Download, RefreshCw } from 'lucide-react';
 import { attendanceApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader, Button, EmptyState } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input, Select } from '../../components/ui';
 import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import { selectHasFeature } from '../../store/slices/permissionsSlice';
 import AttendanceReportPreview from './AttendanceReportPreview';
@@ -161,7 +161,7 @@ export default function AttendanceReportsPage() {
         <div className="att-toolbar" style={{ flexWrap: 'wrap' }}>
           <div className="att-field">
             <label>Report type</label>
-            <select
+            <Select
               value={filters.reportType}
               onChange={(e) => setField('reportType', e.target.value)}
             >
@@ -170,13 +170,13 @@ export default function AttendanceReportsPage() {
                   {t.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {visible.date && (
             <div className="att-field">
               <label>Date</label>
-              <input
+              <Input
                 type="date"
                 value={filters.date}
                 onChange={(e) => setField('date', e.target.value)}
@@ -186,7 +186,7 @@ export default function AttendanceReportsPage() {
           {visible.from && (
             <div className="att-field">
               <label>From</label>
-              <input
+              <Input
                 type="date"
                 value={filters.from}
                 onChange={(e) => setField('from', e.target.value)}
@@ -196,7 +196,7 @@ export default function AttendanceReportsPage() {
           {visible.to && (
             <div className="att-field">
               <label>To</label>
-              <input
+              <Input
                 type="date"
                 value={filters.to}
                 onChange={(e) => setField('to', e.target.value)}
@@ -207,17 +207,17 @@ export default function AttendanceReportsPage() {
             <>
               <div className="att-field">
                 <label>Month</label>
-                <select value={filters.month} onChange={(e) => setField('month', e.target.value)}>
+                <Select value={filters.month} onChange={(e) => setField('month', e.target.value)}>
                   {Array.from({ length: 12 }, (_, i) => (
                     <option key={i + 1} value={String(i + 1)}>
                       {new Date(2000, i, 1).toLocaleString('en', { month: 'long' })}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
               <div className="att-field">
                 <label>Year</label>
-                <input
+                <Input
                   type="number"
                   min="2000"
                   max="2100"
@@ -230,7 +230,7 @@ export default function AttendanceReportsPage() {
           {visible.shift && (
             <div className="att-field">
               <label>Shift</label>
-              <select value={filters.shift} onChange={(e) => setField('shift', e.target.value)}>
+              <Select value={filters.shift} onChange={(e) => setField('shift', e.target.value)}>
                 {(meta?.shifts || [
                   { value: '', label: 'All shifts' },
                   { value: 'day', label: 'Day' },
@@ -240,25 +240,25 @@ export default function AttendanceReportsPage() {
                     {s.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
           {visible.source && (
             <div className="att-field">
               <label>Source</label>
-              <select value={filters.source} onChange={(e) => setField('source', e.target.value)}>
+              <Select value={filters.source} onChange={(e) => setField('source', e.target.value)}>
                 {(meta?.sources || [{ value: '', label: 'All sources' }]).map((s) => (
                   <option key={s.value || 'all'} value={s.value}>
                     {s.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
           {visible.labourScope && (
             <div className="att-field">
               <label>Labour scope</label>
-              <select
+              <Select
                 value={filters.labourScope}
                 onChange={(e) => setField('labourScope', e.target.value)}
               >
@@ -267,13 +267,13 @@ export default function AttendanceReportsPage() {
                     {s.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
           {visible.contractorId && (
             <div className="att-field">
               <label>Contractor</label>
-              <select
+              <Select
                 value={filters.contractorId}
                 onChange={(e) => setField('contractorId', e.target.value)}
               >
@@ -285,13 +285,13 @@ export default function AttendanceReportsPage() {
                     {c.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
           {visible.labourType && (
             <div className="att-field">
               <label>Labour type</label>
-              <select
+              <Select
                 value={filters.labourType}
                 onChange={(e) => setField('labourType', e.target.value)}
               >
@@ -301,25 +301,25 @@ export default function AttendanceReportsPage() {
                     {t.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
           {visible.status && (
             <div className="att-field">
               <label>Status</label>
-              <select value={filters.status} onChange={(e) => setField('status', e.target.value)}>
+              <Select value={filters.status} onChange={(e) => setField('status', e.target.value)}>
                 {(meta?.statuses || [{ value: '', label: 'All statuses' }]).map((s) => (
                   <option key={s.value || 'all'} value={s.value}>
                     {s.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
           {visible.worker && (
             <div className="att-field" style={{ minWidth: 220 }}>
               <label>Worker</label>
-              <select
+              <Select
                 value={
                   filters.subjectId
                     ? `${filters.subjectType}:${filters.subjectId}`
@@ -352,7 +352,7 @@ export default function AttendanceReportsPage() {
                     {w.subjectType === 'company_labour' ? ' · Company' : ''}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
         </div>

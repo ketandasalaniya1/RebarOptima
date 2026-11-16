@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, DollarSign, CreditCard, Building2, AlertCircle } from 'lucide-react';
 import { formatINR } from '../../../utils/money';
+import { Input, Select } from '../../../components/ui';
 
 export default function PaymentForm({
   bookings = [],
@@ -75,7 +76,7 @@ export default function PaymentForm({
 
             <div className="crm-form-group">
               <label className="crm-form-label">Select Booking Contract *</label>
-              <select
+              <Select
                 className="crm-form-input"
                 value={selectedBookingId}
                 onChange={e => setSelectedBookingId(e.target.value)}
@@ -88,7 +89,7 @@ export default function PaymentForm({
                       {b.bookingReference} — {b.customerName} (Unit {b.unitCode})
                     </option>
                   ))}
-              </select>
+              </Select>
             </div>
 
             {selectedBooking && (
@@ -109,7 +110,7 @@ export default function PaymentForm({
             <div className="crm-form-grid">
               <div className="crm-form-group">
                 <label className="crm-form-label">Payment Amount (₹) *</label>
-                <input
+                <Input
                   type="number"
                   required
                   className="crm-form-input"
@@ -121,7 +122,7 @@ export default function PaymentForm({
 
               <div className="crm-form-group">
                 <label className="crm-form-label">Value Date *</label>
-                <input
+                <Input
                   type="date"
                   required
                   className="crm-form-input"
@@ -132,7 +133,7 @@ export default function PaymentForm({
 
               <div className="crm-form-group">
                 <label className="crm-form-label">Payment Method *</label>
-                <select
+                <Select
                   className="crm-form-input"
                   value={paymentMethod}
                   onChange={e => setPaymentMethod(e.target.value)}
@@ -143,12 +144,12 @@ export default function PaymentForm({
                   <option value="Demand Draft">Demand Draft</option>
                   <option value="Credit/Debit Card">Credit/Debit Card</option>
                   <option value="Cash">Cash Float</option>
-                </select>
+                </Select>
               </div>
 
               <div className="crm-form-group">
                 <label className="crm-form-label">Transaction Reference / UTR / Cheque No *</label>
-                <input
+                <Input
                   type="text"
                   required
                   className="crm-form-input"
@@ -160,7 +161,7 @@ export default function PaymentForm({
 
               <div className="crm-form-group full-width">
                 <label className="crm-form-label">Receipt Remarks (Optional)</label>
-                <input
+                <Input
                   type="text"
                   className="crm-form-input"
                   placeholder="e.g. Token payment received via RTGS"

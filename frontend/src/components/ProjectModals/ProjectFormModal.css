@@ -72,13 +72,13 @@
 .pm-subtitle {
   margin: 2px 0 0;
   font-size: 0.8rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pm-close-btn {
   background: none;
   border: none;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
@@ -269,7 +269,7 @@
 
 .pm-toggle-desc {
   font-size: 0.72rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 /* Toggle Switch */
@@ -336,7 +336,7 @@ input:checked + .pm-slider:before {
   background: rgba(30, 41, 59, 0.8);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   border-radius: 6px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, var(--text-secondary));
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
@@ -431,7 +431,7 @@ input:checked + .pm-slider:before {
 .pm-poly-hint {
   margin: 0;
   font-size: 0.74rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 /* Draggable Polygon Vertex Handles */
@@ -546,7 +546,7 @@ input:checked + .pm-slider:before {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -635,7 +635,7 @@ input:checked + .pm-slider:before {
   margin: 0;
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -647,7 +647,7 @@ input:checked + .pm-slider:before {
 }
 
 .pm-review-muted {
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-secondary));
 }
 
 .pm-review-blocks {

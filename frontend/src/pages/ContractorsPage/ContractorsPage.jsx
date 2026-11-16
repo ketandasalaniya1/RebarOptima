@@ -1,19 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  X,
-  Search,
-  ChevronDown,
-  HardHat,
-  AlertTriangle,
-  Image as ImageIcon,
-  Info,
-} from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Search, ChevronDown, HardHat, AlertTriangle, Image as ImageIcon, Info, } from 'lucide-react';
 import { contractorsApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader, Button, EmptyState } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input, Textarea } from '../../components/ui';
 import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import './ContractorsPage.css';
 
@@ -391,7 +380,7 @@ export default function ContractorsPage() {
           <div className="ctr-toolbar">
             <div className="ctr-search">
               <Search size={16} />
-              <input
+              <Input
                 value={listSearch}
                 onChange={(e) => setListSearch(e.target.value)}
                 placeholder="Search name, email, phone, department…"
@@ -486,7 +475,7 @@ export default function ContractorsPage() {
                 <label>
                   Contractor Name <span className="req">*</span>
                 </label>
-                <input
+                <Input
                   value={form.name}
                   onChange={(e) => onNameChange(e.target.value)}
                   onFocus={() => nameSuggestions.length && setNameSuggestOpen(true)}
@@ -517,7 +506,7 @@ export default function ContractorsPage() {
                 <label>
                   Phone Number <span className="req">*</span>
                 </label>
-                <input
+                <Input
                   value={form.phone}
                   onChange={(e) => updateField('phone', e.target.value)}
                   placeholder="Phone number"
@@ -527,7 +516,7 @@ export default function ContractorsPage() {
 
             <div className="ctr-field">
               <label>Contractor Email <span className="ctr-optional">(optional)</span></label>
-              <input
+              <Input
                 type="text"
                 inputMode="email"
                 autoComplete="off"
@@ -539,7 +528,7 @@ export default function ContractorsPage() {
 
             <div className="ctr-field">
               <label>Address</label>
-              <textarea
+              <Textarea
                 rows={2}
                 value={form.address}
                 onChange={(e) => updateField('address', e.target.value)}
@@ -550,7 +539,7 @@ export default function ContractorsPage() {
             <div className="ctr-grid-2">
               <div className="ctr-field">
                 <label>Business Name</label>
-                <input
+                <Input
                   value={form.businessName}
                   onChange={(e) => updateField('businessName', e.target.value)}
                   placeholder="Business / agency name"
@@ -558,7 +547,7 @@ export default function ContractorsPage() {
               </div>
               <div className="ctr-field">
                 <label>Business GST</label>
-                <input
+                <Input
                   value={form.businessGst}
                   onChange={(e) => updateField('businessGst', e.target.value)}
                   placeholder="GSTIN"
@@ -569,7 +558,7 @@ export default function ContractorsPage() {
             <div className="ctr-grid-2">
               <div className="ctr-field">
                 <label>Aadhar Card ID Number</label>
-                <input
+                <Input
                   value={form.aadharNumber}
                   onChange={(e) => updateField('aadharNumber', e.target.value)}
                   placeholder="Aadhar number"
@@ -578,7 +567,7 @@ export default function ContractorsPage() {
               <div className="ctr-field">
                 <label>Aadhar Card Image</label>
                 <div className="ctr-upload">
-                  <input
+                  <Input
                     ref={aadharInputRef}
                     type="file"
                     accept="image/*,application/pdf"
@@ -664,7 +653,7 @@ export default function ContractorsPage() {
               </div>
               <div className="ctr-dept-search">
                 <Search size={15} />
-                <input
+                <Input
                   value={deptQuery}
                   onChange={(e) => onDeptQueryChange(e.target.value)}
                   onFocus={() => {

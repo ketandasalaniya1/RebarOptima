@@ -5,6 +5,7 @@ import {
   FlaskConical, ShieldCheck, Filter
 } from 'lucide-react';
 import { castingApi } from '../castingApi';
+import { Input, Select } from '../../../components/ui';
 
 export default function CastingEventList({
   events,
@@ -59,7 +60,7 @@ export default function CastingEventList({
           {/* Search Box */}
           <div className="casting-search-box">
             <Search size={14} className="casting-search-icon" />
-            <input
+            <Input
               type="text"
               className="casting-search-input"
               placeholder="Search event # or title..."
@@ -69,7 +70,7 @@ export default function CastingEventList({
           </div>
 
           {/* Status Filter */}
-          <select
+          <Select
             className="casting-select casting-filter-select"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -77,7 +78,7 @@ export default function CastingEventList({
             <option value="ALL">All Statuses</option>
             <option value="PLANNED">Planned / Scheduled</option>
             <option value="POURED">Poured / Completed</option>
-          </select>
+          </Select>
 
           {selectedProject && onOpenStockRegister && (
             <button

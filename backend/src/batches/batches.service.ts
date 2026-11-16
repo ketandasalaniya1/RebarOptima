@@ -348,7 +348,7 @@ export class BatchesService {
     let totalSteelPurchasedKg = 0;
     inwardTransactions.forEach((t: any) => {
       const wt = Number(t.weightInKgs) || 0;
-      const cost = Number(t.costPerKg) || 60;
+      const cost = Number(t.costPerKg) || 0;
       totalSteelPurchasedKg += wt;
       totalSteelPurchasedCost += wt * cost;
     });
@@ -356,14 +356,15 @@ export class BatchesService {
     if (totalSteelPurchasedCost === 0 && liveStock.length > 0) {
       liveStock.forEach(i => {
         const wt = Number(i.weightInKgs) || 0;
-        const cost = Number(i.costPerKg) || 60;
+        const cost = Number(i.costPerKg) || 0;
         totalSteelPurchasedKg += wt;
         totalSteelPurchasedCost += wt * cost;
       });
     }
 
     const liveScrapKg = Math.max(0, totalScrapKg);
-    const lostMaterialValue = Math.max(0, (totalScrapKg * 60));
+    const averageCostPerKg = totalSteelPurchasedKg > 0 ? totalSteelPurchasedCost / totalSteelPurchasedKg : 0;
+    const lostMaterialValue = Math.max(0, totalScrapKg * averageCostPerKg);
 
     return {
       liveStandardKg: Math.round(liveStandardKg * 100) / 100,

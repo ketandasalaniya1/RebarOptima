@@ -3674,7 +3674,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
     let totalScrapSoldWeight = 0;
     let totalScrapRevenue = 0;
     let totalScrapLossDifferential = 0;
-    const estPurchasePriceWithGst = 60;
+    const estPurchasePriceWithGst = 0;
 
     scrapSales.forEach((s: any) => {
       totalScrapSoldWeight += s.weight || 0;
@@ -3688,7 +3688,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
     let totalSteelPurchasedKg = 0;
     inwardTransactions.forEach((t: any) => {
       const wt = Number(t.weightInKgs) || 0;
-      const cost = Number(t.costPerKg) || 60;
+      const cost = Number(t.costPerKg) || 0;
       totalSteelPurchasedKg += wt;
       totalSteelPurchasedCost += wt * cost;
     });
@@ -3696,7 +3696,7 @@ app.get('/api/batches/stats', authMiddleware, requirePermission('overview', 'vie
     if (totalSteelPurchasedCost === 0 && liveStock.length > 0) {
       liveStock.forEach((i: any) => {
         const wt = Number(i.weightInKgs) || 0;
-        const cost = Number(i.costPerKg) || 60;
+        const cost = Number(i.costPerKg) || 0;
         totalSteelPurchasedKg += wt;
         totalSteelPurchasedCost += wt * cost;
       });

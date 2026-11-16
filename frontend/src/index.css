@@ -607,6 +607,13 @@ h1, h2, h3, h4, label, th, .kpi-label, .sidenav-section-heading, .gi-header-labe
   .gi-store-pill,
   select {
     min-height: 44px;
+    min-width: 44px;
+  }
+
+  button:not(.ro-theme-pill-btn):not(.ro-theme-compact),
+  [role="button"],
+  [role="tab"] {
+    min-width: 44px;
   }
 
   [role="tablist"],

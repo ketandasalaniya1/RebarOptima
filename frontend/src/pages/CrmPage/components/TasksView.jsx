@@ -111,11 +111,11 @@ export default function TasksView({
     switch (p?.toLowerCase()) {
       case 'urgent':
       case 'high':
-        return '#ef4444';
+        return 'var(--danger-text)';
       case 'medium':
-        return '#f59e0b';
+        return 'var(--warning-text)';
       default:
-        return '#3b82f6';
+        return 'var(--info-text)';
     }
   };
 
@@ -542,9 +542,9 @@ export default function TasksView({
                   padding: '6px 14px',
                   borderRadius: '20px',
                   border: '1px solid',
-                  borderColor: isActive ? '#38bdf8' : 'transparent',
-                  background: isActive ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-                  color: isActive ? '#38bdf8' : 'var(--text-secondary)',
+                  borderColor: isActive ? 'var(--accent-text)' : 'transparent',
+                  background: isActive ? 'var(--accent-subtle)' : 'transparent',
+                  color: isActive ? 'var(--accent-text)' : 'var(--text-secondary)',
                   fontWeight: isActive ? 700 : 500,
                   fontSize: '0.82rem',
                   cursor: 'pointer',

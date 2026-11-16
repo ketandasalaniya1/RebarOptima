@@ -318,8 +318,8 @@
 }
 
 .sidenav-item.active {
-  background: var(--accent-subtle, rgba(110, 30, 231, 0.10));
-  color: var(--accent, #6e1ee7);
+  background: var(--accent-subtle);
+  color: var(--accent-text);
   font-weight: 600;
 }
 

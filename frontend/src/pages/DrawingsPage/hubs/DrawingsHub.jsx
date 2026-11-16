@@ -92,7 +92,6 @@ export default function DrawingsHub({
           type="button"
           className={`drawings-kpi-card ${!filters.status || filters.status === 'all' ? 'selected' : ''}`}
           onClick={() => onFilterChange({ status: 'all' })}
-          aria-label="Filter by all drawings"
         >
           <div className="drawings-kpi-header">
             <span className="drawings-kpi-dot" style={{ backgroundColor: "var(--accent)" }} />
@@ -107,7 +106,6 @@ export default function DrawingsHub({
           type="button"
           className={`drawings-kpi-card ${filters.status === 'Approved' || filters.status === 'GFC' ? 'selected' : ''}`}
           onClick={() => onFilterChange({ status: filters.status === 'Approved' ? 'all' : 'Approved' })}
-          aria-label="Filter by Good for construction"
         >
           <div className="drawings-kpi-header">
             <span className="drawings-kpi-dot" style={{ backgroundColor: "var(--accent)" }} />
@@ -124,7 +122,6 @@ export default function DrawingsHub({
           type="button"
           className={`drawings-kpi-card ${filters.status === 'Draft' ? 'selected' : ''}`}
           onClick={() => onFilterChange({ status: filters.status === 'Draft' ? 'all' : 'Draft' })}
-          aria-label="Filter by Draft"
         >
           <div className="drawings-kpi-header">
             <span className="drawings-kpi-dot" style={{ backgroundColor: '#f59e0b' }} />
@@ -141,7 +138,6 @@ export default function DrawingsHub({
           type="button"
           className={`drawings-kpi-card ${filters.status === 'this-week' ? 'selected' : ''}`}
           onClick={() => onFilterChange({ status: filters.status === 'this-week' ? 'all' : 'this-week' })}
-          aria-label="Filter by updated this week"
         >
           <div className="drawings-kpi-header">
             <span className="drawings-kpi-dot" style={{ backgroundColor: '#3b82f6' }} />
@@ -160,7 +156,6 @@ export default function DrawingsHub({
           type="button"
           className="drawings-big-btn drawings-big-btn-primary"
           onClick={() => onOpenUpload()}
-          aria-label="Upload drawing"
         >
           <div className="drawings-big-btn-icon">
             <Upload size={20} />
@@ -175,7 +170,6 @@ export default function DrawingsHub({
           type="button"
           className="drawings-big-btn drawings-big-btn-secondary"
           onClick={onGoToVersions}
-          aria-label="View version history"
         >
           <div className="drawings-big-btn-icon">
             <Clock size={20} />
@@ -190,7 +184,6 @@ export default function DrawingsHub({
           type="button"
           className="drawings-big-btn drawings-big-btn-secondary"
           onClick={onOpenNewRevision}
-          aria-label="Add new revision"
         >
           <div className="drawings-big-btn-icon">
             <Plus size={20} />

@@ -102,7 +102,7 @@
 }
 
 .gov-tab-btn.active {
-  color: var(--accent, #059669);
+  color: var(--accent-text);
   font-weight: 600;
 }
 

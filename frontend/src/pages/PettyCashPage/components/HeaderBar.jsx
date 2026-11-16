@@ -132,11 +132,10 @@ export default function HeaderBar({
             className="pc-btn-action-header pc-btn-debit-hdr"
             onClick={onOpenDebit}
             title="Record Expense (Shortcut: E)"
-            aria-label="Record Expense"
           >
             <ArrowUpRight size={16} />
             <span>Expense</span>
-            <kbd className="pc-kbd-shortcut pc-hide-md">E</kbd>
+            <kbd className="pc-kbd-shortcut pc-hide-md" aria-hidden="true">E</kbd>
           </button>
         </div>
       </div>

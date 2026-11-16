@@ -379,6 +379,10 @@
   margin-top: 2px;
 }
 
+.drawings-big-btn-primary .drawings-big-btn-sub {
+  color: var(--accent-contrast);
+}
+
 /* ─────────────────────────────────────────────────────────────
    Register Table & Cards
    ───────────────────────────────────────────────────────────── */

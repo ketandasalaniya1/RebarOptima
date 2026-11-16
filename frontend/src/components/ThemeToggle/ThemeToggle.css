@@ -43,6 +43,13 @@
   outline-offset: 1px;
 }
 
+@media (max-width: 1024px) {
+  .ro-theme-pill-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .ro-theme-compact {
   display: inline-flex;
   align-items: center;

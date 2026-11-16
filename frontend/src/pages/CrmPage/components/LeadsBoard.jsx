@@ -401,8 +401,9 @@ return (
           padding: '6px 14px',
           borderRadius: '8px',
           border: 'none',
-          background: activeProjectTab === 'all' ? '#38bdf8' : '#1e293b',
-          color: activeProjectTab === 'all' ? '#0f172a' : 'var(--text-secondary)',
+          background: activeProjectTab === 'all' ? 'var(--accent)' : 'var(--input-bg)',
+          color: activeProjectTab === 'all' ? 'var(--accent-contrast)' : 'var(--text-primary)',
+          border: '1px solid var(--card-border)',
           fontSize: '0.82rem',
           fontWeight: 700,
           cursor: 'pointer',
@@ -414,7 +415,7 @@ return (
       >
         <span>All Projects</span>
         <span style={{
-          background: activeProjectTab === 'all' ? 'rgba(15,23,42,0.2)' : 'rgba(255,255,255,0.08)',
+          background: activeProjectTab === 'all' ? 'var(--accent-subtle)' : 'var(--main-bg)',
           padding: '1px 6px',
           borderRadius: '10px',
           fontSize: '0.72rem'
@@ -437,8 +438,9 @@ return (
               padding: '6px 14px',
               borderRadius: '8px',
               border: 'none',
-              background: isSelected ? '#38bdf8' : '#1e293b',
-              color: isSelected ? '#0f172a' : 'var(--text-secondary)',
+              background: isSelected ? 'var(--accent)' : 'var(--input-bg)',
+              color: isSelected ? 'var(--accent-contrast)' : 'var(--text-primary)',
+              border: '1px solid var(--card-border)',
               fontSize: '0.82rem',
               fontWeight: isSelected ? 700 : 500,
               cursor: 'pointer',
@@ -450,7 +452,7 @@ return (
           >
             <span>{p.name}</span>
             <span style={{
-              background: isSelected ? 'rgba(15,23,42,0.2)' : 'rgba(255,255,255,0.08)',
+              background: isSelected ? 'var(--accent-subtle)' : 'var(--main-bg)',
               padding: '1px 6px',
               borderRadius: '10px',
               fontSize: '0.72rem'
@@ -535,8 +537,8 @@ return (
                 padding: '4px 10px',
                 borderRadius: '6px',
                 border: 'none',
-                background: statusFilter === tab.key ? '#38bdf8' : 'transparent',
-                color: statusFilter === tab.key ? '#0f172a' : 'var(--text-secondary)',
+                background: statusFilter === tab.key ? 'var(--accent)' : 'transparent',
+                color: statusFilter === tab.key ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 fontSize: '0.75rem',
                 fontWeight: statusFilter === tab.key ? 700 : 500,
                 cursor: 'pointer'
@@ -577,8 +579,8 @@ return (
               padding: '5px 8px',
               borderRadius: '6px',
               border: 'none',
-              background: viewMode === 'table' ? '#38bdf8' : 'transparent',
-              color: viewMode === 'table' ? '#0f172a' : 'var(--text-secondary)',
+              background: viewMode === 'table' ? 'var(--accent)' : 'transparent',
+              color: viewMode === 'table' ? 'var(--accent-contrast)' : 'var(--text-secondary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -597,8 +599,8 @@ return (
               padding: '5px 8px',
               borderRadius: '6px',
               border: 'none',
-              background: viewMode === 'kanban' ? '#38bdf8' : 'transparent',
-              color: viewMode === 'kanban' ? '#0f172a' : 'var(--text-secondary)',
+              background: viewMode === 'kanban' ? 'var(--accent)' : 'transparent',
+              color: viewMode === 'kanban' ? 'var(--accent-contrast)' : 'var(--text-secondary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -688,7 +690,7 @@ return (
             background: "var(--accent)",
             border: 'none',
             borderRadius: '8px',
-            color: '#0f172a',
+            color: 'var(--accent-contrast)',
             cursor: 'pointer',
             fontSize: '0.82rem',
             fontWeight: 700,

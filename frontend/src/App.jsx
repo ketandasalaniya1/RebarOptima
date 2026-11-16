@@ -117,14 +117,19 @@ function App() {
         const type = (el.getAttribute('type') || '').toLowerCase();
         const namedKind = el.tagName === 'SELECT' || ['date', 'time', 'datetime-local', 'text', 'search', 'email', 'number', 'tel'].includes(type) || el.tagName === 'TEXTAREA';
         if (!namedKind) return;
-        const sibling = el.previousElementSibling;
-        const nearby = sibling && sibling.tagName === 'LABEL' ? sibling.textContent.trim() : '';
-        const fallback = el.tagName === 'SELECT' ? 'Choose' : (el.getAttribute('placeholder') || 'Field');
-        el.setAttribute('aria-label', nearby || fallback);
+        if (el.tagName === 'SELECT') {
+          const selected = el.selectedOptions?.[0]?.text?.replace(/\s+/g, ' ').trim();
+          if (selected) el.setAttribute('aria-label', selected);
+          return;
+        }
+        const visibleName = (el.value || el.getAttribute('placeholder') || '').replace(/\s+/g, ' ').trim();
+        if (visibleName) el.setAttribute('aria-label', visibleName);
       });
       document.querySelectorAll('button, [role="button"]').forEach((el) => {
-        const text = (el.innerText || '').trim();
-        if (text || el.getAttribute('aria-label') || el.getAttribute('title')) return;
+        const text = (el.innerText || '').replace(/\s+/g, ' ').trim();
+        const hasTextHolder = [...el.children].some((child) => child.tagName !== 'SVG' && !child.closest('svg'));
+        if ((text || hasTextHolder) && el.getAttribute('aria-label') === 'Action') el.removeAttribute('aria-label');
+        if (text || hasTextHolder || el.getAttribute('aria-label') || el.getAttribute('title')) return;
         el.setAttribute('aria-label', 'Action');
       });
       document.querySelectorAll('*').forEach((el) => {

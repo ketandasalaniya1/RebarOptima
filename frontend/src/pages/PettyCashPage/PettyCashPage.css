@@ -286,8 +286,8 @@
 }
 
 .pc-btn-credit-hdr {
-  background-color: #059669;
-  color: #ffffff;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
 }
 
 .pc-btn-credit-hdr:hover {
@@ -444,6 +444,7 @@
   font-weight: 800;
   letter-spacing: -0.5px;
   line-height: 1.1;
+  color: var(--text-primary);
 }
 
 @media (min-width: 1024px) {

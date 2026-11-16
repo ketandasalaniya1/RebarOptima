@@ -117,8 +117,8 @@ export default function FollowupsView({
             gap: '8px',
             padding: '12px 24px',
             borderRadius: '10px',
-            background: '#16a34a',
-            color: '#ffffff',
+            background: 'var(--accent)',
+            color: 'var(--accent-contrast)',
             border: 'none',
             fontWeight: 800,
             fontSize: '0.95rem',
@@ -126,7 +126,7 @@ export default function FollowupsView({
             boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)'
           }}
         >
-          <Play size={18} fill="#ffffff" /> Start Follow-ups ({stats.totalPending || 0})
+          <Play size={18} fill="currentColor" /> Start Follow-ups ({stats.totalPending || 0})
         </button>
       </div>
 

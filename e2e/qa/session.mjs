@@ -161,6 +161,7 @@ export async function readSurface(page) {
     const smallTargets = [];
     for (const el of document.querySelectorAll('button, [role="button"], [role="tab"], a[class*="btn"], input, select, textarea')) {
       if (!visible(el)) continue;
+      if (window.innerWidth <= 1024 && el.closest('.sidenav:not(.open)')) continue;
       const type = (el.getAttribute('type') || '').toLowerCase();
       if (type === 'checkbox' || type === 'radio' || type === 'hidden') continue;
       const rect = el.getBoundingClientRect();

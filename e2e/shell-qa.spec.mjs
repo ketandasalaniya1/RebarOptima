@@ -60,8 +60,14 @@ test('shell invariants on every route', async ({ page, request }) => {
     await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({ state: 'hidden', timeout: 3000 });
   }
-  await page.getByRole('button', { name: /theme/i }).first().click();
-  await page.goto('/projects');
-  const projectButton = page.getByRole('button', { name: /Select Project|Currently Selected/ }).first();
-  if (await projectButton.count()) await projectButton.click({ timeout: 3000 }).catch(() => {});
+  const themeButton = page.getByRole('button', { name: /Change theme/ });
+  const beforeTheme = await themeButton.getAttribute('aria-label');
+  await themeButton.click();
+  const afterTheme = await themeButton.getAttribute('aria-label');
+  if (beforeTheme === afterTheme) throw new Error('theme toggle did not change');
+  await page.getByRole('button', { name: 'Open navigation menu' }).click();
+  await page.locator('.sidenav.open').waitFor({ state: 'visible', timeout: 3000 });
+  await page.getByRole('button', { name: /active project/i }).click();
+  await page.locator('.ps-dropdown, .project-selector-dropdown, .ps-list').first().waitFor({ state: 'visible', timeout: 3000 });
+  await page.keyboard.press('Escape');
 });

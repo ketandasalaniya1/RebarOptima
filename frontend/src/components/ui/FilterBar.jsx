@@ -21,7 +21,7 @@ export default function FilterBar({
         onClear={() => onSearchChange && onSearchChange('')}
         placeholder={searchPlaceholder}
       />
-      {filters ? <div className="ro-filterbar__inline">{filters}</div> : null}
+      {filters && !open ? <div className="ro-filterbar__inline">{filters}</div> : null}
       {filters ? (
         <Button variant="secondary" className="ro-filterbar__open" onClick={() => setOpen(true)}>
           {activeCount > 0 ? `Filters (${activeCount})` : 'Filters'}

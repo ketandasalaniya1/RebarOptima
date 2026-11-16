@@ -484,15 +484,15 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
 }
 
 .blue-badge {
-  background: rgba(59, 130, 246, 0.12);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: var(--info-subtle);
+  color: var(--info-text);
+  border: 1px solid var(--info-text);
 }
 
 .crimson-badge {
-  background: rgba(239, 68, 68, 0.12);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: var(--danger-subtle);
+  color: var(--danger-text);
+  border: 1px solid var(--danger-text);
 }
 
 .badge-dot {
@@ -681,8 +681,8 @@ button.equal-kpi-card.kpi-actionable:focus-visible {
   font-weight: 500;
 }
 
-.std-txt { color: #a78bfa; }
-.rem-txt { color: #34d399; }
+.std-txt { color: var(--info-text); }
+.rem-txt { color: var(--accent-text); }
 
 .dia-total-col {
   display: flex;

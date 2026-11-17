@@ -209,7 +209,7 @@ export default function ReactionPickerModal({
                 ))}
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '24px 12px', color: '#8696a0', fontSize: '13px' }}>
+              <div style={{ textAlign: 'center', padding: '24px 12px', color: 'var(--text-secondary)', fontSize: '13px' }}>
                 No reactions found for "{search}"
               </div>
             )}

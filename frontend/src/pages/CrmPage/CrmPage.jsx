@@ -304,7 +304,7 @@ export default function CrmPage({ subView }) {
   };
 
   return (
-    <div className="crm-unified-container" style={{ display: 'flex', flexDirection: 'column', width: '100%', minHeight: '100%', background: 'var(--main-bg, #0b1120)' }}>
+    <div className="crm-unified-container" style={{ display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0, minHeight: '100%', background: 'var(--main-bg)' }}>
       {/* ── TOP UTILITY STRIP (Project switcher, Global search, Refresh, Add lead) ── */}
       <header className="crm-top-bar" style={{
         position: 'sticky',
@@ -469,7 +469,7 @@ export default function CrmPage({ subView }) {
       </header>
 
       {/* ── MAIN CONTENT VIEWPORT ───────────────────────────────────────────── */}
-      <main className="crm-main-viewport" style={{ flex: 1, overflowY: 'auto' }}>
+      <main className="crm-main-viewport" style={{ flex: 1, minWidth: 0, overflow: 'auto' }}>
         {/* Dashboard View */}
         {activeScreen === 'dashboard' && (
           <ReportsView
@@ -765,7 +765,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '16px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: '#0f172a', border: '1px solid #334155', borderRadius: '14px', width: '100%', maxWidth: '440px', padding: '20px', color: '#f8fafc'
+        background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '14px', width: '100%', maxWidth: '440px', padding: '20px', color: 'var(--text-primary)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>Schedule Appointment</h3>
@@ -780,7 +780,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
               placeholder="e.g. Site Walkthrough - Vikram"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              style={{ width: '100%', padding: '8px 12px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+              style={{ width: '100%', padding: '8px 12px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
             />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -789,7 +789,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
               <Select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
               >
                 <option value="site_visit">Site Visit</option>
                 <option value="meeting">Meeting</option>
@@ -804,7 +804,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
                 type="datetime-local"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
-                style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
               />
             </div>
           </div>
@@ -814,7 +814,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              style={{ width: '100%', padding: '8px 12px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+              style={{ width: '100%', padding: '8px 12px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
             />
           </div>
           <div>
@@ -822,7 +822,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
             <Select
               value={leadId}
               onChange={(e) => setLeadId(e.target.value)}
-              style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+              style={{ width: '100%', padding: '8px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
             >
               <option value="">None</option>
               {leads.map(l => (
@@ -833,7 +833,7 @@ function NewAppointmentModal({ projects, leads, onClose, onCreated }) {
           <button
             type="submit"
             disabled={submitting}
-            style={{ marginTop: '8px', padding: '10px', borderRadius: '8px', background: '#38bdf8', color: '#0f172a', border: 'none', fontWeight: 700, cursor: 'pointer' }}
+            style={{ marginTop: '8px', padding: '10px', borderRadius: '8px', background: 'var(--accent)', color: 'var(--accent-contrast)', border: 'none', fontWeight: 700, cursor: 'pointer' }}
           >
             {submitting ? 'Scheduling...' : 'Confirm Appointment'}
           </button>
@@ -882,7 +882,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '16px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: '#0f172a', border: '1px solid #334155', borderRadius: '14px', width: '100%', maxWidth: '420px', padding: '20px', color: '#f8fafc'
+        background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '14px', width: '100%', maxWidth: '420px', padding: '20px', color: 'var(--text-primary)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>+ Add Task</h3>
@@ -897,7 +897,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
               placeholder="e.g. Call regarding loan sanction letter"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              style={{ width: '100%', padding: '8px 12px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+              style={{ width: '100%', padding: '8px 12px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
             />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -906,7 +906,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
               <Select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
               >
                 <option value="Urgent">Urgent</option>
                 <option value="High">High</option>
@@ -920,7 +920,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
                 type="datetime-local"
                 value={dueDateTime}
                 onChange={(e) => setDueDateTime(e.target.value)}
-                style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
               />
             </div>
           </div>
@@ -929,7 +929,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
             <Select
               value={leadId}
               onChange={(e) => setLeadId(e.target.value)}
-              style={{ width: '100%', padding: '8px', background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f8fafc', fontSize: '0.85rem' }}
+              style={{ width: '100%', padding: '8px', background: 'var(--input-bg)', border: '1px solid var(--card-border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.85rem' }}
             >
               <option value="">None</option>
               {leads.map(l => (
@@ -940,7 +940,7 @@ function NewTaskModal({ leads, onClose, onCreated }) {
           <button
             type="submit"
             disabled={submitting}
-            style={{ marginTop: '8px', padding: '10px', borderRadius: '8px', background: '#38bdf8', color: '#0f172a', border: 'none', fontWeight: 700, cursor: 'pointer' }}
+            style={{ marginTop: '8px', padding: '10px', borderRadius: '8px', background: 'var(--accent)', color: 'var(--accent-contrast)', border: 'none', fontWeight: 700, cursor: 'pointer' }}
           >
             {submitting ? 'Creating...' : 'Create Task'}
           </button>

@@ -62,8 +62,8 @@ Thank you for your payment!`;
         className="crm-receipt-modal"
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: 'var(--bg-primary, #ffffff)',
-          color: 'var(--text-primary, #1e293b)',
+          background: 'var(--bg-primary)',
+          color: 'var(--text-primary)',
           borderRadius: '16px',
           width: '100%',
           maxWidth: '680px',
@@ -80,8 +80,8 @@ Thank you for your payment!`;
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '16px 24px',
-          borderBottom: '1px solid var(--border-color, #e2e8f0)',
-          background: 'var(--bg-secondary, #f8fafc)'
+          borderBottom: '1px solid var(--border-color)',
+          background: 'var(--bg-secondary)'
         }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>Payment Receipt</h3>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -94,8 +94,8 @@ Thank you for your payment!`;
                 gap: '6px',
                 padding: '8px 14px',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                background: '#ffffff',
+                border: '1px solid var(--card-border)',
+                background: 'var(--card-bg)',
                 cursor: 'pointer',
                 fontWeight: 500,
                 fontSize: '0.85rem'
@@ -113,7 +113,7 @@ Thank you for your payment!`;
                 padding: '8px 14px',
                 borderRadius: '8px',
                 background: '#25D366',
-                color: '#ffffff',
+                color: 'var(--text-primary)',
                 border: 'none',
                 cursor: 'pointer',
                 fontWeight: 500,
@@ -129,7 +129,7 @@ Thank you for your payment!`;
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                color: '#64748b',
+                color: 'var(--text-secondary)',
                 padding: '6px'
               }}
             >
@@ -145,23 +145,23 @@ Thank you for your payment!`;
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            borderBottom: '2px solid #0f172a',
+            borderBottom: '2px solid var(--card-border)',
             paddingBottom: '20px',
             marginBottom: '24px'
           }}>
             <div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.5px', color: '#0f172a' }}>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>
                 {receiptData.projectName || 'RebarOptima Realty'}
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 RERA Registered Real Estate Development
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
               <span style={{
                 display: 'inline-block',
-                background: '#dcfce7',
-                color: '#15803d',
+                background: 'var(--success-subtle)',
+                color: 'var(--accent-text)',
                 padding: '4px 10px',
                 borderRadius: '20px',
                 fontSize: '0.75rem',
@@ -170,10 +170,10 @@ Thank you for your payment!`;
               }}>
                 PAYMENT CONFIRMED
               </span>
-              <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                Receipt #: <strong style={{ color: '#0f172a' }}>{receiptData.receiptNumber}</strong>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                Receipt #: <strong style={{ color: 'var(--text-primary)' }}>{receiptData.receiptNumber}</strong>
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 Date: {new Date(receiptData.receiptDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
               </div>
             </div>
@@ -184,28 +184,28 @@ Thank you for your payment!`;
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gap: '20px',
-            background: '#f8fafc',
+            background: 'var(--card-bg)',
             padding: '16px 20px',
             borderRadius: '10px',
             marginBottom: '24px'
           }}>
             <div>
-              <div style={{ fontSize: '0.75rem', textTransform: "none", color: '#64748b', fontWeight: 600 }}>Received From</div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', textTransform: "none", color: 'var(--text-secondary)', fontWeight: 600 }}>Received From</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
                 {receiptData.customerName}
               </div>
               {receiptData.customerPhone && (
-                <div style={{ fontSize: '0.85rem', color: '#475569' }}>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                   Phone: {receiptData.customerPhone}
                 </div>
               )}
             </div>
             <div>
-              <div style={{ fontSize: '0.75rem', textTransform: "none", color: '#64748b', fontWeight: 600 }}>Property / Unit</div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', textTransform: "none", color: 'var(--text-secondary)', fontWeight: 600 }}>Property / Unit</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
                 Unit {receiptData.unitNumber}
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#475569' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                 {receiptData.projectName}
               </div>
             </div>
@@ -213,18 +213,18 @@ Thank you for your payment!`;
 
           {/* Amount Paid Box */}
           <div style={{
-            border: '1.5px solid #0f172a',
+            border: '1.5px solid var(--card-border)',
             borderRadius: '12px',
             padding: '20px',
             textAlign: 'center',
-            background: '#ffffff',
+            background: 'var(--card-bg)',
             marginBottom: '24px'
           }}>
-            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: "none" }}>Amount Received</div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0f172a', margin: '4px 0' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: "none" }}>Amount Received</div>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0' }}>
               {formatINR(receiptData.amount)}
             </div>
-            <div style={{ fontSize: '0.85rem', color: '#475569', fontStyle: 'italic' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
               Received via {receiptData.paymentMethod} (Ref / UTR: {receiptData.transactionReference})
             </div>
           </div>
@@ -232,25 +232,25 @@ Thank you for your payment!`;
           {/* Payment Breakdown Table */}
           <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '28px', fontSize: '0.88rem' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #cbd5e1', textAlign: 'left', color: '#64748b' }}>
+              <tr style={{ borderBottom: '1px solid var(--card-border)', textAlign: 'left', color: 'var(--text-secondary)' }}>
                 <th style={{ padding: '8px 0', fontWeight: 600 }}>Particulars</th>
                 <th style={{ padding: '8px 0', textAlign: 'right', fontWeight: 600 }}>Amount (₹)</th>
               </tr>
             </thead>
             <tbody>
-              <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+              <tr style={{ borderBottom: '1px solid var(--card-border)' }}>
                 <td style={{ padding: '10px 0' }}>Installment / Milestone Inward Payment</td>
                 <td style={{ padding: '10px 0', textAlign: 'right', fontWeight: 600 }}>{formatINR(receiptData.amount)}</td>
               </tr>
               {booking && (
                 <>
-                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '10px 0', color: '#64748b' }}>Total Contract Value (Inclusive of GST)</td>
-                    <td style={{ padding: '10px 0', textAlign: 'right', color: '#64748b' }}>{formatINR(booking.netBookingValue || 0)}</td>
+                  <tr style={{ borderBottom: '1px solid var(--card-border)' }}>
+                    <td style={{ padding: '10px 0', color: 'var(--text-secondary)' }}>Total Contract Value (Inclusive of GST)</td>
+                    <td style={{ padding: '10px 0', textAlign: 'right', color: 'var(--text-secondary)' }}>{formatINR(booking.netBookingValue || 0)}</td>
                   </tr>
-                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '10px 0', color: '#64748b' }}>Cumulative Received Till Date</td>
-                    <td style={{ padding: '10px 0', textAlign: 'right', color: '#16a34a', fontWeight: 600 }}>
+                  <tr style={{ borderBottom: '1px solid var(--card-border)' }}>
+                    <td style={{ padding: '10px 0', color: 'var(--text-secondary)' }}>Cumulative Received Till Date</td>
+                    <td style={{ padding: '10px 0', textAlign: 'right', color: 'var(--accent-text)', fontWeight: 600 }}>
                       {formatINR((booking.financials?.totalPaid || 0) + (payment ? 0 : receiptData.amount))}
                     </td>
                   </tr>
@@ -260,7 +260,7 @@ Thank you for your payment!`;
           </table>
 
           {receiptData.notes && (
-            <div style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '24px' }}>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>
               <strong>Remarks:</strong> {receiptData.notes}
             </div>
           )}
@@ -271,7 +271,7 @@ Thank you for your payment!`;
             justifyContent: 'space-between',
             alignItems: 'flex-end',
             paddingTop: '32px',
-            borderTop: '1px dashed #cbd5e1',
+            borderTop: '1px dashed var(--card-border)',
             marginTop: '20px'
           }}>
             <div style={{ fontSize: '0.75rem', color: "var(--text-secondary)", maxWidth: '320px', lineHeight: 1.4 }}>
@@ -279,7 +279,7 @@ Thank you for your payment!`;
             </div>
             <div style={{ textAlign: 'center', width: '200px' }}>
               <div style={{ height: '40px' }}></div>
-              <div style={{ borderTop: '1px solid #0f172a', paddingTop: '4px', fontSize: '0.82rem', fontWeight: 600 }}>
+              <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '4px', fontSize: '0.82rem', fontWeight: 600 }}>
                 Authorized Signatory
               </div>
             </div>

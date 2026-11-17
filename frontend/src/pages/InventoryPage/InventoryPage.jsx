@@ -8,7 +8,6 @@ import {
 } from 'lucide-react'
 import { PageHeader, TableSkeleton, useDelayedSkeleton, Badge, Input, Select } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
-import InwardVoucherDrawer from './components/InwardVoucherDrawer'
 import ScrapSaleDrawer from './components/ScrapSaleDrawer'
 import ScrapRulesDrawer from './components/ScrapRulesDrawer'
 import { SHOW_FINANCIALS } from '../../utils/steelFinancials'
@@ -45,8 +44,6 @@ export default function InventoryPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Slide-over Drawer States (Hard Rules 3, 4, 7)
-  const [isInwardDrawerOpen, setIsInwardDrawerOpen] = useState(false)
   const [isScrapSaleDrawerOpen, setIsScrapSaleDrawerOpen] = useState(false)
   const [isScrapRulesDrawerOpen, setIsScrapRulesDrawerOpen] = useState(false)
 
@@ -91,6 +88,19 @@ export default function InventoryPage() {
   const [standardFilterDia, setStandardFilterDia] = useState('ALL')
 
   const { projectId, projectEpoch, isStale, selectedProject } = useActiveProject()
+
+  const revealInwardForm = () => {
+    setActiveTab('inward')
+    window.setTimeout(() => {
+      document.getElementById('inward-voucher-form')?.scrollIntoView({ block: 'start' })
+    }, 0)
+  }
+
+  useEffect(() => {
+    if (sessionStorage.getItem('rebar_open_inward') !== '1') return
+    sessionStorage.removeItem('rebar_open_inward')
+    revealInwardForm()
+  }, [])
 
   // Load inventory and rules when active project changes
   useEffect(() => {
@@ -617,7 +627,6 @@ export default function InventoryPage() {
 
       setSuccess(`Voucher inward entry recorded successfully for ${filledRows.length} diameter${filledRows.length > 1 ? 's' : ''}!`)
       setVoucherRows(createDefaultVoucherRows())
-      setIsInwardDrawerOpen(false)
 
       const [invData, ledgerData] = await Promise.all([
         inventoryApi.getInventory(projectId),
@@ -1089,7 +1098,7 @@ export default function InventoryPage() {
             <button
               type="button"
               className="btn-quick-inward-header"
-              onClick={() => setIsInwardDrawerOpen(true)}
+              onClick={revealInwardForm}
               title="Record new inward delivery voucher"
             >
               <Plus size={15} /> Add Inward
@@ -1115,10 +1124,7 @@ export default function InventoryPage() {
           </button>
           <button
             className={`tab-btn ${activeTab === 'inward' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveTab('inward');
-              setIsInwardDrawerOpen(true);
-            }}
+            onClick={revealInwardForm}
           >
             <PlusSquare size={16} /> Voucher Inward
           </button>
@@ -1232,7 +1238,7 @@ export default function InventoryPage() {
                       <button
                         type="button"
                         className="btn-quick-inward"
-                        onClick={() => setIsInwardDrawerOpen(true)}
+                        onClick={revealInwardForm}
                         style={{ marginTop: '8px', fontSize: '0.78rem', padding: '4px 10px' }}
                       >
                         <Plus size={13} /> Add Stock via Voucher
@@ -1291,7 +1297,7 @@ export default function InventoryPage() {
                 </div>
                 <button
                   className="btn-quick-inward"
-                  onClick={() => setIsInwardDrawerOpen(true)}
+                  onClick={revealInwardForm}
                   title="Record new inward delivery"
                 >
                   <Plus size={14} /> Add Inward
@@ -2373,7 +2379,7 @@ export default function InventoryPage() {
 
       {/* Tab: Multi-Diameter Inward Voucher */}
       {activeTab === 'inward' && (
-        <div className="card inward-form-card">
+        <div className="card inward-form-card" id="inward-voucher-form">
           <div className="voucher-header">
             <div>
               <h3 className="form-card-title">Multi-Diameter Inward Voucher Entry</h3>
@@ -2996,32 +3002,6 @@ export default function InventoryPage() {
           )}
         </div>
       )}
-
-      {/* Slide-over Drawers (Hard Rules 3, 4, 7) */}
-      <InwardVoucherDrawer
-        isOpen={isInwardDrawerOpen}
-        onClose={() => setIsInwardDrawerOpen(false)}
-        voucherRows={voucherRows}
-        handleVoucherRowChange={handleVoucherRowChange}
-        handleAddVoucherRow={handleAddVoucherRow}
-        handleDeleteVoucherRow={handleDeleteVoucherRow}
-        handleResetAllDiameters={handleResetAllDiameters}
-        handleApplyBrandVendorToAll={handleApplyBrandVendorToAll}
-        handleVoucherSubmit={handleVoucherSubmit}
-        actionLoading={actionLoading}
-        error={error}
-        success={success}
-        openDropdown={openDropdown}
-        closeDropdownDelayed={closeDropdownDelayed}
-        focusedDropdown={focusedDropdown}
-        highlightedIndex={highlightedIndex}
-        setHighlightedIndex={setHighlightedIndex}
-        handleSelectSuggestion={handleSelectSuggestion}
-        handleDropdownKeyDown={handleDropdownKeyDown}
-        getFilteredBrands={getFilteredBrands}
-        getFilteredVendors={getFilteredVendors}
-        blurTimeoutRef={blurTimeoutRef}
-      />
 
       <ScrapSaleDrawer
         isOpen={isScrapSaleDrawerOpen}

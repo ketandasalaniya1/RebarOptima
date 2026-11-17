@@ -132,24 +132,24 @@ export default function FollowupsView({
 
       {/* ── 4 STAT CARDS ────────────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '24px' }}>
-        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid #ef4444' }}>
+        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid var(--danger)' }}>
           <div style={{ fontSize: '0.75rem', color: "var(--text-secondary)", fontWeight: 700, textTransform: "none" }}>Overdue</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ef4444', marginTop: '4px' }}>{stats.overdue}</div>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--danger-text)', marginTop: '4px' }}>{stats.overdue}</div>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", marginTop: '4px' }}>Requires immediate response</div>
         </div>
-        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid #f59e0b' }}>
+        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid var(--warning)' }}>
           <div style={{ fontSize: '0.75rem', color: "var(--text-secondary)", fontWeight: 700, textTransform: "none" }}>Due Today</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b', marginTop: '4px' }}>{stats.dueToday}</div>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--warning-text)', marginTop: '4px' }}>{stats.dueToday}</div>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", marginTop: '4px' }}>Scheduled for today</div>
         </div>
-        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid #38bdf8' }}>
+        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid var(--accent)' }}>
           <div style={{ fontSize: '0.75rem', color: "var(--text-secondary)", fontWeight: 700, textTransform: "none" }}>Next 7 Days</div>
           <div style={{ fontSize: '2rem', fontWeight: 800, color: "var(--accent)", marginTop: '4px' }}>{stats.next7Days}</div>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", marginTop: '4px' }}>Upcoming scheduled pipeline</div>
         </div>
-        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid #22c55e' }}>
+        <div style={{ background: "var(--input-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '16px', borderLeft: '4px solid var(--accent)' }}>
           <div style={{ fontSize: '0.75rem', color: "var(--text-secondary)", fontWeight: 700, textTransform: "none" }}>Completed Today</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e', marginTop: '4px' }}>{stats.completedToday}</div>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-text)', marginTop: '4px' }}>{stats.completedToday}</div>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", marginTop: '4px' }}>Interactions recorded</div>
         </div>
       </div>
@@ -170,9 +170,9 @@ export default function FollowupsView({
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                border: activeTab === tab.id ? '1px solid #38bdf8' : '1px solid #334155',
-                background: activeTab === tab.id ? 'rgba(56, 189, 248, 0.12)' : '#1e293b',
-                color: activeTab === tab.id ? '#38bdf8' : '#cbd5e1',
+                border: activeTab === tab.id ? '1px solid var(--accent)' : '1px solid var(--card-border)',
+                background: activeTab === tab.id ? 'var(--info-subtle)' : 'var(--input-bg)',
+                color: activeTab === tab.id ? 'var(--info-text)' : 'var(--text-secondary)',
                 fontWeight: 600,
                 fontSize: '0.84rem',
                 cursor: 'pointer'
@@ -222,7 +222,7 @@ export default function FollowupsView({
           </div>
         ) : filteredItems.length === 0 ? (
           <div style={{ padding: '56px 20px', textAlign: 'center', color: "var(--text-secondary)" }}>
-            <CheckCircle2 size={44} color="#22c55e" style={{ margin: '0 auto 12px' }} />
+            <CheckCircle2 size={44} color="var(--accent-text)" style={{ margin: '0 auto 12px' }} />
             <div style={{ fontSize: '1.2rem', fontWeight: 700, color: "var(--text-primary)", marginBottom: '6px' }}>All caught up!</div>
             <div style={{ fontSize: '0.88rem', maxWidth: '420px', margin: '0 auto' }}>
               No follow-ups waiting in this category. Use the "Start Follow-ups" button to launch queued sessions or add new leads.
@@ -232,7 +232,7 @@ export default function FollowupsView({
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.86rem' }}>
               <thead>
-                <tr style={{ background: "var(--card-bg)", borderBottom: '1px solid #334155', color: "var(--text-secondary)" }}>
+                <tr style={{ background: "var(--card-bg)", borderBottom: '1px solid var(--card-border)', color: "var(--text-secondary)" }}>
                   <th style={{ padding: '14px 16px', fontWeight: 700 }}>Lead / Customer</th>
                   <th style={{ padding: '14px 16px', fontWeight: 700 }}>Project & Interest</th>
                   <th style={{ padding: '14px 16px', fontWeight: 700 }}>Due Status</th>
@@ -243,7 +243,7 @@ export default function FollowupsView({
               </thead>
               <tbody>
                 {filteredItems.map(item => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #334155' }}>
+                  <tr key={item.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
                     <td style={{ padding: '14px 16px' }}>
                       <div
                         onClick={() => onSelectLead && onSelectLead(item)}
@@ -257,7 +257,7 @@ export default function FollowupsView({
                     </td>
 
                     <td style={{ padding: '14px 16px' }}>
-                      <div style={{ fontWeight: 600, color: '#e2e8f0' }}>{item.projectName}</div>
+                      <div style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{item.projectName}</div>
                       <div style={{ fontSize: '0.78rem', color: "var(--accent)" }}>{item.interest || 'Property Inquiry'}</div>
                     </td>
 
@@ -270,12 +270,12 @@ export default function FollowupsView({
                         borderRadius: '6px',
                         fontSize: '0.75rem',
                         fontWeight: 700,
-                        background: item.isOverdue ? 'rgba(239, 68, 68, 0.15)' : (item.isToday ? 'rgba(245, 158, 11, 0.15)' : 'rgba(56, 189, 248, 0.15)'),
-                        color: item.isOverdue ? '#ef4444' : (item.isToday ? '#f59e0b' : '#38bdf8')
+                        background: item.isOverdue ? 'var(--danger-subtle)' : (item.isToday ? 'var(--warning-subtle)' : 'var(--info-subtle)'),
+                        color: item.isOverdue ? 'var(--danger-text)' : (item.isToday ? 'var(--warning-text)' : 'var(--info-text)')
                       }}>
                         {item.dueLabel}
                       </span>
-                      <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '3px' }}>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '3px' }}>
                         Attempt #{item.followupCount || 1}
                       </div>
                     </td>
@@ -323,8 +323,8 @@ export default function FollowupsView({
                             style={{
                               padding: '6px',
                               borderRadius: '6px',
-                              background: '#16a34a',
-                              color: '#ffffff',
+                              background: 'var(--accent)',
+                              color: 'var(--accent-contrast)',
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center'
@@ -396,9 +396,9 @@ export default function FollowupsView({
                       style={{
                         padding: '8px 4px',
                         borderRadius: '6px',
-                        border: interactionType === type ? '1px solid #38bdf8' : '1px solid #334155',
-                        background: interactionType === type ? 'rgba(56, 189, 248, 0.15)' : '#1e293b',
-                        color: interactionType === type ? '#38bdf8' : '#cbd5e1',
+                        border: interactionType === type ? '1px solid var(--accent)' : '1px solid var(--card-border)',
+                        background: interactionType === type ? 'var(--info-subtle)' : 'var(--input-bg)',
+                        color: interactionType === type ? 'var(--info-text)' : 'var(--text-secondary)',
                         fontSize: '0.74rem',
                         fontWeight: 600,
                         cursor: 'pointer',
@@ -480,7 +480,7 @@ export default function FollowupsView({
                 <button
                   type="submit"
                   disabled={submitting}
-                  style={{ padding: '9px 20px', borderRadius: '8px', background: "var(--accent)", border: 'none', color: '#0f172a', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ padding: '9px 20px', borderRadius: '8px', background: "var(--accent)", border: 'none', color: 'var(--accent-contrast)', fontWeight: 700, cursor: 'pointer' }}
                 >
                   {submitting ? 'Saving...' : 'Save Interaction'}
                 </button>

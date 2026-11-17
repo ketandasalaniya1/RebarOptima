@@ -48,7 +48,7 @@ export default function MessageInfoModal({
         {/* Modal Header */}
         <div className="chat-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 600 }}>
-            <Info size={18} color="#53bdeb" /> Message info
+            <Info size={18} color="var(--info-text)" /> Message info
           </div>
           <button type="button" className="chat-icon-btn" onClick={onClose} title="Close">
             <X size={18} />
@@ -113,7 +113,7 @@ export default function MessageInfoModal({
 
               {readByList.length === 0 ? (
                 <div className="chat-info-empty-row">
-                  <Clock size={13} color="#64748b" /> Not read yet
+                  <Clock size={13} color="var(--text-secondary)" /> Not read yet
                 </div>
               ) : (
                 <div className="chat-info-receipts-list">
@@ -216,9 +216,9 @@ export default function MessageInfoModal({
             type="button"
             onClick={onClose}
             style={{
-              background: '#21262d',
-              border: '1px solid #30363d',
-              color: '#c9d1d9',
+              background: 'var(--input-bg)',
+              border: '1px solid var(--card-border)',
+              color: 'var(--text-secondary)',
               padding: '6px 16px',
               borderRadius: '6px',
               cursor: 'pointer',

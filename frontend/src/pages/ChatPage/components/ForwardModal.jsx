@@ -47,7 +47,7 @@ export default function ForwardModal({
       <div className="chat-modal chat-forward-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="chat-modal-header">
-          <div style={{ fontSize: '15px', fontWeight: 600, color: '#f8fafc' }}>
+          <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
             Forward message to...
           </div>
           <button type="button" className="chat-icon-btn" onClick={onClose} title="Close">
@@ -56,7 +56,7 @@ export default function ForwardModal({
         </div>
 
         {/* Search */}
-        <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--card-border)' }}>
           <div className="chat-search-input-box">
             <Search size={16} />
             <Input
@@ -72,7 +72,7 @@ export default function ForwardModal({
         {/* Conversation List */}
         <div className="chat-modal-body" style={{ padding: '8px 0', maxHeight: '320px' }}>
           {filteredConversations.length === 0 ? (
-            <div style={{ padding: '32px 16px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+            <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
               No chats or groups found matching "{search}".
             </div>
           ) : (
@@ -100,22 +100,22 @@ export default function ForwardModal({
 
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '13.5px', fontWeight: 500, color: '#f1f5f9' }}>
+                        <span style={{ fontSize: '13.5px', fontWeight: 500, color: 'var(--text-primary)' }}>
                           {conv.displayName || conv.name || 'Chat'}
                         </span>
                         {isGroup && (
-                          <span style={{ fontSize: '10px', background: '#1f2937', color: 'var(--text-secondary)', padding: '1px 5px', borderRadius: '4px' }}>
+                          <span style={{ fontSize: '10px', background: 'var(--input-bg)', color: 'var(--text-secondary)', padding: '1px 5px', borderRadius: '4px' }}>
                             Group
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: '12px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {conv.lastMessage?.contentSnippet || 'No messages yet'}
                       </div>
                     </div>
 
                     <div className={`chat-forward-checkbox ${isSelected ? 'checked' : ''}`}>
-                      {isSelected && <Check size={14} color="#fff" />}
+                      {isSelected && <Check size={14} color="var(--accent-contrast)" />}
                     </div>
                   </div>
                 );
@@ -135,9 +135,9 @@ export default function ForwardModal({
               type="button"
               onClick={onClose}
               style={{
-                background: '#21262d',
-                border: '1px solid #30363d',
-                color: '#c9d1d9',
+                background: 'var(--input-bg)',
+                border: '1px solid var(--card-border)',
+                color: 'var(--text-secondary)',
                 padding: '6px 14px',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -151,9 +151,9 @@ export default function ForwardModal({
               onClick={handleSend}
               disabled={selectedConvIds.length === 0 || sending}
               style={{
-                background: selectedConvIds.length > 0 ? '#238636' : '#21262d',
+                background: selectedConvIds.length > 0 ? 'var(--accent)' : 'var(--input-bg)',
                 border: 'none',
-                color: selectedConvIds.length > 0 ? '#fff' : '#64748b',
+                color: selectedConvIds.length > 0 ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 padding: '6px 16px',
                 borderRadius: '6px',
                 cursor: selectedConvIds.length > 0 ? 'pointer' : 'not-allowed',

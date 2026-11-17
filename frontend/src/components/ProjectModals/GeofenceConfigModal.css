@@ -11,7 +11,7 @@
 }
 
 .geofence-modal-card {
-  background: var(--bg-surface, #1e293b);
+  background: var(--card-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
   border-radius: 14px;
   width: 100%;
@@ -29,7 +29,7 @@
   justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--main-bg);
 }
 
 .gfm-header-left {
@@ -42,8 +42,8 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--primary-color, #10b981);
+  background: var(--accent-subtle);
+  color: var(--accent-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,8 +75,8 @@
 }
 
 .gfm-close-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .gfm-body {
@@ -98,15 +98,15 @@
 }
 
 .gfm-alert-error {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  background: var(--danger-subtle);
+  border: 1px solid var(--danger-text);
+  color: var(--danger-text);
 }
 
 .gfm-alert-success {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #6ee7b7;
+  background: var(--success-subtle);
+  border: 1px solid var(--success-text);
+  color: var(--success-text);
 }
 
 .gfm-layout {
@@ -144,18 +144,18 @@
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent);
   border-radius: 6px;
-  color: #34d399;
+  color: var(--accent-text);
   font-size: 0.76rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 .gfm-add-zone-btn:hover {
-  background: rgba(16, 185, 129, 0.25);
-  color: #fff;
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 .gfm-zones-list {
@@ -169,7 +169,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--input-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   border-radius: 8px;
   cursor: pointer;
@@ -177,12 +177,12 @@
 }
 
 .gfm-zone-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--hover-bg);
 }
 
 .gfm-zone-item.active {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: var(--primary-color, #10b981);
+  background: var(--accent-subtle);
+  border-color: var(--accent);
 }
 
 .gfm-zone-item-left {
@@ -207,8 +207,8 @@
 }
 
 .gfm-zone-delete:hover {
-  color: #f87171;
-  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger-text);
+  background: var(--danger-subtle);
 }
 
 .text-emerald {
@@ -216,12 +216,12 @@
 }
 
 .text-blue {
-  color: #3b82f6;
+  color: var(--info-text);
 }
 
 /* Active Editor */
 .gfm-active-editor {
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--main-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   border-radius: 10px;
   padding: 14px;
@@ -252,7 +252,7 @@
 .gfm-input {
   width: 100%;
   padding: 7px 10px;
-  background: rgba(15, 23, 42, 0.8);
+  background: var(--input-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
   border-radius: 6px;
   color: var(--text-primary, #f8fafc);
@@ -272,7 +272,7 @@
   justify-content: center;
   gap: 6px;
   padding: 6px 10px;
-  background: rgba(30, 41, 59, 0.8);
+  background: var(--input-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   border-radius: 6px;
   color: var(--text-secondary, var(--text-secondary));
@@ -282,9 +282,9 @@
 }
 
 .gfm-type-btn.active {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: var(--primary-color, #10b981);
-  color: #34d399;
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent-text);
 }
 
 .gfm-circle-editor,
@@ -319,10 +319,10 @@
   align-items: center;
   gap: 4px;
   padding: 3px 6px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--danger-subtle);
+  border: 1px solid var(--danger-text);
   border-radius: 4px;
-  color: #f87171;
+  color: var(--danger-text);
   font-size: 0.72rem;
   cursor: pointer;
 }
@@ -336,7 +336,7 @@
 .gfm-map-panel {
   display: flex;
   flex-direction: column;
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--card-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   border-radius: 10px;
   overflow: hidden;
@@ -347,7 +347,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 14px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--main-bg);
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
 }
 
@@ -376,13 +376,13 @@
   gap: 12px;
   padding: 14px 24px;
   border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--main-bg);
 }
 
 .gfm-btn-secondary {
   padding: 8px 16px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--hover-bg);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   color: var(--text-secondary, #cbd5e1);
   font-size: 0.85rem;
@@ -391,8 +391,8 @@
 }
 
 .gfm-btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .gfm-btn-primary {
@@ -403,7 +403,7 @@
   border-radius: 8px;
   background: var(--primary-color, #10b981);
   border: none;
-  color: #fff;
+  color: var(--accent-contrast);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;

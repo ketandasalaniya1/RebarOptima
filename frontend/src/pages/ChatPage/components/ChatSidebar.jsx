@@ -123,8 +123,8 @@ export default function ChatSidebar({
       {/* Push Notification Opt-in Banner */}
       {pushStatus !== 'granted' && pushStatus !== 'unsupported' && (
         <div className="chat-push-banner">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cbd5e1' }}>
-            <Bell size={14} color="#38bdf8" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+            <Bell size={14} color="var(--info-text)" />
             <span>Enable background notifications?</span>
           </div>
           <button
@@ -185,7 +185,7 @@ export default function ChatSidebar({
       {/* Conversation List */}
       <div className="chat-conv-list">
         {filtered.length === 0 ? (
-          <div style={{ padding: '32px 16px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+          <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
             No conversations found. Click "+" to start a new direct chat or create a team group.
           </div>
         ) : (
@@ -216,8 +216,8 @@ export default function ChatSidebar({
                       {c.isPinned && (
                         <Pin
                           size={13}
-                          fill="#22c55e"
-                          color="#22c55e"
+                          fill="var(--accent)"
+                          color="var(--accent)"
                           style={{ marginRight: '5px', verticalAlign: '-1px', display: 'inline-block' }}
                           title="Pinned chat"
                         />
@@ -243,7 +243,7 @@ export default function ChatSidebar({
                         }}
                         title={c.isPinned ? "Unpin chat" : "Pin chat"}
                       >
-                        <Pin size={13} fill={c.isPinned ? "#22c55e" : "none"} color={c.isPinned ? "#22c55e" : "#64748b"} />
+                        <Pin size={13} fill={c.isPinned ? "var(--accent)" : "none"} color={c.isPinned ? "var(--accent)" : "var(--text-secondary)"} />
                       </button>
                       {Boolean(c.unreadCount && c.unreadCount > 0) && (
                         <span className="chat-unread-badge">{c.unreadCount}</span>

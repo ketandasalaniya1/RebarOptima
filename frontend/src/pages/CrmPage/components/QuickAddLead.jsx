@@ -147,16 +147,16 @@ export default function QuickAddLead({
                     {/* Scrollable Form Body */}
                     <form onSubmit={handleSubmit} style={{ overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                       {error && (
-                        <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px 14px', borderRadius: '8px', fontSize: '0.84rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ background: 'var(--danger-subtle)', border: '1px solid var(--danger)', color: 'var(--danger-text)', padding: '10px 14px', borderRadius: '8px', fontSize: '0.84rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <AlertTriangle size={16} /> {error}
                         </div>
                       )}
 
                               {/* Duplicate Collision Warning */}
                               {duplicateMatch && (
-                                <div style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid #f59e0b', color: '#fde68a', padding: '10px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                                <div style={{ background: 'var(--warning-subtle)', border: '1px solid var(--warning)', color: '#fde68a', padding: '10px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem' }}>
-                                    <AlertTriangle size={18} color="#f59e0b" style={{ flexShrink: 0 }} />
+                                    <AlertTriangle size={18} color="var(--warning-text)" style={{ flexShrink: 0 }} />
                                     <div>
                                       <strong>Already registered:</strong> {duplicateMatch.fullName} ({duplicateMatch.customerCode})
                                       <div style={{ fontSize: '0.74rem', color: "var(--text-secondary)" }}>
@@ -431,7 +431,7 @@ export default function QuickAddLead({
                                                   </div>
 
                                                       {/* 4. Visiting Card Upload */}
-                                                      <div style={{ background: "var(--input-bg)", padding: '12px 14px', borderRadius: '8px', border: '1px dashed #334155', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                                                      <div style={{ background: "var(--input-bg)", padding: '12px 14px', borderRadius: '8px', border: '1px dashed var(--card-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                                                         <div>
                                                           <div style={{ fontSize: '0.82rem', fontWeight: 600 }}>Attach Visiting Card / Brochure Note</div>
                                                           <div style={{ fontSize: '0.72rem', color: "var(--text-secondary)" }}>Camera snap or gallery upload for on-site visit records</div>
@@ -447,7 +447,7 @@ export default function QuickAddLead({
                                                           />
                                                         </label>
                                                         {cardPhoto && (
-                                                          <span style={{ fontSize: '0.75rem', color: '#34d399', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                                          <span style={{ fontSize: '0.75rem', color: 'var(--accent-text)', display: 'flex', alignItems: 'center', gap: '3px' }}>
                                                             <Check size={14} /> Attached
                                                           </span>
                                                         )}

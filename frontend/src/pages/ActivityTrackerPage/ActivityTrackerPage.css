@@ -1,0 +1,963 @@
+/* ==========================================================================
+   REBAROPTIMA — ACTIVITY & PROGRESS TRACKER STYLES
+   Adheres 100% to design system tokens with full light/dark theme compliance
+   ========================================================================== */
+
+.ro-act-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+  width: 100%;
+  max-width: var(--page-max-width, 1680px);
+  margin: 0 auto;
+  padding: 16px 20px 48px;
+  box-sizing: border-box;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+/* ── 1. Top Header & Control Bar ── */
+.ro-act-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ro-act-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ro-act-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--accent);
+  color: var(--accent-contrast, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25);
+}
+
+.ro-act-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ro-act-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ro-act-subtitle {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 3px 0 0;
+  line-height: 1.4;
+}
+
+.ro-act-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── 2. Selectors Bar (Project, Block, Floor) ── */
+.ro-act-selectors-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 10px 16px;
+}
+
+.ro-act-selectors-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ro-act-selector-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ro-act-selector-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-label, var(--text-secondary));
+  white-space: nowrap;
+}
+
+.ro-act-select {
+  appearance: none;
+  min-width: 140px;
+  padding: 6px 28px 6px 10px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 0.15s ease;
+}
+
+.ro-act-select:focus {
+  border-color: var(--input-border-focus, var(--accent));
+}
+
+.ro-act-select option {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+}
+
+/* ── 3. KPI Summary Row ── */
+.ro-act-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.ro-act-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.ro-act-kpi-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.ro-act-kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ro-act-kpi-icon.emerald {
+  background-color: var(--accent-subtle, rgba(5, 150, 105, 0.1));
+  color: var(--accent);
+}
+
+.ro-act-kpi-icon.blue {
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+.ro-act-kpi-icon.slate {
+  background-color: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+.ro-act-kpi-icon.amber {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.ro-act-kpi-icon.red {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+.ro-act-kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ro-act-kpi-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.ro-act-kpi-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ── 4. Main 5 Navigation Tabs ── */
+.ro-act-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px solid var(--card-border);
+  padding-bottom: 2px;
+  overflow-x: auto;
+}
+
+.ro-act-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.ro-act-tab-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--main-bg);
+}
+
+.ro-act-tab-btn.active {
+  color: var(--accent);
+  background-color: var(--accent-subtle);
+  border-bottom: 2px solid var(--accent);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ── 5. Activities Section Table & Cards ── */
+.ro-act-section-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ro-act-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ro-act-search-wrap {
+  position: relative;
+  min-width: 260px;
+  flex: 1;
+  max-width: 380px;
+}
+
+.ro-act-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-label);
+  pointer-events: none;
+}
+
+.ro-act-search-input {
+  width: 100%;
+  padding: 8px 30px 8px 32px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ro-act-search-input:focus {
+  border-color: var(--input-border-focus, var(--accent));
+}
+
+.ro-act-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-act-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.ro-act-table th {
+  background-color: var(--main-bg);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--card-border);
+  white-space: nowrap;
+}
+
+.ro-act-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.ro-act-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ro-act-table tr:hover td {
+  background-color: var(--table-row-hover, rgba(0, 0, 0, 0.02));
+}
+
+.ro-act-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ro-act-name-primary {
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.ro-act-name-primary:hover {
+  color: var(--accent);
+}
+
+.ro-act-parent-badge {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── 6. Progress Bars & Badges ── */
+.ro-act-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.ro-act-progress-bar-bg {
+  flex: 1;
+  height: 7px;
+  background-color: var(--card-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ro-act-progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.ro-act-progress-bar-fill.green {
+  background-color: #10b981;
+}
+
+.ro-act-progress-bar-fill.blue {
+  background-color: #2563eb;
+}
+
+.ro-act-progress-bar-fill.amber {
+  background-color: #f59e0b;
+}
+
+.ro-act-progress-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 38px;
+  text-align: right;
+}
+
+/* Status Pills */
+.ro-act-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ro-act-status-pill.completed {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ro-act-status-pill.in_progress {
+  background-color: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+.ro-act-status-pill.not_started {
+  background-color: rgba(100, 116, 139, 0.12);
+  color: #475569;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.ro-act-status-pill.on_hold {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.ro-act-status-pill.cancelled {
+  background-color: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.ro-act-overdue-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ── 7. Daily Planner Cards & Layout ── */
+.ro-planner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.ro-planner-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease;
+}
+
+.ro-planner-card:hover {
+  border-color: var(--accent);
+}
+
+.ro-planner-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ro-planner-act-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.ro-planner-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.ro-planner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ── 8. Modals & Drawers ── */
+.ro-act-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+.ro-act-modal {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 12px);
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+}
+
+.ro-act-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.ro-act-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ro-act-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ro-act-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--card-border);
+  background-color: var(--main-bg);
+}
+
+.ro-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ro-form-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ro-form-input,
+.ro-form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ro-form-input:focus,
+.ro-form-textarea:focus {
+  border-color: var(--input-border-focus, var(--accent));
+}
+
+.ro-form-input option {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+}
+
+/* ── 9. Responsive Adjustments ── */
+@media (max-width: 1024px) {
+  .ro-act-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ro-act-page {
+    padding: 12px 14px 72px;
+  }
+
+  .ro-act-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ro-act-selectors-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ro-act-select {
+    width: 100%;
+  }
+
+  .ro-planner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ── 10. Drawer Styles (Slide-over) ── */
+.ro-act-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1050;
+  backdrop-filter: blur(2px);
+  animation: roFadeIn 0.2s ease-out;
+}
+
+@keyframes roFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.ro-act-drawer {
+  background-color: var(--card-bg);
+  border-left: 1px solid var(--card-border);
+  width: 100%;
+  max-width: 640px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-modal, -4px 0 24px rgba(0, 0, 0, 0.25));
+  animation: roSlideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes roSlideLeft {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.ro-act-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+}
+
+.ro-act-drawer-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ro-act-drawer-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--card-border);
+  background-color: var(--main-bg);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ── 11. Buttons ── */
+.ro-act-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.ro-act-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ro-act-btn-primary {
+  background-color: var(--accent);
+  color: var(--accent-contrast, #ffffff);
+  border-color: var(--accent);
+}
+
+.ro-act-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.ro-act-btn-secondary {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border-color: var(--card-border);
+}
+
+.ro-act-btn-secondary:hover:not(:disabled) {
+  background-color: var(--hover-bg, rgba(148, 163, 184, 0.12));
+}
+
+.ro-act-btn-danger {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.ro-act-btn-danger:hover:not(:disabled) {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.ro-act-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+  padding: 6px 10px;
+}
+
+.ro-act-btn-ghost:hover:not(:disabled) {
+  background-color: var(--hover-bg, rgba(148, 163, 184, 0.1));
+  color: var(--text-primary);
+}
+
+/* ── 12. Updates Timeline & Feed ── */
+.ro-timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ro-timeline-item {
+  display: flex;
+  gap: 16px;
+  position: relative;
+}
+
+.ro-timeline-item::before {
+  content: '';
+  position: absolute;
+  top: 32px;
+  bottom: -14px;
+  left: 17px;
+  width: 2px;
+  background-color: var(--card-border);
+}
+
+.ro-timeline-item:last-child::before {
+  display: none;
+}
+
+.ro-timeline-node {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--main-bg);
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.ro-timeline-content {
+  flex: 1;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ro-timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ro-timeline-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ro-timeline-author {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ro-photo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.ro-photo-thumb {
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-sm, 6px);
+  object-fit: cover;
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.ro-photo-thumb:hover {
+  transform: scale(1.05);
+}
+
+/* ── 13. Reports Styles ── */
+.ro-reports-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .ro-reports-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ro-report-sidebar {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: fit-content;
+}
+
+.ro-report-preset-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--card-border);
+  background-color: var(--main-bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ro-report-preset-btn.active {
+  background-color: var(--accent);
+  color: var(--accent-contrast, #ffffff);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.ro-report-main {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 400px;
+}
+
+/* ── 14. Detail Drawer Cards ── */
+.ro-detail-card {
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ro-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.ro-detail-label {
+  color: var(--text-secondary);
+}
+
+.ro-detail-val {
+  font-weight: 600;
+  color: var(--text-primary);
+}

@@ -1,7 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { batchesApi } from '../../utils/api'
+import { batchesApi, companyApi, profileApi } from '../../utils/api'
 import { SHOW_FINANCIALS } from '../../utils/steelFinancials'
+import { updateUserSuccess } from '../../store/slices/authSlice'
+import {
+  cycleSpan,
+  defaultLayout,
+  isFirmAdmin,
+  resolveDashboard,
+} from '../../utils/dashboardLayout'
+import DashboardWidget from './DashboardWidget'
 import { useActiveProject } from '../../hooks/useActiveProject'
 import { openCreateModal } from '../../store/slices/projectSlice'
 import {
@@ -21,7 +29,7 @@ import {
   FolderPlus
 } from 'lucide-react'
 import { KpiSkeleton, useDelayedSkeleton } from '../../components/ui'
-import { PageHeader, Button, EmptyState } from '../../components/ui'
+import { PageHeader, Button, EmptyState, Select } from '../../components/ui'
 import './OverviewPage.css'
 
 export default function OverviewPage({ onNavigate }) {
@@ -37,6 +45,14 @@ export default function OverviewPage({ onNavigate }) {
   const statsRef = useRef(stats)
   statsRef.current = stats
   const showSkeleton = useDelayedSkeleton(loading)
+  const dragId = useRef('')
+  const [layout, setLayout] = useState(() => defaultLayout())
+  const [roleTemplate, setRoleTemplate] = useState(null)
+  const [draft, setDraft] = useState(null)
+  const [editing, setEditing] = useState(false)
+  const [savingLayout, setSavingLayout] = useState(false)
+  const [layoutError, setLayoutError] = useState('')
+  const [previewRole, setPreviewRole] = useState(() => sessionStorage.getItem('dashboard_preview_role') || '')
 
   const fetchStats = async (isManual = false, epochAtStart = projectEpoch) => {
     if (!projectId) return
@@ -103,6 +119,35 @@ export default function OverviewPage({ onNavigate }) {
     return () => clearInterval(ticker)
   }, [lastSynced])
 
+  useEffect(() => {
+    let cancel = false
+    async function loadLayout() {
+      try {
+        const profile = await profileApi.getProfile()
+        if (cancel) return
+        let templates = profile?.preferences?.dashboardTemplates || {}
+        try {
+          const remote = await companyApi.getDashboard()
+          if (remote?.templates) templates = remote.templates
+        } catch {
+          // Company dashboard route is picked up when the API process reloads.
+        }
+        if (cancel) return
+        const preview = sessionStorage.getItem('dashboard_preview_role') || ''
+        const role = preview || profile?.role || user?.role
+        const template = role && templates[role] ? templates[role] : null
+        const personal = preview ? null : profile?.preferences?.dashboard
+        setPreviewRole(preview)
+        setRoleTemplate(template)
+        setLayout(resolveDashboard(template, personal))
+      } catch {
+        if (!cancel) setLayout(defaultLayout())
+      }
+    }
+    loadLayout()
+    return () => { cancel = true }
+  }, [user?.role, previewRole])
+
   // Currency & count integer formatter: e.g. 33,00,000 or 0
   const formatCurrency = (num) => {
     if (num === undefined || num === null || isNaN(num)) return '0'
@@ -135,6 +180,109 @@ export default function OverviewPage({ onNavigate }) {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })
+  }
+
+  const activeLayout = editing && draft ? draft : layout
+  const canCustomize = !previewRole && activeLayout.widgets.some((widget) => widget.canMove || widget.canHide)
+
+  const startEditing = () => {
+    setDraft(structuredClone(activeLayout))
+    setEditing(true)
+    setLayoutError('')
+  }
+
+  const cancelEditing = () => {
+    setDraft(null)
+    setEditing(false)
+    setLayoutError('')
+  }
+
+  const persistPreferences = async (preferences) => {
+    await profileApi.updateProfile({ preferences })
+    dispatch(updateUserSuccess({ preferences }))
+  }
+
+  const saveLayout = async () => {
+    setSavingLayout(true)
+    setLayoutError('')
+    try {
+      const profile = await profileApi.getProfile()
+      const preferences = { ...(profile.preferences || {}), dashboard: draft }
+      await persistPreferences(preferences)
+      setLayout(resolveDashboard(roleTemplate, draft))
+      setDraft(null)
+      setEditing(false)
+    } catch (err) {
+      setLayoutError(err.message || 'Could not save the dashboard.')
+    } finally {
+      setSavingLayout(false)
+    }
+  }
+
+  const resetLayout = async () => {
+    setSavingLayout(true)
+    setLayoutError('')
+    try {
+      const profile = await profileApi.getProfile()
+      const preferences = { ...(profile.preferences || {}) }
+      delete preferences.dashboard
+      await persistPreferences(preferences)
+      setLayout(resolveDashboard(roleTemplate, null))
+      setDraft(null)
+      setEditing(false)
+    } catch (err) {
+      setLayoutError(err.message || 'Could not reset the dashboard.')
+    } finally {
+      setSavingLayout(false)
+    }
+  }
+
+  const moveWidget = (targetId) => {
+    const fromId = dragId.current
+    if (!fromId || fromId === targetId) return
+    setDraft((current) => {
+      if (!current) return current
+      const widgets = [...current.widgets]
+      const from = widgets.findIndex((widget) => widget.id === fromId)
+      const to = widgets.findIndex((widget) => widget.id === targetId)
+      if (from < 0 || to < 0 || !widgets[from].canMove || !widgets[to].canMove) return current
+      const [item] = widgets.splice(from, 1)
+      widgets.splice(to, 0, item)
+      return { ...current, widgets }
+    })
+  }
+
+  const toggleWidget = (id) => {
+    setDraft((current) => ({
+      ...current,
+      widgets: current.widgets.map((widget) => (
+        widget.id === id && widget.canHide && !widget.mandatory
+          ? { ...widget, hidden: !widget.hidden }
+          : widget
+      )),
+    }))
+  }
+
+  const resizeWidget = (id) => {
+    setDraft((current) => ({
+      ...current,
+      widgets: current.widgets.map((widget) => (
+        widget.id === id && widget.canMove ? { ...widget, span: cycleSpan(widget.span) } : widget
+      )),
+    }))
+  }
+
+  const frame = (id) => {
+    const index = activeLayout.widgets.findIndex((widget) => widget.id === id)
+    return {
+      item: activeLayout.widgets[index],
+      index,
+      editing,
+      onDragStart: (widgetId) => { dragId.current = widgetId },
+      onDrop: moveWidget,
+      onToggle: toggleWidget,
+      onSpan: resizeWidget,
+    }
   }
 
   if (!projectId || !selectedProject) {
@@ -252,6 +400,26 @@ export default function OverviewPage({ onNavigate }) {
                 </span>
                 <RefreshCw size={11} className={`sync-icon ${isSyncing ? 'spin-icon' : ''}`} />
               </button>
+              {canCustomize && !editing && (
+                <Button variant="secondary" onClick={startEditing}>Customize Dashboard</Button>
+              )}
+              {editing && (
+                <>
+                  <label className="dashboard-columns">
+                    Columns
+                    <Select
+                      aria-label="Dashboard columns"
+                      value={activeLayout.columns}
+                      onChange={(event) => setDraft((current) => ({ ...current, columns: Number(event.target.value) }))}
+                    >
+                      {[2, 3, 4, 6].map((count) => <option key={count} value={count}>{count}</option>)}
+                    </Select>
+                  </label>
+                  <Button variant="primary" onClick={saveLayout} disabled={savingLayout}>Save Changes</Button>
+                  <Button variant="secondary" onClick={cancelEditing}>Cancel</Button>
+                  <Button variant="secondary" onClick={resetLayout} disabled={savingLayout}>Reset Dashboard</Button>
+                </>
+              )}
               {onNavigate && (
                 <Button variant="primary" onClick={() => go('inputs')}>
                   <Activity size={15} />
@@ -263,16 +431,45 @@ export default function OverviewPage({ onNavigate }) {
           }
         />
 
+        {previewRole && isFirmAdmin(user) && (
+          <div className="dashboard-preview-banner">
+            <span>Previewing the {previewRole} dashboard.</span>
+            <Button variant="secondary" onClick={() => {
+              sessionStorage.removeItem('dashboard_preview_role')
+              setPreviewRole('')
+            }}>Exit preview</Button>
+          </div>
+        )}
+
         {error && (
           <div className="overview-error-banner" role="alert">
             <AlertTriangle size={16} />
             <span>{error}</span>
           </div>
         )}
+        {layoutError && (
+          <div className="overview-error-banner" role="alert">
+            <AlertTriangle size={16} />
+            <span>{layoutError}</span>
+          </div>
+        )}
 
-        {/* 6 Equal-Sized Primary Metric Cards Grid — each KPI navigates to related module */}
-        <div className="equal-kpi-grid">
-          {/* Card 1: Live Stock → Inventory */}
+        {editing && (
+          <div className="dashboard-library">
+            <span>Hidden cards</span>
+            {activeLayout.widgets.filter((widget) => widget.hidden && widget.canHide).map((widget) => (
+              <button key={widget.id} type="button" className="dashboard-tool-btn" onClick={() => toggleWidget(widget.id)}>
+                Add {widget.id.replace(/-/g, ' ')}
+              </button>
+            ))}
+            {activeLayout.widgets.every((widget) => !widget.hidden || !widget.canHide) && (
+              <span className="dashboard-library-empty">Every card you can add is already on the dashboard.</span>
+            )}
+          </div>
+        )}
+
+        <div className={`dashboard-grid cols-${activeLayout.columns}`}>
+          <DashboardWidget {...frame('live-stock')}>
           <button type="button" className="equal-kpi-card card-purple-accent kpi-actionable" onClick={() => go('inventory')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Live Stock</span>
@@ -300,8 +497,9 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
           </button>
+          </DashboardWidget>
 
-          {/* Card 2: Scrap Stock → Inventory */}
+          <DashboardWidget {...frame('scrap-stock')}>
           <button type="button" className="equal-kpi-card card-rose-accent kpi-actionable" onClick={() => go('inventory')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Scrap Stock</span>
@@ -329,8 +527,9 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
           </button>
+          </DashboardWidget>
 
-          {/* Card 3: Scrap Percentage → Batch History */}
+          <DashboardWidget {...frame('scrap-percent')}>
           <button type="button" className="equal-kpi-card card-amber-accent kpi-actionable" onClick={() => go('history')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Scrap Percentage</span>
@@ -350,8 +549,9 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
           </button>
+          </DashboardWidget>
 
-          {/* Card 4: Total Steel Purchased → Ledger */}
+          <DashboardWidget {...frame('steel-purchased')}>
           <button type="button" className="equal-kpi-card card-blue-accent kpi-actionable" onClick={() => go('ledger')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Total Steel Purchased</span>
@@ -374,8 +574,9 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
           </button>
+          </DashboardWidget>
 
-          {/* Card 5: Total Scrap Sold → Ledger */}
+          <DashboardWidget {...frame('scrap-sold')}>
           <button type="button" className="equal-kpi-card card-cyan-accent kpi-actionable" onClick={() => go('ledger')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Total Scrap Sold</span>
@@ -409,8 +610,9 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
           </button>
+          </DashboardWidget>
 
-          {/* Card 6: Lost Material Value → Batch History */}
+          <DashboardWidget {...frame('scrap-loss')}>
           <button type="button" className="equal-kpi-card card-crimson-accent kpi-actionable" onClick={() => go('history')}>
             <div className="kpi-card-header">
               <span className="kpi-card-title">Lost Material Value</span>
@@ -437,11 +639,9 @@ export default function OverviewPage({ onNavigate }) {
               </div>
             </div>
           </button>
-        </div>
+          </DashboardWidget>
 
-        {/* Lower Analytics Section: Diawise Live Stock & 30-Day Scrap Generation */}
-        <div className="overview-lower-grid">
-          {/* Panel 1: Diawise Live Stock */}
+          <DashboardWidget {...frame('diawise')}>
           <div className="analytics-card diawise-panel">
             <div className="panel-header">
               <div className="panel-header-left">
@@ -511,8 +711,9 @@ export default function OverviewPage({ onNavigate }) {
               })}
             </div>
           </div>
+          </DashboardWidget>
 
-          {/* Panel 2: Daily Scrap Generation Trend (30 Days) */}
+          <DashboardWidget {...frame('scrap-trend')}>
           <div className="analytics-card trend-panel">
             <div className="panel-header">
               <div className="panel-header-left">
@@ -698,6 +899,19 @@ export default function OverviewPage({ onNavigate }) {
               )}
             </div>
           </div>
+          </DashboardWidget>
+
+          <DashboardWidget {...frame('quick-actions')}>
+            <div className="analytics-card dashboard-quick-actions">
+              <h3 className="panel-title">Quick actions</h3>
+              <div className="dashboard-quick-row">
+                <Button variant="secondary" onClick={() => dispatch(openCreateModal())}>Create project</Button>
+                <Button variant="secondary" onClick={() => go('inventory')}>Steel inventory</Button>
+                <Button variant="secondary" onClick={() => go('inputs')}>Run optimizer</Button>
+                <Button variant="secondary" onClick={() => go('contractors')}>Contractors</Button>
+              </div>
+            </div>
+          </DashboardWidget>
         </div>
       </div>
     </div>

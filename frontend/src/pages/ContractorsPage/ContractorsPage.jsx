@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Plus, Pencil, Trash2, X, Search, ChevronDown, HardHat, AlertTriangle, Image as ImageIcon, Info, } from 'lucide-react';
 import { contractorsApi } from '../../utils/api';
 import { useActiveProject } from '../../hooks/useActiveProject';
-import { PageHeader, Button, EmptyState, Input, Textarea } from '../../components/ui';
+import { PageHeader, Button, EmptyState, Input, Textarea, SearchInput } from '../../components/ui';
 import { TableSkeleton, useDelayedSkeleton } from '../../components/ui';
 import './ContractorsPage.css';
 
@@ -378,14 +378,11 @@ export default function ContractorsPage() {
           {success && <div className="ctr-banner ctr-banner--ok">{success}</div>}
 
           <div className="ctr-toolbar">
-            <div className="ctr-search">
-              <Search size={16} />
-              <Input
-                value={listSearch}
-                onChange={(e) => setListSearch(e.target.value)}
-                placeholder="Search name, email, phone, department…"
-              />
-            </div>
+            <SearchInput
+              value={listSearch}
+              onChange={setListSearch}
+              placeholder="Search name, email, phone, department…"
+            />
           </div>
 
           <div className="ctr-table-wrap">

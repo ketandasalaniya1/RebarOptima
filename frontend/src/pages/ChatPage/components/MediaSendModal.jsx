@@ -435,7 +435,7 @@ export default function MediaSendModal({
               /* Audio Preview */
               <div className="chat-media-audio-viewport">
                 <audio src={currentItem.previewUrl} controls />
-                <div style={{ color: '#cbd5e1', marginTop: '12px', fontSize: '14px' }}>
+                <div style={{ color: 'var(--text-secondary)', marginTop: '12px', fontSize: '14px' }}>
                   {currentItem.name}
                 </div>
               </div>
@@ -518,7 +518,7 @@ export default function MediaSendModal({
                         muted
                       />
                       <span className="chat-media-video-overlay-badge">
-                        <Play size={10} fill="#ffffff" color="#ffffff" />
+                        <Play size={10} fill="var(--accent-contrast)" color="var(--accent-contrast)" />
                       </span>
                     </div>
                   ) : (

@@ -80,10 +80,10 @@ export default function ReportsView({
         marginBottom: '24px'
       }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary, #0f172a)' }}>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)' }}>
             Executive Sales & Revenue Analytics
           </h2>
-          <p style={{ margin: '4px 0 0', color: 'var(--text-secondary, #64748b)', fontSize: '0.88rem' }}>
+          <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
             High-level metrics for sales velocity, collections, and pipeline conversion
           </p>
         </div>
@@ -95,8 +95,8 @@ export default function ReportsView({
             style={{
               padding: '8px 12px',
               borderRadius: '8px',
-              border: '1px solid var(--border-color, #cbd5e1)',
-              background: 'var(--bg-secondary, #ffffff)',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-secondary)',
               fontSize: '0.85rem',
               fontWeight: 500
             }}
@@ -115,8 +115,8 @@ export default function ReportsView({
               gap: '6px',
               padding: '8px 14px',
               borderRadius: '8px',
-              border: '1px solid var(--border-color, #cbd5e1)',
-              background: 'var(--bg-primary, #ffffff)',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-primary)',
               cursor: 'pointer',
               fontSize: '0.85rem',
               fontWeight: 600
@@ -135,89 +135,89 @@ export default function ReportsView({
         marginBottom: '28px'
       }}>
         <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '20px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary, #64748b)', textTransform: "none" }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: "none" }}>
               Total Gross Sales
             </span>
-            <div style={{ padding: '8px', borderRadius: '8px', background: '#e0e7ff', color: '#4338ca' }}>
+            <div style={{ padding: '8px', borderRadius: '8px', background: 'var(--info-subtle)', color: 'var(--info-text)' }}>
               <TrendingUp size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary, #0f172a)', marginTop: '8px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '8px' }}>
             {formatShortINR(totalBookingValue)}
           </div>
-          <div style={{ fontSize: '0.82rem', color: '#16a34a', marginTop: '4px', fontWeight: 500 }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--accent-text)', marginTop: '4px', fontWeight: 500 }}>
             {totalBookingsCount} units sold
           </div>
         </div>
 
         <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '20px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary, #64748b)', textTransform: "none" }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: "none" }}>
               Collections Realized
             </span>
-            <div style={{ padding: '8px', borderRadius: '8px', background: '#dcfce7', color: '#15803d' }}>
+            <div style={{ padding: '8px', borderRadius: '8px', background: 'var(--success-subtle)', color: 'var(--accent-text)' }}>
               <DollarSign size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#15803d', marginTop: '8px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-text)', marginTop: '8px' }}>
             {formatShortINR(totalCollections)}
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', marginTop: '4px' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
             {totalBookingValue > 0 ? `${Math.round((totalCollections / totalBookingValue) * 100)}% of booked value` : '0%'}
           </div>
         </div>
 
         <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '20px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary, #64748b)', textTransform: "none" }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: "none" }}>
               Pending Receivables
             </span>
-            <div style={{ padding: '8px', borderRadius: '8px', background: '#fee2e2', color: '#b91c1c' }}>
+            <div style={{ padding: '8px', borderRadius: '8px', background: 'var(--danger-subtle)', color: 'var(--danger-text)' }}>
               <Target size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b91c1c', marginTop: '8px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--danger-text)', marginTop: '8px' }}>
             {formatShortINR(totalOutstanding)}
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', marginTop: '4px' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
             Milestones due or in progress
           </div>
         </div>
 
         <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '20px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary, #64748b)', textTransform: "none" }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: "none" }}>
               Active Pipeline
             </span>
-            <div style={{ padding: '8px', borderRadius: '8px', background: '#fef3c7', color: '#b45309' }}>
+            <div style={{ padding: '8px', borderRadius: '8px', background: 'var(--warning-subtle)', color: 'var(--warning-text)' }}>
               <Users size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary, #0f172a)', marginTop: '8px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '8px' }}>
             {customers.filter(c => !['BOOKED', 'LOST'].includes(c.pipelineStage)).length}
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', marginTop: '4px' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
             Prospects in active stages
           </div>
         </div>
@@ -232,8 +232,8 @@ export default function ReportsView({
       }}>
         {/* Sales Pipeline Funnel */}
         <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '20px'
         }}>
@@ -250,11 +250,11 @@ export default function ReportsView({
                     <span style={{ fontWeight: 500 }}>{stage}</span>
                     <span style={{ fontWeight: 700 }}>{count} ({pct}%)</span>
                   </div>
-                  <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ height: '8px', background: 'var(--card-bg)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{
                       height: '100%',
                       width: `${pct}%`,
-                      background: idx === 4 ? '#16a34a' : '#3b82f6',
+                      background: idx === 4 ? 'var(--accent)' : '#3b82f6',
                       borderRadius: '4px'
                     }} />
                   </div>
@@ -266,8 +266,8 @@ export default function ReportsView({
 
         {/* Lead Sources Distribution */}
         <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '20px'
         }}>
@@ -283,15 +283,15 @@ export default function ReportsView({
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '10px 12px',
-                  background: 'var(--bg-secondary, #f8fafc)',
+                  background: 'var(--bg-secondary)',
                   borderRadius: '8px'
                 }}>
                   <span style={{ fontSize: '0.88rem', fontWeight: 500 }}>{src}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)' }}>{pct}%</span>
+                    <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{pct}%</span>
                     <span style={{
-                      background: '#e0f2fe',
-                      color: '#0369a1',
+                      background: 'var(--info-subtle)',
+                      color: 'var(--info-text)',
                       padding: '2px 8px',
                       borderRadius: '12px',
                       fontSize: '0.8rem',
@@ -309,18 +309,18 @@ export default function ReportsView({
 
       {/* Salesperson Leaderboard */}
       <div style={{
-        background: 'var(--bg-card, #ffffff)',
-        border: '1px solid var(--border-color, #e2e8f0)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-color)',
         borderRadius: '12px',
         padding: '20px'
       }}>
         <h3 style={{ margin: '0 0 16px', fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Award size={18} color="#eab308" /> Sales Team Performance Leaderboard
+          <Award size={18} color="var(--warning-text)" /> Sales Team Performance Leaderboard
         </h3>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-color, #e2e8f0)', textAlign: 'left', color: 'var(--text-secondary, #64748b)' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-secondary)' }}>
                 <th style={{ padding: '10px 12px', fontWeight: 600 }}>Sales Agent</th>
                 <th style={{ padding: '10px 12px', fontWeight: 600, textAlign: 'center' }}>Total Leads</th>
                 <th style={{ padding: '10px 12px', fontWeight: 600, textAlign: 'center' }}>Site Visits</th>
@@ -331,8 +331,8 @@ export default function ReportsView({
             </thead>
             <tbody>
               {agentLeaderboard.map((agent, idx) => (
-                <tr key={agent.name} style={{ borderBottom: '1px solid var(--border-color, #f1f5f9)' }}>
-                  <td style={{ padding: '12px', fontWeight: 600, color: 'var(--text-primary, #0f172a)' }}>
+                <tr key={agent.name} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     {idx === 0 && <span style={{ marginRight: '6px' }}>🥇</span>}
                     {idx === 1 && <span style={{ marginRight: '6px' }}>🥈</span>}
                     {idx === 2 && <span style={{ marginRight: '6px' }}>🥉</span>}
@@ -340,7 +340,7 @@ export default function ReportsView({
                   </td>
                   <td style={{ padding: '12px', textAlign: 'center' }}>{agent.leads}</td>
                   <td style={{ padding: '12px', textAlign: 'center' }}>{agent.siteVisits}</td>
-                  <td style={{ padding: '12px', textAlign: 'center', fontWeight: 700, color: '#16a34a' }}>{agent.bookings}</td>
+                  <td style={{ padding: '12px', textAlign: 'center', fontWeight: 700, color: 'var(--accent-text)' }}>{agent.bookings}</td>
                   <td style={{ padding: '12px', textAlign: 'center' }}>{agent.conversionRate}%</td>
                   <td style={{ padding: '12px', textAlign: 'right', fontWeight: 700 }}>
                     {formatINR(agent.bookedValue)}

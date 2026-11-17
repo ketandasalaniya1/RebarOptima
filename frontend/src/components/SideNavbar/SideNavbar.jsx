@@ -27,6 +27,7 @@ import {
   UserRound,
   CalendarCheck2,
   MessageSquare,
+  Settings,
   PanelLeftClose,
   PanelLeftOpen,
   Calendar,
@@ -37,6 +38,9 @@ import {
   Building,
   FileText,
   Upload,
+  Sparkles,
+  BookUser,
+  Activity,
 } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import ProjectSelector from '../ProjectSelector/ProjectSelector';
@@ -62,9 +66,12 @@ const PARTNER_ALLOWED_MODULES = [
   'contractors',
   'manpower',
   'attendance',
+  'contacts',
+  'activityTracker',
 ];
 
 const ATTENDANCE_VIEWS = ['attendance-mark', 'attendance-history', 'attendance-reports'];
+const GOVERNANCE_VIEWS = ['users', 'roles', 'activity-logs'];
 const STEEL_VIEWS = ['inventory', 'ledger', 'inputs', 'results', 'history'];
 const MANPOWER_VIEWS = ['manpower-labour', 'manpower-contractor-labour'];
 const DRAWINGS_VIEWS = [
@@ -105,6 +112,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     manpower: MANPOWER_VIEWS.includes(currentView),
     attendance: ATTENDANCE_VIEWS.includes(currentView),
     drawings: DRAWINGS_VIEWS.includes(currentView),
+    governance: GOVERNANCE_VIEWS.includes(currentView),
   }));
 
   const user = useSelector((state) => state.auth.user);
@@ -185,6 +193,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
       if (MANPOWER_VIEWS.includes(currentView)) next.manpower = true;
       if (ATTENDANCE_VIEWS.includes(currentView)) next.attendance = true;
       if (DRAWINGS_VIEWS.includes(currentView)) next.drawings = true;
+      if (GOVERNANCE_VIEWS.includes(currentView)) next.governance = true;
       return next;
     });
   }, [currentView]);
@@ -204,6 +213,9 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
     return permissions[moduleKey] !== false;
   };
 
+  const roleUpper = (user?.role || '').toUpperCase();
+  const isFirmAdmin = roleUpper === 'ADMIN' || roleUpper === 'OWNER' || user?.accountType === 'developer';
+
   const MENU_SECTIONS = [
     {
       sectionTitle: null,
@@ -218,6 +230,11 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           label: 'Projects',
           icon: <Building2 size={18} />,
           moduleKey: 'projects',
+        },
+        {
+          id: 'ai-assistant',
+          label: 'AI Assistant',
+          icon: <Sparkles size={18} />,
         },
       ],
     },
@@ -325,6 +342,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           ],
         },
         {
+          id: 'activity-tracker',
+          label: 'Activity & Progress',
+          icon: <Activity size={18} />,
+          moduleKey: 'activityTracker',
+        },
+        {
           id: 'project-management',
           label: 'Projects & Tasks',
           icon: <CalendarRange size={18} />,
@@ -341,6 +364,12 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           label: 'Petty Cash',
           icon: <Wallet size={18} />,
           moduleKey: 'pettyCash',
+        },
+        {
+          id: 'contacts',
+          label: 'Contact Directory',
+          icon: <BookUser size={18} />,
+          moduleKey: 'contacts',
         },
       ],
     },
@@ -415,22 +444,37 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
           moduleKey: 'chat',
         },
         {
-          id: 'users',
-          label: 'User Management',
-          icon: <Users size={18} />,
-          moduleKey: 'users',
-        },
-        {
-          id: 'roles',
-          label: 'Roles & Permissions',
+          id: 'governance',
+          label: 'Access & Governance',
           icon: <Shield size={18} />,
-          moduleKey: 'roles',
+          isGroup: true,
+          defaultView: 'users',
+          children: [
+            {
+              id: 'users',
+              label: 'User Management',
+              icon: <Users size={17} />,
+              moduleKey: 'users',
+            },
+            {
+              id: 'roles',
+              label: 'Roles & Permissions',
+              icon: <Shield size={17} />,
+              moduleKey: 'roles',
+            },
+            {
+              id: 'activity-logs',
+              label: 'Activity Logs',
+              icon: <History size={17} />,
+              moduleKey: 'activityLogs',
+            },
+          ],
         },
         {
-          id: 'activity-logs',
-          label: 'Activity Logs',
-          icon: <History size={18} />,
-          moduleKey: 'activityLogs',
+          id: 'settings',
+          label: 'Settings',
+          icon: <Settings size={18} />,
+          adminOnly: true,
         },
       ],
     },
@@ -440,6 +484,7 @@ export default function SideNavbar({ currentView, onViewChange, onLogout }) {
   const sections = MENU_SECTIONS.map((section) => {
     const filteredItems = section.items
       .map((item) => {
+        if (item.adminOnly && !isFirmAdmin) return null;
         if (item.isGroup && item.children) {
           if (item.moduleKey && !checkPermission(item.moduleKey)) return null;
           const allowedChildren = item.children.filter((child) => checkPermission(child.moduleKey));

@@ -277,7 +277,7 @@ export default function ImportLeadsView({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(56, 189, 248, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: "var(--accent)" }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--info-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: "var(--accent)" }}>
               <Upload size={22} />
             </div>
             <div>
@@ -339,8 +339,8 @@ export default function ImportLeadsView({
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  background: isDone ? '#22c55e' : (isCurrent ? '#38bdf8' : '#1e293b'),
-                  color: (isDone || isCurrent) ? '#0f172a' : 'var(--text-secondary)',
+                  background: isDone ? 'var(--accent)' : (isCurrent ? 'var(--accent)' : 'var(--input-bg)'),
+                  color: (isDone || isCurrent) ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -352,7 +352,7 @@ export default function ImportLeadsView({
                 <span style={{
                   fontSize: '0.86rem',
                   fontWeight: isCurrent ? 700 : 500,
-                  color: isCurrent ? '#f8fafc' : (isDone ? '#22c55e' : '#64748b')
+                  color: isCurrent ? 'var(--text-primary)' : (isDone ? 'var(--accent-text)' : 'var(--text-secondary)')
                 }}>
                   {step.label}
                 </span>
@@ -361,7 +361,7 @@ export default function ImportLeadsView({
                 <div style={{
                   flex: 1,
                   height: '2px',
-                  background: isDone ? '#22c55e' : '#334155',
+                  background: isDone ? 'var(--accent)' : 'var(--input-bg)',
                   margin: '0 16px',
                   minWidth: '24px'
                 }} />
@@ -388,8 +388,8 @@ export default function ImportLeadsView({
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
               style={{
-                border: `2px dashed ${dragActive ? '#38bdf8' : (selectedFile ? '#22c55e' : '#334155')}`,
-                background: dragActive ? 'rgba(56, 189, 248, 0.05)' : (selectedFile ? 'rgba(34, 197, 94, 0.05)' : '#1e293b'),
+                border: `2px dashed ${dragActive ? 'var(--accent)' : (selectedFile ? 'var(--accent)' : 'var(--card-border)')}`,
+                background: dragActive ? 'var(--info-subtle)' : (selectedFile ? 'var(--success-subtle)' : 'var(--input-bg)'),
                 borderRadius: '16px',
                 padding: '40px 24px',
                 cursor: 'pointer',
@@ -407,7 +407,7 @@ export default function ImportLeadsView({
 
               {selectedFile ? (
                 <div>
-                  <FileSpreadsheet size={48} color="#22c55e" style={{ margin: '0 auto 12px' }} />
+                  <FileSpreadsheet size={48} color="var(--accent-text)" style={{ margin: '0 auto 12px' }} />
                   <div style={{ fontWeight: 700, fontSize: '1.05rem', color: "var(--text-primary)" }}>
                     {selectedFile.name}
                   </div>
@@ -445,9 +445,9 @@ export default function ImportLeadsView({
 
             {uploadError && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid #ef4444',
-                color: '#ef4444',
+                background: 'var(--danger-subtle)',
+                border: '1px solid var(--danger)',
+                color: 'var(--danger-text)',
                 padding: '10px 14px',
                 borderRadius: '8px',
                 fontSize: '0.85rem',
@@ -474,8 +474,8 @@ export default function ImportLeadsView({
                   gap: '8px',
                   padding: '10px 24px',
                   borderRadius: '8px',
-                  background: (!selectedFile || uploadLoading) ? '#334155' : '#38bdf8',
-                  color: (!selectedFile || uploadLoading) ? '#64748b' : '#0f172a',
+                  background: (!selectedFile || uploadLoading) ? 'var(--input-bg)' : 'var(--accent)',
+                  color: (!selectedFile || uploadLoading) ? 'var(--text-secondary)' : 'var(--accent-contrast)',
                   fontWeight: 700,
                   fontSize: '0.9rem',
                   border: 'none',
@@ -514,9 +514,9 @@ export default function ImportLeadsView({
               gap: '8px',
               padding: '6px 14px',
               borderRadius: '8px',
-              background: isIdentityMapped() ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-              border: `1px solid ${isIdentityMapped() ? '#22c55e' : '#ef4444'}`,
-              color: isIdentityMapped() ? '#22c55e' : '#ef4444',
+              background: isIdentityMapped() ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+              border: `1px solid ${isIdentityMapped() ? 'var(--accent)' : 'var(--danger)'}`,
+              color: isIdentityMapped() ? 'var(--accent-text)' : 'var(--danger-text)',
               fontSize: '0.82rem',
               fontWeight: 600
             }}>
@@ -528,7 +528,7 @@ export default function ImportLeadsView({
           <div style={{ border: "1px solid var(--card-border)", borderRadius: '10px', overflow: 'hidden', marginBottom: '24px' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.86rem' }}>
               <thead>
-                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid #334155', color: "var(--text-secondary)" }}>
+                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid var(--card-border)', color: "var(--text-secondary)" }}>
                   <th style={{ padding: '12px 16px', width: '30%' }}>File Column Header</th>
                   <th style={{ padding: '12px 16px', width: '35%' }}>First Row Sample</th>
                   <th style={{ padding: '12px 16px', width: '35%' }}>Map to CRM Field</th>
@@ -541,7 +541,7 @@ export default function ImportLeadsView({
                   const isMapped = currentMapped && currentMapped !== 'ignore';
 
                   return (
-                    <tr key={header} style={{ borderBottom: "1px solid var(--card-border)", background: idx % 2 === 0 ? '#0b1120' : '#0f172a' }}>
+                    <tr key={header} style={{ borderBottom: "1px solid var(--card-border)", background: idx % 2 === 0 ? 'var(--main-bg)' : 'var(--card-bg)' }}>
                       <td style={{ padding: '12px 16px', fontWeight: 600, color: "var(--text-primary)" }}>
                         {header}
                       </td>
@@ -556,9 +556,9 @@ export default function ImportLeadsView({
                             width: '100%',
                             padding: '8px 12px',
                             borderRadius: '8px',
-                            background: isMapped ? '#1e293b' : '#0f172a',
-                            color: isMapped ? '#38bdf8' : 'var(--text-secondary)',
-                            border: `1px solid ${isMapped ? '#38bdf8' : '#334155'}`,
+                            background: isMapped ? 'var(--input-bg)' : 'var(--card-bg)',
+                            color: isMapped ? 'var(--info-text)' : 'var(--text-secondary)',
+                            border: `1px solid ${isMapped ? 'var(--accent)' : 'var(--card-border)'}`,
                             fontSize: '0.84rem',
                             fontWeight: isMapped ? 600 : 400,
                             cursor: 'pointer'
@@ -612,8 +612,8 @@ export default function ImportLeadsView({
                 gap: '8px',
                 padding: '10px 22px',
                 borderRadius: '8px',
-                background: !isIdentityMapped() ? '#334155' : '#38bdf8',
-                color: !isIdentityMapped() ? '#64748b' : '#0f172a',
+                background: !isIdentityMapped() ? 'var(--input-bg)' : 'var(--accent)',
+                color: !isIdentityMapped() ? 'var(--text-secondary)' : 'var(--accent-contrast)',
                 fontWeight: 700,
                 fontSize: '0.9rem',
                 border: 'none',
@@ -652,12 +652,12 @@ export default function ImportLeadsView({
                 </div>
                 <div style={{ background: "var(--input-bg)", padding: '10px 16px', borderRadius: '8px', border: "1px solid var(--card-border)" }}>
                   <div style={{ fontSize: '0.74rem', color: "var(--text-secondary)" }}>Preview Sample Valid</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#22c55e' }}>{validCount}</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-text)' }}>{validCount}</div>
                 </div>
                 {invalidCount > 0 && (
-                  <div style={{ background: "var(--input-bg)", padding: '10px 16px', borderRadius: '8px', border: '1px solid #ef4444' }}>
-                    <div style={{ fontSize: '0.74rem', color: '#ef4444' }}>Preview Sample Invalid</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ef4444' }}>{invalidCount}</div>
+                  <div style={{ background: "var(--input-bg)", padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--danger)' }}>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--danger-text)' }}>Preview Sample Invalid</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--danger-text)' }}>{invalidCount}</div>
                   </div>
                 )}
               </div>
@@ -668,7 +668,7 @@ export default function ImportLeadsView({
           <div style={{ border: "1px solid var(--card-border)", borderRadius: '10px', overflowX: 'auto', marginBottom: '24px' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
               <thead>
-                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid #334155', color: "var(--text-secondary)" }}>
+                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid var(--card-border)', color: "var(--text-secondary)" }}>
                   <th style={{ padding: '10px 14px' }}>Row #</th>
                   <th style={{ padding: '10px 14px' }}>Status</th>
                   <th style={{ padding: '10px 14px' }}>Customer Name</th>
@@ -683,25 +683,25 @@ export default function ImportLeadsView({
                 {(parsedData.previewRows || []).slice(0, 15).map((row, idx) => {
                   const v = validateRow(row);
                   return (
-                    <tr key={idx} style={{ borderBottom: "1px solid var(--card-border)", background: idx % 2 === 0 ? '#0b1120' : '#0f172a' }}>
-                      <td style={{ padding: '10px 14px', color: '#64748b' }}>{idx + 1}</td>
+                    <tr key={idx} style={{ borderBottom: "1px solid var(--card-border)", background: idx % 2 === 0 ? 'var(--main-bg)' : 'var(--card-bg)' }}>
+                      <td style={{ padding: '10px 14px', color: 'var(--text-secondary)' }}>{idx + 1}</td>
                       <td style={{ padding: '10px 14px' }}>
                         {v.isValid ? (
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#22c55e', fontWeight: 600, fontSize: '0.78rem' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--accent-text)', fontWeight: 600, fontSize: '0.78rem' }}>
                             <CheckCircle2 size={14} /> Ready
                           </span>
                         ) : (
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontWeight: 600, fontSize: '0.78rem' }} title={v.errors.join(', ')}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--danger-text)', fontWeight: 600, fontSize: '0.78rem' }} title={v.errors.join(', ')}>
                             <XCircle size={14} /> {v.errors[0]}
                           </span>
                         )}
                       </td>
-                      <td style={{ padding: '10px 14px', fontWeight: 600, color: "var(--text-primary)" }}>{v.name || <span style={{ color: '#ef4444' }}>Missing</span>}</td>
-                      <td style={{ padding: '10px 14px', color: "var(--accent)" }}>{v.phone || <span style={{ color: '#ef4444' }}>Missing</span>}</td>
+                      <td style={{ padding: '10px 14px', fontWeight: 600, color: "var(--text-primary)" }}>{v.name || <span style={{ color: 'var(--danger-text)' }}>Missing</span>}</td>
+                      <td style={{ padding: '10px 14px', color: "var(--accent)" }}>{v.phone || <span style={{ color: 'var(--danger-text)' }}>Missing</span>}</td>
                       <td style={{ padding: '10px 14px', color: "var(--text-secondary)" }}>{v.email || '-'}</td>
                       <td style={{ padding: '10px 14px', color: "var(--text-primary)" }}>{v.project}</td>
                       <td style={{ padding: '10px 14px', color: "var(--text-secondary)" }}>{v.unit}</td>
-                      <td style={{ padding: '10px 14px', color: '#f59e0b' }}>{v.source}</td>
+                      <td style={{ padding: '10px 14px', color: 'var(--warning-text)' }}>{v.source}</td>
                     </tr>
                   );
                 })}
@@ -821,8 +821,8 @@ export default function ImportLeadsView({
                   style={{
                     padding: '16px',
                     borderRadius: '10px',
-                    border: `1.5px solid ${isSelected ? '#38bdf8' : '#334155'}`,
-                    background: isSelected ? 'rgba(56, 189, 248, 0.08)' : '#1e293b',
+                    border: `1.5px solid ${isSelected ? 'var(--accent)' : 'var(--card-border)'}`,
+                    background: isSelected ? 'var(--info-subtle)' : 'var(--input-bg)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -837,7 +837,7 @@ export default function ImportLeadsView({
                     style={{ marginTop: '3px', cursor: 'pointer' }}
                   />
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isSelected ? '#38bdf8' : '#f8fafc' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isSelected ? 'var(--info-text)' : 'var(--text-primary)' }}>
                       {strat.title}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: "var(--text-secondary)", marginTop: '4px', lineHeight: 1.4 }}>
@@ -880,8 +880,8 @@ export default function ImportLeadsView({
                 gap: '8px',
                 padding: '11px 26px',
                 borderRadius: '8px',
-                background: executing ? '#334155' : '#16a34a',
-                color: '#ffffff',
+                background: executing ? 'var(--input-bg)' : 'var(--accent)',
+                color: executing ? 'var(--text-secondary)' : 'var(--accent-contrast)',
                 fontWeight: 700,
                 fontSize: '0.92rem',
                 border: 'none',
@@ -910,8 +910,8 @@ export default function ImportLeadsView({
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            background: 'rgba(34, 197, 94, 0.2)',
-            color: '#22c55e',
+            background: 'var(--success-subtle)',
+            color: 'var(--accent-text)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -939,28 +939,28 @@ export default function ImportLeadsView({
                 {importResult.totalProcessed || 0}
               </div>
             </div>
-            <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid #22c55e' }}>
-              <div style={{ fontSize: '0.74rem', color: '#22c55e', textTransform: "none" }}>New Leads Created</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#22c55e', marginTop: '4px' }}>
+            <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid var(--accent)' }}>
+              <div style={{ fontSize: '0.74rem', color: 'var(--accent-text)', textTransform: "none" }}>New Leads Created</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-text)', marginTop: '4px' }}>
                 {importResult.createdCount || 0}
               </div>
             </div>
-            <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid #38bdf8' }}>
+            <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid var(--accent)' }}>
               <div style={{ fontSize: '0.74rem', color: "var(--accent)", textTransform: "none" }}>Updated</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 800, color: "var(--accent)", marginTop: '4px' }}>
                 {importResult.updatedCount || 0}
               </div>
             </div>
-            <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid #f59e0b' }}>
-              <div style={{ fontSize: '0.74rem', color: '#f59e0b', textTransform: "none" }}>Skipped</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f59e0b', marginTop: '4px' }}>
+            <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid var(--warning)' }}>
+              <div style={{ fontSize: '0.74rem', color: 'var(--warning-text)', textTransform: "none" }}>Skipped</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--warning-text)', marginTop: '4px' }}>
                 {importResult.skippedCount || 0}
               </div>
             </div>
             {importResult.errorCount > 0 && (
-              <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid #ef4444' }}>
-                <div style={{ fontSize: '0.74rem', color: '#ef4444', textTransform: "none" }}>Errors</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ef4444', marginTop: '4px' }}>
+              <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '10px', border: '1px solid var(--danger)' }}>
+                <div style={{ fontSize: '0.74rem', color: 'var(--danger-text)', textTransform: "none" }}>Errors</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--danger-text)', marginTop: '4px' }}>
                   {importResult.errorCount}
                 </div>
               </div>
@@ -979,9 +979,9 @@ export default function ImportLeadsView({
                   gap: '6px',
                   padding: '8px 16px',
                   borderRadius: '8px',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  color: '#ef4444',
-                  border: '1px solid #ef4444',
+                  background: 'var(--danger-subtle)',
+                  color: 'var(--danger-text)',
+                  border: '1px solid var(--danger)',
                   fontSize: '0.84rem',
                   fontWeight: 600,
                   cursor: 'pointer'
@@ -1041,8 +1041,8 @@ export default function ImportLeadsView({
                     gap: '6px',
                     padding: '10px 20px',
                     borderRadius: '8px',
-                    background: '#16a34a',
-                    color: '#ffffff',
+                    background: 'var(--accent)',
+                    color: 'var(--accent-contrast)',
                     fontWeight: 700,
                     fontSize: '0.88rem',
                     border: 'none',
@@ -1091,7 +1091,7 @@ export default function ImportLeadsView({
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
               <thead>
-                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid #334155', color: "var(--text-secondary)" }}>
+                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid var(--card-border)', color: "var(--text-secondary)" }}>
                   <th style={{ padding: '10px 14px' }}>Date &amp; Time</th>
                   <th style={{ padding: '10px 14px' }}>File Name</th>
                   <th style={{ padding: '10px 14px' }}>Total Rows</th>
@@ -1104,7 +1104,7 @@ export default function ImportLeadsView({
               </thead>
               <tbody>
                 {history.map((h, i) => (
-                  <tr key={h._id || i} style={{ borderBottom: "1px solid var(--card-border)", background: i % 2 === 0 ? '#0b1120' : '#0f172a' }}>
+                  <tr key={h._id || i} style={{ borderBottom: "1px solid var(--card-border)", background: i % 2 === 0 ? 'var(--main-bg)' : 'var(--card-bg)' }}>
                     <td style={{ padding: '10px 14px', color: "var(--text-secondary)" }}>
                       {new Date(h.importedAt || h.createdAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </td>
@@ -1112,17 +1112,17 @@ export default function ImportLeadsView({
                       {h.fileName}
                     </td>
                     <td style={{ padding: '10px 14px', color: "var(--text-primary)" }}>{h.totalRows}</td>
-                    <td style={{ padding: '10px 14px', color: '#22c55e', fontWeight: 700 }}>+{h.createdCount}</td>
+                    <td style={{ padding: '10px 14px', color: 'var(--accent-text)', fontWeight: 700 }}>+{h.createdCount}</td>
                     <td style={{ padding: '10px 14px', color: "var(--accent)" }}>{h.updatedCount || 0}</td>
-                    <td style={{ padding: '10px 14px', color: '#f59e0b' }}>{h.skippedCount || 0}</td>
+                    <td style={{ padding: '10px 14px', color: 'var(--warning-text)' }}>{h.skippedCount || 0}</td>
                     <td style={{ padding: '10px 14px' }}>
                       <span style={{
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontSize: '0.74rem',
                         fontWeight: 700,
-                        background: h.status === 'Completed' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                        color: h.status === 'Completed' ? '#22c55e' : '#ef4444'
+                        background: h.status === 'Completed' ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+                        color: h.status === 'Completed' ? 'var(--accent-text)' : 'var(--danger-text)'
                       }}>
                         {h.status || 'Completed'}
                       </span>

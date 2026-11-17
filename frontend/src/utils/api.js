@@ -393,6 +393,8 @@ export const permissionsApi = {
 // Company API
 export const companyApi = {
   getStorage: () => apiRequest('/companies/storage'),
+  getDashboard: () => apiRequest('/companies/dashboard'),
+  saveDashboard: (templates) => apiRequest('/companies/dashboard', { method: 'PUT', body: { templates } }),
 };
 
 // Activity Logs API

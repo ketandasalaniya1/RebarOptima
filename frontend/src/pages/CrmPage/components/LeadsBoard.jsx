@@ -478,7 +478,7 @@ return (
           <div style={{ fontSize: '1.15rem', fontWeight: 800, color: "var(--text-primary)", letterSpacing: '-0.2px' }}>
             {stats.total} total · <span style={{ color: "var(--accent)" }}>{stats.active} active</span>
             {stats.openValue > 0 && (
-              <span style={{ fontSize: '0.88rem', color: '#34d399', fontWeight: 600, marginLeft: '8px' }}>
+              <span style={{ fontSize: '0.88rem', color: 'var(--accent-text)', fontWeight: 600, marginLeft: '8px' }}>
                 • ₹{formatShortINR(stats.openValue)} open value
               </span>
             )}
@@ -718,7 +718,7 @@ return (
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
             <thead>
-              <tr style={{ background: "var(--input-bg)", color: "var(--text-secondary)", borderBottom: '1px solid #334155' }}>
+              <tr style={{ background: "var(--input-bg)", color: "var(--text-secondary)", borderBottom: '1px solid var(--card-border)' }}>
                 <th style={{ padding: '10px 14px', fontWeight: 600 }}>Lead</th>
                 <th style={{ padding: '10px 14px', fontWeight: 600 }}>Project &amp; Stage</th>
                 <th style={{ padding: '10px 14px', fontWeight: 600 }}>Interested In</th>
@@ -752,7 +752,7 @@ return (
                           cursor: 'pointer',
                           transition: 'background 0.15s ease'
                         }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--input-bg)'}
                         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                       >
                         {/* Lead Identity */}
@@ -806,7 +806,7 @@ return (
                         </td>
 
                         {/* Budget */}
-                        <td style={{ padding: '10px 14px', fontWeight: 700, color: '#34d399' }}>
+                        <td style={{ padding: '10px 14px', fontWeight: 700, color: 'var(--accent-text)' }}>
                           {lead.budget ? `₹${formatShortINR(lead.budget)}` : 'Flexible'}
                         </td>
 
@@ -831,7 +831,7 @@ return (
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '4px',
-                              color: isOverdue ? '#ef4444' : 'var(--text-secondary)',
+                              color: isOverdue ? 'var(--danger-text)' : 'var(--text-secondary)',
                               fontWeight: isOverdue ? 700 : 500,
                               fontSize: '0.76rem'
                             }}>
@@ -842,7 +842,7 @@ return (
                               </span>
                             </div>
                           ) : (
-                            <span style={{ color: '#64748b', fontSize: '0.74rem' }}>No date set</span>
+                            <span style={{ color: 'var(--text-secondary)', fontSize: '0.74rem' }}>No date set</span>
                           )}
                         </td>
 
@@ -873,10 +873,10 @@ return (
                                   rel="noreferrer"
                                   style={{
                                     padding: '5px',
-                                    background: 'rgba(34, 197, 94, 0.15)',
-                                    border: '1px solid #22c55e',
+                                    background: 'var(--success-subtle)',
+                                    border: '1px solid var(--accent)',
                                     borderRadius: '6px',
-                                    color: '#22c55e',
+                                    color: 'var(--accent-text)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center'
@@ -914,7 +914,7 @@ return (
                   filteredLeads.length === 0 && (
                     <tr>
                       <td colSpan="7" style={{ textAlign: 'center', padding: '40px 20px', color: "var(--text-secondary)" }}>
-                        <Building size={36} color="#334155" style={{ margin: '0 auto 10px' }} />
+                        <Building size={36} color="var(--text-secondary)" style={{ margin: '0 auto 10px' }} />
                         <div style={{ fontWeight: 600, color: "var(--text-secondary)" }}>No leads match current filters</div>
                         <div style={{ fontSize: '0.76rem', marginTop: '4px' }}>Click "+ Add Lead" above to register a prospective buyer.</div>
                       </td>
@@ -987,8 +987,8 @@ return (
                   padding: '4px 8px',
                   borderRadius: '6px',
                   border: "1px solid var(--card-border)",
-                  background: currentPage <= 1 ? 'transparent' : '#1e293b',
-                  color: currentPage <= 1 ? '#475569' : '#f8fafc',
+                  background: currentPage <= 1 ? 'transparent' : 'var(--input-bg)',
+                  color: currentPage <= 1 ? 'var(--text-secondary)' : 'var(--text-primary)',
                   cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
                   fontSize: '0.78rem',
                   fontWeight: 600
@@ -1005,8 +1005,8 @@ return (
                   padding: '4px 10px',
                   borderRadius: '6px',
                   border: "1px solid var(--card-border)",
-                  background: currentPage <= 1 ? 'transparent' : '#1e293b',
-                  color: currentPage <= 1 ? '#475569' : '#f8fafc',
+                  background: currentPage <= 1 ? 'transparent' : 'var(--input-bg)',
+                  color: currentPage <= 1 ? 'var(--text-secondary)' : 'var(--text-primary)',
                   cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
                   fontSize: '0.78rem',
                   fontWeight: 600
@@ -1025,8 +1025,8 @@ return (
                   padding: '4px 10px',
                   borderRadius: '6px',
                   border: "1px solid var(--card-border)",
-                  background: currentPage >= totalPages ? 'transparent' : '#1e293b',
-                  color: currentPage >= totalPages ? '#475569' : '#f8fafc',
+                  background: currentPage >= totalPages ? 'transparent' : 'var(--input-bg)',
+                  color: currentPage >= totalPages ? 'var(--text-secondary)' : 'var(--text-primary)',
                   cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
                   fontSize: '0.78rem',
                   fontWeight: 600
@@ -1042,8 +1042,8 @@ return (
                   padding: '4px 8px',
                   borderRadius: '6px',
                   border: "1px solid var(--card-border)",
-                  background: currentPage >= totalPages ? 'transparent' : '#1e293b',
-                  color: currentPage >= totalPages ? '#475569' : '#f8fafc',
+                  background: currentPage >= totalPages ? 'transparent' : 'var(--input-bg)',
+                  color: currentPage >= totalPages ? 'var(--text-secondary)' : 'var(--text-primary)',
                   cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
                   fontSize: '0.78rem',
                   fontWeight: 600
@@ -1084,8 +1084,8 @@ return (
               onDrop={(e) => handleDrop(e, col)}
               style={{
                 flex: '0 0 290px',
-                background: isDragOver ? 'rgba(56, 189, 248, 0.08)' : '#0f172a',
-                border: isDragOver ? '2px dashed #38bdf8' : '1px solid #1e293b',
+                background: isDragOver ? 'var(--info-subtle)' : 'var(--card-bg)',
+                border: isDragOver ? '2px dashed var(--accent)' : '1px solid var(--card-border)',
                 borderRadius: '12px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -1100,7 +1100,7 @@ return (
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: 'rgba(255,255,255,0.02)'
+                background: 'var(--hover-bg)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: col.color || '#38bdf8' }} />
@@ -1119,7 +1119,7 @@ return (
                   </span>
                 </div>
                 {colBudgetSum > 0 && (
-                  <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--accent-text)', fontWeight: 600 }}>
                     ₹{formatShortINR(colBudgetSum)}
                   </span>
                 )}
@@ -1152,7 +1152,7 @@ return (
                           onClick={() => onSelectLead(lead)}
                           className={`crm-kanban-card ${isBeingDragged ? 'dragging' : ''}`}
                           style={{
-                            background: "var(--input-bg)",
+                            background: "var(--table-header-bg)",
                             border: "1px solid var(--card-border)",
                             borderRadius: '8px',
                             padding: '12px',
@@ -1202,7 +1202,7 @@ return (
                           {/* Middle: Optional Customized Fields */}
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', fontSize: '0.72rem' }}>
                             {cardCustomization.showBudget && lead.budget && (
-                              <span style={{ color: '#34d399', fontWeight: 700 }}>
+                              <span style={{ color: 'var(--accent-text)', fontWeight: 700 }}>
                                 ₹{formatShortINR(lead.budget)}
                               </span>
                             )}
@@ -1214,7 +1214,7 @@ return (
                             )}
 
                             {cardCustomization.showSalesRep && lead.assignedSalespersonName && (
-                              <span style={{ color: '#64748b' }}>
+                              <span style={{ color: 'var(--text-secondary)' }}>
                                 • {lead.assignedSalespersonName}
                               </span>
                             )}
@@ -1227,9 +1227,9 @@ return (
                               alignItems: 'center',
                               gap: '4px',
                               fontSize: '0.72rem',
-                              color: isOverdue ? '#ef4444' : 'var(--text-secondary)',
+                              color: isOverdue ? 'var(--danger-text)' : 'var(--text-secondary)',
                               fontWeight: isOverdue ? 700 : 500,
-                              background: isOverdue ? 'rgba(239, 68, 68, 0.1)' : 'transparent',
+                              background: isOverdue ? 'var(--danger-subtle)' : 'transparent',
                               padding: isOverdue ? '2px 6px' : '0',
                               borderRadius: '4px'
                             }}>
@@ -1250,7 +1250,7 @@ return (
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                                 paddingTop: '6px',
-                                borderTop: '1px solid #334155',
+                                borderTop: '1px solid var(--card-border)',
                                 marginTop: '2px'
                               }}
                             >
@@ -1276,9 +1276,9 @@ return (
                                   rel="noreferrer"
                                   style={{
                                     padding: '4px 6px',
-                                    background: 'rgba(34, 197, 94, 0.15)',
+                                    background: 'var(--success-subtle)',
                                     borderRadius: '4px',
-                                    color: '#22c55e',
+                                    color: 'var(--accent-text)',
                                     display: 'flex',
                                     alignItems: 'center'
                                   }}
@@ -1304,7 +1304,7 @@ return (
                         style={{
                           padding: '8px 12px',
                           background: "var(--input-bg)",
-                          border: '1px dashed #38bdf8',
+                          border: '1px dashed var(--accent)',
                           borderRadius: '6px',
                           color: "var(--accent)",
                           fontSize: '0.76rem',
@@ -1325,9 +1325,9 @@ return (
                       <div style={{
                         textAlign: 'center',
                         padding: '24px 12px',
-                        color: '#64748b',
+                        color: 'var(--text-secondary)',
                         fontSize: '0.75rem',
-                        border: '1px dashed #1e293b',
+                        border: '1px dashed var(--card-border)',
                         borderRadius: '8px'
                       }}>
                         Drop lead here
@@ -1463,7 +1463,7 @@ return (
                     updated[idx] = temp;
                     setEditStagesDraft(updated);
                   }}
-                  style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", color: idx === 0 ? '#475569' : '#f8fafc', borderRadius: '4px', padding: '3px 6px', cursor: idx === 0 ? 'default' : 'pointer' }}
+                  style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", color: idx === 0 ? 'var(--text-secondary)' : 'var(--text-primary)', borderRadius: '4px', padding: '3px 6px', cursor: idx === 0 ? 'default' : 'pointer' }}
                 >
                   <ChevronUp size={12} />
                 </button>
@@ -1477,7 +1477,7 @@ return (
                     updated[idx] = temp;
                     setEditStagesDraft(updated);
                   }}
-                  style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", color: idx === editStagesDraft.length - 1 ? '#475569' : '#f8fafc', borderRadius: '4px', padding: '3px 6px', cursor: idx === editStagesDraft.length - 1 ? 'default' : 'pointer' }}
+                  style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", color: idx === editStagesDraft.length - 1 ? 'var(--text-secondary)' : 'var(--text-primary)', borderRadius: '4px', padding: '3px 6px', cursor: idx === editStagesDraft.length - 1 ? 'default' : 'pointer' }}
                 >
                   <ChevronDown size={12} />
                 </button>
@@ -1487,7 +1487,7 @@ return (
                   <button
                     type="button"
                     onClick={() => setEditStagesDraft(prev => prev.filter((_, i) => i !== idx))}
-                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                    style={{ background: 'none', border: 'none', color: 'var(--danger-text)', cursor: 'pointer', padding: '4px' }}
                     title="Remove stage"
                   >
                     <X size={14} />
@@ -1512,7 +1512,7 @@ return (
                   is_lost: false
                 }
               ])}
-              style={{ padding: '6px 12px', background: "var(--input-bg)", border: '1px dashed #334155', borderRadius: '6px', color: "var(--accent)", fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600, width: '100%' }}
+              style={{ padding: '6px 12px', background: "var(--input-bg)", border: '1px dashed var(--card-border)', borderRadius: '6px', color: "var(--accent)", fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600, width: '100%' }}
             >
               + Add Stage
             </button>
@@ -1544,10 +1544,10 @@ return (
     {lostDialogLead && (
       <div className="crm-modal-overlay" onClick={() => setLostDialogLead(null)}>
         <div className="crm-modal-container" onClick={e => e.stopPropagation()} style={{
-          background: "var(--card-bg)", border: '1px solid #ef4444', borderRadius: '14px', width: '100%', maxWidth: '420px', padding: '20px', color: "var(--text-primary)"
+          background: "var(--card-bg)", border: '1px solid var(--danger)', borderRadius: '14px', width: '100%', maxWidth: '420px', padding: '20px', color: "var(--text-primary)"
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontWeight: 700, fontSize: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--danger-text)', fontWeight: 700, fontSize: '1rem' }}>
               <Ban size={18} /> Mark Lead as Lost
             </div>
             <button type="button" onClick={() => setLostDialogLead(null)} style={{ background: 'none', border: 'none', color: "var(--text-secondary)", cursor: 'pointer' }}>
@@ -1603,7 +1603,7 @@ return (
               type="button"
               disabled={!lostReasonCategory}
               onClick={handleConfirmLost}
-              style={{ padding: '6px 16px', background: '#ef4444', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+              style={{ padding: '6px 16px', background: 'var(--danger)', color: 'var(--accent-contrast)', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
             >
               Confirm Lost
             </button>
@@ -1616,10 +1616,10 @@ return (
     {holdDialogLead && (
       <div className="crm-modal-overlay" onClick={() => setHoldDialogLead(null)}>
         <div className="crm-modal-container" onClick={e => e.stopPropagation()} style={{
-          background: "var(--card-bg)", border: '1px solid #eab308', borderRadius: '14px', width: '100%', maxWidth: '420px', padding: '20px', color: "var(--text-primary)"
+          background: "var(--card-bg)", border: '1px solid var(--warning)', borderRadius: '14px', width: '100%', maxWidth: '420px', padding: '20px', color: "var(--text-primary)"
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#eab308', fontWeight: 700, fontSize: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--warning-text)', fontWeight: 700, fontSize: '1rem' }}>
               <Lock size={18} /> Place Unit on Hold (48h Atomic Hold)
             </div>
             <button type="button" onClick={() => setHoldDialogLead(null)} style={{ background: 'none', border: 'none', color: "var(--text-secondary)", cursor: 'pointer' }}>
@@ -1656,7 +1656,7 @@ return (
             <button
               type="button"
               onClick={handleConfirmHold}
-              style={{ padding: '6px 16px', background: '#eab308', color: '#0f172a', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+              style={{ padding: '6px 16px', background: 'var(--warning)', color: 'var(--accent-contrast)', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
             >
               Execute 48h Hold
             </button>

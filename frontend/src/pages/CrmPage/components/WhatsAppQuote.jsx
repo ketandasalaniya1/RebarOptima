@@ -70,7 +70,7 @@ _Offer valid subject to availability. Contact our sales desk for floorplan drawi
             onClick={handleCopy}
             style={{ gap: '0.35rem' }}
           >
-            {copied ? <Check size={16} style={{ color: '#34d399' }} /> : <Copy size={16} />}
+            {copied ? <Check size={16} style={{ color: 'var(--accent-text)' }} /> : <Copy size={16} />}
             {copied ? 'Copied!' : 'Copy Text'}
           </button>
 

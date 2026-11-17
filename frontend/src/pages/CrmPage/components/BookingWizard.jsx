@@ -215,7 +215,7 @@ export default function BookingWizard({
                 {Number(discountAmount) > 0 && (
                   <div className="crm-sheet-price-row">
                     <span>Discount:</span>
-                    <span style={{ color: '#34d399' }}>-{formatINR(discountAmount)}</span>
+                    <span style={{ color: 'var(--accent-text)' }}>-{formatINR(discountAmount)}</span>
                   </div>
                 )}
                 <div className="crm-sheet-price-row">
@@ -224,7 +224,7 @@ export default function BookingWizard({
                 </div>
                 <div className="crm-sheet-price-row total">
                   <span>Net Booking Value:</span>
-                  <strong style={{ color: '#34d399', fontSize: '1.05rem' }}>{formatINR(netBookingValue)}</strong>
+                  <strong style={{ color: 'var(--accent-text)', fontSize: '1.05rem' }}>{formatINR(netBookingValue)}</strong>
                 </div>
               </div>
 
@@ -284,7 +284,7 @@ export default function BookingWizard({
                 <div style={{ fontSize: '0.82rem', marginBottom: '0.35rem' }}>
                   <strong>Unit:</strong> {selectedUnit?.unitCode} ({selectedUnit?.projectName})
                 </div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#34d399' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-text)' }}>
                   Total Package: {formatINR(netBookingValue)}
                 </div>
               </div>

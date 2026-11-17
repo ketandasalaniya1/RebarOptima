@@ -189,7 +189,7 @@ export default function UnitSheet({
           maxWidth: '680px',
           height: '100vh',
           background: "var(--card-bg)",
-          borderLeft: '1px solid #1e293b',
+          borderLeft: '1px solid var(--card-border)',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '-10px 0 30px rgba(0,0,0,0.5)',
@@ -204,7 +204,7 @@ export default function UnitSheet({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: '#0b1120'
+          background: 'var(--main-bg)'
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -217,8 +217,8 @@ export default function UnitSheet({
                 borderRadius: '6px',
                 fontSize: '0.78rem',
                 fontWeight: 700,
-                background: isAvailable ? 'rgba(34, 197, 94, 0.15)' : (isHeld ? 'rgba(245, 158, 11, 0.15)' : (isBooked ? 'rgba(168, 85, 247, 0.15)' : 'rgba(239, 68, 68, 0.15)')),
-                color: isAvailable ? '#22c55e' : (isHeld ? '#f59e0b' : (isBooked ? '#a855f7' : '#ef4444'))
+                background: isAvailable ? 'var(--success-subtle)' : (isHeld ? 'var(--warning-subtle)' : (isBooked ? 'var(--accent-subtle)' : 'var(--danger-subtle)')),
+                color: isAvailable ? 'var(--accent-text)' : (isHeld ? 'var(--warning-text)' : (isBooked ? '#a855f7' : 'var(--danger-text)'))
               }}>
                 {status}
               </span>
@@ -243,8 +243,8 @@ export default function UnitSheet({
           {/* Status Alert Banners */}
           {isHeld && (
             <div style={{
-              background: 'rgba(245, 158, 11, 0.1)',
-              border: '1px solid #f59e0b',
+              background: 'var(--warning-subtle)',
+              border: '1px solid var(--warning)',
               borderRadius: '10px',
               padding: '12px 16px',
               display: 'flex',
@@ -252,9 +252,9 @@ export default function UnitSheet({
               justifyContent: 'space-between'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Clock size={18} color="#f59e0b" />
+                <Clock size={18} color="var(--warning-text)" />
                 <div>
-                  <div style={{ fontWeight: 700, color: '#f59e0b', fontSize: '0.88rem' }}>Unit on 48h Hold</div>
+                  <div style={{ fontWeight: 700, color: 'var(--warning-text)', fontSize: '0.88rem' }}>Unit on 48h Hold</div>
                   <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)" }}>
                     Auto-releases if earnest money is not received. {calculateRemainingHours(currentUnit.holdExpiresAt || currentUnit.heldUntil)}
                   </div>
@@ -280,8 +280,8 @@ export default function UnitSheet({
 
           {isBlocked && (
             <div style={{
-              background: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid #ef4444',
+              background: 'var(--danger-subtle)',
+              border: '1px solid var(--danger)',
               borderRadius: '10px',
               padding: '12px 16px',
               display: 'flex',
@@ -289,9 +289,9 @@ export default function UnitSheet({
               justifyContent: 'space-between'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <ShieldAlert size={18} color="#ef4444" />
+                <ShieldAlert size={18} color="var(--danger-text)" />
                 <div>
-                  <div style={{ fontWeight: 700, color: '#ef4444', fontSize: '0.88rem' }}>Management Blocked</div>
+                  <div style={{ fontWeight: 700, color: 'var(--danger-text)', fontSize: '0.88rem' }}>Management Blocked</div>
                   <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)" }}>
                     Reason: {currentUnit.blockReason || currentUnit.notes || 'Management Reserved'}
                   </div>
@@ -335,7 +335,7 @@ export default function UnitSheet({
               </div>
               <div>
                 <span style={{ color: "var(--text-secondary)", fontSize: '0.75rem' }}>Availability Status</span>
-                <div style={{ fontWeight: 700, marginTop: '2px', color: isAvailable ? '#22c55e' : '#f59e0b' }}>{status}</div>
+                <div style={{ fontWeight: 700, marginTop: '2px', color: isAvailable ? 'var(--accent-text)' : 'var(--warning-text)' }}>{status}</div>
               </div>
               <div>
                 <span style={{ color: "var(--text-secondary)", fontSize: '0.75rem' }}>Facing / Direction</span>
@@ -476,12 +476,12 @@ export default function UnitSheet({
                 justifyContent: 'space-between',
                 paddingTop: '8px',
                 marginTop: '4px',
-                borderTop: '1px solid #334155',
+                borderTop: '1px solid var(--card-border)',
                 fontSize: '0.96rem',
                 fontWeight: 800
               }}>
                 <span style={{ color: "var(--text-primary)" }}>All-Inclusive Total Package:</span>
-                <span style={{ color: '#22c55e' }}>{formatINR(totalPackageCost)}</span>
+                <span style={{ color: 'var(--accent-text)' }}>{formatINR(totalPackageCost)}</span>
               </div>
             </div>
           </div>
@@ -493,20 +493,20 @@ export default function UnitSheet({
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)' }} />
                 <span style={{ color: "var(--text-secondary)" }}>{new Date(currentUnit.createdAt || Date.now()).toLocaleDateString('en-IN')}:</span>
                 <span style={{ fontWeight: 600 }}>Unit added to project inventory as <strong>Available</strong></span>
               </div>
               {currentUnit.holdExpiresAt && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }} />
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--warning)' }} />
                   <span style={{ color: "var(--text-secondary)" }}>Recent:</span>
                   <span style={{ fontWeight: 600 }}>48h Hold placed (expires {new Date(currentUnit.holdExpiresAt).toLocaleTimeString('en-IN')})</span>
                 </div>
               )}
               {isBooked && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#a855f7' }} />
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)' }} />
                   <span style={{ color: "var(--text-secondary)" }}>Confirmed:</span>
                   <span style={{ fontWeight: 600 }}>Purchase agreement executed and unit status set to <strong>Booked</strong></span>
                 </div>
@@ -554,7 +554,7 @@ export default function UnitSheet({
               <span style={{ padding: '4px 10px', borderRadius: '6px', background: "var(--card-bg)", fontSize: '0.76rem', color: "var(--text-primary)" }}>
                 Active Opportunities: <strong>{relatedLeads.filter(l => !['Booked', 'Lost'].includes(l.stage)).length}</strong>
               </span>
-              <span style={{ padding: '4px 10px', borderRadius: '6px', background: "var(--card-bg)", fontSize: '0.76rem', color: '#22c55e' }}>
+              <span style={{ padding: '4px 10px', borderRadius: '6px', background: "var(--card-bg)", fontSize: '0.76rem', color: 'var(--accent-text)' }}>
                 Qualified Buyers: <strong>{relatedLeads.filter(l => l.stage === 'Qualified').length}</strong>
               </span>
             </div>
@@ -587,7 +587,7 @@ export default function UnitSheet({
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: "var(--text-secondary)" }}>Agreement Value:</span>
-                  <span style={{ fontWeight: 700, color: '#22c55e' }}>{formatINR(bookingInfo.booking?.agreementPrice || basePrice)}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--accent-text)' }}>{formatINR(bookingInfo.booking?.agreementPrice || basePrice)}</span>
                 </div>
               </div>
             ) : (
@@ -613,7 +613,7 @@ export default function UnitSheet({
         <div style={{
           padding: '16px 24px',
           borderTop: "1px solid var(--card-border)",
-          background: '#0b1120',
+          background: 'var(--main-bg)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -632,8 +632,8 @@ export default function UnitSheet({
                     gap: '6px',
                     padding: '8px 14px',
                     borderRadius: '8px',
-                    background: 'rgba(245, 158, 11, 0.15)',
-                    color: '#f59e0b',
+                    background: 'var(--warning-subtle)',
+                    color: 'var(--warning-text)',
                     border: '1px solid rgba(245, 158, 11, 0.3)',
                     fontWeight: 700,
                     fontSize: '0.82rem',
@@ -653,7 +653,7 @@ export default function UnitSheet({
                     padding: '8px 14px',
                     borderRadius: '8px',
                     background: "var(--input-bg)",
-                    color: '#ef4444',
+                    color: 'var(--danger-text)',
                     border: "1px solid var(--card-border)",
                     fontWeight: 600,
                     fontSize: '0.82rem',
@@ -698,7 +698,7 @@ export default function UnitSheet({
                   padding: '8px 14px',
                   borderRadius: '8px',
                   background: "var(--input-bg)",
-                  color: '#22c55e',
+                  color: 'var(--accent-text)',
                   border: "1px solid var(--card-border)",
                   fontWeight: 600,
                   fontSize: '0.82rem',
@@ -742,8 +742,8 @@ export default function UnitSheet({
                 gap: '8px',
                 padding: '9px 18px',
                 borderRadius: '8px',
-                background: '#16a34a',
-                color: '#ffffff',
+                background: 'var(--accent)',
+                color: 'var(--accent-contrast)',
                 fontWeight: 700,
                 fontSize: '0.86rem',
                 border: 'none',

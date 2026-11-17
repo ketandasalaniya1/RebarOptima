@@ -270,17 +270,17 @@ export default function InventoryGrid({
   const getStatusBadgeStyle = (status) => {
     switch (status) {
       case 'Available':
-        return { background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', border: '1px solid rgba(34, 197, 94, 0.3)' };
+        return { background: 'var(--success-subtle)', color: 'var(--accent-text)', border: '1px solid rgba(34, 197, 94, 0.3)' };
       case 'Hold':
       case 'Held':
-        return { background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)' };
+        return { background: 'var(--warning-subtle)', color: 'var(--warning-text)', border: '1px solid rgba(245, 158, 11, 0.3)' };
       case 'Reserved':
-        return { background: 'rgba(56, 189, 248, 0.15)', color: "var(--accent)", border: '1px solid rgba(56, 189, 248, 0.3)' };
+        return { background: 'var(--info-subtle)', color: "var(--accent)", border: '1px solid rgba(56, 189, 248, 0.3)' };
       case 'Booked':
       case 'Sold':
-        return { background: 'rgba(168, 85, 247, 0.15)', color: '#a855f7', border: '1px solid rgba(168, 85, 247, 0.3)' };
+        return { background: 'var(--accent-subtle)', color: '#a855f7', border: '1px solid rgba(168, 85, 247, 0.3)' };
       case 'Blocked':
-        return { background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' };
+        return { background: 'var(--danger-subtle)', color: 'var(--danger-text)', border: '1px solid rgba(239, 68, 68, 0.3)' };
       default:
         return { background: "var(--input-bg)", color: "var(--text-secondary)", border: "1px solid var(--card-border)" };
     }
@@ -302,16 +302,16 @@ export default function InventoryGrid({
           </div>
         </div>
 
-        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid #22c55e' }}>
-          <div style={{ fontSize: '0.74rem', color: '#22c55e', fontWeight: 600, textTransform: "none" }}>Available</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#22c55e', marginTop: '2px' }}>
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid var(--accent)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--accent-text)', fontWeight: 600, textTransform: "none" }}>Available</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-text)', marginTop: '2px' }}>
             {stats.available}
           </div>
         </div>
 
-        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid #f59e0b' }}>
-          <div style={{ fontSize: '0.74rem', color: '#f59e0b', fontWeight: 600, textTransform: "none" }}>On 48h Hold</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f59e0b', marginTop: '2px' }}>
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid var(--warning)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--warning-text)', fontWeight: 600, textTransform: "none" }}>On 48h Hold</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--warning-text)', marginTop: '2px' }}>
             {stats.held}
           </div>
         </div>
@@ -323,14 +323,14 @@ export default function InventoryGrid({
           </div>
         </div>
 
-        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid #ef4444' }}>
-          <div style={{ fontSize: '0.74rem', color: '#ef4444', fontWeight: 600, textTransform: "none" }}>Blocked</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ef4444', marginTop: '2px' }}>
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid var(--danger)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--danger-text)', fontWeight: 600, textTransform: "none" }}>Blocked</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--danger-text)', marginTop: '2px' }}>
             {stats.blocked}
           </div>
         </div>
 
-        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid #38bdf8' }}>
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '12px', padding: '14px 16px', borderLeft: '4px solid var(--accent)' }}>
           <div style={{ fontSize: '0.74rem', color: "var(--accent)", fontWeight: 600, textTransform: "none" }}>Inventory Value</div>
           <div style={{ fontSize: '1.3rem', fontWeight: 800, color: "var(--accent)", marginTop: '4px' }}>
             {formatShortINR(stats.totalValue)}
@@ -351,7 +351,7 @@ export default function InventoryGrid({
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', flex: 1 }}>
             {/* Search Input */}
             <div style={{ position: 'relative', width: '220px' }}>
-              <Search size={14} style={{ position: 'absolute', left: '10px', top: '10px', color: '#64748b' }} />
+              <Search size={14} style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-secondary)' }} />
               <Input
                 type="text"
                 placeholder="Search unit #, tower..."
@@ -467,8 +467,8 @@ export default function InventoryGrid({
                 gap: '4px',
                 padding: '7px 12px',
                 borderRadius: '8px',
-                background: showAdvancedFilters ? '#38bdf8' : '#1e293b',
-                color: showAdvancedFilters ? '#0f172a' : 'var(--text-secondary)',
+                background: showAdvancedFilters ? 'var(--accent)' : 'var(--input-bg)',
+                color: showAdvancedFilters ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 border: "1px solid var(--card-border)",
                 fontSize: '0.82rem',
                 fontWeight: 600,
@@ -491,7 +491,7 @@ export default function InventoryGrid({
                 gap: '5px',
                 padding: '7px 12px',
                 borderRadius: '8px',
-                background: 'rgba(56, 189, 248, 0.1)',
+                background: 'var(--info-subtle)',
                 color: "var(--accent)",
                 border: '1px solid rgba(56, 189, 248, 0.35)',
                 fontSize: '0.82rem',
@@ -514,8 +514,8 @@ export default function InventoryGrid({
                   gap: '5px',
                   padding: '7px 12px',
                   borderRadius: '8px',
-                  background: 'rgba(239, 68, 68, 0.12)',
-                  color: '#ef4444',
+                  background: 'var(--danger-subtle)',
+                  color: 'var(--danger-text)',
                   border: '1px solid rgba(239, 68, 68, 0.3)',
                   fontSize: '0.82rem',
                   fontWeight: 600,
@@ -540,8 +540,8 @@ export default function InventoryGrid({
                 padding: '6px 14px',
                 borderRadius: '6px',
                 border: 'none',
-                background: viewMode === 'matrix' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'matrix' ? '#0f172a' : 'var(--text-secondary)',
+                background: viewMode === 'matrix' ? 'var(--accent)' : 'transparent',
+                color: viewMode === 'matrix' ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 fontSize: '0.82rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -560,8 +560,8 @@ export default function InventoryGrid({
                 padding: '6px 14px',
                 borderRadius: '6px',
                 border: 'none',
-                background: viewMode === 'table' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'table' ? '#0f172a' : 'var(--text-secondary)',
+                background: viewMode === 'table' ? 'var(--accent)' : 'transparent',
+                color: viewMode === 'table' ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 fontSize: '0.82rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -593,7 +593,7 @@ export default function InventoryGrid({
                 onChange={(e) => setMinPrice(e.target.value)}
                 style={{ width: '110px', padding: '5px 8px', borderRadius: '6px', background: "var(--input-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.8rem' }}
               />
-              <span style={{ color: '#64748b' }}>-</span>
+              <span style={{ color: 'var(--text-secondary)' }}>-</span>
               <Input
                 type="number"
                 placeholder="Max Price"
@@ -612,7 +612,7 @@ export default function InventoryGrid({
                 onChange={(e) => setMinArea(e.target.value)}
                 style={{ width: '90px', padding: '5px 8px', borderRadius: '6px', background: "var(--input-bg)", border: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: '0.8rem' }}
               />
-              <span style={{ color: '#64748b' }}>-</span>
+              <span style={{ color: 'var(--text-secondary)' }}>-</span>
               <Input
                 type="number"
                 placeholder="Max sqft"
@@ -626,7 +626,7 @@ export default function InventoryGrid({
               <button
                 type="button"
                 onClick={() => { setMinPrice(''); setMaxPrice(''); setMinArea(''); setMaxArea(''); }}
-                style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline' }}
+                style={{ background: 'none', border: 'none', color: 'var(--danger-text)', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline' }}
               >
                 Clear Filters
               </button>
@@ -640,7 +640,7 @@ export default function InventoryGrid({
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '16px', padding: '20px', overflowX: 'auto' }}>
           {matrixRows.length === 0 ? (
             <div style={{ padding: '60px 20px', textAlign: 'center', color: "var(--text-secondary)" }}>
-              <Building2 size={48} color="#334155" style={{ margin: '0 auto 12px' }} />
+              <Building2 size={48} color="var(--text-secondary)" style={{ margin: '0 auto 12px' }} />
               <div style={{ fontSize: '1.1rem', fontWeight: 700, color: "var(--text-primary)" }}>No matching floors or units found</div>
               <div style={{ fontSize: '0.84rem', marginTop: '4px' }}>Try adjusting your filters above or configure blocks and floors in the Projects module.</div>
             </div>
@@ -656,7 +656,7 @@ export default function InventoryGrid({
                       display: 'flex',
                       alignItems: 'center',
                       gap: '16px',
-                      background: '#0b1120',
+                      background: 'var(--main-bg)',
                       border: "1px solid var(--card-border)",
                       borderRadius: '12px',
                       padding: '10px 14px'
@@ -690,7 +690,7 @@ export default function InventoryGrid({
                       <strong style={{ fontSize: '0.82rem', color: "var(--text-primary)", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }} title={name}>
                         {name}
                       </strong>
-                      <span style={{ fontSize: '0.65rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
                         {floorUnits.length} {floorUnits.length === 1 ? 'unit' : 'units'}
                       </span>
                     </div>
@@ -703,10 +703,10 @@ export default function InventoryGrid({
                           alignItems: 'center',
                           gap: '8px',
                           padding: '8px 14px',
-                          background: 'rgba(30, 41, 59, 0.3)',
+                          background: 'var(--hover-bg)',
                           borderRadius: '8px',
-                          border: '1px dashed #334155',
-                          color: '#64748b',
+                          border: '1px dashed var(--card-border)',
+                          color: 'var(--text-secondary)',
                           fontSize: '0.8rem'
                         }}>
                           <span>No units assigned to {name} yet.</span>
@@ -751,7 +751,7 @@ export default function InventoryGrid({
                                 </strong>
 
                                 {hoursLeft && (
-                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', fontSize: '0.68rem', color: '#f59e0b', fontWeight: 700 }}>
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', fontSize: '0.68rem', color: 'var(--warning-text)', fontWeight: 700 }}>
                                     <Clock size={10} /> {hoursLeft}
                                   </span>
                                 )}
@@ -775,7 +775,7 @@ export default function InventoryGrid({
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
               <thead>
-                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid #334155', color: "var(--text-secondary)" }}>
+                <tr style={{ background: "var(--input-bg)", borderBottom: '1px solid var(--card-border)', color: "var(--text-secondary)" }}>
                   <th style={{ padding: '12px 16px' }}>Unit #</th>
                   <th style={{ padding: '12px 16px' }}>Project</th>
                   <th style={{ padding: '12px 16px' }}>Tower / Block</th>
@@ -808,7 +808,7 @@ export default function InventoryGrid({
                     return (
                       <tr
                         key={unit._id || idx}
-                        style={{ borderBottom: "1px solid var(--card-border)", background: idx % 2 === 0 ? '#0b1120' : '#0f172a' }}
+                        style={{ borderBottom: "1px solid var(--card-border)", background: idx % 2 === 0 ? 'var(--main-bg)' : 'var(--card-bg)' }}
                       >
                         <td style={{ padding: '12px 16px', fontWeight: 700, color: "var(--text-primary)" }}>
                           {unit.unitCode || unit.unitNumber}
@@ -887,8 +887,8 @@ export default function InventoryGrid({
                                   gap: '4px',
                                   padding: '5px 8px',
                                   borderRadius: '6px',
-                                  background: 'rgba(245, 158, 11, 0.15)',
-                                  color: '#f59e0b',
+                                  background: 'var(--warning-subtle)',
+                                  color: 'var(--warning-text)',
                                   border: '1px solid rgba(245, 158, 11, 0.3)',
                                   fontSize: '0.78rem',
                                   fontWeight: 600,
@@ -935,7 +935,7 @@ export default function InventoryGrid({
             width: '100%',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--danger-text)', marginBottom: '12px' }}>
               <AlertCircle size={24} />
               <h3 style={{ margin: 0, fontSize: '1.15rem', color: "var(--text-primary)", fontWeight: 700 }}>
                 Remove Demo / Seed Units
@@ -944,7 +944,7 @@ export default function InventoryGrid({
             <p style={{ color: "var(--text-secondary)", fontSize: '0.88rem', lineHeight: '1.5', margin: '0 0 16px' }}>
               This action will safely remove <strong style={{ color: "var(--text-primary)" }}>{seedUnitsCount}</strong> legacy unlinked sample units for this project.
               <br /><br />
-              <span style={{ color: '#22c55e' }}>✓ Legitimate units created under Blocks &amp; Floors are completely protected and will NOT be touched.</span>
+              <span style={{ color: 'var(--accent-text)' }}>✓ Legitimate units created under Blocks &amp; Floors are completely protected and will NOT be touched.</span>
             </p>
 
             {clearSeedFeedback && (
@@ -952,8 +952,8 @@ export default function InventoryGrid({
                 padding: '10px 14px',
                 borderRadius: '8px',
                 marginBottom: '16px',
-                background: clearSeedFeedback.success ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                color: clearSeedFeedback.success ? '#22c55e' : '#ef4444',
+                background: clearSeedFeedback.success ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+                color: clearSeedFeedback.success ? 'var(--accent-text)' : 'var(--danger-text)',
                 fontSize: '0.84rem'
               }}>
                 {clearSeedFeedback.message}
@@ -985,8 +985,8 @@ export default function InventoryGrid({
                 style={{
                   padding: '8px 18px',
                   borderRadius: '8px',
-                  background: '#ef4444',
-                  color: '#ffffff',
+                  background: 'var(--danger)',
+                  color: 'var(--accent-contrast)',
                   border: 'none',
                   cursor: clearingSeed ? 'not-allowed' : 'pointer',
                   fontSize: '0.84rem',

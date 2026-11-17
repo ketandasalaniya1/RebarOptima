@@ -1,0 +1,397 @@
+/* ==========================================================================
+   GLOBAL AI ASSISTANT FLOATING WIDGET & QUICK-CHAT DRAWER
+   Adheres to Design System Tokens & Supports Both Light and Dark Themes
+   ========================================================================== */
+
+.ai-widget-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 990;
+  font-family: inherit;
+}
+
+/* Floating Launch Button */
+.ai-widget-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 10px 12px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35), 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.ai-widget-trigger:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: var(--accent-hover);
+  box-shadow: 0 6px 18px rgba(4, 120, 87, 0.45), 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.ai-trigger-icon-pulse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  animation: aiIconShimmer 2.4s infinite ease-in-out;
+}
+
+@keyframes aiIconShimmer {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+}
+
+.ai-trigger-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   Quick-Chat Flyout Drawer
+   -------------------------------------------------------------------------- */
+.ai-widget-drawer {
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 540px;
+  max-height: calc(100vh - 100px);
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: aiDrawerSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes aiDrawerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ai-drawer-header {
+  height: 56px;
+  min-height: 56px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.ai-drawer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  overflow: hidden;
+}
+
+.ai-drawer-icon-box {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ai-drawer-brand {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.ai-drawer-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-label);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 190px;
+}
+
+.ai-drawer-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-drawer-btn {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.ai-drawer-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--table-row-hover);
+}
+
+/* Drawer Body & Stream */
+.ai-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  background-color: var(--main-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-drawer-empty {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px 6px;
+}
+
+.ai-drawer-welcome-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-subtle);
+  color: var(--accent-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.ai-drawer-welcome-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.ai-drawer-welcome-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+.ai-drawer-role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+
+.ai-drawer-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  text-align: left;
+}
+
+.ai-chips-heading {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-label);
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.ai-drawer-chip {
+  width: 100%;
+  text-align: left;
+  padding: 8px 11px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ai-drawer-chip:hover {
+  background-color: var(--table-row-hover);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.ai-drawer-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Adjust message bubbles inside widget drawer */
+.ai-drawer-messages .ai-bubble-container {
+  max-width: 90%;
+}
+
+.ai-drawer-messages .ai-bubble {
+  padding: 10px 13px;
+  font-size: 13px;
+}
+
+/* Drawer Footer & Input */
+.ai-drawer-footer {
+  padding: 10px 12px;
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-drawer-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 4px 6px 4px 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ai-drawer-input-row:focus-within {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.ai-drawer-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.ai-drawer-input::placeholder {
+  color: var(--placeholder-text);
+}
+
+.ai-drawer-send-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ai-drawer-send-btn:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.ai-drawer-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ai-drawer-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--text-label);
+  padding: 0 2px;
+}
+
+.ai-drawer-isolated-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-drawer-expand-link {
+  background: none;
+  border: none;
+  color: var(--accent-text);
+  font-size: 10.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ai-drawer-expand-link:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Floating Placement (Clear bottom nav bar)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .ai-widget-wrapper {
+    bottom: 74px;
+    /* Lift above bottom nav bar */
+    right: 16px;
+  }
+
+  .ai-widget-trigger {
+    padding: 9px 12px;
+  }
+
+  .ai-trigger-label {
+    display: none;
+    /* Icon-only floating button on small screens */
+  }
+
+  .ai-widget-drawer {
+    width: calc(100vw - 32px);
+    height: 480px;
+  }
+}

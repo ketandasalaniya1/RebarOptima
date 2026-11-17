@@ -303,7 +303,7 @@ export default function MessageBubble({
                       download={att.name || 'attachment'}
                       className="chat-msg-doc"
                     >
-                      <FileText size={24} color="#38bdf8" />
+                      <FileText size={24} color="var(--info-text)" />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {att.name || 'Document'}
@@ -331,7 +331,7 @@ export default function MessageBubble({
             <Pin size={11} className="chat-meta-pin-icon" title="Pinned message" />
           )}
           {isStarred && (
-            <Star size={11} fill="#eab308" color="#eab308" className="chat-meta-star-icon" title="Starred message" />
+            <Star size={11} fill="var(--warning-text)" color="var(--warning-text)" className="chat-meta-star-icon" title="Starred message" />
           )}
           <span>{timeStr}</span>
           {isMine && !isDeleted && (
@@ -458,8 +458,8 @@ export default function MessageBubble({
                 <Star
                   size={16}
                   className="menu-icon"
-                  fill={isStarred ? '#eab308' : 'none'}
-                  color={isStarred ? '#eab308' : 'currentColor'}
+                  fill={isStarred ? 'var(--warning-text)' : 'none'}
+                  color={isStarred ? 'var(--warning-text)' : 'currentColor'}
                 />
                 <span>{isStarred ? 'Unstar' : 'Star'}</span>
               </button>

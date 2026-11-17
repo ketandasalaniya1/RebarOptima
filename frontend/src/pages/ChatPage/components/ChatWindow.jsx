@@ -122,8 +122,8 @@ export default function ChatWindow({
             Direct & group messaging for site engineers, project managers, and contractors.
             Real-time chat, instant media sharing, voice notes, and push alerts.
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '12px' }}>
-            <Lock size={14} color="#22c55e" /> Encrypted multi-tenant SaaS communication
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '12px' }}>
+            <Lock size={14} color="var(--accent)" /> Encrypted multi-tenant SaaS communication
           </div>
         </div>
       </section>
@@ -156,7 +156,7 @@ export default function ChatWindow({
 
     if (query && filtered.length === 0) {
       return (
-        <div style={{ textAlign: 'center', padding: '32px 16px', color: '#8b949e', fontSize: '13px' }}>
+        <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-secondary)', fontSize: '13px' }}>
           No messages matching "{searchQuery}" found in this conversation.
         </div>
       );
@@ -276,13 +276,13 @@ export default function ChatWindow({
       {showSearch && (
         <div style={{
           padding: '8px 16px',
-          background: '#0d1117',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--input-bg)',
+          borderBottom: '1px solid var(--card-border)',
           display: 'flex',
           alignItems: 'center',
           gap: '8px'
         }}>
-          <Search size={15} color="#8b949e" />
+          <Search size={15} color="var(--text-secondary)" />
           <Input
             type="text"
             placeholder="Search within this chat..."
@@ -293,7 +293,7 @@ export default function ChatWindow({
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: '#f0f6fc',
+              color: 'var(--text-primary)',
               fontSize: '13px'
             }}
             autoFocus
@@ -357,7 +357,7 @@ export default function ChatWindow({
         {/* Live typing presence indicator */}
         {typingUser && (
           <div className="chat-typing-bubble">
-            <span style={{ color: '#22c55e' }}>●</span> {typingUser} is typing...
+            <span style={{ color: 'var(--accent)' }}>●</span> {typingUser} is typing...
           </div>
         )}
 
@@ -374,8 +374,8 @@ export default function ChatWindow({
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 10,
-              background: '#238636',
-              color: '#ffffff',
+              background: 'var(--accent)',
+              color: 'var(--accent-contrast)',
               border: 'none',
               borderRadius: '20px',
               padding: '6px 14px',

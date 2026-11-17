@@ -353,10 +353,10 @@ export default function MessageComposer({
       {replyingTo && (
         <div className="chat-reply-banner">
           <div>
-            <span style={{ fontWeight: 600, color: '#22c55e', marginRight: '6px' }}>
+            <span style={{ fontWeight: 600, color: 'var(--accent)', marginRight: '6px' }}>
               Replying to {replyingTo.senderName}:
             </span>
-            <span style={{ color: '#cbd5e1' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>
               {replyingTo.content?.substring(0, 60) || 'Attachment'}
             </span>
           </div>
@@ -390,7 +390,7 @@ export default function MessageComposer({
               >
                 <div className="chat-mention-avatar">
                   {opt.isAll ? (
-                    <Users size={16} color="#22c55e" />
+                    <Users size={16} color="var(--accent)" />
                   ) : opt.avatar ? (
                     <img src={opt.avatar} alt={opt.name} />
                   ) : (
@@ -421,7 +421,7 @@ export default function MessageComposer({
               <button
                 type="button"
                 onClick={cancelRecording}
-                style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '13px' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--danger-text)', cursor: 'pointer', fontSize: '13px' }}
               >
                 Cancel
               </button>
@@ -429,7 +429,7 @@ export default function MessageComposer({
                 type="button"
                 onClick={stopRecording}
                 style={{
-                  background: '#22c55e',
+                  background: 'var(--accent)',
                   border: 'none',
                   borderRadius: '50%',
                   width: '32px',
@@ -438,10 +438,10 @@ export default function MessageComposer({
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  color: '#0b0e14',
+                  color: 'var(--accent-contrast)',
                 }}
               >
-                <Square size={14} fill="#0b0e14" />
+                <Square size={14} fill="var(--accent-contrast)" />
               </button>
             </div>
           </div>
@@ -502,7 +502,7 @@ export default function MessageComposer({
                 onClick={startRecording}
                 title="Hold or Click to Record Voice Note"
               >
-                <Mic size={20} color="#22c55e" />
+                <Mic size={20} color="var(--accent)" />
               </button>
             )}
           </>

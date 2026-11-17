@@ -214,7 +214,7 @@ export default function CalendarView({
             <button
               type="button"
               onClick={handleToday}
-              style={{ background: 'none', border: 'none', color: "var(--text-primary)", padding: '6px 10px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', borderLeft: '1px solid #334155', borderRight: '1px solid #334155' }}
+              style={{ background: 'none', border: 'none', color: "var(--text-primary)", padding: '6px 10px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', borderLeft: '1px solid var(--card-border)', borderRight: '1px solid var(--card-border)' }}
             >
               Today
             </button>
@@ -240,8 +240,8 @@ export default function CalendarView({
                   padding: '5px 12px',
                   borderRadius: '6px',
                   border: 'none',
-                  background: viewMode === mode ? '#38bdf8' : 'transparent',
-                  color: viewMode === mode ? '#0f172a' : 'var(--text-secondary)',
+                  background: viewMode === mode ? 'var(--accent)' : 'transparent',
+                  color: viewMode === mode ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                   fontWeight: 600,
                   fontSize: '0.78rem',
                   textTransform: 'capitalize',
@@ -313,11 +313,11 @@ export default function CalendarView({
 
         {[
           { key: 'site_visits', label: 'Site Visits', color: '#8b5cf6' },
-          { key: 'appointments', label: 'Meetings & Calls', color: '#f59e0b' },
-          { key: 'tasks', label: 'Tasks', color: '#3b82f6' },
+          { key: 'appointments', label: 'Meetings & Calls', color: 'var(--warning-text)' },
+          { key: 'tasks', label: 'Tasks', color: 'var(--info-text)' },
           { key: 'followups', label: 'Follow-ups', color: "var(--accent)" },
-          { key: 'collections', label: 'Collection Dues', color: '#059669' },
-          { key: 'hold_expiries', label: 'Hold Expiries', color: '#eab308' }
+          { key: 'collections', label: 'Collection Dues', color: 'var(--accent-text)' },
+          { key: 'hold_expiries', label: 'Hold Expiries', color: 'var(--warning-text)' }
         ].map(l => (
           <label key={l.key} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '0.78rem' }}>
             <Input
@@ -326,7 +326,7 @@ export default function CalendarView({
               onChange={() => toggleLayer(l.key)}
               style={{ accentColor: l.color }}
             />
-            <span style={{ color: layers[l.key] ? '#f8fafc' : '#64748b', fontWeight: 600 }}>
+            <span style={{ color: layers[l.key] ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: 600 }}>
               {l.label}
             </span>
           </label>
@@ -345,10 +345,10 @@ export default function CalendarView({
           <div style={{
             display: 'grid',
             gridTemplateColumns: '60px repeat(7, 1fr)',
-            borderBottom: '1px solid #334155',
+            borderBottom: '1px solid var(--card-border)',
             background: "var(--card-bg)"
           }}>
-            <div style={{ padding: '10px 6px', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>Time</div>
+            <div style={{ padding: '10px 6px', textAlign: 'center', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Time</div>
             {weekDates.map(date => {
               const isToday = date.toDateString() === new Date().toDateString();
               return (
@@ -357,8 +357,8 @@ export default function CalendarView({
                   style={{
                     padding: '10px',
                     textAlign: 'center',
-                    borderLeft: '1px solid #334155',
-                    background: isToday ? 'rgba(56, 189, 248, 0.1)' : 'transparent'
+                    borderLeft: '1px solid var(--card-border)',
+                    background: isToday ? 'var(--info-subtle)' : 'transparent'
                   }}
                 >
                   <div style={{ fontSize: '0.75rem', color: "var(--text-secondary)", textTransform: "none" }}>
@@ -367,7 +367,7 @@ export default function CalendarView({
                   <div style={{
                     fontSize: '1.1rem',
                     fontWeight: 800,
-                    color: isToday ? '#38bdf8' : '#f8fafc',
+                    color: isToday ? 'var(--info-text)' : 'var(--text-primary)',
                     marginTop: '2px'
                   }}>
                     {date.getDate()}
@@ -387,13 +387,13 @@ export default function CalendarView({
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '60px repeat(7, 1fr)',
-                    borderBottom: '1px solid #334155',
+                    borderBottom: '1px solid var(--card-border)',
                     minHeight: '52px'
                   }}
                 >
                   <div style={{
                     fontSize: '0.72rem',
-                    color: '#64748b',
+                    color: 'var(--text-secondary)',
                     textAlign: 'center',
                     paddingTop: '6px',
                     background: "var(--card-bg)"
@@ -413,7 +413,7 @@ export default function CalendarView({
                       <div
                         key={dateStr}
                         style={{
-                          borderLeft: '1px solid #334155',
+                          borderLeft: '1px solid var(--card-border)',
                           padding: '3px',
                           display: 'flex',
                           flexDirection: 'column',
@@ -432,7 +432,7 @@ export default function CalendarView({
                             }}
                             style={{
                               background: getEventBadgeColor(evt),
-                              color: '#ffffff',
+                              color: 'var(--text-primary)',
                               borderRadius: '4px',
                               padding: '3px 6px',
                               fontSize: '0.72rem',
@@ -461,7 +461,7 @@ export default function CalendarView({
       {(viewMode === 'agenda' || viewMode === 'month' || viewMode === 'day') && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {filteredEvents.length === 0 ? (
-            <div style={{ padding: '36px', textAlign: 'center', color: '#64748b' }}>
+            <div style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
               No events found for this filter.
             </div>
           ) : (
@@ -506,12 +506,12 @@ export default function CalendarView({
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {evt.type === 'site_visit' && (
-                    <span style={{ fontSize: '0.75rem', background: '#8b5cf6', color: '#ffffff', padding: '3px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                    <span style={{ fontSize: '0.75rem', background: 'var(--accent)', color: 'var(--accent-contrast)', padding: '3px 8px', borderRadius: '6px', fontWeight: 700 }}>
                       Log Feedback
                     </span>
                   )}
                   {evt.amount && (
-                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#10b981' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--accent-text)' }}>
                       {formatINR(evt.amount)}
                     </span>
                   )}
@@ -532,7 +532,7 @@ export default function CalendarView({
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 size={20} color="#10b981" />
+                <CheckCircle2 size={20} color="var(--accent-text)" />
                 <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800 }}>Site Visit Completed</h3>
               </div>
               <button
@@ -565,10 +565,10 @@ export default function CalendarView({
                         border: 'none',
                         cursor: 'pointer',
                         padding: '2px',
-                        color: star <= feedbackRating ? '#eab308' : '#334155'
+                        color: star <= feedbackRating ? 'var(--warning-text)' : 'var(--text-secondary)'
                       }}
                     >
-                      <Star size={24} fill={star <= feedbackRating ? '#eab308' : 'none'} />
+                      <Star size={24} fill={star <= feedbackRating ? 'var(--warning-text)' : 'none'} />
                     </button>
                   ))}
                 </div>
@@ -630,8 +630,8 @@ export default function CalendarView({
                   marginTop: '6px',
                   padding: '11px',
                   borderRadius: '8px',
-                  background: '#10b981',
-                  color: '#ffffff',
+                  background: 'var(--accent)',
+                  color: 'var(--accent-contrast)',
                   border: 'none',
                   fontWeight: 700,
                   fontSize: '0.88rem',

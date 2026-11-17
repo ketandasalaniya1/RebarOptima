@@ -1,0 +1,2204 @@
+/* ==========================================================================
+   CRAVETOBUILD CONTACT DIRECTORY STYLES
+   Adheres strictly to design system tokens with full light/dark theme support
+   ========================================================================== */
+
+.ro-contacts-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: var(--page-max-width, 1680px);
+  margin: 0 auto;
+  padding: 16px 20px 48px;
+  box-sizing: border-box;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   1. Header Bar
+   -------------------------------------------------------------------------- */
+.ro-contacts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ro-contacts-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ro-contacts-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25);
+}
+
+.ro-contacts-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ro-contacts-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ro-count-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  background-color: var(--accent-subtle);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-text);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.ro-contacts-subtitle {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 3px 0 0;
+  line-height: 1.4;
+}
+
+.ro-contacts-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   2. Metric Summary Cards
+   -------------------------------------------------------------------------- */
+.ro-contacts-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.ro-metric-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+}
+
+.ro-metric-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.ro-metric-card.active {
+  border-color: var(--accent);
+  background-color: var(--accent-subtle);
+}
+
+.ro-metric-card.static-card {
+  cursor: default;
+}
+
+.ro-metric-card.static-card:hover {
+  border-color: var(--card-border);
+  transform: none;
+}
+
+.ro-metric-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ro-metric-icon.bg-emerald {
+  background-color: var(--accent-subtle);
+  color: var(--accent-icon);
+}
+
+.ro-metric-icon.bg-amber {
+  background-color: var(--warning-subtle);
+  color: var(--warning-text);
+}
+
+.ro-metric-icon.bg-blue {
+  background-color: var(--info-subtle);
+  color: var(--info-text);
+}
+
+.ro-metric-icon.bg-gray {
+  background-color: var(--disabled-bg);
+  color: var(--text-label);
+}
+
+.ro-metric-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.ro-metric-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.ro-metric-lbl {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Toolbar: Search, Selectors, View Toggle
+   -------------------------------------------------------------------------- */
+.ro-contacts-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ro-search-box-wrap {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ro-search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-label);
+  pointer-events: none;
+}
+
+.ro-search-input {
+  width: 100%;
+  padding: 8px 30px 8px 32px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ro-search-input::placeholder {
+  color: var(--placeholder-text);
+}
+
+.ro-search-input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.ro-search-clear-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.ro-toolbar-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ro-select-prefix-icon {
+  position: absolute;
+  left: 9px;
+  color: var(--text-label);
+  pointer-events: none;
+}
+
+.ro-toolbar-select-wrap .ro-select {
+  padding-left: 28px;
+}
+
+.ro-select {
+  appearance: none;
+  padding: 8px 28px 8px 12px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  transition: border-color 0.15s ease;
+}
+
+.ro-select:focus {
+  border-color: var(--input-border-focus);
+}
+
+.ro-select option,
+select.ro-select option,
+.ro-form-input option {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.ro-view-mode-toggle {
+  display: flex;
+  align-items: center;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm, 6px);
+  padding: 2px;
+}
+
+.ro-view-btn {
+  padding: 6px 9px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-label);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.ro-view-btn:hover {
+  color: var(--text-primary);
+}
+
+.ro-view-btn.active {
+  background-color: var(--card-bg);
+  color: var(--accent-text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
+   4. Category Pills Scroll Bar
+   -------------------------------------------------------------------------- */
+.ro-categories-pill-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.ro-cat-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.ro-cat-pill-btn:hover {
+  background-color: var(--table-row-hover);
+  color: var(--text-primary);
+}
+
+.ro-cat-pill-btn.active {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+
+.ro-cat-pill-count {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background-color: var(--disabled-bg);
+  color: var(--text-secondary);
+}
+
+.ro-cat-pill-btn.active .ro-cat-pill-count {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   5. Contacts Content Area (Grid & Table)
+   -------------------------------------------------------------------------- */
+.ro-contacts-content-area {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ro-contacts-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+/* Skeleton Loading Grid */
+.ro-contacts-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.ro-contact-card-skeleton {
+  height: 180px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  animation: roShimmer 1.5s infinite ease-in-out;
+}
+
+@keyframes roShimmer {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Contact Card Component
+   -------------------------------------------------------------------------- */
+.ro-contact-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.18s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.ro-contact-card:hover {
+  border-color: var(--card-border-hover, #cbd5e1);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.ro-contact-card.is-archived {
+  opacity: 0.75;
+  border-style: dashed;
+}
+
+.ro-contact-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ro-contact-avatar-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ro-contact-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ro-contact-avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.ro-contact-title-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.ro-contact-name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ro-contact-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.ro-contact-badge-private {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background-color: var(--disabled-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+  flex-shrink: 0;
+}
+
+.ro-contact-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ro-contact-designation {
+  font-weight: 500;
+}
+
+.ro-contact-meta-sep {
+  opacity: 0.4;
+}
+
+.ro-contact-company {
+  color: var(--text-label);
+}
+
+.ro-contact-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ro-btn-fav {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-fav:hover {
+  color: #f59e0b;
+}
+
+.ro-btn-fav.active {
+  color: #f59e0b;
+}
+
+.ro-contact-dropdown-anchor {
+  position: relative;
+}
+
+.ro-btn-card-menu {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-card-menu:hover {
+  color: var(--text-primary);
+  background-color: var(--table-row-hover);
+}
+
+.ro-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+.ro-card-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: var(--shadow-modal);
+  padding: 4px;
+  min-width: 150px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ro-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.ro-dropdown-item:hover {
+  background-color: var(--table-row-hover);
+}
+
+.ro-dropdown-item.text-danger {
+  color: var(--danger-text);
+}
+
+.ro-dropdown-item.text-danger:hover {
+  background-color: var(--danger-subtle);
+}
+
+/* Category & Phones Pill Bar */
+.ro-contact-category-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ro-category-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: var(--accent-subtle);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-text);
+}
+
+.ro-other-phones-pill {
+  font-size: 10.5px;
+  color: var(--text-label);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: var(--disabled-bg);
+}
+
+/* Quick Dialing Action Bar */
+.ro-contact-quick-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 6px);
+  gap: 6px;
+}
+
+.ro-phone-action-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.ro-action-link.ro-action-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ro-action-link.ro-action-call:hover {
+  text-decoration: underline;
+}
+
+.ro-action-icon-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.ro-action-icon-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--card-border-hover);
+}
+
+.ro-action-icon-btn.ro-action-wa {
+  color: #10b981;
+}
+
+.ro-action-icon-btn.ro-action-wa:hover {
+  background-color: var(--success-subtle);
+}
+
+.ro-action-icon-btn.ro-action-email {
+  color: var(--info-text);
+}
+
+.ro-action-icon-btn.ro-action-email:hover {
+  background-color: var(--info-subtle);
+}
+
+/* Projects Bar */
+.ro-contact-projects-bar {
+  display: flex;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--text-label);
+  padding-top: 4px;
+  border-top: 1px solid var(--card-border);
+}
+
+.ro-projects-pill-list {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.ro-project-icon {
+  color: var(--text-label);
+  margin-right: 2px;
+}
+
+.ro-project-chip-btn {
+  background: none;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-project-chip-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.ro-more-projects-count {
+  font-size: 10.5px;
+  color: var(--text-label);
+}
+
+.ro-projects-empty-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-label);
+}
+
+.ro-dot-muted {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--text-label);
+  opacity: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   7. Contact Table View
+   -------------------------------------------------------------------------- */
+.ro-contact-table-wrapper {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.ro-contact-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.ro-contact-table th {
+  background-color: var(--table-header-bg);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--card-border);
+  white-space: nowrap;
+}
+
+.ro-contact-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.ro-table-row:hover td {
+  background-color: var(--table-row-hover);
+}
+
+.ro-table-row.is-archived-row {
+  opacity: 0.75;
+}
+
+.th-fav,
+.td-fav {
+  width: 36px;
+  text-align: center;
+  padding: 0 4px 0 12px;
+}
+
+.ro-btn-table-fav {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.ro-btn-table-fav.active {
+  color: #f59e0b;
+}
+
+.ro-table-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ro-table-avatar-initials {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--accent-subtle);
+  color: var(--accent-text);
+  font-weight: 700;
+  font-size: 11.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ro-table-name-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.ro-table-name-text {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ro-table-sub-numbers {
+  font-size: 10.5px;
+  color: var(--text-label);
+}
+
+.ro-table-comp-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.ro-table-comp-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ro-table-comp-desig {
+  font-size: 11px;
+  color: var(--text-label);
+}
+
+.ro-table-phone-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ro-table-phone-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+.ro-table-phone-link:hover {
+  text-decoration: underline;
+}
+
+.ro-table-icon-btn {
+  background: none;
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.ro-table-icon-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--card-border-hover);
+}
+
+.ro-table-email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--info-text);
+  text-decoration: none;
+}
+
+.ro-table-email-link:hover {
+  text-decoration: underline;
+}
+
+.ro-table-projects-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ro-table-project-pill {
+  background: var(--disabled-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.ro-table-project-pill:hover {
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.ro-table-more-pill {
+  font-size: 10.5px;
+  color: var(--text-label);
+}
+
+.ro-table-badge-private {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: var(--disabled-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+}
+
+.ro-table-badge-shared {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ro-table-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ro-table-btn-act {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.ro-table-btn-act:hover {
+  color: var(--text-primary);
+  background-color: var(--table-row-hover);
+}
+
+.ro-table-btn-act.text-danger:hover {
+  color: var(--danger-text);
+  background-color: var(--danger-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   8. Detail Drawer Content
+   -------------------------------------------------------------------------- */
+.ro-contact-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ro-detail-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+  padding: 16px;
+}
+
+.ro-detail-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ro-detail-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ro-detail-initials {
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ro-detail-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ro-detail-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ro-detail-name-row h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ro-btn-detail-fav {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.ro-btn-detail-fav.active {
+  color: #f59e0b;
+}
+
+.ro-detail-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ro-badge-private {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background-color: var(--disabled-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+}
+
+.ro-badge-shared {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.ro-detail-org-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.ro-detail-quick-dial-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.ro-btn-quick-call {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  border-radius: var(--radius-md, 8px);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background-color 0.15s ease;
+}
+
+.ro-btn-quick-call:hover {
+  background-color: var(--accent-hover);
+}
+
+.ro-btn-quick-wa {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background-color: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ro-btn-quick-wa:hover {
+  background-color: #059669;
+}
+
+.ro-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ro-detail-section-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 6px;
+}
+
+.ro-detail-phones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ro-detail-phone-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-phone-num-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ro-phone-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+.ro-phone-text:hover {
+  text-decoration: underline;
+}
+
+.ro-primary-phone-tag {
+  font-size: 10px;
+  font-weight: 600;
+  background-color: var(--accent-subtle);
+  color: var(--accent-text);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.ro-wa-available-tag {
+  font-size: 10px;
+  font-weight: 600;
+  background-color: var(--success-subtle);
+  color: var(--success-text);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.ro-phone-label-text {
+  font-size: 11px;
+  color: var(--text-label);
+  margin-top: 2px;
+}
+
+.ro-phone-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ro-btn-icon-subtle {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-icon-subtle:hover {
+  color: var(--text-primary);
+  border-color: var(--card-border-hover);
+}
+
+.ro-detail-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.ro-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  padding: 8px 12px;
+}
+
+.ro-info-label {
+  font-size: 10.5px;
+  color: var(--text-label);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.ro-info-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--info-text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ro-info-link:hover {
+  text-decoration: underline;
+}
+
+.ro-detail-projects-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ro-detail-project-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-project-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ro-proj-icon {
+  color: var(--text-label);
+}
+
+.ro-proj-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+}
+
+.ro-proj-status {
+  font-size: 11px;
+  color: var(--text-label);
+}
+
+.ro-btn-switch-project {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--accent-text);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-btn-switch-project:hover {
+  border-color: var(--accent);
+}
+
+.ro-detail-address-box,
+.ro-detail-notes-box {
+  padding: 10px 14px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.ro-detail-tags-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ro-tag-chip {
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: var(--disabled-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.ro-detail-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 6px;
+  position: relative;
+}
+
+.ro-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ro-timeline-bullet {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.ro-timeline-title {
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+
+.ro-timeline-date {
+  font-size: 11px;
+  color: var(--text-label);
+  margin-top: 2px;
+}
+
+.ro-drawer-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   9. Modals (Contact Form, Bulk Import, Category Manager)
+   -------------------------------------------------------------------------- */
+.ro-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--overlay-bg, rgba(15, 23, 42, 0.65));
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.ro-modal-container {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+  width: 100%;
+  overflow: hidden;
+  animation: roModalPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes roModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ro-contact-form-modal {
+  max-width: 780px;
+}
+
+.ro-import-modal {
+  max-width: 820px;
+}
+
+.ro-cat-modal {
+  max-width: 520px;
+}
+
+.ro-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+}
+
+.ro-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ro-modal-icon {
+  color: var(--accent-icon);
+}
+
+.ro-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ro-modal-subtitle {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+.ro-modal-btn-close {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.ro-modal-btn-close:hover {
+  color: var(--text-primary);
+  background-color: var(--table-row-hover);
+}
+
+.ro-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ro-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+}
+
+/* Form Styles */
+.ro-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ro-form-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+.ro-section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ro-btn-add-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background-color: var(--accent-subtle);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-text);
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ro-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.ro-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ro-form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.ro-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ro-field-hint {
+  font-size: 11.5px;
+  color: var(--text-label);
+  margin: 0 0 6px;
+}
+
+.ro-input {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ro-input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.ro-textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+/* Phone Repeater Row */
+.ro-phones-repeater-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ro-phone-repeater-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-phone-num-input-wrap {
+  flex: 2;
+  min-width: 180px;
+}
+
+.ro-phone-label-wrap {
+  flex: 1;
+  min-width: 110px;
+}
+
+.ro-phone-primary-radio,
+.ro-phone-wa-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ro-btn-remove-phone {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.ro-btn-remove-phone:hover {
+  color: var(--danger-text);
+}
+
+/* Project Select Cards Grid */
+.ro-project-checkboxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.ro-project-select-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.ro-project-select-card.selected {
+  border-color: var(--accent);
+  background-color: var(--accent-subtle);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+/* Visibility Radio Cards */
+.ro-visibility-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.ro-vis-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ro-vis-card.active {
+  border-color: var(--accent);
+  background-color: var(--accent-subtle);
+}
+
+.ro-vis-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.ro-vis-desc {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+/* Live Duplicate Phone Warning */
+.ro-form-duplicate-alert {
+  padding: 12px 14px;
+  background-color: var(--warning-subtle);
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-md, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ro-dup-alert-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ro-dup-alert-text {
+  font-size: 12.5px;
+  color: var(--warning-text);
+  line-height: 1.45;
+}
+
+.ro-dup-alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 26px;
+  flex-wrap: wrap;
+}
+
+.ro-btn-dup-action {
+  padding: 5px 10px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ro-btn-dup-proceed {
+  padding: 5px 10px;
+  background-color: var(--warning-text);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Category manager list */
+.ro-cat-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.ro-cat-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm, 6px);
+}
+
+.ro-cat-name-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ro-cat-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ro-cat-default-badge {
+  font-size: 10px;
+  color: var(--text-label);
+  padding: 1px 5px;
+  background-color: var(--disabled-bg);
+  border-radius: 4px;
+}
+
+.ro-cat-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ro-btn-cat-act {
+  background: none;
+  border: none;
+  color: var(--text-label);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.ro-btn-cat-act:hover {
+  color: var(--text-primary);
+}
+
+.ro-btn-cat-act.text-danger:hover {
+  color: var(--danger-text);
+}
+
+/* Bulk Import */
+.ro-template-download-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-template-icon-wrap {
+  color: var(--accent-icon);
+}
+
+.ro-template-text {
+  flex: 1;
+}
+
+.ro-template-text strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.ro-template-text p {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+.ro-btn-download-template {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ro-btn-download-template:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.ro-import-dropzone {
+  margin-top: 14px;
+  border: 2px dashed var(--card-border);
+  border-radius: var(--radius-lg, 12px);
+  padding: 32px 20px;
+  text-align: center;
+  background-color: var(--main-bg);
+  transition: border-color 0.15s ease;
+}
+
+.ro-import-dropzone:hover {
+  border-color: var(--accent);
+}
+
+.ro-hidden-file-input {
+  display: none;
+}
+
+.ro-dropzone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.ro-dropzone-icon {
+  color: var(--accent-icon);
+}
+
+.ro-preview-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.ro-stat-badge {
+  padding: 8px 12px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+  display: flex;
+  flex-direction: column;
+}
+
+.ro-stat-lbl {
+  font-size: 11px;
+  color: var(--text-label);
+}
+
+.ro-stat-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ro-import-table-wrap {
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md, 8px);
+}
+
+.ro-import-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ro-import-preview-table th {
+  background-color: var(--table-header-bg);
+  color: var(--text-primary);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--card-border);
+  position: sticky;
+  top: 0;
+}
+
+.ro-import-preview-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-primary);
+}
+
+.ro-pill-success {
+  color: var(--success-text);
+  font-weight: 600;
+}
+
+.ro-pill-warning {
+  color: var(--warning-text);
+  font-weight: 600;
+}
+
+.ro-pill-danger {
+  color: var(--danger-text);
+  font-weight: 600;
+}
+
+/* Pagination Bar */
+.ro-contacts-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ro-btn-page {
+  padding: 6px 14px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ro-btn-page:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ro-page-indicator {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   10. Empty & Error States
+   -------------------------------------------------------------------------- */
+.ro-contacts-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 20px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg, 10px);
+}
+
+.ro-empty-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--accent-subtle);
+  color: var(--accent-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.ro-contacts-empty-state h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.ro-contacts-empty-state p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 440px;
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+.ro-empty-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   11. Buttons & Utility Tokens
+   -------------------------------------------------------------------------- */
+.ro-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md, 8px);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  text-decoration: none;
+}
+
+.ro-btn--primary {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.ro-btn--primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.ro-btn--secondary {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+}
+
+.ro-btn--secondary:hover:not(:disabled) {
+  background-color: var(--table-row-hover);
+}
+
+.ro-btn--danger {
+  background-color: var(--danger-subtle);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+}
+
+.ro-btn--danger:hover:not(:disabled) {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+.ro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   12. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .ro-contacts-metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ro-contacts-metrics-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ro-contacts-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ro-contacts-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .ro-form-grid-2,
+  .ro-visibility-options,
+  .ro-detail-info-grid,
+  .ro-preview-stats-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .hide-sm {
+    display: none;
+  }
+}

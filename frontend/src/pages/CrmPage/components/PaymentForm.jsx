@@ -59,7 +59,7 @@ export default function PaymentForm({
       <div className="crm-modal-container" style={{ maxWidth: '520px' }} onClick={e => e.stopPropagation()}>
         <div className="crm-modal-header">
           <span className="crm-modal-title">
-            <DollarSign size={18} style={{ color: '#34d399' }} /> Record Inward Customer Payment
+            <DollarSign size={18} style={{ color: 'var(--accent-text)' }} /> Record Inward Customer Payment
           </span>
           <button className="crm-modal-close-btn" onClick={onClose} aria-label="Close payment dialog">
             <X size={20} />
@@ -96,12 +96,12 @@ export default function PaymentForm({
               <div className="crm-sheet-price-card" style={{ marginBottom: '1rem' }}>
                 <div className="crm-sheet-price-row">
                   <span>Current Outstanding Balance:</span>
-                  <strong style={{ color: '#ef4444' }}>{formatINR(outstanding)}</strong>
+                  <strong style={{ color: 'var(--danger-text)' }}>{formatINR(outstanding)}</strong>
                 </div>
                 {inputAmountNum > 0 && (
                   <div className="crm-sheet-price-row total" style={{ marginTop: '0.4rem', borderTop: '1px solid var(--card-border)' }}>
                     <span>Remaining Balance After Payment:</span>
-                    <strong style={{ color: '#34d399' }}>{formatINR(remainingAfterPayment)}</strong>
+                    <strong style={{ color: 'var(--accent-text)' }}>{formatINR(remainingAfterPayment)}</strong>
                   </div>
                 )}
               </div>

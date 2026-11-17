@@ -4,11 +4,14 @@ import { setThemeMode, setThemeColor, setDefaults } from '../../store/slices/set
 import { Save, Palette, Sliders, Moon, Sun, Database, Scale, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { companyApi, inventoryApi } from '../../utils/api';
 import { PageHeader, Input } from '../../components/ui';
+import { isFirmAdmin } from '../../utils/dashboardLayout';
+import DashboardTemplates from './DashboardTemplates';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
   const dispatch = useDispatch();
   const settings = useSelector((state) => state.settings);
+  const user = useSelector((state) => state.auth.user);
 
   const [kerf, setKerf] = useState(settings.defaultKerf);
   const [trimMargin, setTrimMargin] = useState(settings.defaultTrimMargin);
@@ -104,7 +107,7 @@ export default function SettingsPage() {
 
       <div className="settings-grid">
         {/* Reusable Remnant & Scrap Rules Card */}
-        <div className="card settings-card rules-span-card">
+        {/* <div className="card settings-card rules-span-card">
           <div className="settings-card-header-flex">
             <div>
               <h3 className="settings-card-title">
@@ -186,7 +189,7 @@ export default function SettingsPage() {
               </div>
             </form>
           )}
-        </div>
+        </div> */}
 
         {/* Visual Customization Card */}
         <div className="card settings-card">
@@ -358,10 +361,12 @@ export default function SettingsPage() {
                 </p>
               </div>
             ) : (
-              <p style={{ color: '#ef4444' }}>Unable to load storage details.</p>
+              <p style={{ color: 'var(--danger-text)' }}>Unable to load storage details.</p>
             )}
           </div>
         </div>
+
+        {isFirmAdmin(user) && <DashboardTemplates user={user} />}
       </div>
     </div>
   );

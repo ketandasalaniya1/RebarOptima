@@ -331,12 +331,12 @@ export default function TasksView({
     });
 
     return [
-      { key: 'overdue', label: 'Overdue', color: '#ef4444', items: overdue },
-      { key: 'today', label: 'Today', color: '#f59e0b', items: today },
+      { key: 'overdue', label: 'Overdue', color: 'var(--danger-text)', items: overdue },
+      { key: 'today', label: 'Today', color: 'var(--warning-text)', items: today },
       { key: 'tomorrow', label: 'Tomorrow', color: "var(--accent)", items: tomorrow },
       { key: 'next_7', label: 'Next 7 Days', color: '#a78bfa', items: next7Days },
       { key: 'later', label: 'Later / Completed', color: "var(--text-secondary)", items: later },
-      { key: 'no_due', label: 'No Due Date', color: '#64748b', items: noDueDate }
+      { key: 'no_due', label: 'No Due Date', color: 'var(--text-secondary)', items: noDueDate }
     ].filter(g => g.items.length > 0);
   }, [filteredTasks, todayStart, todayEnd]);
 
@@ -358,11 +358,11 @@ export default function TasksView({
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontSize: '0.82rem', color: "var(--text-secondary)" }}>
             <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{stats.openCount} open</span>
             <span>•</span>
-            <span style={{ fontWeight: 700, color: stats.overdueCount > 0 ? '#ef4444' : 'var(--text-secondary)' }}>
+            <span style={{ fontWeight: 700, color: stats.overdueCount > 0 ? 'var(--danger-text)' : 'var(--text-secondary)' }}>
               {stats.overdueCount} overdue
             </span>
             <span>•</span>
-            <span style={{ fontWeight: 700, color: '#10b981' }}>{stats.doneTodayCount} done today</span>
+            <span style={{ fontWeight: 700, color: 'var(--accent-text)' }}>{stats.doneTodayCount} done today</span>
           </div>
         </div>
 
@@ -379,8 +379,8 @@ export default function TasksView({
                 padding: '5px 10px',
                 borderRadius: '6px',
                 border: 'none',
-                background: viewMode === 'list' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'list' ? '#0f172a' : 'var(--text-secondary)',
+                background: viewMode === 'list' ? 'var(--accent)' : 'transparent',
+                color: viewMode === 'list' ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 fontWeight: 600,
                 fontSize: '0.78rem',
                 cursor: 'pointer'
@@ -398,8 +398,8 @@ export default function TasksView({
                 padding: '5px 10px',
                 borderRadius: '6px',
                 border: 'none',
-                background: viewMode === 'board' ? '#38bdf8' : 'transparent',
-                color: viewMode === 'board' ? '#0f172a' : 'var(--text-secondary)',
+                background: viewMode === 'board' ? 'var(--accent)' : 'transparent',
+                color: viewMode === 'board' ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 fontWeight: 600,
                 fontSize: '0.78rem',
                 cursor: 'pointer'
@@ -560,7 +560,7 @@ export default function TasksView({
         {/* Filters: Search + Priority */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={14} style={{ position: 'absolute', left: '8px', top: '8px', color: '#64748b' }} />
+            <Search size={14} style={{ position: 'absolute', left: '8px', top: '8px', color: 'var(--text-secondary)' }} />
             <Input
               type="text"
               placeholder="Filter tasks..."
@@ -602,7 +602,7 @@ export default function TasksView({
       {viewMode === 'list' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
           {groupedTasks.length === 0 ? (
-            <div style={{ padding: '36px', textAlign: 'center', color: '#64748b', fontSize: '0.88rem' }}>
+            <div style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
               No tasks match your current filter.
             </div>
           ) : (
@@ -652,8 +652,8 @@ export default function TasksView({
         }}>
           {[
             { id: 'Pending', label: 'To do', color: "var(--accent)" },
-            { id: 'In Progress', label: 'In progress', color: '#f59e0b' },
-            { id: 'Completed', label: 'Done', color: '#10b981' }
+            { id: 'In Progress', label: 'In progress', color: 'var(--warning-text)' },
+            { id: 'Completed', label: 'Done', color: 'var(--accent-text)' }
           ].map(col => {
             const colTasks = filteredTasks.filter(t => (t.status || 'Pending') === col.id);
             return (
@@ -898,15 +898,15 @@ export default function TasksView({
                         onClick={() => handleToggleChecklistItem(item.id)}
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flex: 1 }}
                       >
-                        {item.done ? <CheckCircle2 size={15} color="#10b981" /> : <Circle size={15} color="var(--text-secondary)" />}
-                        <span style={{ fontSize: '0.82rem', textDecoration: item.done ? 'line-through' : 'none', color: item.done ? '#64748b' : '#f8fafc' }}>
+                        {item.done ? <CheckCircle2 size={15} color="var(--accent-text)" /> : <Circle size={15} color="var(--text-secondary)" />}
+                        <span style={{ fontSize: '0.82rem', textDecoration: item.done ? 'line-through' : 'none', color: item.done ? 'var(--text-secondary)' : 'var(--text-primary)' }}>
                           {item.text}
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleDeleteChecklistItem(item.id)}
-                        style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
                       >
                         <X size={13} />
                       </button>
@@ -965,7 +965,7 @@ function TaskCardRow({ task, onToggle, onEdit, onDelete, getPriorityColor, isBoa
   return (
     <div style={{
       background: "var(--card-bg)",
-      border: `1px solid ${task.isOverdue ? '#ef4444' : '#334155'}`,
+      border: `1px solid ${task.isOverdue ? 'var(--danger)' : 'var(--card-border)'}`,
       borderRadius: '8px',
       padding: '10px 12px',
       display: 'flex',
@@ -982,13 +982,13 @@ function TaskCardRow({ task, onToggle, onEdit, onDelete, getPriorityColor, isBoa
             border: 'none',
             padding: 0,
             marginTop: '2px',
-            color: isDone ? '#10b981' : getPriorityColor(task.priority),
+            color: isDone ? 'var(--accent-text)' : getPriorityColor(task.priority),
             cursor: 'pointer'
           }}
           title={isDone ? 'Mark as incomplete' : 'Mark as complete'}
         >
           {isDone ? (
-            <CheckCircle2 size={18} fill="#10b981" color="#0f172a" />
+            <CheckCircle2 size={18} fill="var(--accent)" color="var(--accent-contrast)" />
           ) : (
             <Circle size={18} strokeWidth={2.5} />
           )}
@@ -1000,7 +1000,7 @@ function TaskCardRow({ task, onToggle, onEdit, onDelete, getPriorityColor, isBoa
             style={{
               fontSize: '0.88rem',
               fontWeight: 600,
-              color: isDone ? '#64748b' : '#f8fafc',
+              color: isDone ? 'var(--text-secondary)' : 'var(--text-primary)',
               textDecoration: isDone ? 'line-through' : 'none',
               cursor: 'pointer'
             }}
@@ -1014,7 +1014,7 @@ function TaskCardRow({ task, onToggle, onEdit, onDelete, getPriorityColor, isBoa
             </span>
 
             {task.dueDateTime && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: task.isOverdue ? '#ef4444' : 'var(--text-secondary)' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: task.isOverdue ? 'var(--danger-text)' : 'var(--text-secondary)' }}>
                 <Clock size={11} />
                 {new Date(task.dueDateTime).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
               </span>
@@ -1045,7 +1045,7 @@ function TaskCardRow({ task, onToggle, onEdit, onDelete, getPriorityColor, isBoa
         <button
           type="button"
           onClick={() => onDelete(task._id)}
-          style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}
+          style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
           title="Delete task"
         >
           <Trash2 size={13} />

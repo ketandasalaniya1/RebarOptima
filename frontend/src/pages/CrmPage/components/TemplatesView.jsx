@@ -165,8 +165,8 @@ export default function TemplatesView() {
             gap: '6px',
             padding: '9px 16px',
             borderRadius: '8px',
-            background: '#10b981',
-            color: '#ffffff',
+            background: 'var(--accent)',
+            color: 'var(--accent-contrast)',
             border: 'none',
             fontWeight: 700,
             fontSize: '0.85rem',
@@ -190,9 +190,9 @@ export default function TemplatesView() {
                 padding: '6px 14px',
                 borderRadius: '20px',
                 border: '1px solid',
-                borderColor: isActive ? '#38bdf8' : '#334155',
-                background: isActive ? '#38bdf8' : '#1e293b',
-                color: isActive ? '#0f172a' : 'var(--text-secondary)',
+                borderColor: isActive ? 'var(--accent)' : 'var(--card-border)',
+                background: isActive ? 'var(--accent)' : 'var(--input-bg)',
+                color: isActive ? 'var(--accent-contrast)' : 'var(--text-secondary)',
                 fontWeight: isActive ? 700 : 500,
                 fontSize: '0.8rem',
                 cursor: 'pointer',
@@ -231,7 +231,7 @@ export default function TemplatesView() {
                 </span>
                 <span style={{
                   fontSize: '0.7rem',
-                  background: 'rgba(56, 189, 248, 0.15)',
+                  background: 'var(--info-subtle)',
                   color: "var(--accent)",
                   padding: '2px 8px',
                   borderRadius: '10px',
@@ -245,7 +245,7 @@ export default function TemplatesView() {
               {/* WhatsApp Message Preview Bubble */}
               <div style={{
                 background: '#075E54',
-                color: '#ffffff',
+                color: 'var(--text-primary)',
                 padding: '12px',
                 borderRadius: '8px',
                 fontSize: '0.84rem',
@@ -298,7 +298,7 @@ export default function TemplatesView() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              borderTop: '1px solid #334155',
+              borderTop: '1px solid var(--card-border)',
               paddingTop: '12px'
             }}>
               <button
@@ -310,7 +310,7 @@ export default function TemplatesView() {
                   gap: '4px',
                   background: "var(--card-bg)",
                   border: "1px solid var(--card-border)",
-                  color: copiedId === t._id ? '#10b981' : 'var(--text-secondary)',
+                  color: copiedId === t._id ? 'var(--accent-text)' : 'var(--text-secondary)',
                   borderRadius: '6px',
                   padding: '4px 10px',
                   fontSize: '0.75rem',
@@ -352,9 +352,9 @@ export default function TemplatesView() {
                     width: '28px',
                     height: '28px',
                     borderRadius: '6px',
-                    background: 'rgba(239, 68, 68, 0.15)',
+                    background: 'var(--danger-subtle)',
                     border: '1px solid rgba(239, 68, 68, 0.3)',
-                    color: '#ef4444',
+                    color: 'var(--danger-text)',
                     cursor: 'pointer'
                   }}
                   title="Delete Template"
@@ -473,8 +473,8 @@ export default function TemplatesView() {
                   marginTop: '8px',
                   padding: '11px',
                   borderRadius: '8px',
-                  background: '#10b981',
-                  color: '#ffffff',
+                  background: 'var(--accent)',
+                  color: 'var(--accent-contrast)',
                   border: 'none',
                   fontWeight: 700,
                   fontSize: '0.9rem',

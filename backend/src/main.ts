@@ -25,6 +25,9 @@ import { createReportsRouter } from './reports/reports.routes';
 import { createDeveloperConsoleRouter } from './developer-console/developer.routes';
 import { createNotificationRouter } from './notifications/notification.routes';
 import { createChatRouter } from './chat/chat.routes';
+import { createAiAssistantRouter } from './ai-assistant/ai-assistant.routes';
+import { createContactsRouter } from './contacts/contacts.routes';
+import { createActivityTrackerRouter } from './activity-tracker/activity-tracker.routes';
 import { ChatSocketGateway } from './chat/chat.socket';
 import { resolveUserAndCompany, assertProjectAccess } from './projects/project-access';
 
@@ -497,6 +500,39 @@ const PLATFORM_MODULES: Record<string, { displayName: string; features: Record<s
       view: 'View Reports',
       create: 'Create PDF Reports',
       export: 'Export Excel Reports'
+    }
+  },
+  contacts: {
+    displayName: 'Contact Directory',
+    features: {
+      view: 'View Contacts',
+      create: 'Add Contacts',
+      edit: 'Edit Contacts',
+      delete: 'Delete / Deactivate Contacts',
+      archive: 'Archive / Restore Contacts',
+      import: 'Import Contacts (CSV/Excel)',
+      export: 'Export Contacts',
+      manage_categories: 'Manage Categories',
+      view_private: 'View Private Contacts',
+      manage_all: 'Manage All Organization Contacts'
+    }
+  },
+  activityTracker: {
+    displayName: 'Activity & Progress Tracker',
+    features: {
+      view: 'View Activities & Progress',
+      create: 'Create Activities',
+      edit: 'Edit Activities',
+      archive: 'Archive Activities',
+      submit_daily_update: 'Submit Daily Progress',
+      correct_history: 'Correct Historical Updates',
+      assign_users: 'Assign Team Members',
+      configure_parent_child: 'Configure WBS Hierarchy',
+      configure_progress_mode: 'Configure Progress Mode',
+      configure_weightages: 'Configure Weightages',
+      export: 'Export Reports (PDF/Excel)',
+      print: 'Print Reports',
+      manage_status: 'Manage Activity Status (Hold/Cancel/Reopen)'
     }
   }
 };
@@ -1098,6 +1134,24 @@ app.use(
 app.use(
   '/api/chat',
   createChatRouter(() => db, authMiddleware, () => chatSocketGateway?.getIO()),
+);
+
+// Mount Global AI Assistant Module (Provider-Independent & Role-Scoped)
+app.use(
+  '/api/ai-assistant',
+  createAiAssistantRouter(() => db, authMiddleware, logAudit),
+);
+
+// Mount Central Contact Directory Module
+app.use(
+  '/api/contacts',
+  createContactsRouter(() => db, authMiddleware, logAudit),
+);
+
+// Mount Activity & Progress Tracker Module
+app.use(
+  '/api/activity-tracker',
+  createActivityTrackerRouter(() => db, authMiddleware, logAudit),
 );
 
 // Mount Client Push Notification Discovery & Subscription
@@ -2132,6 +2186,61 @@ app.get('/api/companies/storage', authMiddleware, async (req: any, res) => {
     }
 
     res.json({ consumedMB, maxMB, totalBytes, planName, status, endDate, isExpired });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+const DASHBOARD_WIDGET_IDS = ['live-stock', 'scrap-stock', 'scrap-percent', 'steel-purchased', 'scrap-sold', 'scrap-loss', 'diawise', 'scrap-trend', 'quick-actions'];
+
+function sanitizeDashboardTemplates(input: any) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
+  const templates: Record<string, any> = {};
+  for (const [role, layout] of Object.entries(input)) {
+    const name = String(role).trim().slice(0, 80);
+    if (!name || !layout || typeof layout !== 'object') continue;
+    const seen = new Set<string>();
+    const widgets: Array<{ id: string; span: number; hidden: boolean; mandatory: boolean; canHide: boolean; canMove: boolean }> = [];
+    const source = Array.isArray((layout as any).widgets) ? (layout as any).widgets : [];
+    for (const item of source) {
+      if (!item || !DASHBOARD_WIDGET_IDS.includes(item.id) || seen.has(item.id)) continue;
+      seen.add(item.id);
+      widgets.push({
+        id: item.id,
+        span: [1, 2, 3, 6].includes(Number(item.span)) ? Number(item.span) : 1,
+        hidden: Boolean(item.hidden),
+        mandatory: Boolean(item.mandatory),
+        canHide: item.canHide !== false,
+        canMove: item.canMove !== false,
+      });
+    }
+    const columns = [2, 3, 4, 6].includes(Number((layout as any).columns)) ? Number((layout as any).columns) : 6;
+    templates[name] = { columns, widgets };
+  }
+  return templates;
+}
+
+app.get('/api/companies/dashboard', authMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userObjId = toObjectId(req.user.sub);
+    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : null;
+    if (!user?.companyId) return res.status(400).json({ message: 'Company not found' });
+    const company = await db.collection('companies').findOne({ _id: new ObjectId(user.companyId) });
+    res.json({ templates: sanitizeDashboardTemplates(company?.dashboardTemplates) });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+app.put('/api/companies/dashboard', adminMiddleware, async (req: any, res) => {
+  try {
+    const db = await connectDB();
+    const userObjId = toObjectId(req.user.sub);
+    const user = userObjId ? await db.collection('users').findOne({ _id: userObjId }) : null;
+    if (!user?.companyId) return res.status(400).json({ message: 'Company not found' });
+    const templates = sanitizeDashboardTemplates(req.body?.templates);
+    await db.collection('companies').updateOne(
+      { _id: new ObjectId(user.companyId) },
+      { $set: { dashboardTemplates: templates } }
+    );
+    res.json({ templates });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 

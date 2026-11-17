@@ -2321,14 +2321,19 @@
   }
 
   /* ── Tab buttons horizontal scroll on mobile ── */
-  .tab-buttons {
+  .inventory-page .tab-buttons {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 4px;
     gap: 6px;
   }
 
-  .tab-btn {
+  .inventory-page .tab-btn {
+    flex: 0 0 auto;
     white-space: nowrap;
     flex-shrink: 0;
     font-size: 12px;
@@ -2338,7 +2343,9 @@
   /* ── Inventory header stack on mobile ── */
   .inventory-header-row {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
     gap: 12px;
   }
 

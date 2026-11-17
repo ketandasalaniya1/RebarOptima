@@ -117,8 +117,8 @@ export default function TodayScreen({
             </h1>
             {stats.waitingFollowupsCount > 0 && (
               <span style={{
-                background: '#ef4444',
-                color: '#ffffff',
+                background: 'var(--danger)',
+                color: 'var(--accent-contrast)',
                 fontSize: '0.75rem',
                 fontWeight: 700,
                 padding: '3px 8px',
@@ -147,7 +147,7 @@ export default function TodayScreen({
               padding: '9px 18px',
               borderRadius: '8px',
               background: "var(--accent)",
-              color: '#ffffff',
+              color: 'var(--accent-contrast)',
               border: 'none',
               fontWeight: 700,
               fontSize: '0.88rem',
@@ -155,7 +155,7 @@ export default function TodayScreen({
               boxShadow: '0 2px 10px rgba(22, 163, 74, 0.3)'
             }}
           >
-            <Play size={16} fill="#ffffff" /> Start follow-ups
+            <Play size={16} fill="var(--text-primary)" /> Start follow-ups
           </button>
           <button
             type="button"
@@ -191,10 +191,10 @@ export default function TodayScreen({
           border: "1px solid var(--card-border)",
           borderRadius: '12px',
           padding: '16px',
-          borderLeft: '4px solid #ef4444'
+          borderLeft: '4px solid var(--danger)'
         }}>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, textTransform: "none" }}>Overdue</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ef4444', marginTop: '4px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--danger-text)', marginTop: '4px' }}>
             {stats.overdue}
           </div>
           <div style={{ fontSize: '0.75rem', color: "var(--text-label)", marginTop: '2px' }}>Requires immediate attention</div>
@@ -206,10 +206,10 @@ export default function TodayScreen({
           border: "1px solid var(--card-border)",
           borderRadius: '12px',
           padding: '16px',
-          borderLeft: '4px solid #f59e0b'
+          borderLeft: '4px solid var(--warning)'
         }}>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, textTransform: "none" }}>Due today</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b', marginTop: '4px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--warning-text)', marginTop: '4px' }}>
             {stats.dueToday}
           </div>
           <div style={{ fontSize: '0.75rem', color: "var(--text-label)", marginTop: '2px' }}>Scheduled for today</div>
@@ -221,7 +221,7 @@ export default function TodayScreen({
           border: "1px solid var(--card-border)",
           borderRadius: '12px',
           padding: '16px',
-          borderLeft: '4px solid #38bdf8'
+          borderLeft: '4px solid var(--accent)'
         }}>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, textTransform: "none" }}>Next 7 days</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: "var(--accent)", marginTop: '4px' }}>
@@ -236,10 +236,10 @@ export default function TodayScreen({
           border: "1px solid var(--card-border)",
           borderRadius: '12px',
           padding: '16px',
-          borderLeft: '4px solid #10b981'
+          borderLeft: '4px solid var(--accent)'
         }}>
           <div style={{ fontSize: '0.78rem', color: "var(--text-secondary)", fontWeight: 600, textTransform: "none" }}>Done today</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10b981', marginTop: '4px' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-text)', marginTop: '4px' }}>
             {stats.doneToday}
           </div>
           <div style={{ fontSize: '0.75rem', color: "var(--text-label)", marginTop: '2px' }}>Completed interactions</div>
@@ -318,7 +318,7 @@ export default function TodayScreen({
                       </div>
                     </div>
                   </div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: "var(--accent)", background: 'rgba(56, 189, 248, 0.1)', padding: '3px 8px', borderRadius: '6px' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: "var(--accent)", background: 'var(--info-subtle)', padding: '3px 8px', borderRadius: '6px' }}>
                     {apt.timeRange}
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export default function TodayScreen({
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <CheckSquare size={18} color="#10b981" />
+              <CheckSquare size={18} color="var(--accent-text)" />
               <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                 Tasks for today ({tasks.length})
               </h2>
@@ -376,7 +376,7 @@ export default function TodayScreen({
                   padding: '10px 14px',
                   background: "var(--input-bg)",
                   borderRadius: '8px',
-                  border: `1px solid ${t.isOverdue ? '#ef4444' : '#334155'}`,
+                  border: `1px solid ${t.isOverdue ? 'var(--danger)' : 'var(--card-border)'}`,
                   flexWrap: 'wrap',
                   gap: '10px'
                 }}>
@@ -390,12 +390,12 @@ export default function TodayScreen({
                         cursor: 'pointer',
                         padding: 0,
                         marginTop: '2px',
-                        color: t.status === 'Completed' ? '#10b981' : getPriorityColor(t.priority)
+                        color: t.status === 'Completed' ? 'var(--accent-text)' : getPriorityColor(t.priority)
                       }}
                       title="Toggle task completion"
                     >
                       {t.status === 'Completed' ? (
-                        <CheckCircle2 size={18} fill="#10b981" color="#0f172a" />
+                        <CheckCircle2 size={18} fill="var(--accent)" color="var(--accent-contrast)" />
                       ) : (
                         <Circle size={18} strokeWidth={2.5} />
                       )}
@@ -405,7 +405,7 @@ export default function TodayScreen({
                       <div style={{
                         fontSize: '0.9rem',
                         fontWeight: 600,
-                        color: t.status === 'Completed' ? '#64748b' : '#f8fafc',
+                        color: t.status === 'Completed' ? 'var(--text-secondary)' : 'var(--text-primary)',
                         textDecoration: t.status === 'Completed' ? 'line-through' : 'none'
                       }}>
                         {t.title}
@@ -422,7 +422,7 @@ export default function TodayScreen({
                         </span>
 
                         {t.reminder && (
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', color: '#fbbf24' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', color: 'var(--warning-text)' }}>
                             <Bell size={12} />
                           </span>
                         )}
@@ -455,7 +455,7 @@ export default function TodayScreen({
                         )}
 
                         {t.status === 'In Progress' && (
-                          <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                          <span style={{ background: 'var(--warning-subtle)', color: 'var(--warning-text)', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
                             In progress
                           </span>
                         )}
@@ -477,17 +477,17 @@ export default function TodayScreen({
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <DollarSign size={18} color="#16a34a" />
+              <DollarSign size={18} color="var(--accent-text)" />
               <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                 Collections due ({collections.items?.length || 0})
               </h2>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#16a34a' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)' }}>
                 Total Due: {formatINR(collections.totalDueAmount || 0)}
               </span>
               {collections.overdueCount > 0 && (
-                <span style={{ background: '#ef4444', color: '#ffffff', fontSize: '0.75rem', fontWeight: 700, padding: '2px 8px', borderRadius: '10px' }}>
+                <span style={{ background: 'var(--danger)', color: 'var(--accent-contrast)', fontSize: '0.75rem', fontWeight: 700, padding: '2px 8px', borderRadius: '10px' }}>
                   {collections.overdueCount} Overdue
                 </span>
               )}
@@ -508,7 +508,7 @@ export default function TodayScreen({
                   padding: '12px 14px',
                   background: "var(--input-bg)",
                   borderRadius: '8px',
-                  border: `1px solid ${col.isOverdue ? '#ef4444' : '#334155'}`,
+                  border: `1px solid ${col.isOverdue ? 'var(--danger)' : 'var(--card-border)'}`,
                   flexWrap: 'wrap',
                   gap: '10px'
                 }}>
@@ -534,7 +534,7 @@ export default function TodayScreen({
                       <div style={{ fontSize: '1rem', fontWeight: 800, color: "var(--text-primary)" }}>
                         {formatINR(col.pendingAmount)}
                       </div>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: col.isOverdue ? '#ef4444' : '#f59e0b' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: col.isOverdue ? 'var(--danger-text)' : 'var(--warning-text)' }}>
                         {col.isOverdue ? `${col.daysOverdue} days overdue` : 'Due soon'}
                       </div>
                     </div>
@@ -549,7 +549,7 @@ export default function TodayScreen({
                         padding: '6px 12px',
                         borderRadius: '6px',
                         background: "var(--accent)",
-                        color: '#ffffff',
+                        color: 'var(--accent-contrast)',
                         border: 'none',
                         cursor: 'pointer',
                         fontWeight: 600,
@@ -575,7 +575,7 @@ export default function TodayScreen({
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Clock size={18} color="#f59e0b" />
+              <Clock size={18} color="var(--warning-text)" />
               <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                 Holds expiring soon ({holds.length})
               </h2>
@@ -599,7 +599,7 @@ export default function TodayScreen({
                   padding: '10px 14px',
                   background: "var(--input-bg)",
                   borderRadius: '8px',
-                  border: '1px solid #f59e0b',
+                  border: '1px solid var(--warning)',
                   flexWrap: 'wrap',
                   gap: '8px'
                 }}>
@@ -617,8 +617,8 @@ export default function TodayScreen({
                       fontFamily: 'monospace',
                       fontSize: '0.95rem',
                       fontWeight: 700,
-                      color: '#f59e0b',
-                      background: 'rgba(245, 158, 11, 0.1)',
+                      color: 'var(--warning-text)',
+                      background: 'var(--warning-subtle)',
                       padding: '4px 10px',
                       borderRadius: '6px',
                       border: '1px solid rgba(245, 158, 11, 0.3)'
@@ -649,9 +649,9 @@ export default function TodayScreen({
                       style={{
                         padding: '5px 10px',
                         borderRadius: '6px',
-                        background: 'rgba(239, 68, 68, 0.15)',
-                        color: '#ef4444',
-                        border: '1px solid #ef4444',
+                        background: 'var(--danger-subtle)',
+                        color: 'var(--danger-text)',
+                        border: '1px solid var(--danger)',
                         cursor: 'pointer',
                         fontSize: '0.78rem',
                         fontWeight: 600
@@ -709,7 +709,7 @@ export default function TodayScreen({
                 marginBottom: '8px',
                 fontSize: '0.85rem',
                 fontWeight: 700,
-                color: '#ef4444'
+                color: 'var(--danger-text)'
               }}>
                 <span>OVERDUE ({leadGroups.overdue?.length || 0})</span>
               </div>
@@ -740,7 +740,7 @@ export default function TodayScreen({
                 marginBottom: '8px',
                 fontSize: '0.85rem',
                 fontWeight: 700,
-                color: '#f59e0b'
+                color: 'var(--warning-text)'
               }}>
                 <span>DUE TODAY ({leadGroups.dueToday?.length || 0})</span>
               </div>
@@ -812,7 +812,7 @@ function LeadFollowupRow({ lead, onSelectLead, onWhatsAppLead, getInitials }) {
         padding: '10px 14px',
         background: "var(--input-bg)",
         borderRadius: '8px',
-        border: `1px solid ${lead.isOverdue ? '#ef4444' : '#334155'}`,
+        border: `1px solid ${lead.isOverdue ? 'var(--danger)' : 'var(--card-border)'}`,
         cursor: 'pointer',
         flexWrap: 'wrap',
         gap: '10px'
@@ -860,7 +860,7 @@ function LeadFollowupRow({ lead, onSelectLead, onWhatsAppLead, getInitials }) {
           Follow-up #{lead.followupCount}
         </span>
 
-        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: lead.isOverdue ? '#ef4444' : '#f59e0b' }}>
+        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: lead.isOverdue ? 'var(--danger-text)' : 'var(--warning-text)' }}>
           {lead.dueLabel}
         </span>
 
@@ -897,7 +897,7 @@ function LeadFollowupRow({ lead, onSelectLead, onWhatsAppLead, getInitials }) {
               height: '30px',
               borderRadius: '6px',
               background: "var(--accent)",
-              color: '#ffffff',
+              color: 'var(--accent-contrast)',
               border: 'none',
               cursor: 'pointer'
             }}

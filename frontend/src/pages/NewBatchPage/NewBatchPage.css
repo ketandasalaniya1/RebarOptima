@@ -995,6 +995,7 @@
 .optimizer-step-node {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
   gap: 8px;
   padding: 6px 12px;
   border-radius: 8px;
@@ -1046,6 +1047,21 @@
   font-weight: 600;
   color: var(--text-secondary, #475569);
   white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .optimizer-stepper-container {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .step-nav-footer {
+    flex-wrap: wrap;
+  }
+
+  .btn-step-nav {
+    flex: 1 1 140px;
+  }
 }
 
 .optimizer-step-node.is-active .step-node-title {

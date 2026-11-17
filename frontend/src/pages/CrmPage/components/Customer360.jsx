@@ -147,7 +147,7 @@ return (
           <strong style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>
             {customer.fullName}
           </strong>
-          <span className="crm-badge" style={{ background: 'rgba(255,255,255,0.08)', fontSize: '0.72rem' }}>
+          <span className="crm-badge" style={{ background: 'var(--hover-bg)', fontSize: '0.72rem' }}>
             {customer.customerCode}
           </span>
         </div>
@@ -290,7 +290,7 @@ return (
               <div className="crm-client-details-grid" style={{ marginTop: '0.5rem' }}>
                 <div className="crm-client-detail-row">
                   <span>Max Budget</span>
-                  <strong style={{ color: '#34d399' }}>{formatShortINR(customer.budgetMax || 0)}</strong>
+                  <strong style={{ color: 'var(--accent-text)' }}>{formatShortINR(customer.budgetMax || 0)}</strong>
                 </div>
                 <div className="crm-client-detail-row">
                   <span>Preferred Type</span>
@@ -487,7 +487,7 @@ return (
                       </div>
                       <div style={{ fontSize: '0.75rem', marginTop: '0.2rem', display: 'flex', justifyContent: 'space-between' }}>
                         <span>Budget:</span>
-                        <strong style={{ color: '#34d399' }}>{formatShortINR(item.budget || 0)}</strong>
+                        <strong style={{ color: 'var(--accent-text)' }}>{formatShortINR(item.budget || 0)}</strong>
                       </div>
                     </div>
                   ))

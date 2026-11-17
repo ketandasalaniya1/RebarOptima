@@ -75,9 +75,12 @@ const getInitialView = () => {
     if (path === '/attendance/reports') return 'attendance-reports';
     if (path === '/reports') return 'overview';
     if (path === '/chat') return 'chat';
+    if (path === '/contacts' || path === '/contact-directory') return 'contacts';
+    if (path === '/ai-assistant' || path === '/assistant') return 'ai-assistant';
     if (path === '/ledger') return 'ledger';
     if (path === '/activity-logs') return 'activity-logs';
     if (path === '/project-management') return 'project-management';
+    if (path === '/activity-tracker' || path.startsWith('/activity-tracker')) return 'activity-tracker';
     if (path === '/settings') return 'overview';
     if (path === '/profile') return 'profile';
     if (path === '/projects') return 'projects';
@@ -139,6 +142,9 @@ const routingSlice = createSlice({
       else if (newView === 'crm-templates') targetPath = '/crm/templates';
       else if (newView === 'crm-import') targetPath = '/crm/import';
       else if (newView === 'crm') targetPath = '/crm/today';
+      else if (newView === 'contacts') targetPath = '/contacts';
+      else if (newView === 'activity-tracker') targetPath = '/activity-tracker';
+      else if (newView === 'ai-assistant') targetPath = '/ai-assistant';
       else if (newView === 'design-system') targetPath = '/design-system';
       else if (newView === 'public-transmittal') targetPath = window.location.pathname;
       else if (newView !== 'overview') targetPath = `/${newView}`;

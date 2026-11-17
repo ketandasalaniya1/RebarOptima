@@ -35,12 +35,12 @@ export default function NewChatModal({ isOpen, onClose, onSelectContact, project
       <div className="chat-modal" onClick={(e) => e.stopPropagation()}>
         <div className="chat-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 600 }}>
-            <MessageSquare size={18} color="#22c55e" /> New Direct Chat
+            <MessageSquare size={18} color="var(--accent)" /> New Direct Chat
           </div>
           <button className="chat-icon-btn" onClick={onClose}><X size={18} /></button>
         </div>
 
-        <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--card-border)' }}>
           <div className="chat-search-input-box">
             <Search size={16} />
             <Input
@@ -60,7 +60,7 @@ export default function NewChatModal({ isOpen, onClose, onSelectContact, project
               <p style={{ margin: 0, fontSize: '13px' }}>Loading colleagues...</p>
             </div>
           ) : candidates.length === 0 ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
               No colleagues found in this project.
             </div>
           ) : (
@@ -74,17 +74,17 @@ export default function NewChatModal({ isOpen, onClose, onSelectContact, project
                   gap: '12px',
                   padding: '10px 16px',
                   cursor: 'pointer',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+                  borderBottom: '1px solid var(--card-border)',
                   transition: 'background 0.15s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <div className="chat-user-avatar">
                   {u.avatar ? <img src={u.avatar} alt={u.name} /> : u.name?.charAt(0) || <User size={16} />}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '13px' }}>{u.name}</div>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px' }}>{u.name}</div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>{u.role || u.email}</div>
                 </div>
               </div>

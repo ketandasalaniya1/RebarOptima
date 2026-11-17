@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setView } from '../../store/slices/routingSlice'
 import './NewBatchPage.css'
 import { inventoryApi, batchesApi } from '../../utils/api'
 import { useActiveProject } from '../../hooks/useActiveProject'
 import { PageHeader, TableSkeleton, useDelayedSkeleton, Input, Select } from '../../components/ui'
 import SteelHeader from '../../components/Shared/SteelHeader'
 import PredefinedCutsModal from './components/PredefinedCutsModal'
-import InwardVoucherDrawer from '../InventoryPage/components/InwardVoucherDrawer'
 import ScrapRulesDrawer from '../InventoryPage/components/ScrapRulesDrawer'
 import {
   X,
@@ -33,27 +33,6 @@ import {
   Scissors,
   Package
 } from 'lucide-react'
-
-const STANDARD_DIAMETERS = [8, 10, 12, 16, 20, 25, 32]
-
-const getSingleBarWeight = (dia, lengthMm = 12000) => {
-  const d = Number(dia)
-  const l = Number(lengthMm) / 1000
-  return ((d * d) / 162) * l
-}
-
-const createDefaultVoucherRows = () => {
-  return STANDARD_DIAMETERS.map((dia, idx) => ({
-    id: Date.now() + idx,
-    diameter: dia,
-    weightInTons: '',
-    pricePerTonWithoutGst: '',
-    gstAmount: 0,
-    totalPriceWithGst: 0,
-    brandName: '',
-    vendorName: ''
-  }))
-}
 
 const initialStock = [
   { id: 1, diameter: '12', length: '12000', quantity: '10' },
@@ -100,6 +79,7 @@ function useTableRows(initial, defaults) {
 }
 
 export default function NewBatchPage({ onOptimize, editParams, clearEditParams }) {
+  const dispatch = useDispatch()
   const settingsState = useSelector((state) => state.settings)
   const { user } = useSelector((state) => state.auth)
 
@@ -140,13 +120,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
   // Stock Check & Blocker State (CHANGE 3)
   const [stockBlocker, setStockBlocker] = useState(null)
   const [bypassStockWarning, setBypassStockWarning] = useState(false)
-
-  // Inward Voucher Drawer State (for "+ Add {dia} mm stock" action)
-  const [isInwardDrawerOpen, setIsInwardDrawerOpen] = useState(false)
-  const [voucherRows, setVoucherRows] = useState(() => createDefaultVoucherRows())
-  const [inwardActionLoading, setInwardActionLoading] = useState(false)
-  const [inwardError, setInwardError] = useState('')
-  const [inwardSuccess, setInwardSuccess] = useState('')
 
   // Sync state if settings change
   useEffect(() => {
@@ -475,72 +448,9 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
     return { ok: true };
   };
 
-  // Open Inward Voucher pre-filled with missing diameter
-  const handleOpenInwardForDia = (dia) => {
-    setVoucherRows([
-      {
-        id: 1,
-        diameter: Number(dia),
-        weightInTons: '2.5',
-        pricePerTonWithoutGst: '',
-        gstAmount: 0,
-        totalPriceWithGst: 0,
-        brandName: '',
-        vendorName: ''
-      },
-      ...STANDARD_DIAMETERS.filter(d => d !== Number(dia)).map((d, idx) => ({
-        id: idx + 2,
-        diameter: d,
-        weightInTons: '',
-        pricePerTonWithoutGst: '',
-        gstAmount: 0,
-        totalPriceWithGst: 0,
-        brandName: '',
-        vendorName: ''
-      }))
-    ]);
-    setIsInwardDrawerOpen(true);
-  };
-
-  // Handle Inward voucher submission inside Optimizer
-  const handleInwardVoucherSubmit = async () => {
-    setInwardActionLoading(true);
-    setInwardError('');
-    setInwardSuccess('');
-    try {
-      const filled = voucherRows.filter(r => parseFloat(r.weightInTons) > 0);
-      if (filled.length === 0) {
-        throw new Error('Please enter valid Weight (Tons) for at least one diameter.');
-      }
-      for (const row of filled) {
-        const tons = parseFloat(row.weightInTons);
-        const singleWeight = getSingleBarWeight(row.diameter, 12000);
-        const weightInKgs = tons * 1000;
-        const quantity = Math.round(weightInKgs / singleWeight);
-
-        await inventoryApi.inward({
-          projectId: projectId || undefined,
-          diameter: Number(row.diameter),
-          quantity,
-          weightInKgs,
-          costPerKg: 0,
-          typeOfBar: 'TMT500',
-          brandName: row.brandName || '',
-          vendorName: row.vendorName || '',
-        });
-      }
-      setInwardSuccess('Stock added successfully to yard inventory!');
-      await handleReloadLiveStock();
-      setStockBlocker(null);
-      setTimeout(() => {
-        setIsInwardDrawerOpen(false);
-        setInwardSuccess('');
-      }, 1200);
-    } catch (err) {
-      setInwardError(err.message || 'Failed to submit inward stock.');
-    } finally {
-      setInwardActionLoading(false);
-    }
+  const handleOpenInwardForDia = () => {
+    sessionStorage.setItem('rebar_open_inward', '1');
+    dispatch(setView('inventory'));
   };
 
   // Handle Scrap Rules save from Optimizer (CHANGE 2)
@@ -689,7 +599,7 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
                 <button
                   type="button"
                   className="btn-stock-add-inward"
-                  onClick={() => handleOpenInwardForDia(stockBlocker.diameter)}
+                  onClick={handleOpenInwardForDia}
                 >
                   <Plus size={14} /> Add {stockBlocker.diameter} mm Stock
                 </button>
@@ -1229,61 +1139,6 @@ export default function NewBatchPage({ onOptimize, editParams, clearEditParams }
         onSaveSuccess={(newThreshold) => {
           setRemnantThreshold(newThreshold);
         }}
-      />
-
-      {/* CHANGE 3: Inward Delivery Drawer (opens when stock is missing) */}
-      <InwardVoucherDrawer
-        isOpen={isInwardDrawerOpen}
-        onClose={() => setIsInwardDrawerOpen(false)}
-        voucherRows={voucherRows}
-        handleVoucherRowChange={(id, field, val) => {
-          setVoucherRows(prev => prev.map(r => r.id === id ? { ...r, [field]: val } : r));
-        }}
-        handleAddVoucherRow={() => {
-          setVoucherRows(prev => [
-            ...prev,
-            {
-              id: Date.now(),
-              diameter: 12,
-              weightInTons: '',
-              pricePerTonWithoutGst: '',
-              gstAmount: 0,
-              totalPriceWithGst: 0,
-              brandName: '',
-              vendorName: ''
-            }
-          ]);
-        }}
-        handleDeleteVoucherRow={(id) => {
-          setVoucherRows(prev => prev.filter(r => r.id !== id));
-        }}
-        handleResetAllDiameters={() => {
-          setVoucherRows(createDefaultVoucherRows());
-        }}
-        handleApplyBrandVendorToAll={() => {
-          if (voucherRows.length > 0) {
-            const first = voucherRows[0];
-            setVoucherRows(prev => prev.map(r => ({
-              ...r,
-              brandName: first.brandName,
-              vendorName: first.vendorName
-            })));
-          }
-        }}
-        handleVoucherSubmit={handleInwardVoucherSubmit}
-        actionLoading={inwardActionLoading}
-        error={inwardError}
-        success={inwardSuccess}
-        openDropdown={() => {}}
-        closeDropdownDelayed={() => {}}
-        focusedDropdown={null}
-        highlightedIndex={-1}
-        setHighlightedIndex={() => {}}
-        handleSelectSuggestion={() => {}}
-        handleDropdownKeyDown={() => {}}
-        getFilteredBrands={() => []}
-        getFilteredVendors={() => []}
-        blurTimeoutRef={{ current: null }}
       />
     </div>
   )

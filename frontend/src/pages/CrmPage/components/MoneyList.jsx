@@ -44,7 +44,7 @@ export default function MoneyList({
       <div className="crm-card-header" style={{ marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
           <span className="crm-card-title">
-            <DollarSign size={20} style={{ color: '#34d399' }} /> Bookings Ledger &amp; Inward Payments
+            <DollarSign size={20} style={{ color: 'var(--accent-text)' }} /> Bookings Ledger &amp; Inward Payments
           </span>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             Track construction-linked milestone collections, overdue demands, and official tax receipts.
@@ -100,7 +100,7 @@ export default function MoneyList({
                         {booking.status}
                       </span>
                       {hasOverdue && (
-                        <span className="crm-badge" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                        <span className="crm-badge" style={{ background: 'var(--danger-subtle)', color: 'var(--danger-text)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
                           Overdue: {formatShortINR(financials.overdueAmount)}
                         </span>
                       )}
@@ -117,7 +117,7 @@ export default function MoneyList({
                     </div>
                     <div className="val-box">
                       <span>Collected</span>
-                      <strong style={{ color: '#34d399' }}>{formatShortINR(financials.totalReceived)}</strong>
+                      <strong style={{ color: 'var(--accent-text)' }}>{formatShortINR(financials.totalReceived)}</strong>
                     </div>
                     <div className="val-box">
                       <span>Balance</span>
@@ -135,7 +135,7 @@ export default function MoneyList({
                     className="crm-booking-progress-fill"
                     style={{
                       width: `${progress}%`,
-                      background: progress >= 100 ? '#34d399' : (progress > 30 ? 'var(--accent)' : '#f59e0b')
+                      background: progress >= 100 ? '#34d399' : (progress > 30 ? 'var(--accent)' : 'var(--warning)')
                     }}
                   />
                 </div>
@@ -162,7 +162,7 @@ export default function MoneyList({
                         {booking.status !== 'Cancelled' && (
                           <button
                             className="crm-btn-secondary"
-                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', color: '#ef4444' }}
+                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', color: 'var(--danger-text)' }}
                             onClick={() => setCancelModalBooking(booking)}
                           >
                             Cancel Booking
@@ -196,7 +196,7 @@ export default function MoneyList({
                                 <td>{new Date(p.paymentDate).toLocaleDateString()}</td>
                                 <td>{p.paymentMethod}</td>
                                 <td><code>{p.transactionReference}</code></td>
-                                <td><strong style={{ color: p.paymentStatus === 'Paid' ? '#34d399' : 'inherit' }}>{formatINR(p.amount)}</strong></td>
+                                <td><strong style={{ color: p.paymentStatus === 'Paid' ? 'var(--accent-text)' : 'inherit' }}>{formatINR(p.amount)}</strong></td>
                                 <td>
                                   <span className={`crm-badge ${p.paymentStatus === 'Paid' ? 'status-booked' : 'status-blocked'}`}>
                                     {p.paymentStatus}
@@ -215,7 +215,7 @@ export default function MoneyList({
                                     {p.paymentStatus === 'Paid' && (
                                       <button
                                         className="crm-btn-secondary"
-                                        style={{ padding: '0.2rem 0.45rem', fontSize: '0.72rem', color: '#ef4444' }}
+                                        style={{ padding: '0.2rem 0.45rem', fontSize: '0.72rem', color: 'var(--danger-text)' }}
                                         onClick={() => setReverseModalPayment(p)}
                                         title="Reverse Payment"
                                       >
@@ -243,7 +243,7 @@ export default function MoneyList({
         <div className="crm-modal-overlay" onClick={() => setCancelModalBooking(null)}>
           <div className="crm-modal-container" style={{ maxWidth: '440px' }} onClick={e => e.stopPropagation()}>
             <div className="crm-modal-header">
-              <span className="crm-modal-title" style={{ color: '#ef4444' }}>
+              <span className="crm-modal-title" style={{ color: 'var(--danger-text)' }}>
                 <AlertTriangle size={18} /> Cancel Booking {cancelModalBooking.bookingReference}
               </span>
               <button className="crm-modal-close-btn" onClick={() => setCancelModalBooking(null)}>×</button>
@@ -266,7 +266,7 @@ export default function MoneyList({
               <button className="crm-btn-secondary" onClick={() => setCancelModalBooking(null)}>Dismiss</button>
               <button
                 className="crm-btn-primary"
-                style={{ background: '#ef4444' }}
+                style={{ background: 'var(--danger)' }}
                 disabled={!cancelReason.trim()}
                 onClick={handleConfirmCancel}
               >
@@ -282,7 +282,7 @@ export default function MoneyList({
         <div className="crm-modal-overlay" onClick={() => setReverseModalPayment(null)}>
           <div className="crm-modal-container" style={{ maxWidth: '440px' }} onClick={e => e.stopPropagation()}>
             <div className="crm-modal-header">
-              <span className="crm-modal-title" style={{ color: '#ef4444' }}>
+              <span className="crm-modal-title" style={{ color: 'var(--danger-text)' }}>
                 <RotateCcw size={18} /> Reverse Payment {reverseModalPayment.receiptNumber}
               </span>
               <button className="crm-modal-close-btn" onClick={() => setReverseModalPayment(null)}>×</button>
@@ -305,7 +305,7 @@ export default function MoneyList({
               <button className="crm-btn-secondary" onClick={() => setReverseModalPayment(null)}>Dismiss</button>
               <button
                 className="crm-btn-primary"
-                style={{ background: '#ef4444' }}
+                style={{ background: 'var(--danger)' }}
                 disabled={!reverseReason.trim()}
                 onClick={handleConfirmReverse}
               >

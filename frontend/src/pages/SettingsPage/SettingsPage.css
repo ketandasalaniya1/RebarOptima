@@ -418,3 +418,36 @@
     width: 100%;
   }
 }
+
+.dashboard-template-role,
+.dashboard-template-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  color: var(--text-primary);
+}
+
+.dashboard-template-role select {
+  min-width: 220px;
+}
+
+.dashboard-template-group h4 {
+  margin: 14px 0 6px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dashboard-template-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.dashboard-template-error {
+  color: var(--danger-text);
+}

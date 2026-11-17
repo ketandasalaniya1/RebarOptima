@@ -42,6 +42,10 @@ import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import NoProjectPage from './pages/NoProjectPage/NoProjectPage';
 import PublicTransmittalPage from './pages/PublicTransmittalPage/PublicTransmittalPage';
 import DesignSystemPage from './pages/DesignSystemPage/DesignSystemPage';
+import AiAssistantPage from './pages/AiAssistantPage/AiAssistantPage';
+import ContactDirectoryPage from './pages/ContactDirectoryPage/ContactDirectoryPage';
+import ActivityTrackerPage from './pages/ActivityTrackerPage/ActivityTrackerPage';
+import AiAssistantWidget from './components/AiAssistantWidget/AiAssistantWidget';
 import Breadcrumbs from './components/Breadcrumbs/Breadcrumbs';
 import BottomNavBar from './components/BottomNavBar/BottomNavBar';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
@@ -79,8 +83,10 @@ const NO_PROJECT_SAFE_VIEWS = new Set([
   'projects',
   'profile',
   'chat',
+  'ai-assistant',
   'manpower-labour',
   'public-transmittal',
+  'contacts',
 ]);
 
 function App() {
@@ -545,6 +551,12 @@ function App() {
             {view === 'contractors' && (
               <ContractorsPage />
             )}
+            {view === 'contacts' && (
+              <ContactDirectoryPage />
+            )}
+            {view === 'activity-tracker' && (
+              <ActivityTrackerPage />
+            )}
             {view === 'manpower-labour' && (
               <CompanyLabourPage />
             )}
@@ -565,6 +577,9 @@ function App() {
             )}
             {view === 'chat' && (
               <ChatPage />
+            )}
+            {view === 'ai-assistant' && (
+              <AiAssistantPage />
             )}
             {view === 'ledger' && (
               <LedgerPage />
@@ -614,6 +629,7 @@ function App() {
       {showWorkspace && assignPartnerModalProject && <AssignPartnerModal />}
 
       {showWorkspace && <BottomNavBar currentView={view} onViewChange={handleNavigate} />}
+      {showWorkspace && <AiAssistantWidget />}
 
       <ChatNotificationToaster />
       <ScrollToTop />

@@ -176,6 +176,7 @@
   --border-color: var(--card-border);
   --hover-bg: var(--table-row-hover);
   --danger-bg: var(--danger-subtle);
+  --bg-elevated: #f1f5f9;
   --text-main: var(--text-primary);
   --text-muted: var(--text-label);
   --accent-rgb: 4, 120, 87;
@@ -296,6 +297,7 @@
   --border-color: var(--card-border);
   --hover-bg: var(--table-row-hover);
   --danger-bg: var(--danger-subtle);
+  --bg-elevated: #1e293b;
   --text-main: var(--text-primary);
   --text-muted: var(--text-label);
   --accent-rgb: 52, 211, 153;
@@ -569,6 +571,10 @@ textarea {
   min-height: var(--control-height);
   padding: 8px 12px;
   box-sizing: border-box;
+}
+
+input.search-input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]):not([type="color"]) {
+  padding-left: 34px;
 }
 
 select {

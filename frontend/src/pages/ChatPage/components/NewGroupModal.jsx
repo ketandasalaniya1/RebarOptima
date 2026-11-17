@@ -70,15 +70,15 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
       <div className="chat-modal" onClick={(e) => e.stopPropagation()}>
         <div className="chat-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 600 }}>
-            <Users size={18} color="#22c55e" /> Create Project Group
+            <Users size={18} color="var(--accent)" /> Create Project Group
           </div>
           <button className="chat-icon-btn" onClick={onClose}><X size={18} /></button>
         </div>
 
         <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--card-border)' }}>
             <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Group Subject / Name
               </label>
               <Input
@@ -89,17 +89,17 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
                 required
                 style={{
                   width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
+                  background: 'var(--input-bg)',
+                  border: '1px solid var(--card-border)',
                   borderRadius: '6px',
                   padding: '8px 12px',
-                  color: '#f0f6fc',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                 }}
               />
             </div>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
                 Group Description (Optional)
               </label>
               <Input
@@ -109,18 +109,18 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
                 onChange={(e) => setDescription(e.target.value)}
                 style={{
                   width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
+                  background: 'var(--input-bg)',
+                  border: '1px solid var(--card-border)',
                   borderRadius: '6px',
                   padding: '8px 12px',
-                  color: '#f0f6fc',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                 }}
               />
             </div>
           </div>
 
-          <div style={{ padding: '8px 20px', background: '#111722', fontSize: '12px', color: '#8b949e', fontWeight: 600 }}>
+          <div style={{ padding: '8px 20px', background: 'var(--main-bg)', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
             Select Members ({selectedIds.length} selected)
           </div>
 
@@ -143,8 +143,8 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
                       gap: '12px',
                       padding: '8px 20px',
                       cursor: 'pointer',
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-                      background: isSelected ? 'rgba(34, 197, 94, 0.08)' : 'transparent',
+                      borderBottom: '1px solid var(--card-border)',
+                      background: isSelected ? 'var(--accent-subtle)' : 'transparent',
                     }}
                   >
                     <div
@@ -152,12 +152,12 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
                         width: '20px',
                         height: '20px',
                         borderRadius: '4px',
-                        border: isSelected ? '1px solid #22c55e' : '1px solid #4b5563',
-                        background: isSelected ? '#22c55e' : 'transparent',
+                        border: isSelected ? '1px solid var(--accent)' : '1px solid var(--card-border)',
+                        background: isSelected ? 'var(--accent)' : 'transparent',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#0b0e14',
+                        color: 'var(--accent-contrast)',
                         flexShrink: 0,
                       }}
                     >
@@ -167,7 +167,7 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
                       {u.avatar ? <img src={u.avatar} alt={u.name} /> : u.name?.charAt(0)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '13px' }}>{u.name}</div>
+                      <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '13px' }}>{u.name}</div>
                       <div style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>{u.role || u.email}</div>
                     </div>
                   </div>
@@ -182,8 +182,8 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
               onClick={onClose}
               style={{
                 background: 'transparent',
-                border: '1px solid #30363d',
-                color: '#c9d1d9',
+                border: '1px solid var(--card-border)',
+                color: 'var(--text-secondary)',
                 padding: '6px 14px',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -196,8 +196,8 @@ export default function NewGroupModal({ isOpen, onClose, onGroupCreated, project
               type="submit"
               disabled={creating || !title.trim()}
               style={{
-                background: '#22c55e',
-                color: '#0b0e14',
+                background: 'var(--accent)',
+                color: 'var(--accent-contrast)',
                 border: 'none',
                 padding: '6px 16px',
                 borderRadius: '6px',

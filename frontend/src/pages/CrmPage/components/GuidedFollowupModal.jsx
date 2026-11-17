@@ -217,7 +217,7 @@ export default function GuidedFollowupModal({
           background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '16px', width: '100%', maxWidth: '440px', padding: '32px 24px', textAlign: 'center', color: "var(--text-primary)"
         }}>
           <div style={{
-            width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(22, 163, 74, 0.2)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px'
+            width: '64px', height: '64px', borderRadius: '50%', background: 'var(--success-subtle)', color: 'var(--accent-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px'
           }}>
             <CheckCircle2 size={36} />
           </div>
@@ -275,12 +275,12 @@ export default function GuidedFollowupModal({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: '#0b1120'
+          background: 'var(--main-bg)'
         }}>
           <div>
             <div style={{ fontSize: '0.95rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span>Follow-up</span>
-              <span style={{ fontSize: '0.78rem', color: "var(--accent)", background: 'rgba(56, 189, 248, 0.15)', padding: '2px 8px', borderRadius: '10px' }}>
+              <span style={{ fontSize: '0.78rem', color: "var(--accent)", background: 'var(--info-subtle)', padding: '2px 8px', borderRadius: '10px' }}>
                 {remainingAfterThis > 0 ? `${remainingAfterThis} more after this` : 'Final lead'}
               </span>
             </div>
@@ -393,9 +393,9 @@ export default function GuidedFollowupModal({
                   style={{
                     padding: '8px 4px',
                     borderRadius: '8px',
-                    border: interactionChannel === ch ? '1px solid #38bdf8' : '1px solid #334155',
-                    background: interactionChannel === ch ? 'rgba(56, 189, 248, 0.15)' : '#1e293b',
-                    color: interactionChannel === ch ? '#38bdf8' : '#cbd5e1',
+                    border: interactionChannel === ch ? '1px solid var(--accent)' : '1px solid var(--card-border)',
+                    background: interactionChannel === ch ? 'var(--info-subtle)' : 'var(--input-bg)',
+                    color: interactionChannel === ch ? 'var(--info-text)' : 'var(--text-secondary)',
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     cursor: 'pointer',
@@ -459,7 +459,7 @@ export default function GuidedFollowupModal({
                   boxSizing: 'border-box'
                 }}
               />
-              <div style={{ textAlign: 'right', fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+              <div style={{ textAlign: 'right', fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
                 {messageText.length} characters
               </div>
             </div>
@@ -477,7 +477,7 @@ export default function GuidedFollowupModal({
                 padding: '11px',
                 borderRadius: '8px',
                 background: '#25D366',
-                color: '#ffffff',
+                color: 'var(--text-primary)',
                 border: 'none',
                 fontWeight: 700,
                 fontSize: '0.9rem',
@@ -503,8 +503,8 @@ export default function GuidedFollowupModal({
                 style={{
                   padding: '10px 8px',
                   borderRadius: '8px',
-                  border: `1px solid ${loggingOutcome === 'no_reply' ? '#38bdf8' : '#334155'}`,
-                  background: loggingOutcome === 'no_reply' ? 'rgba(56, 189, 248, 0.15)' : '#1e293b',
+                  border: `1px solid ${loggingOutcome === 'no_reply' ? 'var(--accent)' : 'var(--card-border)'}`,
+                  background: loggingOutcome === 'no_reply' ? 'var(--info-subtle)' : 'var(--input-bg)',
                   color: "var(--text-primary)",
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -526,8 +526,8 @@ export default function GuidedFollowupModal({
                 style={{
                   padding: '10px 8px',
                   borderRadius: '8px',
-                  border: `1px solid ${loggingOutcome === 'replied' ? '#10b981' : '#334155'}`,
-                  background: loggingOutcome === 'replied' ? 'rgba(16, 185, 129, 0.15)' : '#1e293b',
+                  border: `1px solid ${loggingOutcome === 'replied' ? 'var(--accent)' : 'var(--card-border)'}`,
+                  background: loggingOutcome === 'replied' ? 'var(--success-subtle)' : 'var(--input-bg)',
                   color: "var(--text-primary)",
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -537,7 +537,7 @@ export default function GuidedFollowupModal({
                   gap: '4px'
                 }}
               >
-                <MessageSquare size={18} color="#10b981" />
+                <MessageSquare size={18} color="var(--accent-text)" />
                 <span style={{ fontSize: '0.78rem', fontWeight: 700 }}>They replied</span>
                 <span style={{ fontSize: '0.68rem', color: "var(--text-secondary)" }}>Update stage</span>
               </button>
@@ -549,8 +549,8 @@ export default function GuidedFollowupModal({
                 style={{
                   padding: '10px 8px',
                   borderRadius: '8px',
-                  border: `1px solid ${loggingOutcome === 'site_visit' ? '#a78bfa' : '#334155'}`,
-                  background: loggingOutcome === 'site_visit' ? 'rgba(167, 139, 250, 0.15)' : '#1e293b',
+                  border: `1px solid ${loggingOutcome === 'site_visit' ? '#a78bfa' : 'var(--card-border)'}`,
+                  background: loggingOutcome === 'site_visit' ? 'var(--accent-subtle)' : 'var(--input-bg)',
                   color: "var(--text-primary)",
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -572,8 +572,8 @@ export default function GuidedFollowupModal({
                 style={{
                   padding: '10px 8px',
                   borderRadius: '8px',
-                  border: `1px solid ${loggingOutcome === 'not_interested' ? '#ef4444' : '#334155'}`,
-                  background: loggingOutcome === 'not_interested' ? 'rgba(239, 68, 68, 0.15)' : '#1e293b',
+                  border: `1px solid ${loggingOutcome === 'not_interested' ? 'var(--danger)' : 'var(--card-border)'}`,
+                  background: loggingOutcome === 'not_interested' ? 'var(--danger-subtle)' : 'var(--input-bg)',
                   color: "var(--text-primary)",
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -583,7 +583,7 @@ export default function GuidedFollowupModal({
                   gap: '4px'
                 }}
               >
-                <UserX size={18} color="#ef4444" />
+                <UserX size={18} color="var(--danger-text)" />
                 <span style={{ fontSize: '0.78rem', fontWeight: 700 }}>Not interested</span>
                 <span style={{ fontSize: '0.68rem', color: "var(--text-secondary)" }}>Mark lost</span>
               </button>
@@ -595,8 +595,8 @@ export default function GuidedFollowupModal({
                 style={{
                   padding: '10px 8px',
                   borderRadius: '8px',
-                  border: `1px solid ${loggingOutcome === 'deal_won' ? '#f59e0b' : '#334155'}`,
-                  background: loggingOutcome === 'deal_won' ? 'rgba(245, 158, 11, 0.15)' : '#1e293b',
+                  border: `1px solid ${loggingOutcome === 'deal_won' ? 'var(--warning)' : 'var(--card-border)'}`,
+                  background: loggingOutcome === 'deal_won' ? 'var(--warning-subtle)' : 'var(--input-bg)',
                   color: "var(--text-primary)",
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -606,7 +606,7 @@ export default function GuidedFollowupModal({
                   gap: '4px'
                 }}
               >
-                <Award size={18} color="#f59e0b" />
+                <Award size={18} color="var(--warning-text)" />
                 <span style={{ fontSize: '0.78rem', fontWeight: 700 }}>Deal won</span>
                 <span style={{ fontSize: '0.68rem', color: "var(--text-secondary)" }}>Hold / Book</span>
               </button>
@@ -676,7 +676,7 @@ export default function GuidedFollowupModal({
                   disabled={submitting}
                   onClick={() => handleConfirmOutcome('replied')}
                   style={{
-                    padding: '9px', borderRadius: '6px', background: '#10b981', color: '#0f172a', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
+                    padding: '9px', borderRadius: '6px', background: 'var(--accent)', color: 'var(--accent-contrast)', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
                   }}
                 >
                   {submitting ? 'Saving...' : 'Save Reply & Advance Stage'}
@@ -711,7 +711,7 @@ export default function GuidedFollowupModal({
                   disabled={submitting}
                   onClick={() => handleConfirmOutcome('site_visit')}
                   style={{
-                    padding: '9px', borderRadius: '6px', background: '#a78bfa', color: '#0f172a', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
+                    padding: '9px', borderRadius: '6px', background: 'var(--accent)', color: 'var(--accent-contrast)', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
                   }}
                 >
                   {submitting ? 'Scheduling...' : 'Schedule Site Visit & Move to Visit Scheduled'}
@@ -720,9 +720,9 @@ export default function GuidedFollowupModal({
             )}
 
             {loggingOutcome === 'not_interested' && (
-              <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '8px', border: '1px solid #ef4444', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '8px', border: '1px solid var(--danger)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--danger-text)', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
                     Mandatory Lost Reason *
                   </label>
                   <Select
@@ -752,7 +752,7 @@ export default function GuidedFollowupModal({
                   disabled={submitting}
                   onClick={() => handleConfirmOutcome('not_interested')}
                   style={{
-                    padding: '9px', borderRadius: '6px', background: '#ef4444', color: '#ffffff', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
+                    padding: '9px', borderRadius: '6px', background: 'var(--danger)', color: 'var(--accent-contrast)', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
                   }}
                 >
                   {submitting ? 'Saving...' : 'Confirm Drop & Mark Lost'}
@@ -761,8 +761,8 @@ export default function GuidedFollowupModal({
             )}
 
             {loggingOutcome === 'deal_won' && (
-              <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '8px', border: '1px solid #f59e0b', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ fontSize: '0.85rem', color: '#fbbf24', fontWeight: 600 }}>
+              <div style={{ background: "var(--input-bg)", padding: '14px', borderRadius: '8px', border: '1px solid var(--warning)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ fontSize: '0.85rem', color: 'var(--warning-text)', fontWeight: 600 }}>
                   🎉 Deal Won! The customer is ready to proceed.
                 </div>
                 <p style={{ margin: 0, fontSize: '0.78rem', color: "var(--text-secondary)" }}>
@@ -773,7 +773,7 @@ export default function GuidedFollowupModal({
                   disabled={submitting}
                   onClick={() => handleConfirmOutcome('deal_won')}
                   style={{
-                    padding: '9px', borderRadius: '6px', background: '#f59e0b', color: '#0f172a', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
+                    padding: '9px', borderRadius: '6px', background: 'var(--warning)', color: 'var(--accent-contrast)', border: 'none', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer'
                   }}
                 >
                   {submitting ? 'Saving...' : 'Log Deal Won & Open Unit Hold / Booking'}

@@ -22,10 +22,12 @@ import PmManpowerView from './components/PmManpowerView';
 import PmCalendarView from './components/PmCalendarView';
 import PmDailyProgressView from './components/PmDailyProgressView';
 import PmQualityView from './components/PmQualityView';
+import { useActiveProject } from '../../hooks/useActiveProject';
 import PmDelayModal from './components/PmDelayModal';
 import './ProjectManagementPage.css';
 
 export default function ProjectManagementPage() {
+  const { projectId: activeProjectId, projectEpoch } = useActiveProject();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [projects, setProjects] = useState([]);
@@ -43,7 +45,14 @@ export default function ProjectManagementPage() {
   // Initial load
   useEffect(() => {
     loadProjectsAndKpis();
-  }, []);
+  }, [projectEpoch]);
+
+  // Synchronize with active project from navigation bar
+  useEffect(() => {
+    if (activeProjectId) {
+      setSelectedProjectId(String(activeProjectId));
+    }
+  }, [activeProjectId, projectEpoch]);
 
   // When project selection changes, load its child data
   useEffect(() => {

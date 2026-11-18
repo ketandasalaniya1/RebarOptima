@@ -8,8 +8,6 @@ export default function ActualConsumptionModal({
   event,
   onSaved
 }) {
-  if (!isOpen || !event) return null;
-
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -20,15 +18,15 @@ export default function ActualConsumptionModal({
 
   // Form State
   const [actualPourDate, setActualPourDate] = useState(
-    event.actualPourDate || event.plannedDate || new Date().toISOString().split('T')[0]
+    event?.actualPourDate || event?.plannedDate || new Date().toISOString().split('T')[0]
   );
   const [actualPourStartTime, setActualPourStartTime] = useState(
-    event.actualPourStartTime || event.plannedStartTime || '08:30'
+    event?.actualPourStartTime || event?.plannedStartTime || '08:30'
   );
   const [actualPourEndTime, setActualPourEndTime] = useState(
-    event.actualPourEndTime || event.plannedEndTime || '17:00'
+    event?.actualPourEndTime || event?.plannedEndTime || '17:00'
   );
-  const [batchingPlantName, setBatchingPlantName] = useState(event.batchingPlantName || 'Site Batching Plant #1');
+  const [batchingPlantName, setBatchingPlantName] = useState(event?.batchingPlantName || 'Site Batching Plant #1');
   const [weatherConditions, setWeatherConditions] = useState('Clear, 28°C');
   const [generalNotes, setGeneralNotes] = useState('');
 
@@ -39,8 +37,12 @@ export default function ActualConsumptionModal({
   const [materialsConsumed, setMaterialsConsumed] = useState([]);
 
   useEffect(() => {
-    loadData();
-  }, [event]);
+    if (isOpen && event) {
+      loadData();
+    }
+  }, [isOpen, event]);
+
+  if (!isOpen || !event) return null;
 
   const loadData = async () => {
     try {

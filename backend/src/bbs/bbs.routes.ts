@@ -156,7 +156,14 @@ export function createBBSRouter(getDb: () => any, authMiddleware: any) {
       const ctx = await resolveUserAndCompany(req, db);
       const { projectId } = await resolveCanonicalProjectId(db, ctx, req.params.projectId);
 
-      const blocks = await db.collection('bbs_blocks').find({ projectId }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
+      let blocks = await db.collection('project_blocks')
+        .find({ projectId: String(projectId), isDeleted: { $ne: true }, status: 'active' })
+        .sort({ displayOrder: 1, createdAt: 1 })
+        .toArray();
+
+      if (!blocks || blocks.length === 0) {
+        blocks = await db.collection('bbs_blocks').find({ projectId }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
+      }
 
       // Aggregate counts for each block
       const enriched = await Promise.all(

@@ -22,12 +22,13 @@ import NewGroupModal from './components/NewGroupModal';
 import GroupInfoModal from './components/GroupInfoModal';
 import ForwardModal from './components/ForwardModal';
 
+import { useActiveProject } from '../../hooks/useActiveProject';
 import './ChatPage.css';
 
 export default function ChatPage() {
   const authUser = useSelector((state) => state.auth?.user);
-  const selectedProject = useSelector((state) => state.project?.selectedProject);
-  const currentProjectId = selectedProject?._id || selectedProject?.id || localStorage.getItem('selectedProjectId') || null;
+  const { projectId: activeProjectId, selectedProject, projectEpoch } = useActiveProject();
+  const currentProjectId = activeProjectId || selectedProject?._id || selectedProject?.id || localStorage.getItem('rebar_active_project_id') || localStorage.getItem('selectedProjectId') || null;
   const currentProjectName = selectedProject?.name || '';
 
   const [conversations, setConversations] = useState([]);
@@ -91,7 +92,7 @@ export default function ChatPage() {
   // 1. Initial conversations load (scoped by currentProjectId)
   useEffect(() => {
     loadConversations(currentProjectId);
-  }, [currentProjectId]);
+  }, [currentProjectId, projectEpoch]);
 
   const loadConversations = async (targetProjectId = currentProjectId) => {
     try {

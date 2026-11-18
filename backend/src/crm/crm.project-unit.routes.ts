@@ -446,6 +446,23 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
         query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
       }
 
+      // Canonical project_blocks from Project module
+      const projBlockFilter: any = { isDeleted: { $ne: true }, status: 'active' };
+      if (companyId) {
+        const cStr = String(companyId);
+        const cIdObj = ObjectId.isValid(cStr) && cStr.length === 24 ? new ObjectId(cStr) : null;
+        projBlockFilter.$or = cIdObj ? [{ companyId: cStr }, { companyId: cIdObj }] : [{ companyId: cStr }];
+      }
+      if (projectId) {
+        const pIdStr = String(projectId);
+        const pIdObj = ObjectId.isValid(pIdStr) && pIdStr.length === 24 ? new ObjectId(pIdStr) : null;
+        projBlockFilter.projectId = pIdObj ? { $in: [pIdStr, pIdObj] } : pIdStr;
+      }
+      const canonicalProjectBlocks = await db.collection('project_blocks')
+        .find(projBlockFilter)
+        .sort({ displayOrder: 1, name: 1 })
+        .toArray();
+
       // Explicit blocks in crm_blocks
       const explicitBlocks = await db.collection('crm_blocks').find(query).sort({ blockName: 1 }).toArray();
 
@@ -453,9 +470,23 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
       const unitTowers = await db.collection('crm_units').distinct('buildingTower', query);
 
       const map = new Map<string, any>();
+
+      canonicalProjectBlocks.forEach((b: any) => {
+        const name = b.name || b.blockName;
+        if (name) {
+          map.set(name.toUpperCase(), {
+            ...b,
+            blockName: name,
+            source: 'project_blocks'
+          });
+        }
+      });
+
       explicitBlocks.forEach((b: any) => {
         const name = b.blockName || b.name;
-        if (name) map.set(name.toUpperCase(), { ...b, blockName: name });
+        if (name && !map.has(name.toUpperCase())) {
+          map.set(name.toUpperCase(), { ...b, blockName: name, source: 'crm_blocks' });
+        }
       });
 
       for (const t of unitTowers) {

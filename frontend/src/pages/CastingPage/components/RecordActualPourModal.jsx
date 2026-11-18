@@ -8,30 +8,46 @@ export default function RecordActualPourModal({
   event,
   onActualRecorded
 }) {
-  if (!isOpen || !event) return null;
-
   const [actualPourDate, setActualPourDate] = useState(
-    event.actualPourDate || event.plannedDate || new Date().toISOString().split('T')[0]
+    event?.actualPourDate || event?.plannedDate || new Date().toISOString().split('T')[0]
   );
   const [actualPourStartTime, setActualPourStartTime] = useState(
-    event.actualPourStartTime || event.plannedStartTime || '08:30'
+    event?.actualPourStartTime || event?.plannedStartTime || '08:30'
   );
   const [actualPourEndTime, setActualPourEndTime] = useState(
-    event.actualPourEndTime || event.plannedEndTime || '16:30'
+    event?.actualPourEndTime || event?.plannedEndTime || '16:30'
   );
 
   // Per-segment actual volumes
   const [segmentActuals, setSegmentActuals] = useState(() => {
     const map = {};
-    (event.segments || []).forEach((seg) => {
+    (event?.segments || []).forEach((seg) => {
       map[seg.segmentId] = seg.actualVolumeM3 !== undefined ? seg.actualVolumeM3 : seg.plannedVolumeM3;
     });
     return map;
   });
 
-  const [notes, setNotes] = useState(event.notes || '');
+  const [notes, setNotes] = useState(event?.notes || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Sync state whenever active event or isOpen changes
+  React.useEffect(() => {
+    if (isOpen && event) {
+      setActualPourDate(event.actualPourDate || event.plannedDate || new Date().toISOString().split('T')[0]);
+      setActualPourStartTime(event.actualPourStartTime || event.plannedStartTime || '08:30');
+      setActualPourEndTime(event.actualPourEndTime || event.plannedEndTime || '16:30');
+      const map = {};
+      (event.segments || []).forEach((seg) => {
+        map[seg.segmentId] = seg.actualVolumeM3 !== undefined ? seg.actualVolumeM3 : seg.plannedVolumeM3;
+      });
+      setSegmentActuals(map);
+      setNotes(event.notes || '');
+      setErrorMsg('');
+    }
+  }, [isOpen, event]);
+
+  if (!isOpen || !event) return null;
 
   const handleUpdateSegActual = (segId, val) => {
     setSegmentActuals(prev => ({

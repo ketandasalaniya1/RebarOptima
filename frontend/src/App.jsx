@@ -1,53 +1,57 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import SideNavbar from './components/SideNavbar/SideNavbar';
-import NewBatchPage from './pages/NewBatchPage/NewBatchPage';
-import ResultsPage from './pages/ResultsPage/ResultsPage';
-import SignInPage from './pages/SignInPage/SignInPage';
-import SignUpPage from './pages/SignUpPage/SignUpPage';
-import OverviewPage from './pages/OverviewPage/OverviewPage';
-import InventoryPage from './pages/InventoryPage/InventoryPage';
-import BatchHistoryPage from './pages/BatchHistoryPage/BatchHistoryPage';
-import BBSPage from './pages/BBSPage/BBSPage';
-import CastingPage from './pages/CastingPage/CastingPage';
-import GeneralInventoryPage from './pages/GeneralInventoryPage/GeneralInventoryPage';
-import CrmPage from './pages/CrmPage/CrmPage';
-import DrawingsPage from './pages/DrawingsPage/DrawingsPage';
-import PettyCashPage from './pages/PettyCashPage/PettyCashPage';
-import ContractorsPage from './pages/ContractorsPage/ContractorsPage';
-import CompanyLabourPage from './pages/ManpowerPage/CompanyLabourPage';
-import ContractorLabourPage from './pages/ManpowerPage/ContractorLabourPage';
-import MarkAttendancePage from './pages/AttendancePage/MarkAttendancePage';
-import AttendanceHistoryPage from './pages/AttendancePage/AttendanceHistoryPage';
-import AttendanceReportsPage from './pages/AttendancePage/AttendanceReportsPage';
-import ReportsPage from './pages/ReportsPage/ReportsPage';
-import ChatPage from './pages/ChatPage/ChatPage';
-import LedgerPage from './pages/LedgerPage/LedgerPage';
-import SettingsPage from './pages/SettingsPage/SettingsPage';
-import UsersPage from './pages/UsersPage/UsersPage';
-import RolesPage from './pages/RolesPage/RolesPage';
-import ActivityLogsPage from './pages/ActivityLogsPage/ActivityLogsPage';
-import ProfilePage from './pages/ProfilePage/ProfilePage';
-import SuperadminLoginPage from './pages/SuperadminLoginPage/SuperadminLoginPage';
-import SuperadminDashboard from './pages/SuperadminDashboard/SuperadminDashboard';
-import ProjectManagementPage from './pages/ProjectManagementPage/ProjectManagementPage';
-import SubscribePage from './pages/SubscribePage/SubscribePage';
-import BbsProjectsPage from './pages/BBSPage/BbsProjectsPage';
-import BbsDashboardPage from './pages/BBSPage/BbsDashboardPage';
-import BbsWizardPage from './pages/BBSPage/BbsWizardPage';
-import BbsReportsPage from './pages/BBSPage/BbsReportsPage';
-import BbsShapesPage from './pages/BBSPage/BbsShapesPage';
-import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
-import NoProjectPage from './pages/NoProjectPage/NoProjectPage';
-import PublicTransmittalPage from './pages/PublicTransmittalPage/PublicTransmittalPage';
 import Breadcrumbs from './components/Breadcrumbs/Breadcrumbs';
 import ProjectFormModal from './components/ProjectModals/ProjectFormModal';
 import GeofenceConfigModal from './components/ProjectModals/GeofenceConfigModal';
 import AssignPartnerModal from './components/ProjectModals/AssignPartnerModal';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import ChatNotificationToaster from './components/ChatNotificationToaster/ChatNotificationToaster';
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
+
+// Code-split pages for high performance and reduced initial bundle weight
+const SignInPage = lazy(() => import('./pages/SignInPage/SignInPage'));
+const SignUpPage = lazy(() => import('./pages/SignUpPage/SignUpPage'));
+const SubscribePage = lazy(() => import('./pages/SubscribePage/SubscribePage'));
+const SuperadminLoginPage = lazy(() => import('./pages/SuperadminLoginPage/SuperadminLoginPage'));
+const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard/SuperadminDashboard'));
+const NoProjectPage = lazy(() => import('./pages/NoProjectPage/NoProjectPage'));
+const PublicTransmittalPage = lazy(() => import('./pages/PublicTransmittalPage/PublicTransmittalPage'));
+
+const OverviewPage = lazy(() => import('./pages/OverviewPage/OverviewPage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage/ProjectsPage'));
+const InventoryPage = lazy(() => import('./pages/InventoryPage/InventoryPage'));
+const NewBatchPage = lazy(() => import('./pages/NewBatchPage/NewBatchPage'));
+const ResultsPage = lazy(() => import('./pages/ResultsPage/ResultsPage'));
+const BatchHistoryPage = lazy(() => import('./pages/BatchHistoryPage/BatchHistoryPage'));
+const BBSPage = lazy(() => import('./pages/BBSPage/BBSPage'));
+const CastingPage = lazy(() => import('./pages/CastingPage/CastingPage'));
+const GeneralInventoryPage = lazy(() => import('./pages/GeneralInventoryPage/GeneralInventoryPage'));
+const CrmPage = lazy(() => import('./pages/CrmPage/CrmPage'));
+const DrawingsPage = lazy(() => import('./pages/DrawingsPage/DrawingsPage'));
+const PettyCashPage = lazy(() => import('./pages/PettyCashPage/PettyCashPage'));
+const ContractorsPage = lazy(() => import('./pages/ContractorsPage/ContractorsPage'));
+const CompanyLabourPage = lazy(() => import('./pages/ManpowerPage/CompanyLabourPage'));
+const ContractorLabourPage = lazy(() => import('./pages/ManpowerPage/ContractorLabourPage'));
+const MarkAttendancePage = lazy(() => import('./pages/AttendancePage/MarkAttendancePage'));
+const AttendanceHistoryPage = lazy(() => import('./pages/AttendancePage/AttendanceHistoryPage'));
+const AttendanceReportsPage = lazy(() => import('./pages/AttendancePage/AttendanceReportsPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage/ReportsPage'));
+const ChatPage = lazy(() => import('./pages/ChatPage/ChatPage'));
+const LedgerPage = lazy(() => import('./pages/LedgerPage/LedgerPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage/SettingsPage'));
+const UsersPage = lazy(() => import('./pages/UsersPage/UsersPage'));
+const RolesPage = lazy(() => import('./pages/RolesPage/RolesPage'));
+const ActivityLogsPage = lazy(() => import('./pages/ActivityLogsPage/ActivityLogsPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage/ProfilePage'));
+const ProjectManagementPage = lazy(() => import('./pages/ProjectManagementPage/ProjectManagementPage'));
+const BbsProjectsPage = lazy(() => import('./pages/BBSPage/BbsProjectsPage'));
+const BbsDashboardPage = lazy(() => import('./pages/BBSPage/BbsDashboardPage'));
+const BbsWizardPage = lazy(() => import('./pages/BBSPage/BbsWizardPage'));
+const BbsReportsPage = lazy(() => import('./pages/BBSPage/BbsReportsPage'));
+const BbsShapesPage = lazy(() => import('./pages/BBSPage/BbsShapesPage'));
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
 import { permissionsApi, projectsApi, setActiveProjectHeader } from './utils/api';
 import { autoRegisterPushDevice } from './utils/pushNotifications';
@@ -370,166 +374,168 @@ function App() {
 
   return (
     <div className="app-layout">
-      {view === 'public-transmittal' ? (
-        <PublicTransmittalPage />
-      ) : view === 'signin' ? (
-        <SignInPage
-          onSignIn={handleSignInSuccess}
-          onNavigateToSignUp={() => {
-            dispatch(setView('signup'));
-          }}
-          onNavigateToDeveloper={() => {
-            dispatch(setView('superadmin-login'));
-          }}
-        />
-      ) : !isAuthenticated && view === 'signup' ? (
-        <SignUpPage
-          onSignUp={handleSignInSuccess}
-          onNavigateToSignIn={() => {
-            dispatch(setView('signin'));
-          }}
-        />
-      ) : view === 'subscribe' ? (
-        <SubscribePage />
-      ) : view === 'superadmin-login' ? (
-        <SuperadminLoginPage />
-      ) : view === 'superadmin' || isDeveloper ? (
-        <SuperadminDashboard />
-      ) : isAuthenticated && (!projectsReady || projectBootstrapping) ? (
-        <div className="no-project-page">
-          <div className="no-project-card">
-            <p>Loading your projects…</p>
+      <Suspense fallback={<LoadingSpinner message="Loading module..." />}>
+        {view === 'public-transmittal' ? (
+          <PublicTransmittalPage />
+        ) : view === 'signin' ? (
+          <SignInPage
+            onSignIn={handleSignInSuccess}
+            onNavigateToSignUp={() => {
+              dispatch(setView('signup'));
+            }}
+            onNavigateToDeveloper={() => {
+              dispatch(setView('superadmin-login'));
+            }}
+          />
+        ) : !isAuthenticated && view === 'signup' ? (
+          <SignUpPage
+            onSignUp={handleSignInSuccess}
+            onNavigateToSignIn={() => {
+              dispatch(setView('signin'));
+            }}
+          />
+        ) : view === 'subscribe' ? (
+          <SubscribePage />
+        ) : view === 'superadmin-login' ? (
+          <SuperadminLoginPage />
+        ) : view === 'superadmin' || isDeveloper ? (
+          <SuperadminDashboard />
+        ) : isAuthenticated && (!projectsReady || projectBootstrapping) ? (
+          <div className="no-project-page">
+            <div className="no-project-card">
+              <p>Loading your projects…</p>
+            </div>
           </div>
-        </div>
-      ) : showNoProject ? (
-        <>
-          <NoProjectPage onLogout={handleLogout} />
-          {isCreateModalOpen && <ProjectFormModal />}
-        </>
-      ) : showWorkspace ? (
-        <div className="app-workspace">
-          <SideNavbar currentView={view} onViewChange={handleNavigate} onLogout={handleLogout} />
-          <div className="main-viewport">
-            <Breadcrumbs />
-            {view === 'overview' && <OverviewPage onNavigate={handleNavigate} />}
-            {view === 'projects' && <ProjectsPage />}
-            {view === 'inventory' && <InventoryPage />}
-            {view === 'inputs' && (
-              <NewBatchPage
-                editParams={editBatchParams}
-                clearEditParams={() => setEditBatchParams(null)}
-                onOptimize={(data) => {
-                  setOptimizationData(data);
-                  dispatch(setView('results'));
-                }}
-              />
-            )}
-            {view === 'results' && (
-              <ResultsPage
-                data={optimizationData}
-                onBack={() => {
-                  dispatch(setView('inputs'));
-                }}
-                onSaveSuccess={() => {
-                  dispatch(setView('history'));
-                }}
-              />
-            )}
-            {view === 'history' && (
-              <BatchHistoryPage
-                onEditBatch={(batch) => {
-                  setEditBatchParams(batch);
-                  dispatch(setView('inputs'));
-                }}
-              />
-            )}
-            {view === 'bbs' && (
-              <BBSPage />
-            )}
-            {view === 'casting' && (
-              <CastingPage />
-            )}
-            {view === 'general-inventory' && (
-              <GeneralInventoryPage />
-            )}
-            {view === 'crm' && (
-              <CrmPage />
-            )}
-            {view === 'project-management' && (
-              <ProjectManagementPage />
-            )}
-            {(view === 'drawings' || (typeof view === 'string' && view.startsWith('drawings-'))) && (
-              <DrawingsPage subView={view} />
-            )}
-            {view === 'petty-cash' && (
-              <PettyCashPage />
-            )}
-            {view === 'contractors' && (
-              <ContractorsPage />
-            )}
-            {view === 'manpower-labour' && (
-              <CompanyLabourPage />
-            )}
-            {view === 'manpower-contractor-labour' && (
-              <ContractorLabourPage />
-            )}
-            {view === 'attendance-mark' && (
-              <MarkAttendancePage />
-            )}
-            {view === 'attendance-history' && (
-              <AttendanceHistoryPage />
-            )}
-            {view === 'attendance-reports' && (
-              <AttendanceReportsPage />
-            )}
-            {view === 'reports' && (
-              <ReportsPage />
-            )}
-            {view === 'chat' && (
-              <ChatPage />
-            )}
-            {view === 'ledger' && (
-              <LedgerPage />
-            )}
-            {view === 'activity-logs' && (
-              <ActivityLogsPage />
-            )}
-            {view === 'settings' && (
-              <SettingsPage />
-            )}
-            {view === 'users' && (
-              <UsersPage />
-            )}
-            {view === 'roles' && (
-              <RolesPage />
-            )}
-            {view === 'profile' && (
-              <ProfilePage onNavigate={handleNavigate} />
-            )}
-            {view === 'bbs-projects' && (
-              <BbsProjectsPage />
-            )}
-            {view === 'bbs-dashboard' && (
-              <BbsDashboardPage />
-            )}
-            {view === 'bbs-wizard' && (
-              <BbsWizardPage />
-            )}
-            {view === 'bbs-shapes' && (
-              <BbsShapesPage />
-            )}
-            {view === 'bbs-reports' && (
-              <BbsReportsPage />
-            )}
+        ) : showNoProject ? (
+          <>
+            <NoProjectPage onLogout={handleLogout} />
+            {isCreateModalOpen && <ProjectFormModal />}
+          </>
+        ) : showWorkspace ? (
+          <div className="app-workspace">
+            <SideNavbar currentView={view} onViewChange={handleNavigate} onLogout={handleLogout} />
+            <div className="main-viewport">
+              <Breadcrumbs />
+              {view === 'overview' && <OverviewPage onNavigate={handleNavigate} />}
+              {view === 'projects' && <ProjectsPage />}
+              {view === 'inventory' && <InventoryPage />}
+              {view === 'inputs' && (
+                <NewBatchPage
+                  editParams={editBatchParams}
+                  clearEditParams={() => setEditBatchParams(null)}
+                  onOptimize={(data) => {
+                    setOptimizationData(data);
+                    dispatch(setView('results'));
+                  }}
+                />
+              )}
+              {view === 'results' && (
+                <ResultsPage
+                  data={optimizationData}
+                  onBack={() => {
+                    dispatch(setView('inputs'));
+                  }}
+                  onSaveSuccess={() => {
+                    dispatch(setView('history'));
+                  }}
+                />
+              )}
+              {view === 'history' && (
+                <BatchHistoryPage
+                  onEditBatch={(batch) => {
+                    setEditBatchParams(batch);
+                    dispatch(setView('inputs'));
+                  }}
+                />
+              )}
+              {view === 'bbs' && (
+                <BBSPage />
+              )}
+              {view === 'casting' && (
+                <CastingPage />
+              )}
+              {view === 'general-inventory' && (
+                <GeneralInventoryPage />
+              )}
+              {view === 'crm' && (
+                <CrmPage />
+              )}
+              {view === 'project-management' && (
+                <ProjectManagementPage />
+              )}
+              {(view === 'drawings' || (typeof view === 'string' && view.startsWith('drawings-'))) && (
+                <DrawingsPage subView={view} />
+              )}
+              {view === 'petty-cash' && (
+                <PettyCashPage />
+              )}
+              {view === 'contractors' && (
+                <ContractorsPage />
+              )}
+              {view === 'manpower-labour' && (
+                <CompanyLabourPage />
+              )}
+              {view === 'manpower-contractor-labour' && (
+                <ContractorLabourPage />
+              )}
+              {view === 'attendance-mark' && (
+                <MarkAttendancePage />
+              )}
+              {view === 'attendance-history' && (
+                <AttendanceHistoryPage />
+              )}
+              {view === 'attendance-reports' && (
+                <AttendanceReportsPage />
+              )}
+              {view === 'reports' && (
+                <ReportsPage />
+              )}
+              {view === 'chat' && (
+                <ChatPage />
+              )}
+              {view === 'ledger' && (
+                <LedgerPage />
+              )}
+              {view === 'activity-logs' && (
+                <ActivityLogsPage />
+              )}
+              {view === 'settings' && (
+                <SettingsPage />
+              )}
+              {view === 'users' && (
+                <UsersPage />
+              )}
+              {view === 'roles' && (
+                <RolesPage />
+              )}
+              {view === 'profile' && (
+                <ProfilePage onNavigate={handleNavigate} />
+              )}
+              {view === 'bbs-projects' && (
+                <BbsProjectsPage />
+              )}
+              {view === 'bbs-dashboard' && (
+                <BbsDashboardPage />
+              )}
+              {view === 'bbs-wizard' && (
+                <BbsWizardPage />
+              )}
+              {view === 'bbs-shapes' && (
+                <BbsShapesPage />
+              )}
+              {view === 'bbs-reports' && (
+                <BbsReportsPage />
+              )}
+            </div>
           </div>
-        </div>
-      ) : (
-        <SignInPage
-          onSignIn={handleSignInSuccess}
-          onNavigateToSignUp={() => dispatch(setView('signup'))}
-          onNavigateToDeveloper={() => dispatch(setView('superadmin-login'))}
-        />
-      )}
+        ) : (
+          <SignInPage
+            onSignIn={handleSignInSuccess}
+            onNavigateToSignUp={() => dispatch(setView('signup'))}
+            onNavigateToDeveloper={() => dispatch(setView('superadmin-login'))}
+          />
+        )}
+      </Suspense>
 
       {showWorkspace && isCreateModalOpen && <ProjectFormModal />}
       {showWorkspace && geofenceModalProject && <GeofenceConfigModal />}

@@ -25,9 +25,12 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { pettyCashApi } from '../../utils/api';
+import { useActiveProject } from '../../hooks/useActiveProject';
 import './PettyCashPage.css';
 
 export default function PettyCashPage() {
+  const { projectId: activeProjectId, selectedProject, projectEpoch } = useActiveProject();
+
   // ── SITES & ACTIVE STATE ──────────────────────────────────────────────────
   const [sites, setSites] = useState([]);
   const [selectedSiteName, setSelectedSiteName] = useState('');
@@ -114,19 +117,31 @@ export default function PettyCashPage() {
     }
   }, [successMsg]);
 
-  // Initial load: Fetch sites, categories, persons
+  // Initial & projectEpoch load: Fetch sites, categories, persons
   useEffect(() => {
     loadSites();
     loadCategories();
     loadPersons();
-  }, []);
+  }, [projectEpoch]);
+
+  // Synchronize site with active global project when project changes
+  useEffect(() => {
+    if (selectedProject?.name && sites.length > 0) {
+      const match = sites.find(
+        (s) => (s.name || '').trim().toLowerCase() === (selectedProject.name || '').trim().toLowerCase()
+      );
+      if (match && selectedSiteName !== match.name) {
+        setSelectedSiteName(match.name);
+      }
+    }
+  }, [selectedProject?.name, sites]);
 
   // When selected site or date filters change, load transactions
   useEffect(() => {
     if (selectedSiteName) {
       loadTransactions();
     }
-  }, [selectedSiteName, startDate, endDate, typeFilter, categoryFilter, personFilter]);
+  }, [selectedSiteName, startDate, endDate, typeFilter, categoryFilter, personFilter, projectEpoch]);
 
   // ── API CALLS ─────────────────────────────────────────────────────────────
   const loadSites = async () => {
@@ -137,6 +152,12 @@ export default function PettyCashPage() {
         setSites(res.data);
         if (res.data.length > 0) {
           setSelectedSiteName(prev => {
+            if (selectedProject?.name) {
+              const matchedSite = res.data.find(
+                (s) => (s.name || '').trim().toLowerCase() === (selectedProject.name || '').trim().toLowerCase()
+              );
+              if (matchedSite) return matchedSite.name;
+            }
             if (prev && res.data.some(s => s.name === prev)) return prev;
             return res.data[0].name;
           });

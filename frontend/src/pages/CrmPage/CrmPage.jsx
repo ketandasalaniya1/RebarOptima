@@ -231,6 +231,34 @@ export default function CrmPage() {
     askingPrice: 8200000,
     facing: 'East'
   });
+  const [unitModalBlocks, setUnitModalBlocks] = useState([]);
+  const [customTowerMode, setCustomTowerMode] = useState(false);
+
+  // Load project-related blocks whenever Add Individual Unit modal opens or project changes
+  useEffect(() => {
+    if (!showAddUnitModal) {
+      setCustomTowerMode(false);
+      return;
+    }
+    const targetPid = singleUnitFormData.projectId || selectedProjectId;
+    if (targetPid) {
+      crmApi.getBlocks(targetPid)
+        .then(res => {
+          const list = Array.isArray(res) ? res : [];
+          setUnitModalBlocks(list);
+          if (list.length > 0 && (!singleUnitFormData.buildingTower || !list.some(b => (b.blockName || b.name) === singleUnitFormData.buildingTower))) {
+            const firstBlockName = list[0].blockName || list[0].name;
+            if (firstBlockName) {
+              setSingleUnitFormData(prev => ({ ...prev, buildingTower: firstBlockName }));
+            }
+          }
+        })
+        .catch(() => setUnitModalBlocks([]));
+    } else {
+      setUnitModalBlocks([]);
+    }
+  }, [showAddUnitModal, singleUnitFormData.projectId, selectedProjectId]);
+
 
   // Load Initial Workspace Data
   useEffect(() => {
@@ -3612,15 +3640,48 @@ export default function CrmPage() {
                     </select>
                   </div>
                   <div className="crm-form-group">
-                    <label className="crm-form-label">Tower / Block Name *</label>
-                    <input
-                      className="crm-form-input"
-                      type="text"
-                      required
-                      placeholder="e.g. TOWER A, BLOCK C"
-                      value={singleUnitFormData.buildingTower}
-                      onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, buildingTower: e.target.value.toUpperCase() })}
-                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <label className="crm-form-label" style={{ margin: 0 }}>Tower / Block Name *</label>
+                      {unitModalBlocks.length > 0 && (
+                        <button
+                          type="button"
+                          style={{ background: 'none', border: 'none', color: '#10b981', fontSize: '0.72rem', cursor: 'pointer', padding: 0 }}
+                          onClick={() => setCustomTowerMode(!customTowerMode)}
+                        >
+                          {customTowerMode ? 'Select from project blocks' : '+ Custom name'}
+                        </button>
+                      )}
+                    </div>
+                    {unitModalBlocks.length > 0 && !customTowerMode ? (
+                      <select
+                        className="crm-form-select"
+                        required
+                        value={singleUnitFormData.buildingTower}
+                        onChange={(e) => {
+                          if (e.target.value === '__custom__') {
+                            setCustomTowerMode(true);
+                          } else {
+                            setSingleUnitFormData({ ...singleUnitFormData, buildingTower: e.target.value });
+                          }
+                        }}
+                      >
+                        <option value="">-- Choose Tower / Block --</option>
+                        {unitModalBlocks.map((b, idx) => {
+                          const bName = b.blockName || b.name;
+                          return <option key={b._id || b.id || idx} value={bName}>{bName}</option>;
+                        })}
+                        <option value="__custom__">+ Enter custom tower name...</option>
+                      </select>
+                    ) : (
+                      <input
+                        className="crm-form-input"
+                        type="text"
+                        required
+                        placeholder="e.g. TOWER A, BLOCK C"
+                        value={singleUnitFormData.buildingTower}
+                        onChange={(e) => setSingleUnitFormData({ ...singleUnitFormData, buildingTower: e.target.value.toUpperCase() })}
+                      />
+                    )}
                   </div>
                   <div className="crm-form-group">
                     <label className="crm-form-label">Floor Number *</label>

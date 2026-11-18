@@ -38,6 +38,28 @@ describe('project-blocks.service validation', () => {
     expect(v.code).toBe('BLOCK_NAME_DUPLICATE');
   });
 
+  it('accepts blocks with detailed floor, unit, and pricing information', () => {
+    const v = validateBlocksPayload([
+      {
+        name: 'TOWER A',
+        floorNumber: 1,
+        unitNumber: '0501',
+        configuration: '2 BHK',
+        carpetAreaSqFt: 1050,
+        askingPrice: 8200000,
+      },
+    ]);
+    expect(v.ok).toBe(true);
+    expect(v.items?.[0]).toMatchObject({
+      name: 'TOWER A',
+      floorNumber: 1,
+      unitNumber: '0501',
+      configuration: '2 BHK',
+      carpetAreaSqFt: 1050,
+      askingPrice: 8200000,
+    });
+  });
+
   it('rejects more than MAX_BLOCKS_PER_PROJECT', () => {
     const blocks = Array.from({ length: MAX_BLOCKS_PER_PROJECT + 1 }, (_, i) => ({
       name: `Block ${i}`,
@@ -216,5 +238,82 @@ describe('createBlockForProject', () => {
         input: { name: 'Tower A' },
       }),
     ).rejects.toMatchObject({ status: 409, code: 'BLOCK_NAME_DUPLICATE' });
+  });
+
+  it('creates block with unit details and synchronizes unit into crm_units', async () => {
+    const projectId = new ObjectId();
+    const ctx: any = {
+      userId: 'u1',
+      companyId: 'comp_1',
+      isCompanyAdmin: true,
+      requiresProjectAssignment: false,
+      assignedProjects: [],
+    };
+
+    let insertedBlockDoc: any = null;
+    let syncedCrmDoc: any = null;
+
+    const db = {
+      collection: (name: string) => {
+        if (name === 'projects') {
+          return {
+            findOne: jest.fn().mockResolvedValue({
+              _id: projectId,
+              name: 'Greenfield Heights',
+              companyId: 'comp_1',
+              status: 'active',
+            }),
+            updateOne: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+          };
+        }
+        if (name === PROJECT_BLOCKS_COLLECTION) {
+          return {
+            findOne: jest.fn().mockResolvedValue(null),
+            countDocuments: jest.fn().mockResolvedValue(0),
+            insertOne: jest.fn().mockImplementation(async (doc) => {
+              insertedBlockDoc = doc;
+              return { insertedId: doc._id };
+            }),
+          };
+        }
+        if (name === 'crm_units') {
+          return {
+            updateOne: jest.fn().mockImplementation(async (_query, update) => {
+              syncedCrmDoc = update.$setOnInsert;
+              return { upsertedCount: 1 };
+            }),
+          };
+        }
+        return {};
+      },
+    };
+
+    const result = await createBlockForProject({
+      db,
+      ctx,
+      projectId: String(projectId),
+      input: {
+        name: 'TOWER A',
+        floorNumber: 1,
+        unitNumber: '0501',
+        configuration: '2 BHK',
+        carpetAreaSqFt: 1050,
+        askingPrice: 8200000,
+      },
+    });
+
+    expect(result.name).toBe('TOWER A');
+    expect(result.floorNumber).toBe(1);
+    expect(result.unitNumber).toBe('0501');
+    expect(result.configuration).toBe('2 BHK');
+    expect(result.askingPrice).toBe(8200000);
+    expect(insertedBlockDoc).toBeDefined();
+
+    expect(syncedCrmDoc).toBeDefined();
+    expect(syncedCrmDoc.unitCode).toBe('TOWER A-0501');
+    expect(syncedCrmDoc.buildingTower).toBe('TOWER A');
+    expect(syncedCrmDoc.floorNumber).toBe(1);
+    expect(syncedCrmDoc.unitNumber).toBe('0501');
+    expect(syncedCrmDoc.askingPrice).toBe(8200000);
   });
 });

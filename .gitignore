@@ -4,3 +4,15 @@ dist/
 *.tsbuildinfo
 graphify-out/
 scratch/
+
+# OS Junk
+.DS_Store
+Thumbs.db
+
+# Test & Report Artifacts
+test-results/
+test-reports-output/
+playwright-report/
+blob-report/
+design-qa/screenshots/
+

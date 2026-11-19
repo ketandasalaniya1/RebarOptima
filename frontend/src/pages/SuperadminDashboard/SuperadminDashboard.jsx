@@ -149,6 +149,7 @@ export default function SuperadminDashboard() {
       setDeletePassword('');
       setShowFinalWarning(false);
       setModalError('');
+      setSearch('');
       await loadData();
     } catch (err) {
       setModalError(err.message);
@@ -296,7 +297,28 @@ export default function SuperadminDashboard() {
                     <h3>Registered Builder Firms</h3>
                     <div className="dev-search-bar">
                       <Search size={14} />
-                      <Input placeholder="Search firms..." value={search} onChange={e => setSearch(e.target.value)} />
+                      <Input 
+                        type="search"
+                        name="firm_filter_search"
+                        id="firm_filter_search"
+                        placeholder="Search firms..." 
+                        value={search} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (val && (val.includes('@') && (val.includes('superadmin') || val.includes('rebaroptima.io')))) {
+                            setSearch('');
+                            return;
+                          }
+                          setSearch(val);
+                        }}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
+                        data-lpignore="true"
+                        data-1p-ignore="true"
+                        data-form-type="other"
+                      />
                     </div>
                   </div>
                   <div className="dev-table-wrap">
@@ -381,7 +403,15 @@ export default function SuperadminDashboard() {
                                   <button className="dev-btn-sm" onClick={() => { setShowAssignSub(showAssignSub === c.id ? null : c.id); setSelectedPkgId(''); }}>
                                     <CreditCard size={12} /> Sub
                                   </button>
-                                  <button className="dev-btn-sm warning" onClick={() => { setShowDeleteModal(c.id); setDeletePassword(''); setShowFinalWarning(false); setModalError(''); }} title="Hard Delete Firm">
+                                  <button className="dev-btn-sm warning" onClick={() => { 
+                                    setShowDeleteModal(c.id); 
+                                    setDeletePassword(''); 
+                                    setShowFinalWarning(false); 
+                                    setModalError(''); 
+                                    if (search && (search.includes('@') && (search.includes('superadmin') || search.includes('rebaroptima.io')))) {
+                                      setSearch('');
+                                    }
+                                  }} title="Hard Delete Firm">
                                     <Trash2 size={12} />
                                   </button>
                                 </div>
@@ -653,10 +683,26 @@ export default function SuperadminDashboard() {
           <div className="dev-modal-overlay">
             <div className="dev-modal">
               {!showFinalWarning ? (
-                <>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handlePasswordSubmit();
+                  }}
+                  autoComplete="off"
+                >
+                  {/* Hidden dummy credentials to trap any browser autofill attempts */}
+                  <input 
+                    type="text" 
+                    name="prevent_autofill_username" 
+                    autoComplete="username" 
+                    style={{ position: 'absolute', opacity: 0, height: 0, width: 0, zIndex: -1, pointerEvents: 'none' }} 
+                    tabIndex={-1} 
+                    aria-hidden="true" 
+                    readOnly 
+                  />
                   <div className="dev-modal-header">
                     <h3 className="danger-text"><AlertTriangle size={18} /> Delete Builder Firm</h3>
-                    <button className="dev-close-btn" onClick={() => setShowDeleteModal(null)}>×</button>
+                    <button type="button" className="dev-close-btn" onClick={() => { setShowDeleteModal(null); setModalError(''); }}>×</button>
                   </div>
                   <div className="dev-modal-body">
                     <p>You are about to hard-delete <span className="dev-highlight-name">{companyToDeleteName}</span>. This requires Developer authorization.</p>
@@ -670,22 +716,31 @@ export default function SuperadminDashboard() {
                       <label>Developer Password</label>
                       <Input 
                         type="password" 
+                        name="firm_delete_verification_token"
+                        id="firm_delete_verification_token"
                         value={deletePassword} 
                         onChange={(e) => setDeletePassword(e.target.value)}
                         placeholder="Enter master password"
+                        autoComplete="new-password"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
+                        data-lpignore="true"
+                        data-1p-ignore="true"
+                        data-form-type="other"
                       />
                     </div>
                   </div>
                   <div className="dev-modal-footer">
-                    <button className="dev-btn cancel" onClick={() => { setShowDeleteModal(null); setModalError(''); }}>Cancel</button>
-                    <button className="dev-btn danger" onClick={handlePasswordSubmit}>Continue</button>
+                    <button type="button" className="dev-btn cancel" onClick={() => { setShowDeleteModal(null); setModalError(''); }}>Cancel</button>
+                    <button type="submit" className="dev-btn danger">Continue</button>
                   </div>
-                </>
+                </form>
               ) : (
                 <>
                   <div className="dev-modal-header">
                     <h3 className="danger-text"><AlertTriangle size={18} /> FINAL WARNING</h3>
-                    <button className="dev-close-btn" onClick={() => { setShowDeleteModal(null); setShowFinalWarning(false); }}>×</button>
+                    <button type="button" className="dev-close-btn" onClick={() => { setShowDeleteModal(null); setShowFinalWarning(false); }}>×</button>
                   </div>
                   <div className="dev-modal-body">
                     <div className="dev-alert danger">
@@ -695,8 +750,8 @@ export default function SuperadminDashboard() {
                     <p style={{ marginTop: '15px', textAlign: 'center' }}>Are you absolutely sure you want to delete <span className="dev-highlight-name">{companyToDeleteName}</span>?</p>
                   </div>
                   <div className="dev-modal-footer">
-                    <button className="dev-btn cancel" onClick={() => setShowFinalWarning(false)}>No, Go Back</button>
-                    <button className="dev-btn danger" onClick={handleFinalDelete} disabled={actionLoading === `del-${showDeleteModal}`}>
+                    <button type="button" className="dev-btn cancel" onClick={() => setShowFinalWarning(false)}>No, Go Back</button>
+                    <button type="button" className="dev-btn danger" onClick={handleFinalDelete} disabled={actionLoading === `del-${showDeleteModal}`}>
                       {actionLoading === `del-${showDeleteModal}` ? 'Deleting...' : 'YES, PERMANENTLY DELETE'}
                     </button>
                   </div>

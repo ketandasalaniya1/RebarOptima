@@ -39,117 +39,148 @@ export default function SystemHealthPanel() {
 
   if (loading) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: '#8b949e' }}>
-        <RefreshCw className="spin" size={20} style={{ marginBottom: '8px' }} />
-        <p>Probing platform runtime health...</p>
+      <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+        <RefreshCw className="spin" size={24} style={{ marginBottom: '12px', color: 'var(--accent)' }} />
+        <p style={{ margin: 0, fontSize: '13px' }}>Probing platform runtime health...</p>
       </div>
     );
   }
 
   if (!health) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: '#f85149' }}>
+      <div style={{ 
+        padding: '32px', 
+        textAlign: 'center', 
+        color: 'var(--danger-text)',
+        background: 'var(--danger-subtle)',
+        border: '1px solid var(--danger-border)',
+        borderRadius: 'var(--radius-lg)'
+      }}>
         Failed to fetch system diagnostics. Ensure developer credentials are valid.
       </div>
     );
   }
+
+  const cardStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    borderRadius: 'var(--radius-lg)',
+    boxShadow: 'var(--shadow-card)',
+    padding: '20px',
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Overview Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         {/* Core Status */}
-        <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '16px' }}>
+        <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: '#8b949e', fontSize: '13px' }}>Platform Status</span>
-            <Activity size={16} color="#3fb950" />
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>Platform Status</span>
+            <Activity size={16} color="var(--success-text)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#3fb950', fontSize: '18px', fontWeight: 700 }}>{health.status}</span>
-            <CheckCircle2 size={16} color="#3fb950" />
+            <span style={{ color: 'var(--success-text)', fontSize: '20px', fontWeight: 700 }}>{health.status}</span>
+            <CheckCircle2 size={16} color="var(--success-text)" />
           </div>
-          <div style={{ color: '#8b949e', fontSize: '11px', marginTop: '6px' }}>
+          <div style={{ color: 'var(--text-label)', fontSize: '12px', marginTop: '6px' }}>
             Uptime: {formatUptime(health.uptimeSeconds)}
           </div>
         </div>
 
         {/* Database */}
-        <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '16px' }}>
+        <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: '#8b949e', fontSize: '13px' }}>MongoDB Database</span>
-            <Database size={16} color="#58a6ff" />
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>MongoDB Database</span>
+            <Database size={16} color="var(--accent)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: health.database?.connected ? '#3fb950' : '#f85149', fontSize: '18px', fontWeight: 700 }}>
+            <span style={{ 
+              color: health.database?.connected ? 'var(--success-text)' : 'var(--danger-text)', 
+              fontSize: '20px', 
+              fontWeight: 700 
+            }}>
               {health.database?.connected ? 'Connected' : 'Disconnected'}
             </span>
-            {health.database?.connected ? <CheckCircle2 size={16} color="#3fb950" /> : <XCircle size={16} color="#f85149" />}
+            {health.database?.connected ? (
+              <CheckCircle2 size={16} color="var(--success-text)" />
+            ) : (
+              <XCircle size={16} color="var(--danger-text)" />
+            )}
           </div>
-          <div style={{ color: '#8b949e', fontSize: '11px', marginTop: '6px' }}>
+          <div style={{ color: 'var(--text-label)', fontSize: '12px', marginTop: '6px' }}>
             Atlas ping responsive
           </div>
         </div>
 
         {/* Web Push */}
-        <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '16px' }}>
+        <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: '#8b949e', fontSize: '13px' }}>Web Push Service</span>
-            <Bell size={16} color="#a371f7" />
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>Web Push Service</span>
+            <Bell size={16} color="var(--accent)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: health.services?.webPush?.configured ? '#3fb950' : '#d29922', fontSize: '18px', fontWeight: 700 }}>
+            <span style={{ 
+              color: health.services?.webPush?.configured ? 'var(--success-text)' : 'var(--warning-text)', 
+              fontSize: '20px', 
+              fontWeight: 700 
+            }}>
               {health.services?.webPush?.configured ? 'Active' : 'Unconfigured'}
             </span>
           </div>
-          <div style={{ color: '#8b949e', fontSize: '11px', marginTop: '6px' }}>
+          <div style={{ color: 'var(--text-label)', fontSize: '12px', marginTop: '6px' }}>
             {health.services?.webPush?.subscribersCount || 0} active subscriber devices
           </div>
         </div>
 
         {/* SMTP Gateway */}
-        <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '16px' }}>
+        <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: '#8b949e', fontSize: '13px' }}>SMTP Email Gateway</span>
-            <Mail size={16} color="#f0883e" />
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>SMTP Email Gateway</span>
+            <Mail size={16} color="var(--accent)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: health.services?.smtp?.configured ? '#3fb950' : '#d29922', fontSize: '18px', fontWeight: 700 }}>
+            <span style={{ 
+              color: health.services?.smtp?.configured ? 'var(--success-text)' : 'var(--warning-text)', 
+              fontSize: '20px', 
+              fontWeight: 700 
+            }}>
               {health.services?.smtp?.configured ? 'Configured' : 'Unconfigured'}
             </span>
           </div>
-          <div style={{ color: '#8b949e', fontSize: '11px', marginTop: '6px' }}>
+          <div style={{ color: 'var(--text-label)', fontSize: '12px', marginTop: '6px' }}>
             {health.services?.smtp?.totalEmailsSent || 0} emails dispatched
           </div>
         </div>
       </div>
 
       {/* Runtime details */}
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '20px' }}>
-        <h4 style={{ margin: '0 0 12px 0', color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Cpu size={16} color="#58a6ff" /> Process & Resource Diagnostics
+      <div style={{ ...cardStyle, padding: '24px' }}>
+        <h4 style={{ margin: '0 0 16px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px' }}>
+          <Cpu size={18} color="var(--accent)" /> Process & Resource Diagnostics
         </h4>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', fontSize: '13px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px', fontSize: '13px' }}>
           <div>
-            <div style={{ color: '#8b949e', fontSize: '12px' }}>Node.js Engine</div>
-            <div style={{ color: '#f0f6fc', fontWeight: 600, fontFamily: 'monospace', marginTop: '2px' }}>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>Node.js Engine</div>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontFamily: 'monospace', marginTop: '4px' }}>
               {health.nodeVersion}
             </div>
           </div>
           <div>
-            <div style={{ color: '#8b949e', fontSize: '12px' }}>Resident Memory (RSS)</div>
-            <div style={{ color: '#f0f6fc', fontWeight: 600, fontFamily: 'monospace', marginTop: '2px' }}>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>Resident Memory (RSS)</div>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontFamily: 'monospace', marginTop: '4px' }}>
               {formatBytes(health.memoryUsage?.rss)}
             </div>
           </div>
           <div>
-            <div style={{ color: '#8b949e', fontSize: '12px' }}>Heap Memory Allocated</div>
-            <div style={{ color: '#f0f6fc', fontWeight: 600, fontFamily: 'monospace', marginTop: '2px' }}>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>Heap Memory Allocated</div>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontFamily: 'monospace', marginTop: '4px' }}>
               {formatBytes(health.memoryUsage?.heapUsed)} / {formatBytes(health.memoryUsage?.heapTotal)}
             </div>
           </div>
           <div>
-            <div style={{ color: '#8b949e', fontSize: '12px' }}>External Memory</div>
-            <div style={{ color: '#f0f6fc', fontWeight: 600, fontFamily: 'monospace', marginTop: '2px' }}>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>External Memory</div>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontFamily: 'monospace', marginTop: '4px' }}>
               {formatBytes(health.memoryUsage?.external)}
             </div>
           </div>

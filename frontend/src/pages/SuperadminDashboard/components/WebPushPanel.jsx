@@ -274,11 +274,37 @@ export default function WebPushPanel() {
     }
   };
 
+  const cardStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    borderRadius: 'var(--radius-lg)',
+    boxShadow: 'var(--shadow-card)',
+    padding: '24px',
+  };
+
+  const inputStyle = {
+    width: '100%',
+    background: 'var(--main-bg)',
+    border: '1px solid var(--card-border)',
+    borderRadius: 'var(--radius-md)',
+    padding: '9px 12px',
+    color: 'var(--text-primary)',
+    fontSize: '13px',
+  };
+
+  const labelStyle = {
+    display: 'block',
+    color: 'var(--text-secondary)',
+    fontSize: '12px',
+    fontWeight: 600,
+    marginBottom: '6px',
+  };
+
   if (loading) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-        <RefreshCw className="spin" size={24} style={{ marginBottom: '8px' }} />
-        <p>Loading push notification engines...</p>
+      <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+        <RefreshCw className="spin" size={24} style={{ marginBottom: '12px', color: 'var(--accent)' }} />
+        <p style={{ margin: 0, fontSize: '13px' }}>Loading push notification engines...</p>
       </div>
     );
   }
@@ -289,11 +315,11 @@ export default function WebPushPanel() {
       <div
         style={{
           display: 'flex',
-          gap: '8px',
-          background: '#0d1117',
-          padding: '6px',
-          borderRadius: '8px',
-          border: '1px solid #30363d',
+          gap: '6px',
+          background: 'var(--card-bg)',
+          padding: '4px',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--card-border)',
           alignSelf: 'flex-start',
         }}
       >
@@ -309,14 +335,14 @@ export default function WebPushPanel() {
             alignItems: 'center',
             gap: '8px',
             padding: '8px 16px',
-            borderRadius: '6px',
-            border: 'none',
+            borderRadius: 'var(--radius-md)',
+            border: activeTab === 'fcm' ? '1px solid var(--accent-border)' : '1px solid transparent',
             cursor: 'pointer',
             fontSize: '13px',
             fontWeight: 600,
-            background: activeTab === 'fcm' ? '#21262d' : 'transparent',
-            color: activeTab === 'fcm' ? '#f0883e' : '#8b949e',
-            boxShadow: activeTab === 'fcm' ? '0 1px 3px rgba(0,0,0,0.4)' : 'none',
+            background: activeTab === 'fcm' ? 'var(--accent-subtle)' : 'transparent',
+            color: activeTab === 'fcm' ? 'var(--accent-text)' : 'var(--text-secondary)',
+            transition: 'all 0.15s ease',
           }}
         >
           <Flame size={16} /> Firebase Cloud Messaging (FCM)
@@ -325,9 +351,9 @@ export default function WebPushPanel() {
               fontSize: '10px',
               padding: '2px 6px',
               borderRadius: '10px',
-              background: fcmConfig.enabled ? '#0d321d' : '#21262d',
-              color: fcmConfig.enabled ? '#3fb950' : '#8b949e',
-              border: `1px solid ${fcmConfig.enabled ? '#238636' : '#30363d'}`,
+              background: fcmConfig.enabled ? 'var(--success-subtle)' : 'var(--main-bg)',
+              color: fcmConfig.enabled ? 'var(--success-text)' : 'var(--text-secondary)',
+              border: `1px solid ${fcmConfig.enabled ? 'var(--success-border)' : 'var(--card-border)'}`,
             }}
           >
             {fcmConfig.enabled ? 'ACTIVE' : 'OFF'}
@@ -346,14 +372,14 @@ export default function WebPushPanel() {
             alignItems: 'center',
             gap: '8px',
             padding: '8px 16px',
-            borderRadius: '6px',
-            border: 'none',
+            borderRadius: 'var(--radius-md)',
+            border: activeTab === 'vapid' ? '1px solid var(--accent-border)' : '1px solid transparent',
             cursor: 'pointer',
             fontSize: '13px',
             fontWeight: 600,
-            background: activeTab === 'vapid' ? '#21262d' : 'transparent',
-            color: activeTab === 'vapid' ? '#58a6ff' : '#8b949e',
-            boxShadow: activeTab === 'vapid' ? '0 1px 3px rgba(0,0,0,0.4)' : 'none',
+            background: activeTab === 'vapid' ? 'var(--accent-subtle)' : 'transparent',
+            color: activeTab === 'vapid' ? 'var(--accent-text)' : 'var(--text-secondary)',
+            transition: 'all 0.15s ease',
           }}
         >
           <Globe size={16} /> Web Push (Standard VAPID)
@@ -362,9 +388,9 @@ export default function WebPushPanel() {
               fontSize: '10px',
               padding: '2px 6px',
               borderRadius: '10px',
-              background: vapidConfig.enabled ? '#0d321d' : '#21262d',
-              color: vapidConfig.enabled ? '#3fb950' : '#8b949e',
-              border: `1px solid ${vapidConfig.enabled ? '#238636' : '#30363d'}`,
+              background: vapidConfig.enabled ? 'var(--success-subtle)' : 'var(--main-bg)',
+              color: vapidConfig.enabled ? 'var(--success-text)' : 'var(--text-secondary)',
+              border: `1px solid ${vapidConfig.enabled ? 'var(--success-border)' : 'var(--card-border)'}`,
             }}
           >
             {vapidConfig.enabled ? 'ACTIVE' : 'OFF'}
@@ -376,14 +402,14 @@ export default function WebPushPanel() {
         <div
           style={{
             padding: '12px 16px',
-            borderRadius: '6px',
+            borderRadius: 'var(--radius-md)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            background: statusMsg.type === 'success' ? '#0d321d' : '#3d1618',
-            color: statusMsg.type === 'success' ? '#3fb950' : '#f85149',
-            border: `1px solid ${statusMsg.type === 'success' ? '#238636' : '#da3633'}`,
+            background: statusMsg.type === 'success' ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+            color: statusMsg.type === 'success' ? 'var(--success-text)' : 'var(--danger-text)',
+            border: `1px solid ${statusMsg.type === 'success' ? 'var(--success-border)' : 'var(--danger-border)'}`,
           }}
         >
           {statusMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
@@ -399,27 +425,27 @@ export default function WebPushPanel() {
           {/* Explanation Banner */}
           <div
             style={{
-              background: '#0d1117',
-              border: '1px solid #388bfd',
-              borderRadius: '8px',
+              background: 'var(--accent-subtle)',
+              border: '1px solid var(--accent-border)',
+              borderRadius: 'var(--radius-lg)',
               padding: '16px',
               display: 'flex',
               gap: '12px',
               alignItems: 'flex-start',
             }}
           >
-            <Info size={20} color="#58a6ff" style={{ flexShrink: 0, marginTop: '2px' }} />
-            <div style={{ fontSize: '13px', color: '#c9d1d9', lineHeight: 1.6 }}>
-              <strong style={{ color: '#58a6ff' }}>How FCM Message Delivery Works:</strong>
-              <p style={{ margin: '4px 0 0', color: '#8b949e' }}>
+            <Info size={20} color="var(--accent)" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.6 }}>
+              <strong style={{ color: 'var(--accent-text)' }}>How FCM Message Delivery Works:</strong>
+              <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)' }}>
                 Firebase Cloud Messaging (FCM) requires two parts to deliver notifications to a user:
               </p>
-              <ol style={{ margin: '6px 0 0', paddingLeft: '20px' }}>
+              <ol style={{ margin: '6px 0 0', paddingLeft: '20px', color: 'var(--text-secondary)' }}>
                 <li>
-                  <strong>Backend Service Account</strong> (below): Allows the server to authenticate with Google FCM.
+                  <strong style={{ color: 'var(--text-primary)' }}>Backend Service Account</strong> (below): Allows the server to authenticate with Google FCM.
                 </li>
                 <li>
-                  <strong>Receiver's Device Token</strong> (in the table below): When the receiver opens the mobile app (or web app), their device generates a unique FCM token and sends it to <code>POST /api/notifications/fcm-token</code>.
+                  <strong style={{ color: 'var(--text-primary)' }}>Receiver's Device Token</strong> (in the table below): When the receiver opens the mobile app (or web app), their device generates a unique FCM token and sends it to <code>POST /api/notifications/fcm-token</code>.
                   Without a registered token, FCM has no destination device to deliver the message to.
                 </li>
               </ol>
@@ -428,12 +454,12 @@ export default function WebPushPanel() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '24px', alignItems: 'start' }}>
             {/* FCM Config Form */}
-            <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
+            <div style={cardStyle}>
               <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ margin: 0, color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Flame size={20} color="#f0883e" /> 1. Firebase Service Account Credentials
+                <h3 style={{ margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                  <Flame size={20} color="var(--accent)" /> 1. Firebase Service Account Credentials
                 </h3>
-                <p style={{ margin: '4px 0 0', color: '#8b949e', fontSize: '13px' }}>
+                <p style={{ margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
                   Enables backend server to authenticate with Google FCM and send messages.
                 </p>
               </div>
@@ -441,16 +467,16 @@ export default function WebPushPanel() {
               {/* Quick Import Box */}
               <div
                 style={{
-                  background: '#0d1117',
-                  border: '1px dashed #388bfd',
-                  borderRadius: '8px',
+                  background: 'var(--main-bg)',
+                  border: '1px dashed var(--accent-border)',
+                  borderRadius: 'var(--radius-md)',
                   padding: '14px',
                   marginBottom: '20px',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <FileCode size={16} color="#58a6ff" />
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#f0f6fc' }}>
+                  <FileCode size={16} color="var(--accent)" />
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     Quick Import: Paste Service Account JSON
                   </span>
                 </div>
@@ -458,14 +484,9 @@ export default function WebPushPanel() {
                   rows={2}
                   value={serviceAccountJsonInput}
                   onChange={(e) => handleParseServiceAccountJson(e.target.value)}
-                  placeholder='Paste downloaded Firebase service account JSON here...'
+                  placeholder="Paste downloaded Firebase service account JSON here..."
                   style={{
-                    width: '100%',
-                    background: '#161b22',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    color: '#58a6ff',
+                    ...inputStyle,
                     fontFamily: 'monospace',
                     fontSize: '11px',
                   }}
@@ -478,15 +499,15 @@ export default function WebPushPanel() {
                     type="checkbox"
                     checked={fcmConfig.enabled}
                     onChange={(e) => setFcmConfig({ ...fcmConfig, enabled: e.target.checked })}
-                    style={{ width: '16px', height: '16px', accentColor: '#238636' }}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }}
                   />
-                  <span style={{ color: '#f0f6fc', fontWeight: 500, fontSize: '14px' }}>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 500, fontSize: '14px' }}>
                     Enable Firebase Cloud Messaging (FCM) Globally
                   </span>
                 </label>
 
                 <div>
-                  <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+                  <label style={labelStyle}>
                     Firebase Project ID
                   </label>
                   <Input
@@ -495,20 +516,12 @@ export default function WebPushPanel() {
                     onChange={(e) => setFcmConfig({ ...fcmConfig, projectId: e.target.value })}
                     placeholder="e.g. rebar-optima"
                     required
-                    style={{
-                      width: '100%',
-                      background: '#0d1117',
-                      border: '1px solid #30363d',
-                      borderRadius: '6px',
-                      padding: '8px 12px',
-                      color: '#f0f6fc',
-                      fontSize: '13px',
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+                  <label style={labelStyle}>
                     Client Email
                   </label>
                   <Input
@@ -517,20 +530,12 @@ export default function WebPushPanel() {
                     onChange={(e) => setFcmConfig({ ...fcmConfig, clientEmail: e.target.value })}
                     placeholder="firebase-adminsdk-xxxxx@project.iam.gserviceaccount.com"
                     required
-                    style={{
-                      width: '100%',
-                      background: '#0d1117',
-                      border: '1px solid #30363d',
-                      borderRadius: '6px',
-                      padding: '8px 12px',
-                      color: '#f0f6fc',
-                      fontSize: '13px',
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+                  <label style={labelStyle}>
                     Private Key
                   </label>
                   <Textarea
@@ -539,12 +544,7 @@ export default function WebPushPanel() {
                     onChange={(e) => setFcmConfig({ ...fcmConfig, privateKey: e.target.value })}
                     placeholder="-----BEGIN PRIVATE KEY-----\n..."
                     style={{
-                      width: '100%',
-                      background: '#0d1117',
-                      border: '1px solid #30363d',
-                      borderRadius: '6px',
-                      padding: '8px 12px',
-                      color: '#ff7b72',
+                      ...inputStyle,
                       fontFamily: 'monospace',
                       fontSize: '11px',
                     }}
@@ -556,14 +556,15 @@ export default function WebPushPanel() {
                   disabled={saving}
                   style={{
                     alignSelf: 'flex-start',
-                    background: '#238636',
+                    background: 'var(--accent)',
                     color: '#ffffff',
                     border: 'none',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '9px 18px',
                     fontSize: '13px',
                     fontWeight: 600,
                     cursor: 'pointer',
+                    opacity: saving ? 0.7 : 1,
                   }}
                 >
                   {saving ? 'Saving...' : 'Save FCM Configuration'}
@@ -572,18 +573,18 @@ export default function WebPushPanel() {
             </div>
 
             {/* FCM Test Dispatch Panel */}
-            <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
-              <h3 style={{ margin: '0 0 8px 0', color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ShieldCheck size={18} color="#3fb950" /> 2. Test Connection & Direct Push
+            <div style={cardStyle}>
+              <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                <ShieldCheck size={18} color="var(--success-text)" /> 2. Test Connection & Direct Push
               </h3>
-              <p style={{ margin: '0 0 16px 0', color: '#8b949e', fontSize: '13px' }}>
+              <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
                 Verify Firebase authentication or send a test push directly to any device token.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>
-                    Target Device Token <span style={{ color: '#8b949e' }}>(Optional)</span>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>
+                    Target Device Token <span style={{ color: 'var(--text-label)' }}>(Optional)</span>
                   </label>
                   <Input
                     type="text"
@@ -591,12 +592,7 @@ export default function WebPushPanel() {
                     onChange={(e) => setFcmTargetToken(e.target.value)}
                     placeholder="Paste FCM Device Token here to test sending to a real device"
                     style={{
-                      width: '100%',
-                      background: '#0d1117',
-                      border: '1px solid #30363d',
-                      borderRadius: '6px',
-                      padding: '8px 12px',
-                      color: '#7ee787',
+                      ...inputStyle,
                       fontFamily: 'monospace',
                       fontSize: '11px',
                     }}
@@ -604,38 +600,26 @@ export default function WebPushPanel() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Notification Title</label>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>
+                    Notification Title
+                  </label>
                   <Input
                     type="text"
                     value={testPayload.title}
                     onChange={(e) => setTestPayload({ ...testPayload, title: e.target.value })}
-                    style={{
-                      width: '100%',
-                      background: '#0d1117',
-                      border: '1px solid #30363d',
-                      borderRadius: '6px',
-                      padding: '8px 12px',
-                      color: '#f0f6fc',
-                      fontSize: '13px',
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Notification Body</label>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>
+                    Notification Body
+                  </label>
                   <Textarea
                     rows={2}
                     value={testPayload.body}
                     onChange={(e) => setTestPayload({ ...testPayload, body: e.target.value })}
-                    style={{
-                      width: '100%',
-                      background: '#0d1117',
-                      border: '1px solid #30363d',
-                      borderRadius: '6px',
-                      padding: '8px 12px',
-                      color: '#f0f6fc',
-                      fontSize: '13px',
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
@@ -644,18 +628,19 @@ export default function WebPushPanel() {
                   onClick={handleTestFcm}
                   disabled={testing || !fcmConfig.enabled}
                   style={{
-                    background: '#f0883e',
+                    background: 'var(--accent)',
                     color: '#ffffff',
                     border: 'none',
-                    borderRadius: '6px',
+                    borderRadius: 'var(--radius-md)',
                     padding: '9px 16px',
                     fontSize: '13px',
                     fontWeight: 600,
-                    cursor: 'pointer',
+                    cursor: testing || !fcmConfig.enabled ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '6px',
+                    opacity: testing || !fcmConfig.enabled ? 0.6 : 1,
                   }}
                 >
                   <Send size={14} /> {testing ? 'Testing FCM...' : fcmTargetToken ? 'Send Test Push to Device Token' : 'Verify Firebase Credentials'}
@@ -665,18 +650,18 @@ export default function WebPushPanel() {
               {testResult && (
                 <div
                   style={{
-                    padding: '12px',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    background: testResult.success ? '#0d321d' : '#3d1618',
-                    color: testResult.success ? '#3fb950' : '#f85149',
-                    border: `1px solid ${testResult.success ? '#238636' : '#da3633'}`,
+                    padding: '12px 14px',
+                    borderRadius: 'var(--radius-md)',
+                    fontSize: '13px',
+                    background: testResult.success ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+                    color: testResult.success ? 'var(--success-text)' : 'var(--danger-text)',
+                    border: `1px solid ${testResult.success ? 'var(--success-border)' : 'var(--danger-border)'}`,
                   }}
                 >
                   <div style={{ fontWeight: 600, marginBottom: '4px' }}>
                     {testResult.success ? '✓ Verification Successful!' : '✗ Test Failed'}
                   </div>
-                  <div style={{ whiteSpace: 'pre-wrap' }}>
+                  <div style={{ whiteSpace: 'pre-wrap', fontSize: '12px' }}>
                     {testResult.message || (testResult.success ? 'Firebase Admin SDK connected.' : 'An error occurred.')}
                   </div>
                 </div>
@@ -685,13 +670,13 @@ export default function WebPushPanel() {
           </div>
 
           {/* 3. REGISTERED FCM DEVICES SECTION */}
-          <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
+          <div style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div>
-                <h3 style={{ margin: 0, color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Smartphone size={20} color="#a371f7" /> 3. Active FCM Device Registrations in Database
+                <h3 style={{ margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                  <Smartphone size={20} color="var(--accent)" /> 3. Active FCM Device Registrations in Database
                 </h3>
-                <p style={{ margin: '4px 0 0', color: '#8b949e', fontSize: '13px' }}>
+                <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
                   These are the devices that will receive FCM push notifications when a chat message or event is triggered.
                 </p>
               </div>
@@ -700,10 +685,10 @@ export default function WebPushPanel() {
                 onClick={loadFcmTokens}
                 disabled={loadingTokens}
                 style={{
-                  background: '#21262d',
-                  border: '1px solid #30363d',
-                  color: '#c9d1d9',
-                  borderRadius: '6px',
+                  background: 'var(--main-bg)',
+                  border: '1px solid var(--card-border)',
+                  color: 'var(--text-secondary)',
+                  borderRadius: 'var(--radius-md)',
                   padding: '6px 12px',
                   fontSize: '12px',
                   cursor: 'pointer',
@@ -722,14 +707,14 @@ export default function WebPushPanel() {
                 style={{
                   padding: '24px',
                   textAlign: 'center',
-                  background: '#0d1117',
-                  borderRadius: '6px',
-                  border: '1px dashed #30363d',
-                  color: '#8b949e',
+                  background: 'var(--main-bg)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px dashed var(--card-border)',
+                  color: 'var(--text-secondary)',
                   fontSize: '13px',
                 }}
               >
-                <p style={{ margin: '0 0 8px 0', color: '#e3b341', fontWeight: 600 }}>
+                <p style={{ margin: '0 0 8px 0', color: 'var(--warning-text)', fontWeight: 600 }}>
                   ⚠️ No FCM device tokens currently registered in the database!
                 </p>
                 <p style={{ margin: 0, fontSize: '12px' }}>
@@ -739,23 +724,23 @@ export default function WebPushPanel() {
               </div>
             ) : (
               <div style={{ overflowX: 'auto', marginBottom: '20px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', color: '#c9d1d9' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', color: 'var(--text-secondary)' }}>
                   <thead>
-                    <tr style={{ background: '#0d1117', textAlign: 'left', borderBottom: '1px solid #30363d' }}>
-                      <th style={{ padding: '10px 12px' }}>User</th>
-                      <th style={{ padding: '10px 12px' }}>Platform</th>
-                      <th style={{ padding: '10px 12px' }}>Device Info</th>
-                      <th style={{ padding: '10px 12px' }}>Token</th>
-                      <th style={{ padding: '10px 12px' }}>Registered At</th>
-                      <th style={{ padding: '10px 12px', textAlign: 'right' }}>Actions</th>
+                    <tr style={{ background: 'var(--main-bg)', textAlign: 'left', borderBottom: '1px solid var(--card-border)' }}>
+                      <th style={{ padding: '10px 12px', color: 'var(--text-primary)' }}>User</th>
+                      <th style={{ padding: '10px 12px', color: 'var(--text-primary)' }}>Platform</th>
+                      <th style={{ padding: '10px 12px', color: 'var(--text-primary)' }}>Device Info</th>
+                      <th style={{ padding: '10px 12px', color: 'var(--text-primary)' }}>Token</th>
+                      <th style={{ padding: '10px 12px', color: 'var(--text-primary)' }}>Registered At</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-primary)' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {fcmTokens.map((t) => (
-                      <tr key={t._id} style={{ borderBottom: '1px solid #21262d' }}>
+                      <tr key={t._id} style={{ borderBottom: '1px solid var(--card-border)' }}>
                         <td style={{ padding: '10px 12px' }}>
-                          <div style={{ fontWeight: 600, color: '#f0f6fc' }}>{t.userName}</div>
-                          <div style={{ fontSize: '11px', color: '#8b949e' }}>{t.userEmail} ({t.userId})</div>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t.userName}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{t.userEmail} ({t.userId})</div>
                         </td>
                         <td style={{ padding: '10px 12px' }}>
                           <span
@@ -764,16 +749,16 @@ export default function WebPushPanel() {
                               borderRadius: '10px',
                               fontSize: '11px',
                               fontWeight: 600,
-                              background: t.platform === 'android' ? '#0d321d' : t.platform === 'ios' ? '#1f293d' : '#282210',
-                              color: t.platform === 'android' ? '#3fb950' : t.platform === 'ios' ? '#58a6ff' : '#d29922',
+                              background: t.platform === 'android' ? 'var(--success-subtle)' : t.platform === 'ios' ? 'var(--accent-subtle)' : 'var(--warning-subtle)',
+                              color: t.platform === 'android' ? 'var(--success-text)' : t.platform === 'ios' ? 'var(--accent-text)' : 'var(--warning-text)',
                             }}
                           >
                             {t.platform?.toUpperCase() || 'WEB'}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 12px', color: '#8b949e' }}>{t.deviceInfo || '—'}</td>
-                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#7ee787' }}>{t.tokenSnippet}</td>
-                        <td style={{ padding: '10px 12px', color: '#8b949e' }}>
+                        <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>{t.deviceInfo || '—'}</td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: 'var(--accent-text)' }}>{t.tokenSnippet}</td>
+                        <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>
                           {t.updatedAt ? new Date(t.updatedAt).toLocaleString() : '—'}
                         </td>
                         <td style={{ padding: '10px 12px', textAlign: 'right' }}>
@@ -784,7 +769,7 @@ export default function WebPushPanel() {
                             style={{
                               background: 'transparent',
                               border: 'none',
-                              color: '#f85149',
+                              color: 'var(--danger-text)',
                               cursor: 'pointer',
                               padding: '4px',
                             }}
@@ -803,18 +788,18 @@ export default function WebPushPanel() {
             <div
               style={{
                 marginTop: '16px',
-                background: '#0d1117',
-                border: '1px solid #30363d',
-                borderRadius: '6px',
+                background: 'var(--main-bg)',
+                border: '1px solid var(--card-border)',
+                borderRadius: 'var(--radius-md)',
                 padding: '16px',
               }}
             >
-              <h4 style={{ margin: '0 0 12px 0', color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <PlusCircle size={16} color="#3fb950" /> Attach / Register a Device Token to a User (for Instant Testing)
+              <h4 style={{ margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <PlusCircle size={16} color="var(--success-text)" /> Attach / Register a Device Token to a User (for Instant Testing)
               </h4>
               <form onSubmit={handleRegisterManualToken} style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 1fr 1fr auto', gap: '10px', alignItems: 'end' }}>
                 <div>
-                  <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>User ID</label>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px' }}>User ID</label>
                   <Input
                     type="text"
                     value={manualUserId}
@@ -823,18 +808,18 @@ export default function WebPushPanel() {
                     required
                     style={{
                       width: '100%',
-                      background: '#161b22',
-                      border: '1px solid #30363d',
-                      borderRadius: '4px',
+                      background: 'var(--card-bg)',
+                      border: '1px solid var(--card-border)',
+                      borderRadius: 'var(--radius-sm)',
                       padding: '7px 10px',
-                      color: '#f0f6fc',
+                      color: 'var(--text-primary)',
                       fontSize: '12px',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>FCM Device Token</label>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px' }}>FCM Device Token</label>
                   <Input
                     type="text"
                     value={manualToken}
@@ -843,11 +828,11 @@ export default function WebPushPanel() {
                     required
                     style={{
                       width: '100%',
-                      background: '#161b22',
-                      border: '1px solid #30363d',
-                      borderRadius: '4px',
+                      background: 'var(--card-bg)',
+                      border: '1px solid var(--card-border)',
+                      borderRadius: 'var(--radius-sm)',
                       padding: '7px 10px',
-                      color: '#7ee787',
+                      color: 'var(--accent-text)',
                       fontFamily: 'monospace',
                       fontSize: '11px',
                     }}
@@ -855,17 +840,17 @@ export default function WebPushPanel() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>Platform</label>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px' }}>Platform</label>
                   <Select
                     value={manualPlatform}
                     onChange={(e) => setManualPlatform(e.target.value)}
                     style={{
                       width: '100%',
-                      background: '#161b22',
-                      border: '1px solid #30363d',
-                      borderRadius: '4px',
+                      background: 'var(--card-bg)',
+                      border: '1px solid var(--card-border)',
+                      borderRadius: 'var(--radius-sm)',
                       padding: '7px 10px',
-                      color: '#f0f6fc',
+                      color: 'var(--text-primary)',
                       fontSize: '12px',
                     }}
                   >
@@ -876,7 +861,7 @@ export default function WebPushPanel() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#8b949e', fontSize: '11px', marginBottom: '4px' }}>Device Label</label>
+                  <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px' }}>Device Label</label>
                   <Input
                     type="text"
                     value={manualDeviceInfo}
@@ -884,11 +869,11 @@ export default function WebPushPanel() {
                     placeholder="e.g. Ketan's Phone"
                     style={{
                       width: '100%',
-                      background: '#161b22',
-                      border: '1px solid #30363d',
-                      borderRadius: '4px',
+                      background: 'var(--card-bg)',
+                      border: '1px solid var(--card-border)',
+                      borderRadius: 'var(--radius-sm)',
                       padding: '7px 10px',
-                      color: '#f0f6fc',
+                      color: 'var(--text-primary)',
                       fontSize: '12px',
                     }}
                   />
@@ -898,15 +883,16 @@ export default function WebPushPanel() {
                   type="submit"
                   disabled={registeringManual}
                   style={{
-                    background: '#238636',
+                    background: 'var(--accent)',
                     color: '#ffffff',
                     border: 'none',
-                    borderRadius: '4px',
+                    borderRadius: 'var(--radius-sm)',
                     padding: '7px 14px',
                     fontSize: '12px',
                     fontWeight: 600,
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
+                    opacity: registeringManual ? 0.7 : 1,
                   }}
                 >
                   {registeringManual ? 'Saving...' : 'Register Device'}
@@ -923,13 +909,13 @@ export default function WebPushPanel() {
       {activeTab === 'vapid' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '24px', alignItems: 'start' }}>
           {/* Config Form */}
-          <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
+          <div style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div>
-                <h3 style={{ margin: 0, color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Bell size={20} color="#58a6ff" /> Web Push & VAPID Configuration
+                <h3 style={{ margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                  <Bell size={20} color="var(--accent)" /> Web Push & VAPID Configuration
                 </h3>
-                <p style={{ margin: '4px 0 0', color: '#8b949e', fontSize: '13px' }}>
+                <p style={{ margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
                   Standard browser Web Push (RFC 8291/8292) without vendor lock-in.
                 </p>
               </div>
@@ -941,10 +927,10 @@ export default function WebPushPanel() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  background: '#21262d',
-                  border: '1px solid #30363d',
-                  color: '#58a6ff',
-                  borderRadius: '6px',
+                  background: 'var(--main-bg)',
+                  border: '1px solid var(--card-border)',
+                  color: 'var(--accent-text)',
+                  borderRadius: 'var(--radius-md)',
                   padding: '6px 12px',
                   cursor: 'pointer',
                   fontSize: '12px',
@@ -961,15 +947,15 @@ export default function WebPushPanel() {
                   type="checkbox"
                   checked={vapidConfig.enabled}
                   onChange={(e) => setVapidConfig({ ...vapidConfig, enabled: e.target.checked })}
-                  style={{ width: '16px', height: '16px', accentColor: '#238636' }}
+                  style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }}
                 />
-                <span style={{ color: '#f0f6fc', fontWeight: 500, fontSize: '14px' }}>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 500, fontSize: '14px' }}>
                   Enable Web Push Engine Globally
                 </span>
               </label>
 
               <div>
-                <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+                <label style={labelStyle}>
                   VAPID Subject (mailto: or URL)
                 </label>
                 <Input
@@ -978,20 +964,12 @@ export default function WebPushPanel() {
                   onChange={(e) => setVapidConfig({ ...vapidConfig, subject: e.target.value })}
                   placeholder="mailto:support@rebaroptima.com"
                   required
-                  style={{
-                    width: '100%',
-                    background: '#0d1117',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    color: '#f0f6fc',
-                    fontSize: '13px',
-                  }}
+                  style={inputStyle}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+                <label style={labelStyle}>
                   VAPID Public Key (Safe for client browsers)
                 </label>
                 <Textarea
@@ -1001,12 +979,8 @@ export default function WebPushPanel() {
                   placeholder="BEl62iUYgUivxIkv69yViEuiBIa-Ib9-Skv..."
                   required
                   style={{
-                    width: '100%',
-                    background: '#0d1117',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    color: '#7ee787',
+                    ...inputStyle,
+                    color: 'var(--accent-text)',
                     fontFamily: 'monospace',
                     fontSize: '12px',
                   }}
@@ -1014,7 +988,7 @@ export default function WebPushPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+                <label style={labelStyle}>
                   VAPID Private Key (Encrypted Secret)
                 </label>
                 <Input
@@ -1023,12 +997,7 @@ export default function WebPushPanel() {
                   onChange={(e) => setVapidConfig({ ...vapidConfig, privateKey: e.target.value })}
                   placeholder="Leave blank or unchanged to preserve existing secret"
                   style={{
-                    width: '100%',
-                    background: '#0d1117',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    color: '#ff7b72',
+                    ...inputStyle,
                     fontFamily: 'monospace',
                     fontSize: '12px',
                   }}
@@ -1040,14 +1009,15 @@ export default function WebPushPanel() {
                 disabled={saving}
                 style={{
                   alignSelf: 'flex-start',
-                  background: '#238636',
+                  background: 'var(--accent)',
                   color: '#ffffff',
                   border: 'none',
-                  borderRadius: '6px',
-                  padding: '8px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '9px 18px',
                   fontSize: '13px',
                   fontWeight: 600,
                   cursor: 'pointer',
+                  opacity: saving ? 0.7 : 1,
                 }}
               >
                 {saving ? 'Saving...' : 'Save VAPID Configuration'}
@@ -1056,18 +1026,18 @@ export default function WebPushPanel() {
           </div>
 
           {/* Test Push Dispatcher */}
-          <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 8px 0', color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Send size={18} color="#a371f7" /> Test Push Dispatcher
+          <div style={cardStyle}>
+            <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+              <Send size={18} color="var(--accent)" /> Test Push Dispatcher
             </h3>
-            <p style={{ margin: '0 0 16px 0', color: '#8b949e', fontSize: '13px' }}>
+            <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
               Broadcast a live test push notification to all actively registered browsers.
             </p>
 
-            <div style={{ background: '#0d1117', border: '1px solid #30363d', borderRadius: '6px', padding: '12px', marginBottom: '16px' }}>
+            <div style={{ background: 'var(--main-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius-md)', padding: '12px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '12px', color: '#8b949e', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Laptop size={14} color="#58a6ff" /> Browser Permission: <strong style={{ color: devicePermission === 'granted' ? '#3fb950' : '#d29922' }}>{devicePermission}</strong>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Laptop size={14} color="var(--accent)" /> Browser Permission: <strong style={{ color: devicePermission === 'granted' ? 'var(--success-text)' : 'var(--warning-text)' }}>{devicePermission}</strong>
                 </span>
               </div>
               <button
@@ -1076,11 +1046,11 @@ export default function WebPushPanel() {
                 disabled={subscribingDevice || !vapidConfig.enabled}
                 style={{
                   width: '100%',
-                  background: '#21262d',
-                  color: '#58a6ff',
-                  border: '1px solid #388bfd',
-                  borderRadius: '6px',
-                  padding: '7px 12px',
+                  background: 'var(--accent-subtle)',
+                  color: 'var(--accent-text)',
+                  border: '1px solid var(--accent-border)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '8px 12px',
                   fontSize: '12px',
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -1088,6 +1058,7 @@ export default function WebPushPanel() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
+                  opacity: subscribingDevice || !vapidConfig.enabled ? 0.6 : 1,
                 }}
               >
                 <Bell size={13} /> {subscribingDevice ? 'Registering Device...' : '1. Register This Browser Device'}
@@ -1096,38 +1067,26 @@ export default function WebPushPanel() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
               <div>
-                <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Notification Title</label>
+                <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>
+                  Notification Title
+                </label>
                 <Input
                   type="text"
                   value={testPayload.title}
                   onChange={(e) => setTestPayload({ ...testPayload, title: e.target.value })}
-                  style={{
-                    width: '100%',
-                    background: '#0d1117',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    color: '#f0f6fc',
-                    fontSize: '13px',
-                  }}
+                  style={inputStyle}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>Message Body</label>
+                <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>
+                  Message Body
+                </label>
                 <Textarea
                   rows={2}
                   value={testPayload.body}
                   onChange={(e) => setTestPayload({ ...testPayload, body: e.target.value })}
-                  style={{
-                    width: '100%',
-                    background: '#0d1117',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    color: '#f0f6fc',
-                    fontSize: '13px',
-                  }}
+                  style={inputStyle}
                 />
               </div>
 
@@ -1136,18 +1095,19 @@ export default function WebPushPanel() {
                 onClick={handleTestVapid}
                 disabled={testing || !vapidConfig.enabled}
                 style={{
-                  background: '#8957e5',
+                  background: 'var(--accent)',
                   color: '#ffffff',
                   border: 'none',
-                  borderRadius: '6px',
-                  padding: '8px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '9px 16px',
                   fontSize: '13px',
                   fontWeight: 600,
-                  cursor: 'pointer',
+                  cursor: testing || !vapidConfig.enabled ? 'not-allowed' : 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
+                  opacity: testing || !vapidConfig.enabled ? 0.6 : 1,
                 }}
               >
                 <Send size={14} /> {testing ? 'Sending Push...' : '2. Send Test Notification'}
@@ -1157,19 +1117,19 @@ export default function WebPushPanel() {
             {testResult && (
               <div
                 style={{
-                  padding: '12px',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  background: testResult.success ? '#0d321d' : '#3d1618',
-                  color: testResult.success ? '#3fb950' : '#f85149',
-                  border: `1px solid ${testResult.success ? '#238636' : '#da3633'}`,
+                  padding: '12px 14px',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: '13px',
+                  background: testResult.success ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+                  color: testResult.success ? 'var(--success-text)' : 'var(--danger-text)',
+                  border: `1px solid ${testResult.success ? 'var(--success-border)' : 'var(--danger-border)'}`,
                 }}
               >
                 <div style={{ fontWeight: 600, marginBottom: '4px' }}>
                   {testResult.success ? `✓ Dispatched to ${testResult.sentCount} subscriber(s)!` : '✗ Dispatch failed'}
                 </div>
                 {testResult.errors && testResult.errors.length > 0 && (
-                  <ul style={{ margin: '4px 0 0', paddingLeft: '16px' }}>
+                  <ul style={{ margin: '4px 0 0', paddingLeft: '16px', fontSize: '12px' }}>
                     {testResult.errors.map((err, i) => (
                       <li key={i}>{typeof err === 'object' ? err.error || JSON.stringify(err) : String(err)}</li>
                     ))}

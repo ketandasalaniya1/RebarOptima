@@ -71,11 +71,37 @@ export default function SmtpPanel() {
     }
   };
 
+  const cardStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    borderRadius: 'var(--radius-lg)',
+    boxShadow: 'var(--shadow-card)',
+    padding: '24px',
+  };
+
+  const inputStyle = {
+    width: '100%',
+    background: 'var(--main-bg)',
+    border: '1px solid var(--card-border)',
+    borderRadius: 'var(--radius-md)',
+    padding: '9px 12px',
+    color: 'var(--text-primary)',
+    fontSize: '13px',
+  };
+
+  const labelStyle = {
+    display: 'block',
+    color: 'var(--text-secondary)',
+    fontSize: '12px',
+    fontWeight: 600,
+    marginBottom: '6px',
+  };
+
   if (loading) {
     return (
-      <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-        <RefreshCw className="spin" size={24} style={{ marginBottom: '8px' }} />
-        <p>Loading SMTP configuration...</p>
+      <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+        <RefreshCw className="spin" size={24} style={{ marginBottom: '12px', color: 'var(--accent)' }} />
+        <p style={{ margin: 0, fontSize: '13px' }}>Loading SMTP configuration...</p>
       </div>
     );
   }
@@ -83,12 +109,12 @@ export default function SmtpPanel() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '24px', alignItems: 'start' }}>
       {/* Settings Form */}
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
+      <div style={cardStyle}>
         <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ margin: 0, color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Mail size={20} color="#58a6ff" /> Global SMTP Email Gateway
+          <h3 style={{ margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+            <Mail size={20} color="var(--accent)" /> Global SMTP Email Gateway
           </h3>
-          <p style={{ margin: '4px 0 0', color: '#8b949e', fontSize: '13px' }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5 }}>
             Configure transactional email delivery for user invitations, password resets, and automated project reports.
           </p>
         </div>
@@ -96,16 +122,16 @@ export default function SmtpPanel() {
         {statusMsg && (
           <div
             style={{
-              padding: '12px',
-              borderRadius: '6px',
+              padding: '12px 14px',
+              borderRadius: 'var(--radius-md)',
               marginBottom: '16px',
               fontSize: '13px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: statusMsg.type === 'success' ? '#0d321d' : '#3d1618',
-              color: statusMsg.type === 'success' ? '#3fb950' : '#f85149',
-              border: `1px solid ${statusMsg.type === 'success' ? '#238636' : '#da3633'}`,
+              background: statusMsg.type === 'success' ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+              color: statusMsg.type === 'success' ? 'var(--success-text)' : 'var(--danger-text)',
+              border: `1px solid ${statusMsg.type === 'success' ? 'var(--success-border)' : 'var(--danger-border)'}`,
             }}
           >
             {statusMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
@@ -119,16 +145,16 @@ export default function SmtpPanel() {
               type="checkbox"
               checked={config.enabled}
               onChange={(e) => setConfig({ ...config, enabled: e.target.checked })}
-              style={{ width: '16px', height: '16px', accentColor: '#238636' }}
+              style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }}
             />
-            <span style={{ color: '#f0f6fc', fontWeight: 500, fontSize: '14px' }}>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 500, fontSize: '14px' }}>
               Enable SMTP Outgoing Email Globally
             </span>
           </label>
 
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={labelStyle}>
                 SMTP Host
               </label>
               <Input
@@ -137,19 +163,11 @@ export default function SmtpPanel() {
                 onChange={(e) => setConfig({ ...config, host: e.target.value })}
                 placeholder="smtp.sendgrid.net or smtp.gmail.com"
                 required
-                style={{
-                  width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#f0f6fc',
-                  fontSize: '13px',
-                }}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={labelStyle}>
                 Port
               </label>
               <Input
@@ -161,15 +179,7 @@ export default function SmtpPanel() {
                   if (!config.port) setConfig((prev) => ({ ...prev, port: 587 }));
                 }}
                 required
-                style={{
-                  width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#f0f6fc',
-                  fontSize: '13px',
-                }}
+                style={inputStyle}
               />
             </div>
           </div>
@@ -179,16 +189,16 @@ export default function SmtpPanel() {
               type="checkbox"
               checked={config.secure}
               onChange={(e) => setConfig({ ...config, secure: e.target.checked })}
-              style={{ width: '16px', height: '16px', accentColor: '#238636' }}
+              style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }}
             />
-            <span style={{ color: '#c9d1d9', fontSize: '13px' }}>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
               SSL / TLS Encryption (Port 465). Uncheck for Port 587 / STARTTLS.
             </span>
           </label>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={labelStyle}>
                 Username / API Key
               </label>
               <Input
@@ -196,19 +206,11 @@ export default function SmtpPanel() {
                 value={config.username || ''}
                 onChange={(e) => setConfig({ ...config, username: e.target.value })}
                 placeholder="apikey or user@example.com"
-                style={{
-                  width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#f0f6fc',
-                  fontSize: '13px',
-                }}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={labelStyle}>
                 Password / API Secret
               </label>
               <Input
@@ -216,22 +218,14 @@ export default function SmtpPanel() {
                 value={config.password || ''}
                 onChange={(e) => setConfig({ ...config, password: e.target.value })}
                 placeholder="••••••••"
-                style={{
-                  width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#f0f6fc',
-                  fontSize: '13px',
-                }}
+                style={inputStyle}
               />
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={labelStyle}>
                 From Sender Name
               </label>
               <Input
@@ -240,19 +234,11 @@ export default function SmtpPanel() {
                 onChange={(e) => setConfig({ ...config, fromName: e.target.value })}
                 placeholder="Rebar Optima Notifications"
                 required
-                style={{
-                  width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#f0f6fc',
-                  fontSize: '13px',
-                }}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+              <label style={labelStyle}>
                 From Email Address
               </label>
               <Input
@@ -261,21 +247,13 @@ export default function SmtpPanel() {
                 onChange={(e) => setConfig({ ...config, fromEmail: e.target.value })}
                 placeholder="noreply@rebaroptima.com"
                 required
-                style={{
-                  width: '100%',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#f0f6fc',
-                  fontSize: '13px',
-                }}
+                style={inputStyle}
               />
             </div>
           </div>
 
           <div>
-            <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
+            <label style={labelStyle}>
               Reply-To Address (Optional)
             </label>
             <Input
@@ -283,15 +261,7 @@ export default function SmtpPanel() {
               value={config.replyTo || ''}
               onChange={(e) => setConfig({ ...config, replyTo: e.target.value })}
               placeholder="support@rebaroptima.com"
-              style={{
-                width: '100%',
-                background: '#0d1117',
-                border: '1px solid #30363d',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                color: '#f0f6fc',
-                fontSize: '13px',
-              }}
+              style={inputStyle}
             />
           </div>
 
@@ -300,14 +270,16 @@ export default function SmtpPanel() {
             disabled={saving}
             style={{
               alignSelf: 'flex-start',
-              background: '#238636',
+              background: 'var(--accent)',
               color: '#ffffff',
               border: 'none',
-              borderRadius: '6px',
-              padding: '8px 16px',
+              borderRadius: 'var(--radius-md)',
+              padding: '9px 18px',
               fontSize: '13px',
               fontWeight: 600,
               cursor: 'pointer',
+              opacity: saving ? 0.7 : 1,
+              marginTop: '4px',
             }}
           >
             {saving ? 'Saving...' : 'Save Configuration'}
@@ -316,17 +288,17 @@ export default function SmtpPanel() {
       </div>
 
       {/* Diagnostics & Test Email Dispatcher */}
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '24px' }}>
-        <h3 style={{ margin: '0 0 8px 0', color: '#f0f6fc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShieldCheck size={18} color="#3fb950" /> Live SMTP Connection Tester
+      <div style={cardStyle}>
+        <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+          <ShieldCheck size={18} color="var(--success-text)" /> Live SMTP Connection Tester
         </h3>
-        <p style={{ margin: '0 0 16px 0', color: '#8b949e', fontSize: '13px' }}>
+        <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5 }}>
           Perform a socket handshake test with your SMTP host and optionally send a live test message.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={{ display: 'block', color: '#c9d1d9', fontSize: '12px', marginBottom: '4px' }}>
+            <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>
               Test Recipient Email (Optional)
             </label>
             <Input
@@ -334,15 +306,7 @@ export default function SmtpPanel() {
               value={testRecipient}
               onChange={(e) => setTestRecipient(e.target.value)}
               placeholder="developer@yourcompany.com"
-              style={{
-                width: '100%',
-                background: '#0d1117',
-                border: '1px solid #30363d',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                color: '#f0f6fc',
-                fontSize: '13px',
-              }}
+              style={inputStyle}
             />
           </div>
 
@@ -351,18 +315,19 @@ export default function SmtpPanel() {
             onClick={handleTest}
             disabled={testing || !config.host}
             style={{
-              background: '#1f6feb',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '8px 16px',
+              background: 'var(--accent-subtle)',
+              color: 'var(--accent-text)',
+              border: '1px solid var(--accent-border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '9px 16px',
               fontSize: '13px',
               fontWeight: 600,
-              cursor: 'pointer',
+              cursor: testing || !config.host ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
+              opacity: testing || !config.host ? 0.6 : 1,
             }}
           >
             <Send size={14} /> {testing ? 'Testing Handshake...' : 'Run SMTP Verification Test'}
@@ -372,18 +337,18 @@ export default function SmtpPanel() {
         {testResult && (
           <div
             style={{
-              padding: '12px',
-              borderRadius: '6px',
-              fontSize: '12px',
-              background: testResult.success ? '#0d321d' : '#3d1618',
-              color: testResult.success ? '#3fb950' : '#f85149',
-              border: `1px solid ${testResult.success ? '#238636' : '#da3633'}`,
+              padding: '12px 14px',
+              borderRadius: 'var(--radius-md)',
+              fontSize: '13px',
+              background: testResult.success ? 'var(--success-subtle)' : 'var(--danger-subtle)',
+              color: testResult.success ? 'var(--success-text)' : 'var(--danger-text)',
+              border: `1px solid ${testResult.success ? 'var(--success-border)' : 'var(--danger-border)'}`,
             }}
           >
             <div style={{ fontWeight: 600, marginBottom: '4px' }}>
               {testResult.success ? '✓ Verification Succeeded!' : '✗ Verification Failed'}
             </div>
-            <p style={{ margin: 0, wordBreak: 'break-word' }}>{testResult.message}</p>
+            <p style={{ margin: 0, wordBreak: 'break-word', fontSize: '12px' }}>{testResult.message}</p>
           </div>
         )}
       </div>

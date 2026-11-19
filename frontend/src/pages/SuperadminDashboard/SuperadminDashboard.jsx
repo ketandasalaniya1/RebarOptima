@@ -16,7 +16,7 @@ import SmtpPanel from './components/SmtpPanel';
 import TemplatesPanel from './components/TemplatesPanel';
 import DeliveryLogsPanel from './components/DeliveryLogsPanel';
 import SystemHealthPanel from './components/SystemHealthPanel';
-import { Input, Select } from '../../components/ui';
+import { Input, Select, KpiCard } from '../../components/ui';
 
 export default function SuperadminDashboard() {
   const dispatch = useDispatch();
@@ -238,34 +238,26 @@ export default function SuperadminDashboard() {
 
         {/* Stats Row */}
         <section className="dev-metrics-row">
-          <div className="dev-metric-card">
-            <div className="dev-metric-info">
-              <span className="dev-metric-label">Builder Firms</span>
-              <span className="dev-metric-value">{stats?.totalCompanies ?? '—'}</span>
-            </div>
-            <div className="dev-metric-icon purple"><Building2 size={22} /></div>
-          </div>
-          <div className="dev-metric-card">
-            <div className="dev-metric-info">
-              <span className="dev-metric-label">Active Firms</span>
-              <span className="dev-metric-value">{stats?.activeCompanies ?? '—'}</span>
-            </div>
-            <div className="dev-metric-icon green"><CheckCircle size={22} /></div>
-          </div>
-          <div className="dev-metric-card">
-            <div className="dev-metric-info">
-              <span className="dev-metric-label">Total Users</span>
-              <span className="dev-metric-value">{stats?.totalUsers ?? '—'}</span>
-            </div>
-            <div className="dev-metric-icon blue"><Users size={22} /></div>
-          </div>
-          <div className="dev-metric-card">
-            <div className="dev-metric-info">
-              <span className="dev-metric-label">Active Subscriptions</span>
-              <span className="dev-metric-value">{stats?.totalSubscriptions ?? '—'}</span>
-            </div>
-            <div className="dev-metric-icon orange"><CreditCard size={22} /></div>
-          </div>
+          <KpiCard
+            title="Builder Firms"
+            value={stats?.totalCompanies ?? '—'}
+            icon={Building2}
+          />
+          <KpiCard
+            title="Active Firms"
+            value={stats?.activeCompanies ?? '—'}
+            icon={CheckCircle}
+          />
+          <KpiCard
+            title="Total Users"
+            value={stats?.totalUsers ?? '—'}
+            icon={Users}
+          />
+          <KpiCard
+            title="Active Subscriptions"
+            value={stats?.totalSubscriptions ?? '—'}
+            icon={CreditCard}
+          />
         </section>
 
         {/* Tab Bar */}
@@ -275,8 +267,9 @@ export default function SuperadminDashboard() {
               key={tab.id}
               className={`dev-tab ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
+              title={tab.label}
             >
-              {tab.icon} {tab.label}
+              {tab.icon} <span>{tab.label}</span>
             </button>
           ))}
         </div>

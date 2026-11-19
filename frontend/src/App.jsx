@@ -55,6 +55,7 @@ import GeofenceConfigModal from './components/ProjectModals/GeofenceConfigModal'
 import AssignPartnerModal from './components/ProjectModals/AssignPartnerModal';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import ChatNotificationToaster from './components/ChatNotificationToaster/ChatNotificationToaster';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
 
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
@@ -496,6 +497,7 @@ function App() {
         <div className="app-workspace">
           <SideNavbar currentView={view} onViewChange={handleNavigate} onLogout={handleLogout} />
           <div className="main-viewport">
+            <ErrorBoundary>
             <Breadcrumbs />
             {view === 'overview' && <OverviewPage onNavigate={handleNavigate} />}
             {view === 'projects' && <ProjectsPage />}
@@ -617,6 +619,7 @@ function App() {
               <BbsReportsPage />
             )}
 
+            </ErrorBoundary>
           </div>
         </div>
       ) : (

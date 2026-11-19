@@ -29,10 +29,12 @@ import EntryDrawer from './components/EntryDrawer';
 import Lightbox from './components/Lightbox';
 import SettingsModal from './components/SettingsModal';
 import NewSiteModal from './components/NewSiteModal';
-
+import { useActiveProject } from '../../hooks/useActiveProject';
 import './PettyCashPage.css';
 
 export default function PettyCashPage() {
+  const { projectId: activeProjectId, selectedProject, projectEpoch } = useActiveProject();
+
   // ── LOGGED IN USER CONTEXT ────────────────────────────────────────────────
   const currentUser = useMemo(() => {
     try {
@@ -202,14 +204,26 @@ export default function PettyCashPage() {
     loadSites();
     loadCategories();
     loadPersons();
-  }, []);
+  }, [projectEpoch]);
+
+  // Synchronize site with active global project when project changes
+  useEffect(() => {
+    if (selectedProject?.name && sites.length > 0) {
+      const match = sites.find(
+        (s) => (s.name || '').trim().toLowerCase() === (selectedProject.name || '').trim().toLowerCase()
+      );
+      if (match && selectedSiteName !== match.name) {
+        setSelectedSiteName(match.name);
+      }
+    }
+  }, [selectedProject?.name, sites]);
 
   // When selected site or filters change, load transactions
   useEffect(() => {
     if (selectedSiteName) {
       loadTransactions();
     }
-  }, [selectedSiteName, startDate, endDate, typeFilter, categoryFilter, personFilter, statusFilter]);
+  }, [selectedSiteName, startDate, endDate, typeFilter, categoryFilter, personFilter, statusFilter, projectEpoch]);
 
   // ── AUTO-DISMISS SUCCESS BANNER ───────────────────────────────────────────
   useEffect(() => {
@@ -228,6 +242,12 @@ export default function PettyCashPage() {
         setSites(res.data);
         if (res.data.length > 0) {
           setSelectedSiteName((prev) => {
+            if (selectedProject?.name) {
+              const matchedSite = res.data.find(
+                (s) => (s.name || '').trim().toLowerCase() === (selectedProject.name || '').trim().toLowerCase()
+              );
+              if (matchedSite) return matchedSite.name;
+            }
             if (prev && res.data.some((s) => s.name === prev)) return prev;
             return res.data[0].name;
           });

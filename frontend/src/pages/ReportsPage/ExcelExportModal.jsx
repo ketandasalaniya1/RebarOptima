@@ -22,8 +22,6 @@ export default function ExcelExportModal({
   onExport,
   loading = false,
 }) {
-  if (!isOpen) return null;
-
   const todayStr = new Date().toISOString().split('T')[0];
   const firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
 
@@ -31,6 +29,8 @@ export default function ExcelExportModal({
   const [startDate, setStartDate] = useState(firstOfMonth);
   const [endDate, setEndDate] = useState(todayStr);
   const [selectedProjectId, setSelectedProjectId] = useState(activeProjectId || 'all');
+
+  if (!isOpen) return null;
 
   const handleExport = () => {
     onExport({

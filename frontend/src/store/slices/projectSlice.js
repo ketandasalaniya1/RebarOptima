@@ -2,13 +2,33 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const ACTIVE_PROJECT_KEY = 'rebar_active_project_id';
 
+const safeStorage = {
+  getItem: (key) => {
+    try {
+      return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (key, val) => {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.setItem(key, val);
+    } catch {}
+  },
+  removeItem: (key) => {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.removeItem(key);
+    } catch {}
+  },
+};
+
 const projectSlice = createSlice({
   name: 'project',
   initialState: {
     projects: [],
     selectedProject: null,
     /** Hint from localStorage only — never proof of authorization */
-    storedProjectHint: typeof localStorage !== 'undefined' ? localStorage.getItem(ACTIVE_PROJECT_KEY) : null,
+    storedProjectHint: safeStorage.getItem(ACTIVE_PROJECT_KEY),
     projectsReady: false,
     projectValidated: false,
     /** Bumped on every project switch so in-flight fetches can be ignored */
@@ -43,13 +63,13 @@ const projectSlice = createSlice({
       state.projectValidated = !!action.payload;
       if (action.payload) {
         const id = action.payload._id || action.payload.id;
-        localStorage.setItem(ACTIVE_PROJECT_KEY, id);
+        safeStorage.setItem(ACTIVE_PROJECT_KEY, id);
         state.storedProjectHint = id;
         if (String(prevId) !== String(id)) {
           state.projectEpoch += 1;
         }
       } else {
-        localStorage.removeItem(ACTIVE_PROJECT_KEY);
+        safeStorage.removeItem(ACTIVE_PROJECT_KEY);
         state.storedProjectHint = null;
         state.projectEpoch += 1;
       }
@@ -61,7 +81,7 @@ const projectSlice = createSlice({
         const prevId = state.selectedProject?._id || state.selectedProject?.id;
         state.selectedProject = found;
         state.projectValidated = true;
-        localStorage.setItem(ACTIVE_PROJECT_KEY, id);
+        safeStorage.setItem(ACTIVE_PROJECT_KEY, id);
         state.storedProjectHint = id;
         if (String(prevId) !== String(id)) {
           state.projectEpoch += 1;
@@ -74,7 +94,7 @@ const projectSlice = createSlice({
       state.projectValidated = true;
       state.projectsReady = true;
       const id = action.payload._id || action.payload.id;
-      localStorage.setItem(ACTIVE_PROJECT_KEY, id);
+      safeStorage.setItem(ACTIVE_PROJECT_KEY, id);
       state.storedProjectHint = id;
       state.projectEpoch += 1;
     },
@@ -100,7 +120,7 @@ const projectSlice = createSlice({
       state.projectEpoch += 1;
       state.loading = false;
       state.error = null;
-      localStorage.removeItem(ACTIVE_PROJECT_KEY);
+      safeStorage.removeItem(ACTIVE_PROJECT_KEY);
     },
     setProjectValidated: (state, action) => {
       state.projectValidated = !!action.payload;

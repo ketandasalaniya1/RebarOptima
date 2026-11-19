@@ -11,8 +11,6 @@ export default function ReportBuilderModal({
   onGeneratePdf,
   loading = false,
 }) {
-  if (!isOpen) return null;
-
   const todayStr = new Date().toISOString().split('T')[0];
   const defaultStart = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
 
@@ -41,6 +39,8 @@ export default function ReportBuilderModal({
     inventory: true,
     manpower: true,
   });
+
+  if (!isOpen) return null;
 
   const toggleSectionGroup = (key) => {
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));

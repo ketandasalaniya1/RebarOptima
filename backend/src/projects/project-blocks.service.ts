@@ -8,6 +8,11 @@ export type BlockInput = {
   name: string;
   code?: string;
   description?: string;
+  floorNumber?: number;
+  unitNumber?: string;
+  configuration?: string;
+  carpetAreaSqFt?: number;
+  askingPrice?: number;
 };
 
 export function normalizeBlockName(name: string): string {
@@ -45,7 +50,7 @@ export function validateBlocksPayload(blocks: unknown): {
       typeof raw === 'string'
         ? raw
         : raw && typeof raw === 'object'
-          ? String((raw as any).name || '')
+          ? String((raw as any).name || (raw as any).buildingTower || '')
           : '';
     const trimmed = name.trim();
     if (!trimmed) {
@@ -69,6 +74,24 @@ export function validateBlocksPayload(blocks: unknown): {
       if ((raw as any).code !== undefined) item.code = String((raw as any).code || '').trim();
       if ((raw as any).description !== undefined) {
         item.description = String((raw as any).description || '').trim();
+      }
+      if ((raw as any).floorNumber !== undefined && (raw as any).floorNumber !== null && (raw as any).floorNumber !== '') {
+        const fn = Number((raw as any).floorNumber);
+        if (!isNaN(fn)) item.floorNumber = fn;
+      }
+      if ((raw as any).unitNumber !== undefined && (raw as any).unitNumber !== null) {
+        item.unitNumber = String((raw as any).unitNumber || '').trim();
+      }
+      if ((raw as any).configuration !== undefined && (raw as any).configuration !== null) {
+        item.configuration = String((raw as any).configuration || '').trim();
+      }
+      if ((raw as any).carpetAreaSqFt !== undefined && (raw as any).carpetAreaSqFt !== null && (raw as any).carpetAreaSqFt !== '') {
+        const ca = Number((raw as any).carpetAreaSqFt);
+        if (!isNaN(ca)) item.carpetAreaSqFt = ca;
+      }
+      if ((raw as any).askingPrice !== undefined && (raw as any).askingPrice !== null && (raw as any).askingPrice !== '') {
+        const ap = Number((raw as any).askingPrice);
+        if (!isNaN(ap)) item.askingPrice = ap;
       }
     }
     items.push(item);
@@ -117,31 +140,89 @@ export async function listProjectBlocks(
     .sort({ displayOrder: 1, createdAt: 1 })
     .toArray();
 
-  // Enrich each block with live floor and unit counts
-  const enriched = await Promise.all(
-    blocks.map(async (b: any) => {
-      const bId = String(b._id || b.id);
-      const floorsColl = db.collection('project_floors');
-      const unitsColl = db.collection('crm_units');
+  let targetBlocks = blocks || [];
+  if (!targetBlocks || targetBlocks.length === 0) {
+    // Safe backward compatibility fallback to legacy module blocks
+    try {
+      const castingColl = db.collection('casting_blocks');
+      if (castingColl && typeof castingColl.find === 'function') {
+        const castingBlocks = await castingColl
+          .find({ projectId: String(projectId), isDeleted: { $ne: true } })
+          .toArray();
+        if (castingBlocks && castingBlocks.length > 0) {
+          targetBlocks = castingBlocks.map((b: any, idx: number) => ({
+            _id: b._id,
+            id: String(b._id),
+            companyId: b.companyId,
+            projectId: String(projectId),
+            name: b.name,
+            code: b.code || '',
+            description: b.description || '',
+            displayOrder: b.displayOrder || idx + 1,
+            status: b.status || 'active',
+            isDeleted: false,
+            isLegacyFallback: true,
+          }));
+        }
+      }
 
+      if (!targetBlocks || targetBlocks.length === 0) {
+        const bbsColl = db.collection('bbs_blocks');
+        if (bbsColl && typeof bbsColl.find === 'function') {
+          const bbsBlocks = await bbsColl
+            .find({ projectId: String(projectId) })
+            .toArray();
+          if (bbsBlocks && bbsBlocks.length > 0) {
+            targetBlocks = bbsBlocks.map((b: any, idx: number) => ({
+              _id: b._id,
+              id: String(b._id),
+              companyId: b.companyId,
+              projectId: String(projectId),
+              name: b.name,
+              code: b.code || '',
+              description: b.description || '',
+              displayOrder: b.displayOrder || idx + 1,
+              status: 'active',
+              isDeleted: false,
+              isLegacyFallback: true,
+            }));
+          }
+        }
+      }
+    } catch (_e) {
+      // Non-fatal fallback query error
+    }
+  }
+
+  // Enrich each block with live floor and unit counts
+  const floorsColl = db.collection('project_floors');
+  const unitsColl = db.collection('crm_units');
+
+  const enriched = await Promise.all(
+    (targetBlocks || []).map(async (b: any) => {
+      const bId = String(b._id || b.id);
       const floorCount =
         typeof floorsColl?.countDocuments === 'function'
-          ? await floorsColl.countDocuments({
-              $or: [{ blockId: bId }, { blockId: b._id }],
-              isDeleted: { $ne: true },
-            }).catch(() => 0)
+          ? await floorsColl
+              .countDocuments({
+                $or: [{ blockId: bId }, { blockId: b._id }],
+                isDeleted: { $ne: true },
+              })
+              .catch(() => 0)
           : 0;
 
       const unitCount =
         typeof unitsColl?.countDocuments === 'function'
-          ? await unitsColl.countDocuments({
-              $or: [
-                { blockId: bId },
-                { blockId: b._id },
-                { buildingTower: b.name },
-              ],
-              isDeleted: { $ne: true },
-            }).catch(() => 0)
+          ? await unitsColl
+              .countDocuments({
+                $or: [
+                  { blockId: bId },
+                  { blockId: b._id },
+                  { buildingTower: b.name },
+                ],
+                isDeleted: { $ne: true },
+              })
+              .catch(() => 0)
           : 0;
 
       return {
@@ -203,6 +284,45 @@ export async function assertBlockInProject(
       }
       return { project, block: blockAlt };
     }
+
+    // Check fallback legacy collections before failing
+    try {
+      const castingBlock = await db.collection('casting_blocks')?.findOne?.({
+        ...blockIdQuery(String(blockId)),
+        projectId: pId,
+        isDeleted: { $ne: true },
+      });
+      if (castingBlock) {
+        return {
+          project,
+          block: {
+            ...castingBlock,
+            id: String(castingBlock._id),
+            status: castingBlock.status || 'active',
+            isLegacyFallback: true,
+          },
+        };
+      }
+
+      const bbsBlock = await db.collection('bbs_blocks')?.findOne?.({
+        ...blockIdQuery(String(blockId)),
+        projectId: pId,
+      });
+      if (bbsBlock) {
+        return {
+          project,
+          block: {
+            ...bbsBlock,
+            id: String(bbsBlock._id),
+            status: bbsBlock.status || 'active',
+            isLegacyFallback: true,
+          },
+        };
+      }
+    } catch (_e) {
+      // Non-fatal check
+    }
+
     const err: any = new Error('Block not found in this project');
     err.status = 404;
     err.code = 'BLOCK_NOT_FOUND';
@@ -238,6 +358,11 @@ function buildBlockDocs(
       nameLower: normalizeBlockName(item.name),
       code: item.code || '',
       description: item.description || '',
+      floorNumber: item.floorNumber !== undefined ? item.floorNumber : null,
+      unitNumber: item.unitNumber || '',
+      configuration: item.configuration || '',
+      carpetAreaSqFt: item.carpetAreaSqFt !== undefined ? item.carpetAreaSqFt : null,
+      askingPrice: item.askingPrice !== undefined ? item.askingPrice : null,
       displayOrder: startOrder + idx,
       status: 'active',
       isDeleted: false,
@@ -394,6 +519,52 @@ export async function createBlockForProject(params: {
     { _id: project._id },
     { $set: { blockCount: count + 1, updatedAt: now } },
   );
+
+  // If unitNumber is specified, safely synchronize/create the unit in crm_units
+  if (item.unitNumber) {
+    try {
+      const cleanTower = item.name.trim().toUpperCase();
+      const unitCode = `${cleanTower}-${item.unitNumber.trim()}`.toUpperCase();
+      const calculatedBasePrice = Number(item.askingPrice) || ((Number(item.carpetAreaSqFt) || 1000) * 6000);
+      const crmUnitDoc = {
+        companyId: ctx.companyId,
+        projectId: ObjectId.isValid(pId) && pId.length === 24 ? new ObjectId(pId) : pId,
+        projectName: project.name,
+        blockId: doc._id,
+        unitCode,
+        buildingTower: cleanTower,
+        floorNumber: Number(item.floorNumber) || 1,
+        unitNumber: item.unitNumber.trim(),
+        configuration: item.configuration || '2BHK',
+        propertyType: 'Apartment',
+        carpetAreaSqFt: Number(item.carpetAreaSqFt) || 0,
+        saleableAreaSqFt: Number(item.carpetAreaSqFt) || 0,
+        basePrice: calculatedBasePrice,
+        askingPrice: Number(item.askingPrice) || calculatedBasePrice,
+        availabilityStatus: 'Available',
+        heldUntil: null,
+        heldByCustomerId: null,
+        activeBookingId: null,
+        facing: 'East',
+        notes: item.description || '',
+        createdAt: now,
+        updatedAt: now,
+      };
+      if (typeof db.collection === 'function') {
+        const crmUnits = db.collection('crm_units');
+        if (crmUnits && typeof crmUnits.updateOne === 'function') {
+          await crmUnits.updateOne(
+            { companyId: ctx.companyId, projectId: crmUnitDoc.projectId, unitCode },
+            { $setOnInsert: crmUnitDoc },
+            { upsert: true }
+          );
+        }
+      }
+    } catch (errSync: any) {
+      console.warn('Sync to crm_units skipped:', errSync?.message || errSync);
+    }
+  }
+
   return doc;
 }
 
@@ -408,6 +579,11 @@ export async function updateBlockForProject(params: {
     description?: string;
     displayOrder?: number;
     status?: string;
+    floorNumber?: number;
+    unitNumber?: string;
+    configuration?: string;
+    carpetAreaSqFt?: number;
+    askingPrice?: number;
   };
 }): Promise<any> {
   const { db, ctx, projectId, blockId, patch } = params;
@@ -438,6 +614,11 @@ export async function updateBlockForProject(params: {
   if (patch.code !== undefined) update.code = String(patch.code || '').trim();
   if (patch.description !== undefined) update.description = String(patch.description || '').trim();
   if (patch.displayOrder !== undefined) update.displayOrder = Number(patch.displayOrder);
+  if (patch.floorNumber !== undefined) update.floorNumber = Number(patch.floorNumber);
+  if (patch.unitNumber !== undefined) update.unitNumber = String(patch.unitNumber).trim();
+  if (patch.configuration !== undefined) update.configuration = String(patch.configuration).trim();
+  if (patch.carpetAreaSqFt !== undefined) update.carpetAreaSqFt = Number(patch.carpetAreaSqFt);
+  if (patch.askingPrice !== undefined) update.askingPrice = Number(patch.askingPrice);
   if (patch.status !== undefined) {
     if (!['active', 'inactive'].includes(patch.status)) {
       const err: any = new Error('Block status must be "active" or "inactive"');
@@ -450,6 +631,44 @@ export async function updateBlockForProject(params: {
 
   await db.collection(PROJECT_BLOCKS_COLLECTION).updateOne({ _id: block._id }, { $set: update });
   const updated = await db.collection(PROJECT_BLOCKS_COLLECTION).findOne({ _id: block._id });
+
+  // Synchronize updated block and unit fields to crm_units
+  if (
+    patch.unitNumber !== undefined ||
+    patch.name !== undefined ||
+    patch.floorNumber !== undefined ||
+    patch.configuration !== undefined ||
+    patch.carpetAreaSqFt !== undefined ||
+    patch.askingPrice !== undefined
+  ) {
+    try {
+      const targetUnitNumber = (patch.unitNumber !== undefined ? patch.unitNumber : block.unitNumber || '').trim();
+      const targetTower = (patch.name !== undefined ? patch.name : block.name || '').trim().toUpperCase();
+      if (targetUnitNumber && typeof db.collection === 'function') {
+        const unitCode = `${targetTower}-${targetUnitNumber}`.toUpperCase();
+        const crmUnits = db.collection('crm_units');
+        if (crmUnits && typeof crmUnits.updateOne === 'function') {
+          await crmUnits.updateOne(
+            { blockId: block._id },
+            {
+              $set: {
+                buildingTower: targetTower,
+                unitNumber: targetUnitNumber,
+                unitCode,
+                floorNumber: patch.floorNumber !== undefined ? Number(patch.floorNumber) : (block.floorNumber ?? 1),
+                configuration: patch.configuration !== undefined ? patch.configuration : (block.configuration || '2BHK'),
+                carpetAreaSqFt: patch.carpetAreaSqFt !== undefined ? Number(patch.carpetAreaSqFt) : (block.carpetAreaSqFt ?? 0),
+                askingPrice: patch.askingPrice !== undefined ? Number(patch.askingPrice) : (block.askingPrice ?? 0),
+                updatedAt: new Date(),
+              },
+            },
+          );
+        }
+      }
+    } catch (eCrm: any) {
+      console.warn('Sync updated block to crm_units skipped:', eCrm?.message || eCrm);
+    }
+  }
 
   if (patch.status !== undefined) {
     const count = await countActiveBlocks(db, String(project._id || project.id));

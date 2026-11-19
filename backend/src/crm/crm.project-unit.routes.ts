@@ -502,40 +502,46 @@ export function createCrmProjectUnitRouter(getDb: () => any, authMiddleware: any
         query.projectId = ObjectId.isValid(projectId) ? new ObjectId(projectId) : projectId;
       }
 
-      // 1. Canonical blocks from project_blocks
-      const pIdStr = projectId ? String(projectId) : null;
-      let canonicalBlocks: any[] = [];
-      if (pIdStr) {
-        canonicalBlocks = await db.collection('project_blocks').find({
-          projectId: { $in: [pIdStr, ObjectId.isValid(pIdStr) && pIdStr.length === 24 ? new ObjectId(pIdStr) : null].filter(Boolean) },
-          isDeleted: { $ne: true },
-          status: { $ne: 'inactive' }
-        }).sort({ displayOrder: 1, createdAt: 1 }).toArray();
-
-        // Enrich canonical blocks with live floorCount and unitCount
-        await Promise.all(canonicalBlocks.map(async (b: any) => {
-          const bId = String(b._id || b.id);
-          const bName = b.name || b.blockName;
-          const [floorCount, unitCount] = await Promise.all([
-            db.collection('project_floors').countDocuments({
-              $or: [{ blockId: bId }, ObjectId.isValid(bId) ? { blockId: new ObjectId(bId) } : null].filter(Boolean),
-              isDeleted: { $ne: true }
-            }).catch(() => 0),
-            db.collection('crm_units').countDocuments({
-              $or: [
-                { blockId: bId },
-                ObjectId.isValid(bId) ? { blockId: new ObjectId(bId) } : null,
-                bName ? { buildingTower: bName } : null
-              ].filter(Boolean),
-              isDeleted: { $ne: true }
-            }).catch(() => 0)
-          ]);
-          b.floorCount = floorCount;
-          b.unitCount = unitCount;
-        }));
+      // Canonical project_blocks from Project module
+      const projBlockFilter: any = { isDeleted: { $ne: true }, status: { $ne: 'inactive' } };
+      if (companyId) {
+        const cStr = String(companyId);
+        const cIdObj = ObjectId.isValid(cStr) && cStr.length === 24 ? new ObjectId(cStr) : null;
+        projBlockFilter.$or = cIdObj ? [{ companyId: cStr }, { companyId: cIdObj }] : [{ companyId: cStr }];
       }
+      if (projectId) {
+        const pIdStr = String(projectId);
+        const pIdObj = ObjectId.isValid(pIdStr) && pIdStr.length === 24 ? new ObjectId(pIdStr) : null;
+        projBlockFilter.projectId = pIdObj ? { $in: [pIdStr, pIdObj] } : pIdStr;
+      }
+      const canonicalBlocks = await db.collection('project_blocks')
+        .find(projBlockFilter)
+        .sort({ displayOrder: 1, name: 1 })
+        .toArray();
 
-      // 2. Explicit blocks in crm_blocks
+      // Enrich canonical blocks with live floorCount and unitCount
+      await Promise.all(canonicalBlocks.map(async (b: any) => {
+        const bId = String(b._id || b.id);
+        const bName = b.name || b.blockName;
+        const [floorCount, unitCount] = await Promise.all([
+          db.collection('project_floors').countDocuments({
+            $or: [{ blockId: bId }, ObjectId.isValid(bId) ? { blockId: new ObjectId(bId) } : null].filter(Boolean),
+            isDeleted: { $ne: true }
+          }).catch(() => 0),
+          db.collection('crm_units').countDocuments({
+            $or: [
+              { blockId: bId },
+              ObjectId.isValid(bId) ? { blockId: new ObjectId(bId) } : null,
+              bName ? { buildingTower: bName } : null
+            ].filter(Boolean),
+            isDeleted: { $ne: true }
+          }).catch(() => 0)
+        ]);
+        b.floorCount = floorCount;
+        b.unitCount = unitCount;
+      }));
+
+      // Explicit blocks in crm_blocks
       const explicitBlocks = await db.collection('crm_blocks').find(query).sort({ blockName: 1 }).toArray();
 
       // 3. Distinct towers inferred from crm_units

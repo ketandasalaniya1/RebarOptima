@@ -25,6 +25,22 @@ export default function SegmentRecipeAssignModal({
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  React.useEffect(() => {
+    if (event?.segments) {
+      setBindings(
+        (event.segments || []).map(seg => ({
+          segmentId: seg.segmentId,
+          segmentName: seg.segmentName,
+          grade: seg.grade || 'M25',
+          plannedVolumeM3: seg.plannedVolumeM3,
+          recipeId: seg.recipeBinding?.recipeId || '',
+          versionNumber: seg.recipeBinding?.versionNumber || '',
+          appliedWastagePercent: seg.recipeBinding?.appliedWastagePercent ?? 1.5
+        }))
+      );
+    }
+  }, [event]);
+
   if (!isOpen || !event) return null;
 
   // Filter approved recipes only

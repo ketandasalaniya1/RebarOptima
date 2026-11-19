@@ -349,9 +349,14 @@ export function createProjectsRouter(
         ctx,
         projectId: req.params.id,
         input: {
-          name: req.body?.name,
+          name: req.body?.name || req.body?.buildingTower,
           code: req.body?.code,
           description: req.body?.description,
+          floorNumber: req.body?.floorNumber,
+          unitNumber: req.body?.unitNumber,
+          configuration: req.body?.configuration,
+          carpetAreaSqFt: req.body?.carpetAreaSqFt,
+          askingPrice: req.body?.askingPrice,
         },
       });
       if (logAudit) {
@@ -393,6 +398,11 @@ export function createProjectsRouter(
           description: req.body?.description,
           displayOrder: req.body?.displayOrder,
           status: req.body?.status,
+          floorNumber: req.body?.floorNumber,
+          unitNumber: req.body?.unitNumber,
+          configuration: req.body?.configuration,
+          carpetAreaSqFt: req.body?.carpetAreaSqFt,
+          askingPrice: req.body?.askingPrice,
         },
       });
       res.json(updated);

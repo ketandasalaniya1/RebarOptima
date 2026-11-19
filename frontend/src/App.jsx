@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import SideNavbar from './components/SideNavbar/SideNavbar';
@@ -46,15 +46,17 @@ import AiAssistantPage from './pages/AiAssistantPage/AiAssistantPage';
 import ContactDirectoryPage from './pages/ContactDirectoryPage/ContactDirectoryPage';
 import ActivityTrackerPage from './pages/ActivityTrackerPage/ActivityTrackerPage';
 import AiAssistantWidget from './components/AiAssistantWidget/AiAssistantWidget';
+
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 import Breadcrumbs from './components/Breadcrumbs/Breadcrumbs';
 import BottomNavBar from './components/BottomNavBar/BottomNavBar';
-import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 import ProjectFormModal from './components/ProjectModals/ProjectFormModal';
 import GeofenceConfigModal from './components/ProjectModals/GeofenceConfigModal';
 import AssignPartnerModal from './components/ProjectModals/AssignPartnerModal';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import ChatNotificationToaster from './components/ChatNotificationToaster/ChatNotificationToaster';
 import { setView, syncViewFromPopState } from './store/slices/routingSlice';
+
 import { loginSuccess, logout, updateActivity } from './store/slices/authSlice';
 import { permissionsApi, projectsApi, setActiveProjectHeader } from './utils/api';
 import { autoRegisterPushDevice } from './utils/pushNotifications';
@@ -614,16 +616,16 @@ function App() {
             {view === 'bbs-reports' && (
               <BbsReportsPage />
             )}
+
           </div>
         </div>
       ) : (
-        <SignInPage
-          onSignIn={handleSignInSuccess}
-          onNavigateToSignUp={() => dispatch(setView('signup'))}
-          onNavigateToDeveloper={() => dispatch(setView('superadmin-login'))}
-        />
-      )}
-
+          <SignInPage
+            onSignIn={handleSignInSuccess}
+            onNavigateToSignUp={() => dispatch(setView('signup'))}
+            onNavigateToDeveloper={() => dispatch(setView('superadmin-login'))}
+          />
+        )}
       {showWorkspace && isCreateModalOpen && <ProjectFormModal />}
       {showWorkspace && geofenceModalProject && <GeofenceConfigModal />}
       {showWorkspace && assignPartnerModalProject && <AssignPartnerModal />}
@@ -638,3 +640,6 @@ function App() {
 }
 
 export default App;
+
+
+

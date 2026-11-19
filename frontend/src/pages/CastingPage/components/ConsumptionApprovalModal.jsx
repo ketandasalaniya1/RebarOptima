@@ -9,8 +9,6 @@ export default function ConsumptionApprovalModal({
   event,
   onActionComplete
 }) {
-  if (!isOpen || !event) return null;
-
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -27,8 +25,12 @@ export default function ConsumptionApprovalModal({
   const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
-    loadRecordAndStock();
-  }, [event]);
+    if (isOpen && event) {
+      loadRecordAndStock();
+    }
+  }, [isOpen, event]);
+
+  if (!isOpen || !event) return null;
 
   const loadRecordAndStock = async () => {
     try {

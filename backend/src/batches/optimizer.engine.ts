@@ -185,9 +185,11 @@ export function solve1DCSP(
     flatParts.forEach(part => {
       let targetBar: (typeof usedBars)[0] | null = null;
       for (const bar of usedBars) {
-        const totalUsedLength =
-          bar.parts.reduce((sum, p) => sum + p.length + kerf, 0) + trimMargin * 2;
-        if (totalUsedLength + part.length <= bar.stockLength) {
+        const barTrim = bar.isRemnant ? 0 : trimMargin * 2;
+        const currentPartsLength = bar.parts.reduce((sum, p) => sum + p.length, 0);
+        // Candidate test: current parts + new part + kerf between parts + bar trim
+        const neededKerfs = bar.parts.length * kerf;
+        if (currentPartsLength + part.length + neededKerfs + barTrim <= bar.stockLength) {
           targetBar = bar;
           break;
         }
@@ -198,16 +200,16 @@ export function solve1DCSP(
         let stockIndex = -1;
         let isFromRemnant = false;
 
-        // 1. Prioritize remnants first in LOWER to HIGHER length order
+        // 1. Prioritize remnants first in LOWER to HIGHER length order (remnants are already trimmed, so no trimMargin)
         for (let i = 0; i < availableRemnants.length; i++) {
-          if (availableRemnants[i].length >= part.length + trimMargin * 2) {
+          if (availableRemnants[i].length >= part.length) {
             stockIndex = i;
             isFromRemnant = true;
             break;
           }
         }
 
-        // 2. Check standard stock bars (descending order)
+        // 2. Check standard stock bars (descending order, requires standard trimMargin)
         if (stockIndex === -1) {
           for (let i = 0; i < availableStandards.length; i++) {
             if (availableStandards[i].length >= part.length + trimMargin * 2) {
@@ -251,15 +253,28 @@ export function solve1DCSP(
     // Calculate remnants / waste metrics per bar
     usedBars.forEach(bar => {
       const cutsLength = bar.parts.reduce((sum, p) => sum + p.length, 0);
-      const kerfCount = Math.max(0, bar.parts.length - 1);
-      const totalCutAndKerf = cutsLength + kerfCount * kerf;
-      const totalUsedWithTrim = totalCutAndKerf + trimMargin * 2;
-      const rawWaste = bar.stockLength - totalUsedWithTrim;
+      const barTrim = bar.isRemnant ? 0 : trimMargin * 2;
 
-      bar.cutsCount =
-        bar.parts.length === 0 ? 0 : rawWaste > 0.1 ? bar.parts.length : bar.parts.length - 1;
-      bar.waste = rawWaste;
-      bar.utilization = (cutsLength / bar.stockLength) * 100;
+      // Preliminary waste check without end-cut kerf
+      const minKerfs = Math.max(0, bar.parts.length - 1);
+      const minConsumed = cutsLength + minKerfs * kerf + barTrim;
+      const preliminaryWaste = bar.stockLength - minConsumed;
+
+      // If leftover exceeds kerf, an additional physical cut is made to detach the remnant/scrap
+      let totalCuts = bar.parts.length;
+      let actualKerfLoss = bar.parts.length * kerf;
+      let rawWaste = bar.stockLength - (cutsLength + actualKerfLoss + barTrim);
+
+      if (preliminaryWaste <= 0.1 || rawWaste < 0) {
+        // Perfect consumption without end offcut
+        totalCuts = Math.max(0, bar.parts.length - 1);
+        actualKerfLoss = totalCuts * kerf;
+        rawWaste = Math.max(0, bar.stockLength - (cutsLength + actualKerfLoss + barTrim));
+      }
+
+      bar.cutsCount = totalCuts;
+      bar.waste = Math.round(rawWaste * 100) / 100;
+      bar.utilization = Math.min(100, Math.round((cutsLength / bar.stockLength) * 10000) / 100);
     });
 
     // Group identical layouts

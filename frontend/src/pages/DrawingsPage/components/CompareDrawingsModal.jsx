@@ -16,16 +16,24 @@ export default function CompareDrawingsModal({
   initialLeftRevId,
   initialRightRevId,
 }) {
-  if (!isOpen || !drawing) return null;
-
-  const revList = revisions.length > 0 ? revisions : [drawing.currentRevision].filter(Boolean);
+  const revList = revisions.length > 0 ? revisions : [drawing?.currentRevision].filter(Boolean);
 
   const [leftRevId, setLeftRevId] = useState(
-    initialLeftRevId || (revList.length > 1 ? revList[1]._id : revList[0]?._id)
+    initialLeftRevId || (revList.length > 1 ? revList[1]?._id : revList[0]?._id)
   );
   const [rightRevId, setRightRevId] = useState(
     initialRightRevId || revList[0]?._id
   );
+
+  React.useEffect(() => {
+    if (drawing) {
+      const list = revisions.length > 0 ? revisions : [drawing.currentRevision].filter(Boolean);
+      setLeftRevId(initialLeftRevId || (list.length > 1 ? list[1]?._id : list[0]?._id));
+      setRightRevId(initialRightRevId || list[0]?._id);
+    }
+  }, [drawing, revisions, initialLeftRevId, initialRightRevId]);
+
+  if (!isOpen || !drawing) return null;
 
   const leftRev = revList.find((r) => String(r._id) === String(leftRevId)) || revList[0];
   const rightRev = revList.find((r) => String(r._id) === String(rightRevId)) || revList[0];

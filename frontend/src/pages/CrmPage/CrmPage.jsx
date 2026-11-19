@@ -715,6 +715,7 @@ export default function CrmPage({ subView }) {
           onClose={() => setShowNewTaskModal(false)}
           onCreated={() => setRefreshEpoch(prev => prev + 1)}
         />
+
       )}
     </div>
   );

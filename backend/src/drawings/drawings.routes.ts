@@ -477,19 +477,34 @@ export function createDrawingsMasterRouter(getDb: () => any, authMiddleware: any
       let blocks: any[] = [];
       if (projectId && projectId !== 'all') {
         const pStr = String(projectId);
-        const crmBlocks = await db.collection('crm_blocks').find({
-          companyId,
-          $or: [
-            { projectId: ObjectId.isValid(pStr) && pStr.length === 24 ? new ObjectId(pStr) : pStr },
-            { projectId: pStr }
-          ]
-        }).toArray();
-        if (crmBlocks.length > 0) {
-          blocks = crmBlocks.map((b: any) => ({
+        const pFilter = ObjectId.isValid(pStr) && pStr.length === 24 ? { $in: [pStr, new ObjectId(pStr)] } : pStr;
+        const projectBlocks = await db.collection('project_blocks').find({
+          projectId: pFilter,
+          isDeleted: { $ne: true },
+          status: 'active'
+        }).sort({ displayOrder: 1, name: 1 }).toArray();
+
+        if (projectBlocks && projectBlocks.length > 0) {
+          blocks = projectBlocks.map((b: any) => ({
             _id: String(b._id),
-            name: b.blockName || b.name || 'Block A',
-            code: b.prefix || 'BLK'
+            name: b.name || b.blockName,
+            code: b.code || 'BLK'
           }));
+        } else {
+          const crmBlocks = await db.collection('crm_blocks').find({
+            companyId,
+            $or: [
+              { projectId: ObjectId.isValid(pStr) && pStr.length === 24 ? new ObjectId(pStr) : pStr },
+              { projectId: pStr }
+            ]
+          }).toArray();
+          if (crmBlocks.length > 0) {
+            blocks = crmBlocks.map((b: any) => ({
+              _id: String(b._id),
+              name: b.blockName || b.name || 'Block A',
+              code: b.prefix || 'BLK'
+            }));
+          }
         }
       }
       if (blocks.length === 0) {

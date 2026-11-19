@@ -326,10 +326,17 @@ export function createCastingRouter(
       const companyId = await resolveCompanyId(req, db);
       const projectId = req.params.projectId;
 
-      const blocks = await db.collection('casting_blocks')
-        .find({ companyId, projectId, isDeleted: { $ne: true } })
+      let blocks = await db.collection('project_blocks')
+        .find({ projectId: String(projectId), isDeleted: { $ne: true }, status: 'active' })
         .sort({ displayOrder: 1, createdAt: 1 })
         .toArray();
+
+      if (!blocks || blocks.length === 0) {
+        blocks = await db.collection('casting_blocks')
+          .find({ companyId, projectId, isDeleted: { $ne: true } })
+          .sort({ displayOrder: 1, createdAt: 1 })
+          .toArray();
+      }
 
       const enriched = await Promise.all(
         blocks.map(async (b: any) => {

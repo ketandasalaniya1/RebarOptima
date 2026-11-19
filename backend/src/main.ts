@@ -68,8 +68,9 @@ app.use((req, res, next) => {
 // ── HEALTH & DB STATUS CHECK ────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
   const isAtlasConnected = !isInMemoryActive && db !== null;
-  res.json({
-    status: 'ok',
+  const statusCode = isAtlasConnected ? 200 : 503;
+  res.status(statusCode).json({
+    status: isAtlasConnected ? 'ok' : 'degraded',
     database: {
       connected: isAtlasConnected,
       type: isAtlasConnected ? 'MongoDB Atlas' : 'In-Memory Fallback (Offline)',
@@ -297,7 +298,9 @@ function mongoConnectionLabel(uri: string, dbName: string): string {
 
 async function connectDB(): Promise<Db> {
   if (db) return db;
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.DATABASE_URL;
+  const isProduction = process.env.NODE_ENV === 'production';
+
   if (uri) {
     try {
       client = new MongoClient(uri, {
@@ -328,16 +331,52 @@ async function connectDB(): Promise<Db> {
       }
       return connectedDb;
     } catch (err: any) {
+      if (isProduction) {
+        console.error('❌ FATAL: Could not connect to MongoDB in production mode. In-memory fallback is disabled in production to prevent silent data loss:', err.message);
+        process.exit(1);
+      }
       console.warn('⚠️ Could not connect to MONGODB_URI. Falling back to In-Memory DB:', err.message);
     }
+  } else if (isProduction) {
+    console.error('❌ FATAL: Neither MONGODB_URI nor DATABASE_URL environment variable is set in production mode. In-memory fallback is disabled in production.');
+    process.exit(1);
   }
 
   if (!isInMemoryActive) {
-    console.warn('⚠️ MongoDB Atlas is not accessible. Using clean In-Memory DB (No test/default data created).');
+    console.warn('⚠️ DEV WARNING: MongoDB Atlas is not accessible. Using In-Memory DB for local development. Data will not persist across restarts.');
     isInMemoryActive = true;
     db = memoryDbInstance as any;
   }
   return db as Db;
+}
+
+async function runWithTransaction<T>(
+  client: MongoClient | null,
+  fn: (session?: any) => Promise<T>
+): Promise<T> {
+  if (client && !isInMemoryActive) {
+    let session;
+    try {
+      session = client.startSession();
+    } catch {
+      return fn();
+    }
+
+    try {
+      session.startTransaction();
+      const result = await fn(session);
+      await session.commitTransaction();
+      return result;
+    } catch (err) {
+      if (session.inTransaction()) {
+        try { await session.abortTransaction(); } catch {}
+      }
+      throw err;
+    } finally {
+      await session.endSession();
+    }
+  }
+  return fn();
 }
 
 function toObjectId(id: any): ObjectId | null {
@@ -765,8 +804,21 @@ const DEFAULT_SUBSCRIPTION_PACKAGES = [
 // ══════════════════════════════════════════════════════════════════════════════
 // AUTH HELPERS
 // ══════════════════════════════════════════════════════════════════════════════
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback-access-secret';
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret';
+const isProduction = process.env.NODE_ENV === 'production';
+const rawAccessSecret = process.env.JWT_ACCESS_SECRET;
+const rawRefreshSecret = process.env.JWT_REFRESH_SECRET;
+
+if (isProduction && (!rawAccessSecret || rawAccessSecret === 'fallback-access-secret')) {
+  console.error('❌ FATAL: JWT_ACCESS_SECRET is missing or insecure in production mode.');
+  process.exit(1);
+}
+if (isProduction && (!rawRefreshSecret || rawRefreshSecret === 'fallback-refresh-secret')) {
+  console.error('❌ FATAL: JWT_REFRESH_SECRET is missing or insecure in production mode.');
+  process.exit(1);
+}
+
+const ACCESS_SECRET = rawAccessSecret || 'dev-only-insecure-access-secret';
+const REFRESH_SECRET = rawRefreshSecret || 'dev-only-insecure-refresh-secret';
 
 function generateTokens(userId: string, email: string, role: string, accountType: 'developer' | 'user' = 'user') {
   const accessToken = jwt.sign(
@@ -3499,7 +3551,7 @@ app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'del
     const userDoc = await db.collection('users').findOne({ _id: new ObjectId(req.user.sub) });
     const companyId = userDoc ? new ObjectId(userDoc.companyId) : null;
     const batchId = new ObjectId(req.params.id);
-    const restoreStock = String(req.query.restoreStock) === 'true';
+    const restoreStock = req.query.restoreStock === 'true' || req.query.restoreStock === true;
 
     if (!restoreStock) {
       const result = await db.collection('batches').findOneAndDelete({ _id: batchId, companyId });
@@ -3623,7 +3675,9 @@ app.delete('/api/batches/:id', authMiddleware, requirePermission('history', 'del
         action: 'BATCH_DELETED',
         resource: 'batches',
         resourceId: req.params.id,
-        description: `Deleted cutting batch "${payload.batchName || 'Cutting Batch'}" and restored stock`,
+        description: payload.restored
+          ? `Deleted cutting batch "${payload.batchName || 'Cutting Batch'}" and restored stock`
+          : `Deleted cutting batch report "${payload.batchName || 'Cutting Batch'}" (stock unchanged)`,
         previousValue: { batchName: payload.batchName, summary: payload.summary, remnantShortfalls: payload.remnantShortfalls }
       });
     }

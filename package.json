@@ -15,9 +15,6 @@
     "start:backend": "node backend/dist/main.js",
     "start:prod": "node backend/dist/main.js",
     "lint": "npm run lint --workspace=frontend",
-    "check:ui": "node scripts/check-ui.mjs",
-    "design-qa": "npm --prefix e2e run design-qa",
-    "e2e:seed": "node e2e/seed/seed.mjs",
     "test:backend": "npm run test --workspace=backend",
     "test:frontend": "node --experimental-vm-modules node_modules/jest/bin/jest.js frontend/src/store/slices/projectSlice.spec.js",
     "test": "npm run test:backend && npm run test:frontend"

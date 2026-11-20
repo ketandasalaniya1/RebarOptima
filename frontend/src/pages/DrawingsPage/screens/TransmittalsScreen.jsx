@@ -196,7 +196,7 @@ export default function TransmittalsScreen({
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Document Transmittal — RebarOptima</title>
+        <title>Document Transmittal — CraveToBuild</title>
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; color: #0f172a; }
           .header { display: flex; justify-content: space-between; border-bottom: 2px solid #059669; padding-bottom: 16px; margin-bottom: 24px; }
@@ -212,7 +212,7 @@ export default function TransmittalsScreen({
         <div class="header">
           <div>
             <div class="title">DOCUMENT TRANSMITTAL SLIP</div>
-            <div style="font-size: 13px; color: #64748b; margin-top: 4px;">RebarOptima Engineering &amp; Construction Platform</div>
+            <div style="font-size: 13px; color: #64748b; margin-top: 4px;">CraveToBuild Engineering &amp; Construction Platform</div>
           </div>
           <div style="text-align: right; font-size: 13px;">
             <div><strong>Project:</strong> ${activeProject?.name || 'Active Project'}</div>
@@ -251,7 +251,7 @@ export default function TransmittalsScreen({
         </table>
 
         <div class="footer">
-          <p>Please inspect drawings upon receipt. Acknowledge transmission electronically via the RebarOptima portal link.</p>
+          <p>Please inspect drawings upon receipt. Acknowledge transmission electronically via the CraveToBuild portal link.</p>
         </div>
       </body>
       </html>

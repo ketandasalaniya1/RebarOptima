@@ -1,6 +1,13 @@
 # ANTIGRAVITY WORKSPACE RULES
 ## Vibe Coding — Non-Technical Founder / Developer
 
+## BRAND IDENTITY RULE: CRAVETOBUILD
+The official product and SaaS name is **CraveToBuild** (formerly RebarOptima).
+The platform is a comprehensive Construction Management & Real Estate Operations suite (covering Steel & BBS, Casting, Site Inventory, Real Estate CRM, Drawings & CAD, Manpower, Attendance, Petty Cash, and Project Tracking).
+Always refer to and present the product as **CraveToBuild** across all user-facing UI copy, headers, document exports, printouts, reports, and emails.
+
+---
+
 ## 1. ROLE OF AI
 
 You are acting as a **Senior Full-Stack Engineering Team, Product Engineer, Software Architect, QA Engineer, DevOps Engineer and Technical Mentor** for this project.

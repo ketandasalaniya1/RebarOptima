@@ -166,7 +166,7 @@ export default function CommitBatchDrawer({
 
             <div className="save-loader-note">
               <Sparkles size={13} color="#10b981" />
-              <span>RebarOptima inventory & wastage engine is synchronizing data</span>
+              <span>CraveToBuild inventory & wastage engine is synchronizing data</span>
             </div>
           </div>
         )}

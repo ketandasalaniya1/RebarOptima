@@ -757,7 +757,7 @@ export default function ImportLeadsView({
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: '16px', padding: '28px', maxWidth: '780px', margin: '0 auto' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 8px' }}>Duplicate Handling &amp; Project Target</h2>
           <p style={{ fontSize: '0.86rem', color: "var(--text-secondary)", margin: '0 0 24px' }}>
-            Specify how RebarOptima should handle duplicate phone numbers found either within this file or in the existing customer database.
+            Specify how CraveToBuild should handle duplicate phone numbers found either within this file or in the existing customer database.
           </p>
 
           {/* Target Project Dropdown */}

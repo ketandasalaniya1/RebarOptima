@@ -254,7 +254,7 @@ export class ActivityReportsService {
         dayBeforeStart,
         projectName: project?.name || 'Authorized Project',
         blockName,
-        companyName: 'RebarOptima Construction',
+        companyName: 'CraveToBuild Construction',
         generatedAt: new Date().toISOString(),
       },
       summary: {
@@ -279,8 +279,8 @@ export class ActivityReportsService {
         size: 'A4',
         margin: 36,
         info: {
-          Title: `RebarOptima - ${data.metadata.reportType} Report`,
-          Author: 'RebarOptima Progress Tracking System',
+          Title: `CraveToBuild - ${data.metadata.reportType} Report`,
+          Author: 'CraveToBuild Progress Tracking System',
         },
       });
 
@@ -289,7 +289,7 @@ export class ActivityReportsService {
       doc.on('end', () => resolve(Buffer.concat(buffers)));
       doc.on('error', reject);
 
-      const primaryColor = '#047857'; // RebarOptima Brand Emerald
+      const primaryColor = '#047857'; // CraveToBuild Brand Emerald
       const darkNavy = '#0f172a';
       const slateGrey = '#475569';
       const lightBorder = '#e2e8f0';
@@ -298,7 +298,7 @@ export class ActivityReportsService {
       doc.rect(36, 36, 523, 60).fill('#f8fafc');
       doc.rect(36, 36, 523, 60).stroke(lightBorder);
 
-      doc.fillColor(primaryColor).fontSize(16).font('Helvetica-Bold').text(`REBAROPTIMA — ${data.metadata.reportType} REPORT`, 50, 48);
+      doc.fillColor(primaryColor).fontSize(16).font('Helvetica-Bold').text(`CRAVETOBUILD — ${data.metadata.reportType} REPORT`, 50, 48);
       doc.fillColor(darkNavy).fontSize(10).font('Helvetica-Bold').text(`Project: ${data.metadata.projectName}  |  Block: ${data.metadata.blockName}`, 50, 68);
       doc.fillColor(slateGrey).fontSize(9).font('Helvetica').text(`Reporting Period: ${data.metadata.startDate} to ${data.metadata.endDate}  (Baseline date: ${data.metadata.dayBeforeStart})`, 50, 80);
 
@@ -389,7 +389,7 @@ export class ActivityReportsService {
 
       // Page footer
       doc.fillColor(slateGrey).fontSize(7).font('Helvetica').text(
-        `Generated on ${new Date().toLocaleString()} by RebarOptima Progress Tracker. Starting progress reflects status as of close of day prior to period.`,
+        `Generated on ${new Date().toLocaleString()} by CraveToBuild Progress Tracker. Starting progress reflects status as of close of day prior to period.`,
         36,
         780,
         { align: 'center', width: 523 },
@@ -404,19 +404,19 @@ export class ActivityReportsService {
    */
   static async generateExcel(data: any): Promise<Buffer> {
     const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'RebarOptima Activity Tracker';
+    workbook.creator = 'CraveToBuild Activity Tracker';
     workbook.created = new Date();
 
     const sheet = workbook.addWorksheet(`${data.metadata.reportType} Report`.substring(0, 31), {
       views: [{ state: 'frozen', ySplit: 5 }],
     });
 
-    const primaryColor = '047857'; // RebarOptima Emerald
+    const primaryColor = '047857'; // CraveToBuild Emerald
 
     // Title Row
     sheet.mergeCells('A1:I1');
     const titleCell = sheet.getCell('A1');
-    titleCell.value = `REBAROPTIMA — ${data.metadata.reportType} REPORT (${data.metadata.startDate} to ${data.metadata.endDate})`;
+    titleCell.value = `CRAVETOBUILD — ${data.metadata.reportType} REPORT (${data.metadata.startDate} to ${data.metadata.endDate})`;
     titleCell.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFF' } };
     titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: primaryColor } };
     titleCell.alignment = { vertical: 'middle', indent: 1 };

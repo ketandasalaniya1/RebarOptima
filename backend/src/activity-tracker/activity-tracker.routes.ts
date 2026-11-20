@@ -1362,7 +1362,7 @@ export function createActivityTrackerRouter(
 
       const pdfBuffer = await ActivityReportsService.generatePdf(reportData);
 
-      const fileName = `RebarOptima_${reportData.metadata.reportType}_${reportData.metadata.startDate}.pdf`;
+      const fileName = `CraveToBuild_${reportData.metadata.reportType}_${reportData.metadata.startDate}.pdf`;
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
       res.end(pdfBuffer);
@@ -1396,7 +1396,7 @@ export function createActivityTrackerRouter(
 
       const excelBuffer = await ActivityReportsService.generateExcel(reportData);
 
-      const fileName = `RebarOptima_${reportData.metadata.reportType}_${reportData.metadata.startDate}.xlsx`;
+      const fileName = `CraveToBuild_${reportData.metadata.reportType}_${reportData.metadata.startDate}.xlsx`;
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
       res.end(excelBuffer);

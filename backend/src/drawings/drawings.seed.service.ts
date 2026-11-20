@@ -125,7 +125,7 @@ export async function seedDrawingsSampleData(db: any, companyId: any, currentUse
     <text x="560" y="450" font-size="14" font-weight="bold" fill="#fbbf24" text-anchor="middle" font-family="sans-serif">MODULAR KITCHEN</text>
     <!-- Title Block at bottom-right -->
     <rect x="480" y="525" width="240" height="30" fill="#1e293b" stroke="#38bdf8" />
-    <text x="600" y="545" font-size="11" fill="#f8fafc" text-anchor="middle" font-family="monospace">REBAROPTIMA DRAWING REGISTER</text>
+    <text x="600" y="545" font-size="11" fill="#f8fafc" text-anchor="middle" font-family="monospace">CRAVETOBUILD DRAWING REGISTER</text>
   </svg>`;
 
   // Stored File

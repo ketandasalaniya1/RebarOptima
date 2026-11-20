@@ -67,7 +67,7 @@ export default function SlipPreviewModal({
             <div className="gi-slip-header">
               <div>
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                  REBAROPTIMA
+                  CRAVETOBUILD
                 </h1>
                 <div style={{ fontSize: '0.85rem', color: '#475569' }}>
                   Site Inventory & Store Management Register
@@ -249,7 +249,7 @@ export default function SlipPreviewModal({
               <div className="gi-sign-box">
                 <div>Store Incharge / Authorized Signatory</div>
                 <div style={{ fontSize: '0.75rem', marginTop: '0.2rem', color: '#475569' }}>
-                  RebarOptima Site Inventory
+                  CraveToBuild Site Inventory
                 </div>
               </div>
             </div>

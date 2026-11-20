@@ -2129,7 +2129,7 @@ app.post('/api/auth/signin', async (req, res) => {
       action: 'USER_SIGNIN',
       resource: 'users',
       resourceId: user._id.toString(),
-      description: `${user.firstName || ''} ${user.lastName || ''} (${roleName}) logged in to RebarOptima`
+      description: `${user.firstName || ''} ${user.lastName || ''} (${roleName}) logged in to CraveToBuild`
     });
 
     res.json({

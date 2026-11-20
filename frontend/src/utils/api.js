@@ -434,7 +434,7 @@ export const activityLogsApi = {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `rebaroptima_activity_logs_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `cravetobuild_activity_logs_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -759,7 +759,7 @@ export const reportsApi = {
     }
     const blob = await res.blob();
     const disposition = res.headers.get('content-disposition');
-    let filename = `RebarOptima_Report_${config.reportMode}_${config.startDate}.pdf`;
+    let filename = `CraveToBuild_Report_${config.reportMode}_${config.startDate}.pdf`;
     if (disposition && disposition.includes('filename=')) {
       const match = disposition.match(/filename="?([^"]+)"?/);
       if (match && match[1]) filename = match[1];
@@ -788,7 +788,7 @@ export const reportsApi = {
     }
     const blob = await res.blob();
     const disposition = res.headers.get('content-disposition');
-    let filename = `RebarOptima_Export_${config.extractType}.xlsx`;
+    let filename = `CraveToBuild_Export_${config.extractType}.xlsx`;
     if (disposition && disposition.includes('filename=')) {
       const match = disposition.match(/filename="?([^"]+)"?/);
       if (match && match[1]) filename = match[1];

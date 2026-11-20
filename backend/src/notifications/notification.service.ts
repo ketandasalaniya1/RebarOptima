@@ -170,7 +170,7 @@ export class NotificationService {
           enabled: true,
           publicKey: process.env.VAPID_PUBLIC_KEY,
           privateKey: process.env.VAPID_PRIVATE_KEY,
-          subject: process.env.VAPID_SUBJECT || 'mailto:support@rebaroptima.com',
+          subject: process.env.VAPID_SUBJECT || 'mailto:support@cravetobuild.com',
         };
       }
 

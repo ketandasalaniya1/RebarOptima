@@ -416,7 +416,7 @@ export default function DrawingDetailsView({
                     {/* Title Block matching Screenshot 4 */}
                     <rect x="460" y="515" width="265" height="30" fill="#111a2e" stroke="#38bdf8" strokeWidth="1" />
                     <text x="592" y="534" fontSize="10" fill="#f8fafc" textAnchor="middle" fontFamily="monospace">
-                      REBAROPTIMA DRAWING REGISTER • {drawing.drawingNumber}
+                      CRAVETOBUILD DRAWING REGISTER • {drawing.drawingNumber}
                     </text>
                   </svg>
                 )}

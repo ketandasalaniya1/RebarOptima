@@ -28,7 +28,7 @@ export default function WebPushPanel() {
     enabled: false,
     publicKey: '',
     privateKey: '',
-    subject: 'mailto:support@rebaroptima.com',
+    subject: 'mailto:support@cravetobuild.com',
   });
 
   // FCM State
@@ -962,7 +962,7 @@ export default function WebPushPanel() {
                   type="text"
                   value={vapidConfig.subject || ''}
                   onChange={(e) => setVapidConfig({ ...vapidConfig, subject: e.target.value })}
-                  placeholder="mailto:support@rebaroptima.com"
+                  placeholder="mailto:support@cravetobuild.com"
                   required
                   style={inputStyle}
                 />

@@ -113,7 +113,7 @@ export default function CalendarView({
 
   // Export iCalendar (.ics)
   const handleExportIcs = () => {
-    let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//RebarOptima Real Estate CRM//EN\n";
+    let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//CraveToBuild Real Estate CRM//EN\n";
 
     filteredEvents.forEach(e => {
       const start = new Date(e.start || Date.now()).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';

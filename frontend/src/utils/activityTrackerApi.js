@@ -170,7 +170,7 @@ export const activityTrackerApi = {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `RebarOptima_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+    a.download = `CraveToBuild_Report_${new Date().toISOString().split('T')[0]}.pdf`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -195,7 +195,7 @@ export const activityTrackerApi = {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `RebarOptima_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+    a.download = `CraveToBuild_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
     document.body.appendChild(a);
     a.click();
     a.remove();

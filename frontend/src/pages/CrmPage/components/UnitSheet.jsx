@@ -224,7 +224,7 @@ export default function UnitSheet({
               </span>
             </div>
             <div style={{ fontSize: '0.82rem', color: "var(--text-secondary)", marginTop: '2px' }}>
-              {currentUnit.projectName || 'RebarOptima Project'} • {currentUnit.buildingTower || 'Tower A'} • Floor {currentUnit.floorNumber || 1}
+              {currentUnit.projectName || 'CraveToBuild Project'} • {currentUnit.buildingTower || 'Tower A'} • Floor {currentUnit.floorNumber || 1}
             </div>
           </div>
 
@@ -356,7 +356,7 @@ export default function UnitSheet({
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', fontSize: '0.84rem' }}>
               <div>
                 <span style={{ color: "var(--text-secondary)", fontSize: '0.75rem' }}>Project Name</span>
-                <div style={{ fontWeight: 700, marginTop: '2px' }}>{currentUnit.projectName || 'RebarOptima Grand Heights'}</div>
+                <div style={{ fontWeight: 700, marginTop: '2px' }}>{currentUnit.projectName || 'CraveToBuild Grand Heights'}</div>
               </div>
               <div>
                 <span style={{ color: "var(--text-secondary)", fontSize: '0.75rem' }}>Building / Tower</span>

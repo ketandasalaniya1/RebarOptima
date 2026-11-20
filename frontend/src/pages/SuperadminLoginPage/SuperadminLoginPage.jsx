@@ -65,7 +65,7 @@ export default function SuperadminLoginPage() {
               <Mail size={18} className="dev-input-icon" />
               <Input 
                 type="email" 
-                placeholder="developer@rebaroptima.com" 
+                placeholder="developer@cravetobuild.com" 
                 required 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

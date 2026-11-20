@@ -814,7 +814,7 @@ export default function InventoryGrid({
                           {unit.unitCode || unit.unitNumber}
                         </td>
                         <td style={{ padding: '12px 16px', color: "var(--text-primary)" }}>
-                          {unit.projectName || 'RebarOptima Project'}
+                          {unit.projectName || 'CraveToBuild Project'}
                         </td>
                         <td style={{ padding: '12px 16px', color: "var(--text-secondary)" }}>
                           {unit.buildingTower || unit.blockName || 'Tower A'}

@@ -641,7 +641,7 @@ export default function BatchHistoryPage({ onEditBatch }) {
           {/* Print Header */}
           <div className="print-header">
             <div>
-              <h2 className="print-title">RebarOptima Cutting Optimization Report</h2>
+              <h2 className="print-title">CraveToBuild Cutting Optimization Report</h2>
               <div className="print-badge-row">
                 <span className="print-batch-name">{printableBatch.batchName || 'Cutting Batch'}</span>
                 <span className="print-mode-indicator">

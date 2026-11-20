@@ -138,7 +138,7 @@ export function createReportsRouter(
       const reportData = await service.getAggregatedReportData(companyId, req.user || {}, config);
       const pdfBuffer = await ReportsPdfBuilder.generate(reportData);
 
-      const filename = `RebarOptima_Report_${config.reportMode}_${config.startDate}_to_${config.endDate}.pdf`;
+      const filename = `CraveToBuild_Report_${config.reportMode}_${config.startDate}_to_${config.endDate}.pdf`;
 
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
@@ -198,7 +198,7 @@ export function createReportsRouter(
       });
 
       const cleanType = config.extractType.replace(/_/g, '-');
-      const filename = `RebarOptima_Export_${cleanType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const filename = `CraveToBuild_Export_${cleanType}_${new Date().toISOString().split('T')[0]}.xlsx`;
 
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

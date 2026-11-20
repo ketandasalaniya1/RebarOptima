@@ -150,7 +150,7 @@ Every view, card, and data table must explicitly account for all 5 states:
 5. **Success / Active State**: The fully populated, dense, interactive UI.
 
 ### Pillar 7: High-Density Table Architecture
-For complex SaaS tools like RebarOptima:
+For complex SaaS tools like CraveToBuild:
 - **Compact Row Height**: 40px–48px per row.
 - **Sticky Column Headers**: Table header remains anchored when scrolling vertically.
 - **Sticky Actions**: Action buttons (Edit, Delete, Download, View) pinned on the right edge so users don't have to scroll 15 columns to access them.

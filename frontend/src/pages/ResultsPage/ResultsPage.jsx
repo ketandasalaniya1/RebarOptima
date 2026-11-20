@@ -1362,8 +1362,8 @@ export default function ResultsPage({ data, onBack, onSaveSuccess }) {
 
         {/* Brand signature (visible on print only) */}
         <div className="print-footer print-only">
-          <span>© 2026-2027 RebarOptima. All rights reserved.</span>
-          <span>Generated: {reportDate} &nbsp;·&nbsp; RebarOptima Cut Optimizer &nbsp;·&nbsp; Confidential</span>
+          <span>© 2026-2027 CraveToBuild. All rights reserved.</span>
+          <span>Generated: {reportDate} &nbsp;·&nbsp; CraveToBuild Cut Optimizer &nbsp;·&nbsp; Confidential</span>
         </div>
       </div>
     </div>

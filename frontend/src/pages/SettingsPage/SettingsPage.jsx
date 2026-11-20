@@ -196,7 +196,7 @@ export default function SettingsPage() {
           <h3 className="settings-card-title">
             <Palette size={18} style={{ marginRight: '8px' }} /> Theme & Styling
           </h3>
-          <p className="settings-card-desc">Personalize your RebarOptima workspace theme and styling accents.</p>
+          <p className="settings-card-desc">Personalize your CraveToBuild workspace theme and styling accents.</p>
 
           <div className="setting-group">
             <label className="setting-label">Theme Mode</label>

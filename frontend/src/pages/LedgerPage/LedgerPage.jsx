@@ -1757,7 +1757,7 @@ export default function LedgerPage() {
         <div className="print-report-header">
           <div className="print-brand-row">
             <div>
-              <h1 className="print-app-title">RebarOptima</h1>
+              <h1 className="print-app-title">CraveToBuild</h1>
               <div className="print-app-subtitle">Cutting Optimization & Steel Inventory Management System</div>
             </div>
             <div className="print-meta-right">

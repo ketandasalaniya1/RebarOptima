@@ -12,7 +12,7 @@ export default function SmtpPanel() {
     username: '',
     password: '',
     fromName: 'Rebar Optima Notifications',
-    fromEmail: 'noreply@rebaroptima.com',
+    fromEmail: 'noreply@cravetobuild.com',
     replyTo: '',
   });
   const [loading, setLoading] = useState(true);
@@ -245,7 +245,7 @@ export default function SmtpPanel() {
                 type="email"
                 value={config.fromEmail || ''}
                 onChange={(e) => setConfig({ ...config, fromEmail: e.target.value })}
-                placeholder="noreply@rebaroptima.com"
+                placeholder="noreply@cravetobuild.com"
                 required
                 style={inputStyle}
               />
@@ -260,7 +260,7 @@ export default function SmtpPanel() {
               type="email"
               value={config.replyTo || ''}
               onChange={(e) => setConfig({ ...config, replyTo: e.target.value })}
-              placeholder="support@rebaroptima.com"
+              placeholder="support@cravetobuild.com"
               style={inputStyle}
             />
           </div>

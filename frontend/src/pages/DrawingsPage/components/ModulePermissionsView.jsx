@@ -183,7 +183,7 @@ export default function ModulePermissionsView({
                   <Input
                     type="email"
                     className="dw-form-input"
-                    placeholder="e.g. priya.mehta@rebaroptima.com"
+                    placeholder="e.g. priya.mehta@cravetobuild.com"
                     required
                     value={formData.userEmail}
                     onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}

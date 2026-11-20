@@ -327,7 +327,7 @@ export default function LedgerHub({
 
     let csvContent = '';
     const dateStr = new Date().toISOString().split('T')[0];
-    const filename = `RebarOptima_${viewMode === 'ledger' ? 'Material_Ledger' : reportType}_${dateStr}`;
+    const filename = `CraveToBuild_${viewMode === 'ledger' ? 'Material_Ledger' : reportType}_${dateStr}`;
 
     if (viewMode === 'ledger') {
       const headers = ['Date', 'Reference #', 'Type', 'Material', 'Quantity', 'Unit (UOM)', 'Store / Godown', 'Party / Performed By', 'Remarks / Legal Reason'];
@@ -382,7 +382,7 @@ export default function LedgerHub({
     setIsExportingPdf(true);
 
     const dateStr = new Date().toISOString().split('T')[0];
-    const filename = `RebarOptima_Material_Ledger_${dateStr}.pdf`;
+    const filename = `CraveToBuild_Material_Ledger_${dateStr}.pdf`;
 
     const opt = {
       margin: [10, 10, 10, 10],
@@ -810,7 +810,7 @@ export default function LedgerHub({
           {/* Header */}
           <div className="gi-pdf-header">
             <div>
-              <h1 className="gi-pdf-title">REBAROPTIMA</h1>
+              <h1 className="gi-pdf-title">CRAVETOBUILD</h1>
               <div className="gi-pdf-subtitle">Site Inventory & Material Movement Ledger</div>
             </div>
             <div style={{ textAlign: 'right' }}>

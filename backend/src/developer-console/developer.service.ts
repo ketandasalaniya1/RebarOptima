@@ -33,7 +33,7 @@ export class DeveloperService {
         enabled: false,
         publicKey: '',
         privateKey: '',
-        subject: 'mailto:support@rebaroptima.com',
+        subject: 'mailto:support@cravetobuild.com',
       };
     }
     const cfg = { ...doc.value } as IWebPushConfig;
@@ -54,7 +54,7 @@ export class DeveloperService {
       enabled: Boolean(data.enabled),
       publicKey: data.publicKey?.trim() || '',
       privateKey: privateKey?.trim() || '',
-      subject: data.subject?.trim() || 'mailto:support@rebaroptima.com',
+      subject: data.subject?.trim() || 'mailto:support@cravetobuild.com',
       updatedAt: new Date(),
       updatedBy,
     };
@@ -326,8 +326,8 @@ export class DeveloperService {
         secure: false,
         username: '',
         password: '',
-        fromName: 'Rebar Optima Notifications',
-        fromEmail: 'noreply@rebaroptima.com',
+        fromName: 'CraveToBuild Notifications',
+        fromEmail: 'noreply@cravetobuild.com',
       };
     }
     const cfg = { ...doc.value } as ISmtpConfig;
@@ -351,8 +351,8 @@ export class DeveloperService {
       secure: Boolean(data.secure),
       username: data.username?.trim() || '',
       password: password || '',
-      fromName: data.fromName?.trim() || 'Rebar Optima Notifications',
-      fromEmail: data.fromEmail?.trim() || 'noreply@rebaroptima.com',
+      fromName: data.fromName?.trim() || 'CraveToBuild Notifications',
+      fromEmail: data.fromEmail?.trim() || 'noreply@cravetobuild.com',
       replyTo: data.replyTo?.trim() || undefined,
       updatedAt: new Date(),
       updatedBy,

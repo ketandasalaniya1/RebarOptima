@@ -151,7 +151,7 @@ Thank you for your payment!`;
           }}>
             <div>
               <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>
-                {receiptData.projectName || 'RebarOptima Realty'}
+                {receiptData.projectName || 'CraveToBuild Realty'}
               </div>
               <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 RERA Registered Real Estate Development

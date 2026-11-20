@@ -192,7 +192,7 @@ export default function SubscribePage() {
       </main>
 
       <footer className="subscribe-footer-help">
-        Need assistance or custom enterprise billing? Contact Support at <a href="mailto:support@rebaroptima.com">support@rebaroptima.com</a>
+        Need assistance or custom enterprise billing? Contact Support at <a href="mailto:support@cravetobuild.com">support@cravetobuild.com</a>
       </footer>
     </div>
   );

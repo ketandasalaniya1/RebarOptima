@@ -31,8 +31,6 @@ export function createGeneralInventoryRouter(
   // Helper to extract companyId from authenticated user
   const resolveCompanyId = async (req: any, db: Db): Promise<string> => {
     if (req.user?.companyId) return String(req.user.companyId);
-    const header = req.headers['x-company-id'];
-    if (header) return String(header);
 
     const userId = req.user?.sub;
     if (userId) {
@@ -41,6 +39,13 @@ export function createGeneralInventoryRouter(
         if (u && u.companyId) return String(u.companyId);
       } catch {}
     }
+
+    // Only platform developers can override company context via header
+    if (req.user?.accountType === 'developer') {
+      const header = req.headers['x-company-id'];
+      if (header) return String(header);
+    }
+
     return req.user?.companyId || 'default-company';
   };
 

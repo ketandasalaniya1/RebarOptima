@@ -10,8 +10,6 @@ export default function CreateCastingEventModal({
   selectedProject,
   onEventCreated
 }) {
-  if (!isOpen) return null;
-
   const [projectId, setProjectId] = useState(selectedProject ? (selectedProject.id || selectedProject._id) : (projects[0]?.id || projects[0]?._id || ''));
   const [title, setTitle] = useState('');
   const [activityType, setActivityType] = useState('Slab_Beam');
@@ -143,6 +141,8 @@ export default function CreateCastingEventModal({
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="casting-modal-backdrop">

@@ -14,8 +14,6 @@ export default function CreateMemberModal({
   memberTypes,
   onMemberCreated
 }) {
-  if (!isOpen) return null;
-
   const [mode, setMode] = useState('single'); // 'single' | 'batch'
   const [memberType, setMemberType] = useState('Slab');
   const [concreteGrade, setConcreteGrade] = useState('M25');
@@ -146,6 +144,8 @@ export default function CreateMemberModal({
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="casting-modal-backdrop">

@@ -148,8 +148,6 @@ export function createPettyCashRouter(
   // Helper to resolve companyId from token or database
   const resolveCompanyId = async (req: any, db: Db): Promise<string> => {
     if (req.user?.companyId) return String(req.user.companyId);
-    const header = req.headers['x-company-id'];
-    if (header) return String(header);
 
     const userId = req.user?.sub;
     if (userId) {
@@ -158,6 +156,13 @@ export function createPettyCashRouter(
         if (u && u.companyId) return String(u.companyId);
       } catch { }
     }
+
+    // Only platform developers can override company context via header
+    if (req.user?.accountType === 'developer') {
+      const header = req.headers['x-company-id'];
+      if (header) return String(header);
+    }
+
     return req.user?.companyId || 'default-company';
   };
 
@@ -209,8 +214,11 @@ export function createPettyCashRouter(
 
       const sitesList = Array.from(siteMap.values());
 
-      // Fetch all transactions to calculate live balance for each site
-      const allTransactions = await db.collection('petty_cash_transactions').find(compFilter).toArray().catch(() => []);
+      // Fetch all transactions with lean projection to calculate live balance for each site
+      const allTransactions = await db.collection('petty_cash_transactions')
+        .find(compFilter, { projection: { siteName: 1, type: 1, amount: 1 } })
+        .toArray()
+        .catch(() => []);
 
       const siteBalances = new Map<string, { totalCredits: number; totalDebits: number; currentBalance: number; txCount: number }>();
 

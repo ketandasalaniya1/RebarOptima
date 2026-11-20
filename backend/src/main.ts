@@ -820,14 +820,16 @@ if (isProduction && (!rawRefreshSecret || rawRefreshSecret === 'fallback-refresh
 const ACCESS_SECRET = rawAccessSecret || 'dev-only-insecure-access-secret';
 const REFRESH_SECRET = rawRefreshSecret || 'dev-only-insecure-refresh-secret';
 
-function generateTokens(userId: string, email: string, role: string, accountType: 'developer' | 'user' = 'user') {
+function generateTokens(userId: string, email: string, role: string, accountType: 'developer' | 'user' = 'user', companyId?: any) {
+  const payload: any = { sub: userId, email, role, accountType };
+  if (companyId) payload.companyId = String(companyId);
   const accessToken = jwt.sign(
-    { sub: userId, email, role, accountType },
+    payload,
     ACCESS_SECRET,
     { expiresIn: (process.env.ACCESS_TOKEN_EXPIRATION || '15m') as any }
   );
   const refreshToken = jwt.sign(
-    { sub: userId, accountType },
+    { sub: userId, accountType, ...(companyId ? { companyId: String(companyId) } : {}) },
     REFRESH_SECRET,
     { expiresIn: (process.env.REFRESH_TOKEN_EXPIRATION || '7d') as any }
   );
@@ -2049,7 +2051,7 @@ app.post('/api/auth/signup', async (req, res) => {
     const userId = userResult.insertedId.toString();
 
     // Generate tokens
-    const tokens = generateTokens(userId, userDoc.email, 'Admin', 'user');
+    const tokens = generateTokens(userId, userDoc.email, 'Admin', 'user', companyId);
 
     // Get effective permissions
     const permissions = await getEffectivePermissions(db, userId);
@@ -2113,7 +2115,7 @@ app.post('/api/auth/signin', async (req, res) => {
       if (role) roleName = role.name;
     }
 
-    const tokens = generateTokens(user._id.toString(), user.email, roleName, 'user');
+    const tokens = generateTokens(user._id.toString(), user.email, roleName, 'user', user.companyId);
 
     // Get effective permissions
     const permissions = await getEffectivePermissions(db, user._id.toString());
@@ -2178,7 +2180,7 @@ app.post('/api/auth/refresh', async (req, res) => {
         if (role) roleName = role.name;
       }
       
-      const tokens = generateTokens(user._id.toString(), user.email, roleName, 'user');
+      const tokens = generateTokens(user._id.toString(), user.email, roleName, 'user', user.companyId);
       return res.json(tokens);
     }
   } catch (e: any) {

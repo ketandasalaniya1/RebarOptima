@@ -39,13 +39,11 @@ export default function DiffDrawer({
   onClose,
   log,
 }) {
-  if (!log) return null;
+  const actorName = log?.actor?.name || log?.actorName || 'User';
+  const actorEmail = log?.actor?.email || log?.actorEmail || '';
+  const actorRole = log?.actor?.role || log?.actorRole || 'Staff';
 
-  const actorName = log.actor?.name || log.actorName || 'User';
-  const actorEmail = log.actor?.email || log.actorEmail || '';
-  const actorRole = log.actor?.role || log.actorRole || 'Staff';
-
-  const formattedDate = log.timestamp
+  const formattedDate = log?.timestamp
     ? new Date(log.timestamp).toLocaleString('en-IN', {
         month: 'short',
         day: 'numeric',
@@ -59,6 +57,7 @@ export default function DiffDrawer({
 
   // Compute field-by-field diffs
   const fieldDiffs = useMemo(() => {
+    if (!log) return [];
     const prev = log.previousValue && typeof log.previousValue === 'object' ? log.previousValue : null;
     const next = log.newValue && typeof log.newValue === 'object' ? log.newValue : null;
 
@@ -105,6 +104,8 @@ export default function DiffDrawer({
 
     return [];
   }, [log]);
+
+  if (!log) return null;
 
   const footer = (
     <div className="dd-footer">

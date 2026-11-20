@@ -14,8 +14,6 @@ export default function ProjectStockRegisterModal({
   projectId,
   projectName
 }) {
-  if (!isOpen || !projectId) return null;
-
   const [activeTab, setActiveTab] = useState('balances'); // 'balances' | 'inward' | 'ledger'
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -253,6 +251,8 @@ export default function ProjectStockRegisterModal({
       default: return 'stock-cat-tag';
     }
   };
+
+  if (!isOpen || !projectId) return null;
 
   return (
     <div className="casting-modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>

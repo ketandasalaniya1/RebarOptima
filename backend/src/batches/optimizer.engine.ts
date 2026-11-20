@@ -177,6 +177,7 @@ export function solve1DCSP(
       dbId?: string;
       isRemnant?: boolean;
       parts: PartLayoutItem[];
+      currentPartsLength: number;
       cutsCount?: number;
       waste?: number;
       utilization?: number;
@@ -186,7 +187,7 @@ export function solve1DCSP(
       let targetBar: (typeof usedBars)[0] | null = null;
       for (const bar of usedBars) {
         const barTrim = bar.isRemnant ? 0 : trimMargin * 2;
-        const currentPartsLength = bar.parts.reduce((sum, p) => sum + p.length, 0);
+        const currentPartsLength = bar.currentPartsLength;
         // Candidate test: current parts + new part + kerf between parts + bar trim
         const neededKerfs = bar.parts.length * kerf;
         if (currentPartsLength + part.length + neededKerfs + barTrim <= bar.stockLength) {
@@ -232,6 +233,7 @@ export function solve1DCSP(
             dbId: selectedStock.dbId,
             isRemnant: selectedStock.isRemnant,
             parts: [],
+            currentPartsLength: 0,
           };
           usedBars.push(targetBar);
         } else {
@@ -242,12 +244,14 @@ export function solve1DCSP(
             diameter: dia,
             isVirtual: true,
             parts: [],
+            currentPartsLength: 0,
           };
           usedBars.push(targetBar);
         }
       }
 
       targetBar.parts.push(part);
+      targetBar.currentPartsLength += part.length;
     });
 
     // Calculate remnants / waste metrics per bar

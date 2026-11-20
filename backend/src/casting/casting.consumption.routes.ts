@@ -20,8 +20,6 @@ function idQuery(id: string): any {
 
 async function resolveCompanyId(req: any, db: Db): Promise<string> {
   if (req.user?.companyId) return String(req.user.companyId);
-  const header = req.headers['x-company-id'];
-  if (header) return String(header);
 
   if (req.user?.sub) {
     const userQuery = ObjectId.isValid(req.user.sub) && req.user.sub.length === 24
@@ -30,6 +28,13 @@ async function resolveCompanyId(req: any, db: Db): Promise<string> {
     const u = await db.collection('users').findOne(userQuery);
     if (u?.companyId) return String(u.companyId);
   }
+
+  // Only platform developers can override company context via header
+  if (req.user?.accountType === 'developer') {
+    const header = req.headers['x-company-id'];
+    if (header) return String(header);
+  }
+
   return 'default-company';
 }
 

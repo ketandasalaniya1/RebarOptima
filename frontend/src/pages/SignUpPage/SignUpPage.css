@@ -233,11 +233,13 @@
 .input-icon {
   position: absolute;
   left: 15px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .input-wrapper input {
   width: 100%;
-  padding: 12px 15px 12px 42px;
+  padding: 12px 15px 12px 42px !important;
   background: var(--input-bg);
   border: 1px solid var(--input-border);
   border-radius: 8px;
@@ -245,6 +247,11 @@
   font-size: 14px;
   outline: none;
   transition: all 0.2s;
+}
+
+.input-wrapper:has(.toggle-password) input,
+.input-wrapper input[type="password"] {
+  padding-right: 42px !important;
 }
 
 .input-wrapper input:focus {
@@ -562,8 +569,13 @@
 
   .input-wrapper input,
   .signup-select {
-    padding: 10px 10px 10px 36px;
+    padding: 10px 10px 10px 36px !important;
     font-size: 13px;
+  }
+
+  .input-wrapper:has(.toggle-password) input,
+  .input-wrapper input[type="password"] {
+    padding-right: 36px !important;
   }
 }
 

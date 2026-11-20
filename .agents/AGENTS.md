@@ -523,6 +523,7 @@ Preserve:
 
 When redesigning, first understand the current system.
 
+"All frontend UI/UX development, styling, and component design in this project must strictly adhere to the Apple HIG SaaS Designer system (Liquid Glass layer hierarchy, concentric radii, tabular numbers, 8pt grid, and centralized @/components/ui primitives)"
 ---
 
 # 25. PERFORMANCE
@@ -563,6 +564,9 @@ When making a significant architectural or product decision, document:
 **Decision → Reason → Alternatives → Consequences**
 
 This prevents future AI sessions from accidentally reversing important decisions.
+
+All generated documentation, reports, CSV matrices, architectural guides, and export files must always be saved in:
+`C:\Users\ketan\.gemini\antigravity-ide\scratch\RebarOptima\docs` (or `./docs`).
 
 ---
 

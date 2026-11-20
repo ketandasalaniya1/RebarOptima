@@ -561,9 +561,9 @@ input[type="radio"] {
   margin-bottom: 4px;
 }
 
-input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]):not([type="color"]):not(.ro-search-input),
-select,
-textarea {
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]):not([type="color"]):not(.ro-search-input)),
+:where(select),
+:where(textarea) {
   border: 1px solid var(--input-border);
   border-radius: var(--radius-md);
   background-color: var(--input-bg);
